@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
     initAuth();
@@ -23,12 +24,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Wait for auth initialization before checking authentication
-    if (!isInitialized) return;
+    if (!isInitialized || hasRedirectedRef.current) return;
     
-    // Redirect if already authenticated
+    // Redirect if already authenticated (only on initial mount, not after login)
     if (isAuthenticated && user) {
       console.log('[Login] Already authenticated, redirecting...', user);
       const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+      hasRedirectedRef.current = true;
       router.push(redirectPath);
       router.refresh();
     }
@@ -38,6 +40,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLocalError('');
     clearError();
+    hasRedirectedRef.current = true; // Prevent useEffect from redirecting while we handle login
 
     if (!email || !password) {
       setLocalError('Veuillez remplir tous les champs');
@@ -72,6 +75,9 @@ export default function LoginPage() {
         const redirectPath = currentUser.role === 'admin' ? '/admin' : '/dashboard';
         console.log('[Login] Redirect path:', redirectPath);
 
+        // Mark that we're redirecting to prevent useEffect from also redirecting
+        hasRedirectedRef.current = true;
+        
         // Force navigation
         window.location.href = redirectPath;
       } else {

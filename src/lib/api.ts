@@ -48,6 +48,7 @@ class ApiClient {
   }
 
   setToken(token: string | null) {
+    console.log('[API] setToken called:', token ? `token length: ${token.length}` : 'null');
     this.token = token;
     if (typeof window !== 'undefined') {
       if (token) {
@@ -59,11 +60,12 @@ class ApiClient {
           cookieString += '; Secure';
         }
         document.cookie = cookieString;
-        console.log('[API] Cookie synced with token');
+        console.log('[API] Cookie synced with token, document.cookie after:', document.cookie.substring(0, 100));
       } else {
         localStorage.removeItem('token');
         // Clear cookie
         document.cookie = 'token=; path=/; max-age=0';
+        console.log('[API] Token cleared, document.cookie after:', document.cookie);
       }
     }
   }
@@ -259,13 +261,22 @@ class ApiClient {
   // Auth endpoints
   async login(email: string, password: string): Promise<AuthResponse> {
     console.log('[API] Login attempt for:', email);
-    const response = await this.request<AuthResponse>('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    console.log('[API] Login response:', { user: response.user, tokenLength: response.token?.length });
-    this.setToken(response.token);
-    return response;
+    try {
+      const response = await this.request<AuthResponse>('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      console.log('[API] Login response:', { user: response.user, tokenLength: response.token?.length, tokenPreview: response.token?.substring(0, 20) + '...' });
+      if (!response.token) {
+        console.error('[API] Login response missing token!', response);
+        throw new Error('Server did not return authentication token');
+      }
+      this.setToken(response.token);
+      return response;
+    } catch (error) {
+      console.error('[API] Login error details:', error);
+      throw error;
+    }
   }
 
   async logout(): Promise<void> {

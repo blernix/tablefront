@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      console.error('[AuthStore] Login error:', errorMessage);
+      console.error('[AuthStore] Login error:', errorMessage, 'Full error:', error);
       set({
         user: null,
         token: null,
