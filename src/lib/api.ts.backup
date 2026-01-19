@@ -49,6 +49,31 @@ class ApiClient {
 
   setToken(token: string | null) {
     console.log('[API] setToken called:', token ? `token length: ${token.length}` : 'null');
+    
+    // Validate token format if provided
+    if (token && token.split('.').length !== 3) {
+      console.error('[API] Invalid token format (not a JWT), rejecting token:', token.substring(0, 50) + '...');
+      token = null;
+    }
+    
+    // Decode and log token expiration if valid
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const exp = payload.exp ? new Date(payload.exp * 1000) : null;
+        const now = new Date();
+        const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
+        console.log(`[API] Token payload:`, { 
+          userId: payload.userId, 
+          email: payload.email, 
+          exp: exp?.toISOString(),
+          timeLeft: timeLeft !== null ? `${Math.floor(timeLeft / 60)}m ${Math.floor(timeLeft % 60)}s` : 'none'
+        });
+      } catch (e) {
+        console.warn('[API] Failed to decode token payload:', e);
+      }
+    }
+    
     this.token = token;
     if (typeof window !== 'undefined') {
       if (token) {
@@ -80,6 +105,37 @@ class ApiClient {
       if (storedToken !== this.token) {
         console.log(`[API] Token sync: updating from localStorage (changed: ${!!this.token} -> ${!!storedToken})`);
         this.token = storedToken;
+        // Log token expiration after sync
+        if (storedToken) {
+          try {
+            const payload = JSON.parse(atob(storedToken.split('.')[1]));
+            const exp = payload.exp ? new Date(payload.exp * 1000) : null;
+            const now = new Date();
+            const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
+            console.log(`[API] Synced token expiration:`, {
+              exp: exp?.toISOString(),
+              timeLeft: timeLeft !== null ? `${Math.floor(timeLeft / 60)}m ${Math.floor(timeLeft % 60)}s` : 'none',
+              expired: timeLeft !== null && timeLeft <= 0
+            });
+          } catch (e) {
+            console.warn('[API] Failed to decode synced token:', e);
+          }
+        }
+      }
+    }
+
+    // Check token expiration and warn if close to expiry
+    if (this.token) {
+      try {
+        const payload = JSON.parse(atob(this.token.split('.')[1]));
+        const exp = payload.exp ? new Date(payload.exp * 1000) : null;
+        const now = new Date();
+        const timeLeft = exp ? (exp.getTime() - now.getTime()) / 1000 : null;
+        if (timeLeft !== null && timeLeft > 0 && timeLeft < 300) { // less than 5 minutes
+          console.warn(`[API] Token expires soon: ${Math.floor(timeLeft)} seconds left`);
+        }
+      } catch (e) {
+        // ignore decoding errors
       }
     }
 
@@ -136,9 +192,14 @@ class ApiClient {
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
-            // Wait for ongoing refresh
+            // Wait for ongoing refresh - store promise reference before await
             console.log('[API] Waiting for ongoing token refresh...');
-            await this.refreshPromise;
+            const currentRefreshPromise = this.refreshPromise;
+            if (!currentRefreshPromise) {
+              console.warn('[API] No refresh promise found, retrying request');
+              return this.request<T>(endpoint, options);
+            }
+            await currentRefreshPromise;
             // After refresh, retry the request with new token
             console.log('[API] Token refresh completed, retrying request');
             return this.request<T>(endpoint, options);
@@ -210,9 +271,14 @@ class ApiClient {
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
-            // Wait for ongoing refresh
+            // Wait for ongoing refresh - store promise reference before await
             console.log('[API] Waiting for ongoing token refresh...');
-            await this.refreshPromise;
+            const currentRefreshPromise = this.refreshPromise;
+            if (!currentRefreshPromise) {
+              console.warn('[API] No refresh promise found, retrying upload');
+              return this.uploadFile<T>(endpoint, file, fieldName);
+            }
+            await currentRefreshPromise;
             // After refresh, retry the upload with new token
             console.log('[API] Token refresh completed, retrying upload');
             return this.uploadFile<T>(endpoint, file, fieldName);
@@ -255,6 +321,13 @@ class ApiClient {
       method: 'POST',
     });
     console.log('[API] Token refreshed successfully');
+    
+    // Validate the returned token
+    if (!response.token || response.token.split('.').length !== 3) {
+      console.error('[API] Invalid token received from refresh endpoint:', response.token?.substring(0, 50) + '...');
+      throw new Error('Invalid token received from server');
+    }
+    
     return response;
   }
 

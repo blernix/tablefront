@@ -5,12 +5,15 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
+import { formatDate } from '@/lib/formatters';
 import { DayBlock } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus, Trash2, Ban, Calendar } from 'lucide-react';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
+import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 
 export default function BlockedDaysPage() {
   const router = useRouter();
@@ -22,6 +25,14 @@ export default function BlockedDaysPage() {
   // Form state
   const [date, setDate] = useState('');
   const [reason, setReason] = useState('');
+
+  // Delete confirmation hook
+  const { isOpen: isDeleteModalOpen, itemToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+    onDelete: async (id) => {
+      await apiClient.deleteDayBlock(id);
+      fetchDayBlocks();
+    },
+  });
 
   useEffect(() => {
     fetchDayBlocks();
@@ -61,26 +72,10 @@ export default function BlockedDaysPage() {
     }
   };
 
-  const handleDelete = async (id: string, dateStr: string) => {
-    if (!confirm(`Débloquer le ${format(new Date(dateStr), 'dd MMMM yyyy', { locale: fr })} ?`)) {
-      return;
-    }
-
-    try {
-      await apiClient.deleteDayBlock(id);
-      fetchDayBlocks();
-    } catch (err) {
-      alert('Erreur lors de la suppression');
-    }
+  const handleDelete = (dayBlock: DayBlock) => {
+    openDeleteModal({ id: dayBlock._id, name: formatDate(dayBlock.date) });
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'EEEE dd MMMM yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
 
   // Group by past and future
   const today = new Date();
@@ -200,7 +195,7 @@ export default function BlockedDaysPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDelete(block._id, block.date)}
+                  onClick={() => handleDelete(block)}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -240,7 +235,7 @@ export default function BlockedDaysPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDelete(block._id, block.date)}
+                  onClick={() => handleDelete(block)}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -260,6 +255,16 @@ export default function BlockedDaysPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        title="Débloquer le jour"
+        itemName={itemToDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

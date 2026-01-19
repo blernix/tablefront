@@ -119,19 +119,37 @@ export const useAuthStore = create<AuthState>((set) => ({
 
        if (token && userStr) {
         try {
-          const user = JSON.parse(userStr);
-          updates.user = user;
-          updates.token = token;
-          updates.isAuthenticated = true;
-          apiClient.setToken(token);
-          // Ensure cookie is set for middleware with proper flags
-          const isSecure = window.location.protocol === 'https:';
-          let cookieString = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-          if (isSecure) {
-            cookieString += '; Secure';
+          // Validate token format and expiration
+          const parts = token.split('.');
+          if (parts.length !== 3) {
+            throw new Error('Invalid token format');
           }
-          document.cookie = cookieString;
-          console.log('[AuthStore] Cookie synced on init');
+          const payload = JSON.parse(atob(parts[1]));
+          const exp = payload.exp ? new Date(payload.exp * 1000) : null;
+          const now = new Date();
+          if (exp && exp.getTime() <= now.getTime()) {
+            console.log('[AuthStore] Token expired on init, clearing auth');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.cookie = 'token=; path=/; max-age=0';
+            updates.user = null;
+            updates.token = null;
+            updates.isAuthenticated = false;
+          } else {
+            const user = JSON.parse(userStr);
+            updates.user = user;
+            updates.token = token;
+            updates.isAuthenticated = true;
+            apiClient.setToken(token);
+            // Ensure cookie is set for middleware with proper flags
+            const isSecure = window.location.protocol === 'https:';
+            let cookieString = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+            if (isSecure) {
+              cookieString += '; Secure';
+            }
+            document.cookie = cookieString;
+            console.log('[AuthStore] Cookie synced on init');
+          }
         } catch (error) {
           console.error('Failed to parse user from localStorage:', error);
           localStorage.removeItem('token');

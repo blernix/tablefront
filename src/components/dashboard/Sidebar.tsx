@@ -29,7 +29,7 @@ const navigation = [
   },
   {
     name: 'Menus',
-    href: '/dashboard/menus',
+    href: '/dashboard/menus?tab=dashboard',
     icon: Utensils,
     allowedRoles: ['admin', 'restaurant'] as const,
   },
@@ -102,7 +102,9 @@ export default function DashboardSidebar({
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-4">
           {filteredNavigation.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+            // Extract base path without query params
+            const baseHref = item.href.split('?')[0];
+            const isActive = pathname === baseHref || pathname.startsWith(baseHref + '/');
             const Icon = item.icon;
 
             return (

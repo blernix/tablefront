@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Utensils, Users, TrendingUp, Clock, Euro, ArrowRight, Plus } from 'lucide-react';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
+import EmptyState from '@/components/EmptyState';
 
 interface DashboardStats {
   today: {
@@ -81,42 +83,15 @@ export default function DashboardPage() {
   };
 
   if (!isInitialized) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-20 bg-slate-200 rounded-lg" />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 bg-slate-200 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton type="dashboard" />;
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-20 bg-slate-200 rounded-lg" />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 bg-slate-200 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton type="dashboard" />;
   }
 
   if (isLoading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-20 bg-slate-200 rounded-lg" />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 bg-slate-200 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton type="dashboard" />;
   }
 
   const getTotalCapacity = () => {
@@ -303,13 +278,11 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 mb-4">
-                  <Calendar className="h-8 w-8 text-slate-400" />
-                </div>
-                <p className="text-sm font-medium text-slate-900">Aucune réservation aujourd&apos;hui</p>
-                <p className="mt-1 text-sm text-slate-600">Les réservations apparaîtront ici</p>
-              </div>
+              <EmptyState
+                icon={Calendar}
+                title="Aucune réservation aujourd'hui"
+                description="Les réservations apparaîtront ici"
+              />
             )}
           </CardContent>
         </Card>

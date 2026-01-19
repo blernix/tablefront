@@ -6,6 +6,8 @@ import { apiClient } from '@/lib/api';
 import { ServerUser } from '@/types';
 import { toast } from 'sonner';
 import { UserPlus, Trash2, Edit2, Eye, EyeOff } from 'lucide-react';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
+import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 
 export default function ServersPage() {
   const router = useRouter();
@@ -20,6 +22,15 @@ export default function ServersPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+  });
+
+  // Delete confirmation hook
+  const { isOpen: isDeleteModalOpen, itemToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+    onDelete: async (id) => {
+      await apiClient.deleteServerUser(id);
+      toast.success('Serveur supprimé avec succès');
+      loadServers();
+    },
   });
 
   useEffect(() => {
@@ -113,18 +124,8 @@ export default function ServersPage() {
     }
   };
 
-  const handleDeleteServer = async (serverId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce serveur ?')) {
-      return;
-    }
-
-    try {
-      await apiClient.deleteServerUser(serverId);
-      toast.success('Serveur supprimé avec succès');
-      loadServers();
-    } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de la suppression du serveur');
-    }
+  const handleDeleteServer = (server: ServerUser) => {
+    openDeleteModal({ id: server.id, name: server.email });
   };
 
   const openEditModal = (server: ServerUser) => {
@@ -234,7 +235,7 @@ export default function ServersPage() {
                         <Edit2 size={18} />
                       </button>
                       <button
-                        onClick={() => handleDeleteServer(server.id)}
+                        onClick={() => handleDeleteServer(server)}
                         className="text-red-600 hover:text-red-900"
                         title="Supprimer"
                       >
@@ -281,7 +282,7 @@ export default function ServersPage() {
                     <span>Modifier</span>
                   </button>
                   <button
-                    onClick={() => handleDeleteServer(server.id)}
+                    onClick={() => handleDeleteServer(server)}
                     className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Trash2 size={16} />
@@ -412,6 +413,16 @@ export default function ServersPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        title="Supprimer le serveur"
+        itemName={itemToDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

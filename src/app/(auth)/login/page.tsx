@@ -250,17 +250,7 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <div className="mt-10 pt-8 border-t border-gray-300/30">
-              <p className="text-center text-sm text-muted-foreground mb-2">Compte démo Admin</p>
-              <div className="bg-navy/5 rounded-xl p-4 border border-decorative">
-                <p className="text-center font-mono text-sm text-navy">
-                  admin@tablemaster.com / admin123
-                </p>
-              </div>
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                Utilisez ces identifiants pour explorer toutes les fonctionnalités
-              </p>
-            </div>
+
           </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import { apiClient } from '@/lib/api';
 import { Restaurant } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
+import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 
 export default function RestaurantsPage() {
   const router = useRouter();
@@ -15,6 +17,14 @@ export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Delete confirmation hook
+  const { isOpen: isDeleteModalOpen, itemToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+    onDelete: async (id) => {
+      await apiClient.deleteRestaurant(id);
+      fetchRestaurants();
+    },
+  });
 
   useEffect(() => {
     initAuth();
@@ -53,17 +63,8 @@ export default function RestaurantsPage() {
     router.push('/login');
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce restaurant ?')) {
-      return;
-    }
-
-    try {
-      await apiClient.deleteRestaurant(id);
-      fetchRestaurants();
-    } catch (err) {
-      alert('Erreur lors de la suppression');
-    }
+  const handleDelete = (restaurant: Restaurant) => {
+    openDeleteModal({ id: restaurant._id, name: restaurant.name });
   };
 
   if (!isInitialized) {
@@ -158,7 +159,7 @@ export default function RestaurantsPage() {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(restaurant._id)}
+                        onClick={() => handleDelete(restaurant)}
                       >
                         Supprimer
                       </Button>
@@ -170,6 +171,16 @@ export default function RestaurantsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        title="Supprimer le restaurant"
+        itemName={itemToDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

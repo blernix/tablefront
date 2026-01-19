@@ -52,6 +52,7 @@ export interface Restaurant {
   menu: {
     displayMode: 'pdf' | 'detailed' | 'both';
     pdfUrl?: string;
+    qrCodeGenerated?: boolean;
   };
   openingHours: OpeningHours;
   tablesConfig: {
@@ -134,7 +135,7 @@ export interface DishVariation {
 export interface Dish {
   _id: string;
   restaurantId: string;
-  categoryId: string | { _id: string; name: string };
+  categoryId: string | { _id: string; name: string } | null;
   name: string;
   description?: string;
   price: number;

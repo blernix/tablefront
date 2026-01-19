@@ -9,10 +9,23 @@ import { toast } from 'sonner';
 interface QrCodeDisplayProps {
   pdfUrl: string;
   restaurantName?: string;
+  restaurantId: string;
+  qrCodeGenerated?: boolean;
+  onGenerate?: () => void;
 }
 
-export default function QrCodeDisplay({ pdfUrl, restaurantName = 'Menu' }: QrCodeDisplayProps) {
+export default function QrCodeDisplay({
+  pdfUrl,
+  restaurantName = 'Menu',
+  restaurantId,
+  qrCodeGenerated = false,
+  onGenerate
+}: QrCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
+
+  // Generate stable QR code URL that redirects to current PDF
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+  const qrCodeUrl = `${backendUrl}/api/public/menu/pdf/${restaurantId}`;
 
   const handleDownload = () => {
     const svg = document.getElementById('menu-qr-code');
@@ -39,7 +52,7 @@ export default function QrCodeDisplay({ pdfUrl, restaurantName = 'Menu' }: QrCod
 
   const handleCopyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(pdfUrl);
+      await navigator.clipboard.writeText(qrCodeUrl);
       setCopied(true);
       toast.success('URL copiée dans le presse-papier');
       setTimeout(() => setCopied(false), 2000);
@@ -54,7 +67,7 @@ export default function QrCodeDisplay({ pdfUrl, restaurantName = 'Menu' }: QrCod
         await navigator.share({
           title: `Menu - ${restaurantName}`,
           text: 'Scannez ce QR code pour accéder au menu',
-          url: pdfUrl,
+          url: qrCodeUrl,
         });
       } catch (err) {
         console.log('Share cancelled');
@@ -66,32 +79,53 @@ export default function QrCodeDisplay({ pdfUrl, restaurantName = 'Menu' }: QrCod
 
   return (
     <div className="rounded-2xl border-2 border-gold-light/30 bg-white/80 backdrop-blur-sm p-6 md:p-8 shadow-elevated animate-fade-in">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold/80 flex items-center justify-center">
-          <QrCode className="w-5 h-5 text-white" />
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-gold/80 flex items-center justify-center">
+            <QrCode className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-heading font-semibold text-navy">QR Code du Menu</h3>
+            <p className="text-sm text-muted-foreground">
+              {qrCodeGenerated ? 'Scannez ce code pour accéder au menu sur mobile' : 'Générez votre QR code permanent'}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-heading font-semibold text-navy">QR Code du Menu</h3>
-          <p className="text-sm text-muted-foreground">
-            Scannez ce code pour accéder au menu sur mobile
-          </p>
-        </div>
+        {!qrCodeGenerated && onGenerate && (
+          <Button
+            onClick={onGenerate}
+            className="bg-gold hover:bg-gold/90 text-navy font-semibold"
+          >
+            Générer le QR Code
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* QR Code Display */}
         <div className="flex flex-col items-center space-y-6">
           <div className="relative p-8 bg-white rounded-2xl border-2 border-decorative shadow-subtle">
-            <QRCodeSVG
-              id="menu-qr-code"
-              value={pdfUrl}
-              size={220}
-              level="H"
-              includeMargin={true}
-              bgColor="#F8F4E9"
-              fgColor="#0A1D3F"
-              className="animate-scale-in"
-            />
+            {qrCodeGenerated ? (
+              <QRCodeSVG
+                id="menu-qr-code"
+                value={qrCodeUrl}
+                size={220}
+                level="H"
+                includeMargin={true}
+                bgColor="#F8F4E9"
+                fgColor="#0A1D3F"
+                className="animate-scale-in"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-[220px] h-[220px] bg-slate-100 rounded-lg">
+                <div className="text-center p-4">
+                  <QrCode className="w-12 h-12 mx-auto text-slate-400 mb-2" />
+                  <p className="text-sm text-slate-600">
+                    Cliquez sur &quot;Générer le QR Code&quot; pour créer votre QR code permanent
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
               <div className="px-4 py-1 bg-gold text-xs font-medium text-navy rounded-full">
                 {restaurantName}
@@ -168,7 +202,9 @@ export default function QrCodeDisplay({ pdfUrl, restaurantName = 'Menu' }: QrCod
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-2 h-2 rounded-full bg-gold mt-1.5 flex-shrink-0"></div>
-                <span>L&apos;URL reste valide même si vous remplacez le PDF (le QR code reste le même)</span>
+                <span>
+                  <strong>Important :</strong> Le QR code reste valide même si vous remplacez le PDF - vous n&apos;avez pas besoin de le régénérer !
+                </span>
               </li>
             </ul>
           </div>

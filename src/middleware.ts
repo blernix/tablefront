@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   console.log('[Middleware] Path:', pathname, 'has token?', !!token, 'token length:', token?.length, 'all cookies:', allCookies.map(c => ({ name: c.name, value: c.value?.substring(0, 10) + '...' })));
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/login', '/forgot-password', '/reset-password'];
+  const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password'];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   // If trying to access protected route without token

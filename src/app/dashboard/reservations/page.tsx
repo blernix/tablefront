@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
+import { formatDate } from '@/lib/formatters';
 import { Reservation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -309,13 +310,6 @@ export default function ReservationsPage() {
     openEmailConfirmationModal('status', reservation, newStatus);
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'EEEE dd MMMM yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
 
   // Apply all filters
   const filteredReservations = reservations.filter(r => {
@@ -601,7 +595,7 @@ export default function ReservationsPage() {
                   <span className="text-sm font-medium">Filtres actifs:</span>
                   {selectedDate && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setSelectedDate(null)}
                     >
@@ -612,7 +606,7 @@ export default function ReservationsPage() {
                   )}
                   {searchTerm && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setSearchTerm('')}
                     >
@@ -622,7 +616,7 @@ export default function ReservationsPage() {
                   )}
                   {dateRangeStart && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setDateRangeStart('')}
                     >
@@ -632,7 +626,7 @@ export default function ReservationsPage() {
                   )}
                   {dateRangeEnd && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setDateRangeEnd('')}
                     >
@@ -642,7 +636,7 @@ export default function ReservationsPage() {
                   )}
                   {minGuests && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setMinGuests('')}
                     >
@@ -652,7 +646,7 @@ export default function ReservationsPage() {
                   )}
                   {maxGuests && (
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       onClick={() => setMaxGuests('')}
                     >

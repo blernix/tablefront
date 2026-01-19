@@ -8,12 +8,15 @@ import { z } from 'zod';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
+import { formatDateShort } from '@/lib/formatters';
 import { Closure } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
+import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 
 const formSchema = z.object({
   startDate: z.string().min(1, 'Date de début requise'),
@@ -29,6 +32,14 @@ export default function ClosuresPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  // Delete confirmation
+  const { isOpen: isDeleteModalOpen, itemToDelete: closureToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+    onDelete: async (id) => {
+      await apiClient.deleteClosure(id);
+      fetchClosures();
+    },
+  });
 
   const {
     register,
@@ -73,24 +84,13 @@ export default function ClosuresPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer cette fermeture ?')) return;
-
-    try {
-      await apiClient.deleteClosure(id);
-      fetchClosures();
-    } catch (err) {
-      alert('Erreur lors de la suppression');
-    }
+  const handleDelete = (closure: Closure) => {
+    openDeleteModal({
+      id: closure._id,
+      name: `${formatDateShort(closure.startDate)} au ${formatDateShort(closure.endDate)}`
+    });
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), 'dd MMMM yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
 
   if (isLoading) {
     return <div className="text-muted-foreground">Chargement...</div>;
@@ -212,9 +212,9 @@ export default function ClosuresPage() {
                 >
                   <div>
                     <p className="font-medium">
-                      {formatDate(closure.startDate)}
+                      {formatDateShort(closure.startDate)}
                       {closure.startDate !== closure.endDate && (
-                        <span> - {formatDate(closure.endDate)}</span>
+                        <span> - {formatDateShort(closure.endDate)}</span>
                       )}
                     </p>
                     {closure.reason && (
@@ -224,7 +224,7 @@ export default function ClosuresPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleDelete(closure._id)}
+                    onClick={() => handleDelete(closure)}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
@@ -234,6 +234,16 @@ export default function ClosuresPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        title="Supprimer la fermeture"
+        itemName={closureToDelete?.name}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
