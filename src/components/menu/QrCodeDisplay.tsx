@@ -208,12 +208,6 @@ export default function QrCodeDisplay({
               </li>
             </ul>
           </div>
-
-          <div className="bg-gradient-to-r from-navy/5 to-gold-light/10 rounded-xl p-4 border border-decorative">
-            <p className="text-sm text-navy font-medium">
-              📱 <span className="font-semibold">Astuce :</span> Vous pouvez également générer des QR codes individuels pour chaque table avec des URLs spécifiques.
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -28,9 +28,7 @@ import {
   GripVertical,
   Save,
   Check,
-  ArrowLeft,
-  Grid3x3,
-  List
+  ArrowLeft
 } from 'lucide-react';
 import Image from 'next/image';
 import DishFormModal from '@/components/menu/DishFormModal';
@@ -49,7 +47,6 @@ export default function PlatsTab() {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -346,32 +343,14 @@ export default function PlatsTab() {
               : 'Créez et gérez tous vos plats'}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
-              title="Vue grille"
-            >
-              <Grid3x3 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
-              title="Vue liste"
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
-          <Button
-            size="sm"
-            onClick={() => handleStartCreateDish()}
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-          >
-            <Plus className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Ajouter un plat</span>
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={() => handleStartCreateDish()}
+          className="bg-orange-500 hover:bg-orange-600 text-white"
+        >
+          <Plus className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">Ajouter un plat</span>
+        </Button>
       </div>
 
       {/* Filters Bar */}
@@ -733,120 +712,14 @@ export default function PlatsTab() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {viewMode === 'grid' ? (
-                // Grid View
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {filteredDishes.map((dish) => (
-                    <Card
-                      key={dish._id}
-                      className="group overflow-hidden hover:shadow-lg transition-all duration-200 border-slate-200 cursor-pointer"
-                      onClick={() => handleStartEditDish(dish)}
-                    >
-                      {/* Image Section */}
-                      <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                        {dish.photoUrl ? (
-                          <Image
-                            src={dish.photoUrl}
-                            alt={dish.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            unoptimized
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center h-full">
-                            <UtensilsCrossed className="h-12 w-12 text-slate-300" />
-                          </div>
-                        )}
-
-                        {/* Availability Badge */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleAvailability(dish._id, dish.name);
-                          }}
-                          className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 backdrop-blur hover:bg-white transition-all shadow-sm z-10"
-                          title={dish.available ? 'Marquer comme indisponible' : 'Marquer comme disponible'}
-                        >
-                          {dish.available ? (
-                            <Eye className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-red-600" />
-                          )}
-                        </button>
-
-                        {/* Quick Actions Overlay (on hover) */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStartEditDish(dish);
-                            }}
-                            className="bg-white/90 hover:bg-white"
-                          >
-                            <Edit2 className="h-3.5 w-3.5 mr-1.5" />
-                            Modifier
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteDish(dish._id, dish.name);
-                            }}
-                            className="bg-red-50 hover:bg-red-100 text-red-600"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Info Section */}
-                      <CardContent className="p-3">
-                        <h4 className="font-semibold text-slate-900 truncate">
-                          {dish.name}
-                        </h4>
-                        {dish.description && (
-                          <p className="text-sm text-slate-600 line-clamp-1 mt-1">
-                            {dish.description}
-                          </p>
-                        )}
-
-                        <div className="flex items-center justify-between mt-3">
-                          <span className="text-lg font-semibold text-orange-500 tabular-nums">
-                            {dish.hasVariations ? 'Dès ' : ''}{dish.price.toFixed(2)} €
-                          </span>
-                        </div>
-
-                        {/* Badges */}
-                        {(dish.hasVariations || dish.allergens.length > 0) && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {dish.hasVariations && (
-                              <Badge variant="default" className="text-xs">
-                                {dish.variations.length} variation{dish.variations.length > 1 ? 's' : ''}
-                              </Badge>
-                            )}
-                            {dish.allergens.length > 0 && (
-                              <Badge variant="outline" className="text-xs">
-                                {dish.allergens.length} allergène{dish.allergens.length > 1 ? 's' : ''}
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                // List View
-                <div className="space-y-2">
-                  {dishesByCategoryWithOrphans.map(({ category, dishes: categoryDishes }) => (
-                    <Collapsible
-                      key={category._id}
-                      open={category._id === 'none' ? true : expandedCategories.includes(category._id)}
-                      onOpenChange={category._id === 'none' ? undefined : () => toggleCategory(category._id)}
-                    >
+              {/* List View */}
+              <div className="space-y-2">
+                {dishesByCategoryWithOrphans.map(({ category, dishes: categoryDishes }) => (
+                  <Collapsible
+                    key={category._id}
+                    open={category._id === 'none' ? true : expandedCategories.includes(category._id)}
+                    onOpenChange={category._id === 'none' ? undefined : () => toggleCategory(category._id)}
+                  >
                       <Card className="border-slate-200 shadow-sm">
                         <CollapsibleTrigger asChild>
                           <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50">
@@ -921,7 +794,7 @@ export default function PlatsTab() {
                                     <span className="font-semibold text-orange-500 tabular-nums">
                                       {dish.price.toFixed(2)} €
                                     </span>
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                       <Button
                                         size="sm"
                                         variant="ghost"
@@ -951,7 +824,6 @@ export default function PlatsTab() {
                     </Collapsible>
                   ))}
                 </div>
-              )}
             </div>
           )}
         </div>

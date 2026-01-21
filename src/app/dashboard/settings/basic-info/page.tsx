@@ -18,6 +18,7 @@ const formSchema = z.object({
   address: z.string().min(1, 'L\'adresse est requise'),
   phone: z.string().min(1, 'Le téléphone est requis'),
   email: z.string().email('Email invalide'),
+  googleReviewLink: z.string().url('URL invalide').optional().or(z.literal('')),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -48,6 +49,7 @@ export default function BasicInfoPage() {
         address: response.restaurant.address,
         phone: response.restaurant.phone,
         email: response.restaurant.email,
+        googleReviewLink: response.restaurant.googleReviewLink || '',
       });
     } catch (err) {
       console.error('Error fetching restaurant:', err);
@@ -161,6 +163,23 @@ export default function BasicInfoPage() {
                   <p className="text-sm text-destructive">{errors.email.message}</p>
                 )}
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="googleReviewLink">Lien vers page Google (optionnel)</Label>
+              <Input
+                id="googleReviewLink"
+                type="url"
+                {...register('googleReviewLink')}
+                placeholder="https://g.page/votre-restaurant/review"
+                disabled={isSaving}
+              />
+              {errors.googleReviewLink && (
+                <p className="text-sm text-destructive">{errors.googleReviewLink.message}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Ce lien sera envoyé aux clients après leur visite pour qu&apos;ils laissent un avis Google
+              </p>
             </div>
 
             {successMessage && (

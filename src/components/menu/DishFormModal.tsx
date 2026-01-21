@@ -42,11 +42,11 @@ interface DishFormModalProps {
   initialCategoryId?: string;
 }
 
-const DishFormModal = ({ 
-  isOpen, 
-  onClose, 
-  dish, 
-  categories, 
+const DishFormModal = ({
+  isOpen,
+  onClose,
+  dish,
+  categories,
   onSuccess,
   initialCategoryId = ''
 }: DishFormModalProps) => {
@@ -55,6 +55,8 @@ const DishFormModal = ({
   const [variations, setVariations] = useState<DishVariation[]>(dish?.variations || []);
   const [variationName, setVariationName] = useState('');
   const [variationPrice, setVariationPrice] = useState('');
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string | undefined>(dish?.photoUrl);
+  const [photoHasChanged, setPhotoHasChanged] = useState(false);
 
   const {
     register,
@@ -91,6 +93,8 @@ const DishFormModal = ({
     setVariations(dish?.variations || []);
     setVariationName('');
     setVariationPrice('');
+    setCurrentPhotoUrl(dish?.photoUrl);
+    setPhotoHasChanged(false);
   }, [dish, reset, initialCategoryId]);
 
   useEffect(() => {
@@ -101,6 +105,11 @@ const DishFormModal = ({
 
     resetForm();
   }, [resetForm]);
+
+  // Synchroniser currentPhotoUrl quand dish change
+  useEffect(() => {
+    setCurrentPhotoUrl(dish?.photoUrl);
+  }, [dish]);
 
   const handleAddVariation = () => {
     if (!variationName || !variationPrice) {
@@ -130,8 +139,11 @@ const DishFormModal = ({
 
     try {
       const response = await apiClient.uploadDishPhoto(dish._id, file);
+      // Mettre à jour l'URL de la photo localement sans recharger les données
+      setCurrentPhotoUrl(response.dish.photoUrl);
+      setPhotoHasChanged(true);
       toast.success('Photo ajoutée avec succès');
-      onSuccess();
+      // NE PAS appeler onSuccess() ici pour éviter le re-render
     } catch (err) {
       throw new Error(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
     }
@@ -142,8 +154,11 @@ const DishFormModal = ({
 
     try {
       const response = await apiClient.deleteDishPhoto(dish._id);
+      // Mettre à jour l'URL de la photo localement sans recharger les données
+      setCurrentPhotoUrl(undefined);
+      setPhotoHasChanged(true);
       toast.success('Photo supprimée avec succès');
-      onSuccess();
+      // NE PAS appeler onSuccess() ici pour éviter le re-render
     } catch (err) {
       throw new Error(err instanceof Error ? err.message : 'Erreur lors de la suppression');
     }
@@ -190,8 +205,9 @@ const DishFormModal = ({
         toast.success(`Plat "${data.name}" créé avec succès`);
       }
 
-       onClose();
-       onSuccess();
+      // Fermer la modal et rafraîchir les données
+      handleClose();
+      onSuccess();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
     } finally {
@@ -200,6 +216,10 @@ const DishFormModal = ({
   };
 
   const handleClose = () => {
+    // Si la photo a été modifiée, rafraîchir les données dans la liste
+    if (photoHasChanged) {
+      onSuccess();
+    }
     resetForm();
     onClose();
   };
@@ -293,9 +313,9 @@ const DishFormModal = ({
             <Label>Photo du plat</Label>
             <div className="max-w-xs">
               <ImageUpload
-                currentImageUrl={dish.photoUrl}
+                currentImageUrl={currentPhotoUrl}
                 onUpload={handleUploadPhoto}
-                onDelete={dish.photoUrl ? handleDeletePhoto : undefined}
+                onDelete={currentPhotoUrl ? handleDeletePhoto : undefined}
                 disabled={isSubmitting}
                 aspectRatio="landscape"
                 maxSizeMB={5}

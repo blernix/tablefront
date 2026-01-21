@@ -9,6 +9,7 @@ import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
 import { formatDate } from '@/lib/formatters';
 import { Reservation } from '@/types';
+import { useRealtimeReservationsManager } from '@/hooks/useRealtimeReservations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,7 +43,7 @@ const statusLabels = {
 
 export default function ReservationsPage() {
   const router = useRouter();
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const { reservations, isConnected, refreshReservations } = useRealtimeReservationsManager();
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
@@ -88,21 +89,21 @@ export default function ReservationsPage() {
     },
   });
 
+  // Load initial reservations and handle loading state
   useEffect(() => {
-    fetchReservations();
-  }, []);
-
-  const fetchReservations = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiClient.getReservations();
-      setReservations(response.reservations);
-    } catch (err) {
-      console.error('Error fetching reservations:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const loadInitialReservations = async () => {
+      try {
+        setIsLoading(true);
+        await refreshReservations();
+      } catch (err) {
+        console.error('Error loading reservations:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadInitialReservations();
+  }, [refreshReservations]);
 
   const handleStartCreate = () => {
     setEditingReservation(null);
@@ -176,7 +177,7 @@ export default function ReservationsPage() {
       await apiClient.deleteReservation(deleteModal.reservation._id);
       toast.success('Réservation supprimée avec succès');
       setDeleteModal({ show: false, reservation: null });
-      fetchReservations();
+      refreshReservations();
     } catch (err) {
       toast.error('Erreur lors de la suppression');
     } finally {
@@ -296,7 +297,7 @@ export default function ReservationsPage() {
       }
 
       // Refresh reservations
-      fetchReservations();
+      refreshReservations();
       closeEmailConfirmationModal();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erreur lors de l\'opération');
@@ -433,12 +434,27 @@ export default function ReservationsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold text-slate-900">Réservations</h1>
-          <p className="mt-2 text-slate-600">
-            {filteredReservations.length} réservation{filteredReservations.length > 1 ? 's' : ''} {statusFilter && `• ${statusLabels[statusFilter as keyof typeof statusLabels]?.label || 'Filtrées'}`}
-          </p>
-        </div>
+         <div>
+           <div className="flex items-center gap-2">
+             <h1 className="text-3xl font-semibold text-slate-900">Réservations</h1>
+             <div className="flex items-center gap-2">
+               <span
+                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                   isConnected
+                     ? 'bg-green-100 text-green-800'
+                     : 'bg-yellow-100 text-yellow-800'
+                 }`}
+                 title={isConnected ? 'Connecté en temps réel' : 'Connexion temps réel inactive'}
+               >
+                 <span className={`w-2 h-2 rounded-full mr-1 ${isConnected ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                 {isConnected ? 'Temps réel' : 'Hors ligne'}
+               </span>
+             </div>
+           </div>
+           <p className="mt-2 text-slate-600">
+             {filteredReservations.length} réservation{filteredReservations.length > 1 ? 's' : ''} {statusFilter && `• ${statusLabels[statusFilter as keyof typeof statusLabels]?.label || 'Filtrées'}`}
+           </p>
+         </div>
         {!showForm && (
           <div className="flex gap-2 flex-wrap">
             <Button

@@ -44,6 +44,15 @@ export class AdminApi extends ApiClient {
     return this.request(`/api/admin/restaurants/${restaurantId}/analytics${query}`);
   }
 
+  // Notification analytics
+  async getNotificationAnalytics(): Promise<any> {
+    return this.request('/api/admin/analytics/notifications');
+  }
+
+  async getRestaurantNotificationAnalytics(restaurantId: string): Promise<any> {
+    return this.request(`/api/admin/analytics/notifications/restaurant/${restaurantId}`);
+  }
+
   // Data export
   async exportRestaurants(): Promise<void> {
     const response = await this.fetchWithBlob('/api/admin/export/restaurants');
@@ -58,6 +67,11 @@ export class AdminApi extends ApiClient {
   async exportReservations(): Promise<void> {
     const response = await this.fetchWithBlob('/api/admin/export/reservations');
     this.downloadBlob(response.blob, 'reservations.csv');
+  }
+
+  async exportNotificationAnalytics(): Promise<void> {
+    const response = await this.fetchWithBlob('/api/admin/export/notifications');
+    this.downloadBlob(response.blob, 'notification_analytics.csv');
   }
 
   private async fetchWithBlob(endpoint: string): Promise<{ blob: Blob }> {

@@ -49,6 +49,7 @@ export interface Restaurant {
   apiKey?: string;
   status: 'active' | 'inactive';
   logoUrl?: string;
+  googleReviewLink?: string;
   menu: {
     displayMode: 'pdf' | 'detailed' | 'both';
     pdfUrl?: string;
@@ -86,6 +87,7 @@ export interface UpdateRestaurantInput {
   address?: string;
   phone?: string;
   email?: string;
+  googleReviewLink?: string;
   status?: 'active' | 'inactive';
   tablesConfig?: {
     totalTables?: number;
@@ -273,4 +275,179 @@ export interface RestaurantAnalytics {
     hour: string;
     count: number;
   }>;
+}
+
+// Notification Types
+export interface PushSubscription {
+  endpoint: string;
+  keys: {
+    auth: string;
+    p256dh: string;
+  };
+}
+
+export interface NotificationPreferences {
+  userId: string;
+  pushEnabled: boolean;
+  emailEnabled: boolean;
+  reservationCreated: boolean;
+  reservationConfirmed: boolean;
+  reservationCancelled: boolean;
+  reservationUpdated: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VapidPublicKeyResponse {
+  publicKey: string;
+}
+
+export interface PushNotificationStatus {
+  enabled: boolean;
+  vapidPublicKey?: string;
+}
+
+export interface PushNotificationPayload {
+  title: string;
+  body: string;
+  icon?: string;
+  badge?: string;
+  image?: string;
+  tag?: string;
+  data?: {
+    url?: string;
+    reservationId?: string;
+    type: 'reservation_created' | 'reservation_confirmed' | 'reservation_cancelled' | 'reservation_updated' | 'general';
+    [key: string]: any;
+  };
+  actions?: Array<{
+    action: string;
+    title: string;
+    icon?: string;
+  }>;
+}
+
+// SSE Event Types
+export type ReservationEventType = 'reservation_created' | 'reservation_updated' | 'reservation_cancelled' | 'reservation_confirmed' | 'reservation_completed';
+
+export interface ReservationEvent {
+  type: ReservationEventType;
+  reservation: {
+    id: string;
+    customerName: string;
+    customerEmail: string;
+    date: string;
+    time: string;
+    numberOfGuests: number;
+    status: string;
+    restaurantId: string;
+  };
+  timestamp: string;
+}
+
+export interface SSEConnectedEvent {
+  event: 'connected';
+  data: {
+    message: string;
+  };
+}
+
+// Notification Analytics Types
+export type NotificationType = 'push' | 'email' | 'sse';
+export type NotificationEventType = 'reservation_created' | 'reservation_confirmed' | 'reservation_cancelled' | 'reservation_updated' | 'general' | 'system';
+export type NotificationStatus = 'sent' | 'delivered' | 'opened' | 'clicked' | 'failed';
+
+export interface NotificationAnalytics {
+  _id: string;
+  userId: string;
+  restaurantId: string;
+  notificationType: NotificationType;
+  eventType: NotificationEventType;
+  status: NotificationStatus;
+  sentAt: string;
+  deliveredAt?: string;
+  openedAt?: string;
+  clickedAt?: string;
+  failedAt?: string;
+  errorCode?: string;
+  errorMessage?: string;
+  pushEndpoint?: string;
+  pushMessageId?: string;
+  emailTo?: string;
+  emailMessageId?: string;
+  sseClientId?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationTypeStats {
+  _id: NotificationType;
+  count: number;
+  delivered: number;
+  failed: number;
+  deliveryRate: number;
+}
+
+export interface NotificationEventStats {
+  _id: NotificationEventType;
+  count: number;
+  delivered: number;
+  failed: number;
+}
+
+export interface DailyNotificationStats {
+  date: string;
+  totalSent: number;
+  delivered: number;
+  deliveryRate: number;
+}
+
+export interface RestaurantNotificationStats {
+  restaurantId: string;
+  restaurantName: string;
+  totalNotifications: number;
+  deliveryRate: number;
+}
+
+export interface NotificationChannelSummary {
+  push: {
+    total: number;
+    delivered: number;
+    deliveryRate: number;
+  };
+  email: {
+    total: number;
+    delivered: number;
+    deliveryRate: number;
+  };
+  sse: {
+    total: number;
+    delivered: number;
+    deliveryRate: number;
+  };
+}
+
+export interface GlobalNotificationAnalytics {
+  totalNotifications: number;
+  byType: NotificationTypeStats[];
+  byEventType: NotificationEventStats[];
+  recentStats: DailyNotificationStats[];
+  topRestaurants: RestaurantNotificationStats[];
+  summary: NotificationChannelSummary;
+}
+
+export interface RestaurantNotificationAnalyticsResponse {
+  restaurant: {
+    id: string;
+    name: string;
+  };
+  totalNotifications: number;
+  byType: NotificationTypeStats[];
+  byEventType: NotificationEventStats[];
+  deliveryRates: {
+    push: { delivered: number; total: number; rate: number };
+    email: { delivered: number; total: number; rate: number };
+    sse: { delivered: number; total: number; rate: number };
+  };
 }

@@ -88,6 +88,9 @@ export default function RestaurantsPage() {
               <Button variant="link" className="font-semibold">
                 Restaurants
               </Button>
+              <Button variant="link" onClick={() => router.push('/admin/analytics/notifications')}>
+                Analytics Notifications
+              </Button>
             </nav>
           </div>
           <div className="flex items-center gap-4">

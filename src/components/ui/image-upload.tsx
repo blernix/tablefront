@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from './button';
 import Image from 'next/image';
@@ -27,6 +27,11 @@ export default function ImageUpload({
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Réinitialiser le preview quand l'URL de l'image actuelle change
+  useEffect(() => {
+    setPreview(null);
+  }, [currentImageUrl]);
 
   const getAspectRatioClass = () => {
     switch (aspectRatio) {

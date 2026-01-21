@@ -100,6 +100,9 @@ export default function AdminDashboardPage() {
               <Button variant="link" className="font-semibold">
                 Tableau de bord
               </Button>
+              <Button variant="link" onClick={() => router.push('/admin/analytics/notifications')}>
+                Analytics Notifications
+              </Button>
             </nav>
           </div>
           <div className="flex items-center gap-4">

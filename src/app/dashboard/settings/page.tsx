@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users } from 'lucide-react';
+import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell } from 'lucide-react';
 
 const settingsCategories = [
   {
@@ -46,6 +46,13 @@ const settingsCategories = [
     description: 'Créez des comptes serveurs avec accès limité',
     icon: Users,
     href: '/dashboard/settings/servers',
+    available: true,
+  },
+  {
+    title: 'Notifications',
+    description: 'Gérez vos préférences de notifications push et email',
+    icon: Bell,
+    href: '/dashboard/settings/notifications',
     available: true,
   },
 ];

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Upload, FileText, CheckCircle, AlertCircle, Download, Eye, Smartphone, Table, Printer, Share2, Copy, QrCode, FileUp } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertCircle, Download, Eye, Smartphone, Table, Printer, Share2, QrCode, FileUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function PublicationTab() {
@@ -365,57 +365,6 @@ export default function PublicationTab() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Tips & Best Practices */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader>
-              <CardTitle>Conseils pratiques</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-slate-900">Taille minimale</h4>
-                  <p className="text-sm text-slate-600">
-                    Pour une lecture fiable, le QR code doit mesurer au moins 2×2 cm sur papier et 100×100 pixels à l&apos;écran.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-slate-900">Mise à jour automatique</h4>
-                  <p className="text-sm text-slate-600">
-                    Le QR code reste valide même si vous remplacez votre menu PDF. Les clients verront toujours le dernier menu.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-slate-900">Compatibilité</h4>
-                  <p className="text-sm text-slate-600">
-                    Tous les smartphones modernes peuvent lire les QR codes avec l&apos;appareil photo sans application supplémentaire.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-slate-900">Sécurité</h4>
-                  <p className="text-sm text-slate-600">
-                    Le QR code pointe vers votre menu sécurisé sur TableMaster. Aucune donnée personnelle n&apos;est collectée.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 mt-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100">
-                    <Copy className="h-3 w-3 text-slate-900" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">
-                      💡 Astuce : Créez des QR codes personnalisés pour différents usages (menu du jour, carte des vins, promotions).
-                    </p>
-                    <p className="text-xs text-slate-800 mt-1">
-                      Contactez notre support pour des QR codes personnalisés avec vos couleurs et logo.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </>
       ) : (
         <Card className="border-slate-200 shadow-sm">
@@ -467,67 +416,6 @@ export default function PublicationTab() {
           </CardContent>
         </Card>
       )}
-
-      {/* Information sur les modes d'affichage */}
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader>
-          <CardTitle>À propos des modes d&apos;affichage</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <h4 className="font-semibold text-slate-900">Mode PDF</h4>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Idéal pour les restaurants qui ont déjà un menu au format PDF</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Le menu sera automatiquement affiché sur votre site web public</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Vous pouvez remplacer le PDF à tout moment</span>
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold text-slate-900">Mode détaillé</h4>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Créez votre menu directement dans TableMaster</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Ajoutez des photos, descriptions et allergènes</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
-                  <span>Gérez les disponibilités en temps réel</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
-                <CheckCircle className="h-3 w-3 text-blue-900" />
-              </div>
-              <div>
-                 <p className="text-sm font-medium text-slate-900">
-                   💡 Vous pouvez utiliser les deux modes simultanément ! Le mode &ldquo;Mix&rdquo; affiche à la fois le PDF et le menu détaillé.
-                 </p>
-                <p className="text-xs text-slate-800 mt-1">
-                  Pour changer de mode, allez dans les paramètres de votre restaurant.
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
