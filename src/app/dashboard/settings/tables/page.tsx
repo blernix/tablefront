@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +26,7 @@ export default function TablesConfigPage() {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Mode management
   const [mode, setMode] = useState<'simple' | 'detailed'>('simple');
@@ -46,7 +47,14 @@ export default function TablesConfigPage() {
   });
 
   const fetchRestaurant = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching restaurant data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const response = await apiClient.getMyRestaurant();
       setRestaurant(response.restaurant);
@@ -67,12 +75,14 @@ export default function TablesConfigPage() {
       toast.error('Erreur lors du chargement de la configuration');
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
-  }, [reset]);
+  }, [reset]); // Include reset as dependency
 
   useEffect(() => {
     fetchRestaurant();
-  }, [fetchRestaurant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const handleAddTableType = () => {
     if (!tableType || !tableQuantity || !tableCapacity) {

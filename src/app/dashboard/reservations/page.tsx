@@ -101,9 +101,10 @@ export default function ReservationsPage() {
         setIsLoading(false);
       }
     };
-    
+
     loadInitialReservations();
-  }, [refreshReservations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount - refreshReservations is from hook with internal protection
 
   const handleStartCreate = () => {
     setEditingReservation(null);

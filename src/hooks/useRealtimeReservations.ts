@@ -14,7 +14,7 @@ export const useRealtimeReservations = (
   options: UseRealtimeReservationsOptions = {}
 ) => {
   const {
-    enabled = true,
+    enabled = false, // ⚠️ TEMPORARILY DISABLED SSE to debug fetch issues
     onEvent,
     onError,
     onConnected,
@@ -240,21 +240,21 @@ export const useRealtimeReservationsManager = () => {
   const handleReservationEvent = useCallback((event: ReservationEvent) => {
     setReservations(prevReservations => {
       const { type, reservation: eventReservation } = event;
-      
+
       switch (type) {
         case 'reservation_created':
           // Add new reservation to the beginning of the list
           const newReservation = convertEventReservationToReservation(eventReservation);
           return [newReservation, ...prevReservations];
-          
+
         case 'reservation_updated':
         case 'reservation_confirmed':
         case 'reservation_completed':
           // Update existing reservation
-          return prevReservations.map(r => 
-            r._id === eventReservation.id 
-              ? { 
-                  ...r, 
+          return prevReservations.map(r =>
+            r._id === eventReservation.id
+              ? {
+                  ...r,
                   ...convertEventReservationToReservation(eventReservation),
                   // Keep original fields not in event
                   customerPhone: r.customerPhone,
@@ -263,42 +263,68 @@ export const useRealtimeReservationsManager = () => {
                 }
               : r
           );
-          
+
         case 'reservation_cancelled':
           // Remove cancelled reservation from the list
           return prevReservations.filter(r => r._id !== eventReservation.id);
-          
+
         default:
           return prevReservations;
       }
     });
   }, []);
 
-  // Use the real-time hook
+  // Memoize SSE callbacks to prevent reconnections
+  const handleConnected = useCallback(() => {
+    console.log('SSE connected');
+    setIsConnected(true);
+  }, []);
+
+  const handleDisconnected = useCallback(() => {
+    console.log('SSE disconnected');
+    setIsConnected(false);
+  }, []);
+
+  const handleError = useCallback((error: Event) => {
+    console.error('SSE error:', error);
+    setIsConnected(false);
+  }, []);
+
+  // Use the real-time hook with memoized callbacks
   const { connect, disconnect, reconnect } = useRealtimeReservations({
     onEvent: handleReservationEvent,
-    onConnected: () => setIsConnected(true),
-    onDisconnected: () => setIsConnected(false),
-    onError: (error) => {
-      console.error('SSE error:', error);
-      setIsConnected(false);
-    },
+    onConnected: handleConnected,
+    onDisconnected: handleDisconnected,
+    onError: handleError,
   });
+
+  // Track loading state to prevent multiple simultaneous calls
+  const isLoadingRef = useRef(false);
 
   // Function to refresh reservations manually
   const refreshReservations = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isLoadingRef.current) {
+      console.log('Already loading reservations, skipping...');
+      return;
+    }
+
     try {
+      isLoadingRef.current = true;
       const response = await apiClient.getReservations();
       setReservations(response.reservations);
     } catch (error) {
       console.error('Error refreshing reservations:', error);
+    } finally {
+      isLoadingRef.current = false;
     }
   }, []);
 
-  // Load initial reservations
+  // Load initial reservations ONCE on mount
   useEffect(() => {
     refreshReservations();
-  }, [refreshReservations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   return {
     reservations,

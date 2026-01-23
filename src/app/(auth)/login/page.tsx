@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import TwoFactorVerificationModal from '@/components/modals/TwoFactorVerificationModal';
+import { TwoFactorRequiredError } from '@/lib/api/auth';
+import { AuthResponse } from '@/types';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +19,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
+  const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
+  const [twoFactorData, setTwoFactorData] = useState<{
+    tempToken: string;
+    userId: string;
+    email: string;
+  } | null>(null);
   const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
@@ -25,14 +34,13 @@ export default function LoginPage() {
   useEffect(() => {
     // Wait for auth initialization before checking authentication
     if (!isInitialized || hasRedirectedRef.current) return;
-    
+
     // Redirect if already authenticated (only on initial mount, not after login)
     if (isAuthenticated && user) {
       console.log('[Login] Already authenticated, redirecting...', user);
       const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
       hasRedirectedRef.current = true;
       router.push(redirectPath);
-      router.refresh();
     }
   }, [isInitialized, isAuthenticated, user, router]);
 
@@ -77,20 +85,58 @@ export default function LoginPage() {
 
         // Mark that we're redirecting to prevent useEffect from also redirecting
         hasRedirectedRef.current = true;
-        
-        // Force navigation
-        window.location.href = redirectPath;
+
+        // Navigate to the appropriate page
+        router.push(redirectPath);
       } else {
         console.error('[Login] No user or token after login');
         setLocalError('Erreur lors de la connexion. Veuillez réessayer.');
       }
     } catch (err) {
-      // Error is already set in the store
       console.error('[Login] Login failed:', err);
+      
+      // Check if it's a 2FA required error
+      if (err instanceof TwoFactorRequiredError) {
+        console.log('[Login] 2FA required, showing verification modal');
+        setTwoFactorData({
+          tempToken: err.tempToken,
+          userId: err.userId,
+          email: err.email,
+        });
+        setShowTwoFactorModal(true);
+        clearError();
+        return;
+      }
+      
+      // For other errors, show the error message
       if (!error) {
         setLocalError('Erreur lors de la connexion. Vérifiez vos identifiants.');
       }
     }
+  };
+
+  const handleTwoFactorSuccess = (response: AuthResponse) => {
+    console.log('[Login] 2FA verification successful:', { user: response.user, tokenPreview: response.token?.substring(0, 20) + '...' });
+    
+    // Update auth store with the response
+    useAuthStore.getState().setUser(response.user, response.token);
+    
+    // Store user in localStorage for persistence
+    localStorage.setItem('user', JSON.stringify(response.user));
+    localStorage.setItem('token', response.token);
+
+    // Store token in cookie for middleware
+    const cookieString = `token=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`; // 7 days
+    document.cookie = cookieString;
+    console.log('[Login] Cookie set after 2FA verification');
+
+    // Redirect based on role
+    const redirectPath = response.user.role === 'admin' ? '/admin' : '/dashboard';
+    console.log('[Login] Redirect path after 2FA:', redirectPath);
+
+    // Close modal and navigate
+    setShowTwoFactorModal(false);
+    router.push(redirectPath);
   };
 
   const displayError = error || localError;
@@ -251,9 +297,23 @@ export default function LoginPage() {
             </div>
 
 
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+           </div>
+         </div>
+       </div>
+       
+       {twoFactorData && (
+         <TwoFactorVerificationModal
+           isOpen={showTwoFactorModal}
+           onClose={() => {
+             setShowTwoFactorModal(false);
+             setTwoFactorData(null);
+           }}
+           onSuccess={handleTwoFactorSuccess}
+           tempToken={twoFactorData.tempToken}
+           userId={twoFactorData.userId}
+           email={twoFactorData.email}
+         />
+       )}
+     </div>
+   );
+ }

@@ -13,6 +13,14 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface TwoFactorAuthResponse {
+  requiresTwoFactor: true;
+  tempToken: string;
+  userId: string;
+  email: string;
+  message: string;
+}
+
 export interface TimeSlot {
   start: string;
   end: string;

@@ -6,6 +6,8 @@ export class ApiClient {
   private onUnauthorizedCallback: (() => void) | null = null;
   private isRefreshing = false;
   private refreshPromise: Promise<{ token: string }> | null = null;
+  private static pendingRequests = 0; // Track concurrent requests
+  private static maxConcurrentRequests = 0; // Track peak
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -127,11 +129,24 @@ export class ApiClient {
     let response;
     let retries = 0;
     const maxRetries = 2; // Retry up to 2 times for network errors
+    let startTime = 0;
 
     while (retries <= maxRetries) {
       try {
+        // Track concurrent requests
+        ApiClient.pendingRequests++;
+        ApiClient.maxConcurrentRequests = Math.max(ApiClient.maxConcurrentRequests, ApiClient.pendingRequests);
+
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout (increased from 30s)
+
+        console.log(`[API] 🚀 Sending request to ${endpoint}`, {
+          method: options.method || 'GET',
+          hasToken: !!this.token,
+          concurrent: ApiClient.pendingRequests,
+          peak: ApiClient.maxConcurrentRequests
+        });
+        startTime = Date.now();
 
         response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...options,
@@ -140,24 +155,44 @@ export class ApiClient {
           signal: controller.signal,
         });
 
+        const duration = Date.now() - startTime;
+        ApiClient.pendingRequests--; // Request completed
+        console.log(`[API] ✅ Received response from ${endpoint} in ${duration}ms`, {
+          status: response.status,
+          concurrent: ApiClient.pendingRequests,
+          peak: ApiClient.maxConcurrentRequests
+        });
+
         clearTimeout(timeoutId);
         break; // Success, exit retry loop
       } catch (error) {
         retries++;
+        ApiClient.pendingRequests--; // Request failed
+        const duration = Date.now() - startTime;
 
         if (error instanceof DOMException && error.name === 'AbortError') {
-          console.error(`[API] Request timeout for ${endpoint}`);
-          throw new Error('Request timeout - please check your connection');
+          console.error(`[API] ❌ Request timeout for ${endpoint} after ${duration}ms`, {
+            concurrent: ApiClient.pendingRequests,
+            peak: ApiClient.maxConcurrentRequests
+          });
+          throw new Error(`Request timeout after ${duration}ms - please check your connection`);
         }
 
         // Retry on network errors (like during Hot Reload)
         if (retries <= maxRetries) {
-          console.warn(`[API] Network error for ${endpoint}, retrying (${retries}/${maxRetries})...`);
+          console.warn(`[API] ⚠️ Network error for ${endpoint}, retrying (${retries}/${maxRetries})...`, {
+            error,
+            concurrent: ApiClient.pendingRequests
+          });
           await new Promise(resolve => setTimeout(resolve, 500 * retries)); // Exponential backoff
           continue;
         }
 
-        console.error(`[API] Network error for ${endpoint} after ${retries} retries:`, error);
+        console.error(`[API] ❌ Network error for ${endpoint} after ${retries} retries:`, {
+          error,
+          concurrent: ApiClient.pendingRequests,
+          peak: ApiClient.maxConcurrentRequests
+        });
         throw new Error(`Failed to fetch: ${error instanceof Error ? error.message : 'Network error'}`);
       }
     }

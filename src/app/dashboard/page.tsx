@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { apiClient } from '@/lib/api';
@@ -43,6 +43,7 @@ export default function DashboardPage() {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   useEffect(() => {
     initAuth();
@@ -50,24 +51,24 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
   }, [isInitialized, isAuthenticated, router]);
 
-  useEffect(() => {
-    if (user?.restaurantId) {
-      fetchData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.restaurantId]);
-
   const fetchData = async () => {
     if (!user?.restaurantId) return;
 
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching dashboard data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const [restaurantRes, statsRes] = await Promise.all([
         apiClient.getMyRestaurant(),
@@ -79,8 +80,16 @@ export default function DashboardPage() {
       console.error('Error fetching dashboard data:', err);
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   };
+
+  useEffect(() => {
+    if (user?.restaurantId) {
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.restaurantId]);
 
   if (!isInitialized) {
     return <LoadingSkeleton type="dashboard" />;
@@ -150,12 +159,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button onClick={() => router.push('/dashboard/reservations')}>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button onClick={() => router.push('/dashboard/reservations')} className="w-full sm:w-auto">
           <Plus className="h-4 w-4" />
           Nouvelle réservation
         </Button>
-        <Button variant="outline" onClick={() => router.push('/dashboard/reservations')}>
+        <Button variant="outline" onClick={() => router.push('/dashboard/reservations')} className="w-full sm:w-auto">
           <Calendar className="h-4 w-4" />
           Voir le calendrier
         </Button>
@@ -310,7 +319,7 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-slate-600">Adresse</p>
                 <p className="mt-1 text-sm text-slate-900">{restaurant?.address}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Téléphone</p>
                   <p className="mt-1 text-sm text-slate-900">{restaurant?.phone}</p>
@@ -320,7 +329,7 @@ export default function DashboardPage() {
                   <p className="mt-1 text-sm text-slate-900 truncate">{restaurant?.email}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium text-slate-600">Capacité</p>
                   <p className="mt-1 text-sm text-slate-900">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +27,7 @@ export default function ReservationConfigPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   const {
     register,
@@ -41,7 +42,14 @@ export default function ReservationConfigPage() {
   const useOpeningHours = watch('useOpeningHours');
 
   const fetchRestaurant = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching restaurant data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const response = await apiClient.getMyRestaurant();
       setRestaurant(response.restaurant);
@@ -54,12 +62,14 @@ export default function ReservationConfigPage() {
       console.error('Error fetching restaurant:', err);
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
-  }, [reset]);
+  }, [reset]); // Include reset as dependency
 
   useEffect(() => {
     fetchRestaurant();
-  }, [fetchRestaurant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const onSubmit = async (data: FormData) => {
     try {

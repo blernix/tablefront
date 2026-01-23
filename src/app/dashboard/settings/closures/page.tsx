@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +32,7 @@ export default function ClosuresPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Delete confirmation
   const { isOpen: isDeleteModalOpen, itemToDelete: closureToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
@@ -52,10 +53,18 @@ export default function ClosuresPage() {
 
   useEffect(() => {
     fetchClosures();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const fetchClosures = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching closures data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const response = await apiClient.getClosures();
       setClosures(response.closures);
@@ -63,6 +72,7 @@ export default function ClosuresPage() {
       console.error('Error fetching closures:', err);
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   };
 
@@ -131,7 +141,7 @@ export default function ClosuresPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="startDate">Date de début</Label>
                   <Input

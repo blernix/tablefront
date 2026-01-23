@@ -83,6 +83,39 @@ class UnifiedApiClient {
     return this.auth.resetPassword(token, newPassword);
   }
 
+  async changePassword(currentPassword: string, newPassword: string) {
+    return this.auth.changePassword(currentPassword, newPassword);
+  }
+
+  async changeEmail(currentPassword: string, newEmail: string) {
+    return this.auth.changeEmail(currentPassword, newEmail);
+  }
+
+  // Two-factor authentication delegation methods
+  async getTwoFactorStatus() {
+    return this.auth.getTwoFactorStatus();
+  }
+
+  async generateTwoFactorSetup() {
+    return this.auth.generateTwoFactorSetup();
+  }
+
+  async enableTwoFactor(secret: string, token: string) {
+    return this.auth.enableTwoFactor(secret, token);
+  }
+
+  async disableTwoFactor() {
+    return this.auth.disableTwoFactor();
+  }
+
+  async verifyTwoFactorLogin(tempToken: string, token: string) {
+    return this.auth.verifyTwoFactorLogin(tempToken, token);
+  }
+
+  async useRecoveryCode(tempToken: string, recoveryCode: string) {
+    return this.auth.useRecoveryCode(tempToken, recoveryCode);
+  }
+
   async refreshToken() {
     return this.baseClient.refreshToken();
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Restaurant } from '@/types';
@@ -28,13 +28,17 @@ export default function DashboardTab() {
     unavailableDishes: 0,
     hasPdf: false
   });
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   const fetchData = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching menu data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const [restaurantRes, categoriesRes, dishesRes] = await Promise.all([
         apiClient.getMyRestaurant(),
@@ -57,8 +61,14 @@ export default function DashboardTab() {
       toast.error('Erreur lors du chargement des données');
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
 
   const handleNavigateToPlats = () => {

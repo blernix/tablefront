@@ -18,7 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     if (!isAuthenticated) {
       router.push('/login');
       return;
@@ -29,6 +29,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.push('/admin');
     }
   }, [isInitialized, isAuthenticated, user?.role, pathname, router]);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   // Wait for auth initialization
   if (!isInitialized) {
@@ -54,7 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden w-full md:w-auto">
         <DashboardHeader
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />

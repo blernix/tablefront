@@ -67,6 +67,7 @@ export default function PlatsTab() {
   const [draggingCategoryId, setDraggingCategoryId] = useState<string | null>(null);
   const [dragOverCategoryId, setDragOverCategoryId] = useState<string | null>(null);
   const editCategoryInputRef = useRef<HTMLInputElement>(null);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Delete confirmation hooks
   const { isOpen: isDeleteDishModalOpen, itemToDelete: dishToDelete, isDeleting: isDeletingDish, openDeleteModal: openDeleteDishModal, closeDeleteModal: closeDeleteDishModal, confirmDelete: confirmDeleteDish } = useDeleteConfirm({
@@ -88,9 +89,35 @@ export default function PlatsTab() {
     },
   });
 
+  const fetchData = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching dishes data, skipping...');
+      return;
+    }
+
+    try {
+      isFetchingRef.current = true;
+      setIsLoading(true);
+      const [categoriesRes, dishesRes] = await Promise.all([
+        apiClient.getCategories(),
+        apiClient.getDishes()
+      ]);
+      setCategories(categoriesRes.categories);
+      setDishes(dishesRes.dishes);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      toast.error('Erreur lors du chargement des données');
+    } finally {
+      setIsLoading(false);
+      isFetchingRef.current = false;
+    }
+  };
+
   useEffect(() => {
     fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   useEffect(() => {
     // Auto-expand filtered category or all categories
@@ -109,23 +136,6 @@ export default function PlatsTab() {
       editCategoryInputRef.current.select();
     }
   }, [editingCategoryId]);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [categoriesRes, dishesRes] = await Promise.all([
-        apiClient.getCategories(),
-        apiClient.getDishes()
-      ]);
-      setCategories(categoriesRes.categories);
-      setDishes(dishesRes.dishes);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-      toast.error('Erreur lors du chargement des données');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Dish management functions
   const handleStartCreateDish = (categoryId?: string) => {

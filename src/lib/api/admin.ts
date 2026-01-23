@@ -44,6 +44,36 @@ export class AdminApi extends ApiClient {
     return this.request(`/api/admin/restaurants/${restaurantId}/analytics${query}`);
   }
 
+  async getRestaurantMonitoring(): Promise<{
+    restaurants: Array<{
+      id: string;
+      name: string;
+      status: string;
+      healthStatus: 'healthy' | 'warning' | 'critical';
+      metrics: {
+        reservationsThisMonth: number;
+        notificationDeliveryRate: number;
+        lastActivity: string | null;
+        problems: string[];
+      };
+      optionalMetrics: {
+        estimatedRevenue: number;
+        cancellationRate: number;
+        confirmedReservations: number;
+        completedReservations: number;
+        totalGuests: number;
+      };
+    }>;
+    summary: {
+      total: number;
+      healthy: number;
+      warning: number;
+      critical: number;
+    };
+  }> {
+    return this.request('/api/admin/monitoring');
+  }
+
   // Notification analytics
   async getNotificationAnalytics(): Promise<any> {
     return this.request('/api/admin/analytics/notifications');

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import LoginPage from '@/app/(auth)/login/page'
@@ -67,10 +68,13 @@ describe('Login Page', () => {
     mockApiLogin.mockResolvedValue({
       token: 'test-token',
       user: {
-        _id: '1',
+        id: '1',
         email: 'test@restaurant.com',
         role: 'restaurant',
         restaurantId: 'rest123',
+        status: 'active',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
       },
     })
 
@@ -87,12 +91,15 @@ describe('Login Page', () => {
     await waitFor(() => {
       expect(mockApiLogin).toHaveBeenCalledWith('test@restaurant.com', 'password123')
       expect(mockLogin).toHaveBeenCalledWith(
-        {
-          _id: '1',
-          email: 'test@restaurant.com',
-          role: 'restaurant',
-          restaurantId: 'rest123',
-        },
+         {
+           id: '1',
+           email: 'test@restaurant.com',
+           role: 'restaurant',
+           restaurantId: 'rest123',
+           status: 'active',
+           createdAt: '2024-01-01',
+           updatedAt: '2024-01-01',
+         },
         'test-token'
       )
       expect(mockPush).toHaveBeenCalledWith('/dashboard')

@@ -4,8 +4,8 @@
   "description": "Application de gestion de restaurant - réservations, menus et paramètres",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "orientation": "portrait-primary",
   "icons": [
     {

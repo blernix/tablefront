@@ -21,15 +21,15 @@ export default function AdminPage() {
     }
 
     if (user?.role === 'admin') {
-      router.push('/admin/restaurants');
+      router.push('/admin/dashboard');
     } else {
       router.push('/dashboard');
     }
   }, [isInitialized, isAuthenticated, user, router]);
 
   if (!isInitialized) {
-    return <div className="p-8">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
   }
 
-  return <div className="p-8">Redirection...</div>;
+  return <div className="min-h-screen flex items-center justify-center">Redirection...</div>;
 }

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Montserrat } from 'next/font/google';
 import { Toaster } from 'sonner';
+import QueryProvider from '@/providers/QueryProvider';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -61,8 +62,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={`${montserrat.className} ${cormorant.variable} antialiased`}>
-        {children}
-        <Toaster position="top-right" richColors />
+        <QueryProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </QueryProvider>
       </body>
     </html>
   );

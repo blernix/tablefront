@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -21,6 +21,7 @@ export default function BlockedDaysPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Form state
   const [date, setDate] = useState('');
@@ -36,10 +37,18 @@ export default function BlockedDaysPage() {
 
   useEffect(() => {
     fetchDayBlocks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const fetchDayBlocks = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching day blocks data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const response = await apiClient.getDayBlocks();
       setDayBlocks(response.dayBlocks);
@@ -47,6 +56,7 @@ export default function BlockedDaysPage() {
       console.error('Error fetching day blocks:', err);
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   };
 

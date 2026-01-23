@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { OpeningHours, DaySchedule, TimeSlot } from '@/types';
@@ -36,13 +36,22 @@ export default function OpeningHoursPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   useEffect(() => {
     fetchOpeningHours();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const fetchOpeningHours = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching opening hours data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setIsLoading(true);
       const response = await apiClient.getMyRestaurant();
       setOpeningHours(response.restaurant.openingHours);
@@ -50,6 +59,7 @@ export default function OpeningHoursPage() {
       console.error('Error fetching opening hours:', err);
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
   };
 

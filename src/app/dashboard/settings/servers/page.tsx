@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { ServerUser } from '@/types';
@@ -17,6 +17,7 @@ export default function ServersPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedServer, setSelectedServer] = useState<ServerUser | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Form states
   const [formData, setFormData] = useState({
@@ -35,10 +36,18 @@ export default function ServersPage() {
 
   useEffect(() => {
     loadServers();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const loadServers = async () => {
+    // Prevent multiple simultaneous calls
+    if (isFetchingRef.current) {
+      console.log('Already fetching servers data, skipping...');
+      return;
+    }
+
     try {
+      isFetchingRef.current = true;
       setLoading(true);
       const response = await apiClient.getServerUsers();
       console.log('[ServersPage] Servers loaded:', response.servers);
@@ -48,6 +57,7 @@ export default function ServersPage() {
       toast.error(error.message || 'Erreur lors du chargement des serveurs');
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   };
 
