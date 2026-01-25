@@ -55,8 +55,8 @@ self.addEventListener('notificationclick', function(event) {
   if (notificationData.url) {
     url = notificationData.url;
   } else if (notificationData.reservationId) {
-    url = `/reservations/${notificationData.reservationId}`;
-  } else if (notificationData.type === 'reservation_created' || 
+    url = `/dashboard/reservations/${notificationData.reservationId}`;
+  } else if (notificationData.type === 'reservation_created' ||
              notificationData.type === 'reservation_confirmed' ||
              notificationData.type === 'reservation_cancelled' ||
              notificationData.type === 'reservation_updated') {
@@ -68,7 +68,7 @@ self.addEventListener('notificationclick', function(event) {
     console.log('[Push SW] Action clicked:', event.action);
     // You can add custom handling for different actions here
     if (event.action === 'view_reservation' && notificationData.reservationId) {
-      url = `/reservations/${notificationData.reservationId}`;
+      url = `/dashboard/reservations/${notificationData.reservationId}`;
     }
   }
 
