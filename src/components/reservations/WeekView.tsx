@@ -1,31 +1,63 @@
 'use client';
 
-import { Reservation } from '@/types';
+import { Reservation, Restaurant } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSameDay, isToday } from 'date-fns';
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  addWeeks,
+  subWeeks,
+  isSameDay,
+  isToday,
+} from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { getAvailableTimeSlots } from '@/hooks/useRestaurantInfo';
 
 interface WeekViewProps {
   reservations: Reservation[];
   currentWeek: Date;
   onWeekChange: (date: Date) => void;
   onReservationClick?: (reservation: Reservation) => void;
+  restaurant?: Restaurant | null;
 }
 
 export const WeekView = ({
   reservations,
   currentWeek,
   onWeekChange,
-  onReservationClick
+  onReservationClick,
+  restaurant,
 }: WeekViewProps) => {
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
-  // Time slots from 11h to 23h
-  const timeSlots = Array.from({ length: 13 }, (_, i) => i + 11);
+  // Calculate time range from restaurant opening hours
+  let minHour = 11;
+  let maxHour = 23;
+
+  if (restaurant?.openingHours) {
+    const allSlots: string[] = [];
+    weekDays.forEach((day) => {
+      const dayOfWeek = day.getDay();
+      const slots = getAvailableTimeSlots(restaurant, dayOfWeek);
+      allSlots.push(...slots);
+    });
+
+    if (allSlots.length > 0) {
+      // Find earliest and latest hours
+      const hours = allSlots.map((slot) => parseInt(slot.split(':')[0]));
+      minHour = Math.min(...hours);
+      maxHour = Math.max(...hours) + 1; // Add 1 to include the last hour
+    }
+  }
+
+  // Generate time slots based on opening hours
+  const timeSlots = Array.from({ length: maxHour - minHour + 1 }, (_, i) => i + minHour);
 
   const handlePreviousWeek = () => {
     onWeekChange(subWeeks(currentWeek, 1));
@@ -39,11 +71,20 @@ export const WeekView = ({
     onWeekChange(new Date());
   };
 
+  // Check if a day is closed
+  const isDayClosed = (day: Date): boolean => {
+    if (!restaurant?.openingHours) return false;
+    const dayOfWeek = day.getDay();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = dayNames[dayOfWeek] as keyof typeof restaurant.openingHours;
+    return restaurant.openingHours[dayName]?.closed || false;
+  };
+
   // Get reservations for a specific day and hour
   const getReservationsForSlot = (day: Date, hour: number) => {
     const dayStr = day.toISOString().split('T')[0];
 
-    return reservations.filter(r => {
+    return reservations.filter((r) => {
       const resDate = new Date(r.date).toISOString().split('T')[0];
       if (resDate !== dayStr || r.status === 'cancelled') return false;
 
@@ -72,7 +113,8 @@ export const WeekView = ({
         <div className="flex items-center gap-3">
           <Calendar className="h-6 w-6 text-slate-700" />
           <h2 className="text-xl md:text-2xl font-bold text-slate-900">
-            Semaine du {format(weekStart, 'd', { locale: fr })} au {format(weekEnd, 'd MMMM yyyy', { locale: fr })}
+            Semaine du {format(weekStart, 'd', { locale: fr })} au{' '}
+            {format(weekEnd, 'd MMMM yyyy', { locale: fr })}
           </h2>
         </div>
         <div className="flex gap-2">
@@ -93,35 +135,42 @@ export const WeekView = ({
         <div className="min-w-[800px]">
           {/* Day headers */}
           <div className="grid grid-cols-8 gap-1 mb-2">
-            <div className="text-xs font-semibold text-slate-600 p-2">
-              Heure
-            </div>
-            {weekDays.map(day => (
-              <div
-                key={day.toISOString()}
-                className={cn(
-                  'text-center p-2 rounded-t-lg',
-                  isToday(day) ? 'bg-blue-50' : ''
-                )}
-              >
-                <div className={cn(
-                  'text-xs font-semibold capitalize',
-                  isToday(day) ? 'text-blue-600' : 'text-slate-600'
-                )}>
-                  {format(day, 'EEE', { locale: fr })}
+            <div className="text-xs font-semibold text-slate-600 p-2">Heure</div>
+            {weekDays.map((day) => {
+              const closed = isDayClosed(day);
+              return (
+                <div
+                  key={day.toISOString()}
+                  className={cn(
+                    'text-center p-2 rounded-t-lg',
+                    isToday(day) ? 'bg-blue-50' : '',
+                    closed ? 'opacity-50' : ''
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'text-xs font-semibold capitalize',
+                      isToday(day) ? 'text-blue-600' : 'text-slate-600'
+                    )}
+                  >
+                    {format(day, 'EEE', { locale: fr })}
+                  </div>
+                  <div
+                    className={cn(
+                      'text-lg font-bold mt-1',
+                      isToday(day) ? 'text-blue-600' : 'text-slate-900'
+                    )}
+                  >
+                    {format(day, 'd')}
+                  </div>
+                  {closed && <div className="text-[10px] text-red-600 mt-1">Fermé</div>}
                 </div>
-                <div className={cn(
-                  'text-lg font-bold mt-1',
-                  isToday(day) ? 'text-blue-600' : 'text-slate-900'
-                )}>
-                  {format(day, 'd')}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Time slots */}
-          {timeSlots.map(hour => (
+          {timeSlots.map((hour) => (
             <div key={hour} className="grid grid-cols-8 gap-1 mb-1">
               {/* Hour label */}
               <div className="text-xs font-medium text-slate-500 p-2 flex items-start">
@@ -129,9 +178,10 @@ export const WeekView = ({
               </div>
 
               {/* Day columns */}
-              {weekDays.map(day => {
+              {weekDays.map((day) => {
                 const slotReservations = getReservationsForSlot(day, hour);
                 const hasReservations = slotReservations.length > 0;
+                const closed = isDayClosed(day);
 
                 return (
                   <div
@@ -139,10 +189,11 @@ export const WeekView = ({
                     className={cn(
                       'min-h-[60px] border border-slate-200 rounded p-1',
                       isToday(day) ? 'bg-blue-50/30' : 'bg-white',
-                      hasReservations ? 'bg-slate-50' : ''
+                      hasReservations ? 'bg-slate-50' : '',
+                      closed ? 'bg-slate-100 opacity-50' : ''
                     )}
                   >
-                    {slotReservations.map(reservation => (
+                    {slotReservations.map((reservation) => (
                       <button
                         key={reservation._id}
                         onClick={() => onReservationClick?.(reservation)}

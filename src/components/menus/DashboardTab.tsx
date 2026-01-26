@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { apiClient } from '@/lib/api';
-import { Restaurant } from '@/types';
+import { useMenuData } from '@/hooks/useMenuData';
+import { useMenuStats } from '@/hooks/useMenuStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,63 +12,22 @@ import {
   CheckCircle,
   AlertCircle,
   AlertTriangle,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
+/**
+ * Onglet Dashboard du menu
+ * Vue d'ensemble et statistiques de la carte
+ */
 export default function DashboardTab() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState({
-    categoriesCount: 0,
-    dishesCount: 0,
-    unavailableDishes: 0,
-    hasPdf: false
-  });
-  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
-  const fetchData = async () => {
-    // Prevent multiple simultaneous calls
-    if (isFetchingRef.current) {
-      console.log('Already fetching menu data, skipping...');
-      return;
-    }
+  // Data hooks (centralized API calls)
+  const { restaurant, categories, dishes, isLoading } = useMenuData();
 
-    try {
-      isFetchingRef.current = true;
-      setIsLoading(true);
-      const [restaurantRes, categoriesRes, dishesRes] = await Promise.all([
-        apiClient.getMyRestaurant(),
-        apiClient.getCategories(),
-        apiClient.getDishes()
-      ]);
-
-      setRestaurant(restaurantRes.restaurant);
-
-      const unavailableDishes = dishesRes.dishes.filter(dish => !dish.available).length;
-
-      setStats({
-        categoriesCount: categoriesRes.categories.length,
-        dishesCount: dishesRes.dishes.length,
-        unavailableDishes,
-        hasPdf: !!restaurantRes.restaurant.menu.pdfUrl
-      });
-    } catch (err) {
-      console.error('Error fetching data:', err);
-      toast.error('Erreur lors du chargement des données');
-    } finally {
-      setIsLoading(false);
-      isFetchingRef.current = false;
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
-
+  // Stats hook
+  const stats = useMenuStats(dishes, categories, restaurant);
 
   const handleNavigateToPlats = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -86,15 +44,15 @@ export default function DashboardTab() {
   if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse pb-20 md:pb-6">
-        <div className="h-16 bg-stone-100 rounded-xl" />
+        <div className="h-16 bg-[#E5E5E5]" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-stone-100 rounded-xl" />
+            <div key={i} className="h-24 bg-[#E5E5E5]" />
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="h-48 bg-stone-100 rounded-xl" />
+            <div key={i} className="h-48 bg-[#E5E5E5]" />
           ))}
         </div>
       </div>
@@ -104,69 +62,74 @@ export default function DashboardTab() {
   return (
     <div className="space-y-6 pb-20 md:pb-6">
       {/* Header avec titre */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard Menu</h1>
-        <p className="text-slate-600 mt-1">Vue d&apos;ensemble et statistiques de votre carte</p>
+      <div className="relative">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
+        <h1 className="text-2xl font-light text-[#2A2A2A] pt-4">Dashboard Menu</h1>
+        <p className="text-[#666666] mt-1 font-light">Vue d&apos;ensemble et statistiques de votre carte</p>
       </div>
 
       {/* Statistiques */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {/* Plats indisponibles */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
+        <Card className="card-hover p-4">
+          <CardContent className="p-0">
             <div className="flex flex-col items-center text-center gap-2">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                stats.unavailableDishes > 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
-              }`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center border ${
+                  stats.unavailableDishes > 0
+                    ? 'border-red-600 text-red-600'
+                    : 'border-emerald-600 text-emerald-600'
+                }`}
+              >
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-slate-900">
-                  {stats.unavailableDishes}
-                </p>
-                <p className="text-xs text-slate-600 mt-1">Indisponibles</p>
+                <p className="text-3xl font-light text-[#2A2A2A]">{stats.unavailableDishes}</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">Indisponibles</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Catégories */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
+        <Card className="card-hover p-4">
+          <CardContent className="p-0">
             <div className="flex flex-col items-center text-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+              <div className="flex h-10 w-10 items-center justify-center border border-[#0066FF] text-[#0066FF]">
                 <FolderTree className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-slate-900">{stats.categoriesCount}</p>
-                <p className="text-xs text-slate-600 mt-1">Catégories</p>
+                <p className="text-3xl font-light text-[#2A2A2A]">{stats.totalCategories}</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">Catégories</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Plats */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
+        <Card className="card-hover p-4">
+          <CardContent className="p-0">
             <div className="flex flex-col items-center text-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <div className="flex h-10 w-10 items-center justify-center border border-[#0066FF] text-[#0066FF]">
                 <UtensilsCrossed className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-slate-900">{stats.dishesCount}</p>
-                <p className="text-xs text-slate-600 mt-1">Plats total</p>
+                <p className="text-3xl font-light text-[#2A2A2A]">{stats.totalDishes}</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">Plats total</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* PDF Status */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
+        <Card className="card-hover p-4">
+          <CardContent className="p-0">
             <div className="flex flex-col items-center text-center gap-2">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                stats.hasPdf ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-              }`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center border ${
+                  stats.hasPdf ? 'border-emerald-600 text-emerald-600' : 'border-red-600 text-red-600'
+                }`}
+              >
                 {stats.hasPdf ? (
                   <CheckCircle className="h-5 w-5" />
                 ) : (
@@ -174,10 +137,8 @@ export default function DashboardTab() {
                 )}
               </div>
               <div>
-                <p className="text-lg font-bold text-slate-900">
-                  {stats.hasPdf ? 'OK' : 'Non'}
-                </p>
-                <p className="text-xs text-slate-600 mt-1">PDF Menu</p>
+                <p className="text-lg font-light text-[#2A2A2A]">{stats.hasPdf ? 'OK' : 'Non'}</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">PDF Menu</p>
                 {!stats.hasPdf && (
                   <Button
                     variant="link"
@@ -198,21 +159,19 @@ export default function DashboardTab() {
       {/* Actions rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Gestion des plats */}
-        <Card className="border-orange-200 shadow-sm hover:shadow-md transition-shadow bg-gradient-to-br from-orange-50 to-amber-50">
-          <CardContent className="p-6">
+        <Card className="card-hover p-8">
+          <CardContent className="p-0">
             <div className="flex flex-col h-full">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white mb-4">
+              <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF] bg-[#0066FF] text-white mb-4">
                 <UtensilsCrossed className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Gérer les plats
-              </h3>
-              <p className="text-sm text-slate-600 mb-4 flex-1">
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Gérer les plats</h3>
+              <p className="text-sm text-[#666666] mb-4 flex-1 font-light">
                 Créez, modifiez et organisez vos plats par catégories
               </p>
               <Button
                 onClick={handleNavigateToPlats}
-                className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+                className="w-full"
               >
                 Accéder à la gestion
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -222,22 +181,20 @@ export default function DashboardTab() {
         </Card>
 
         {/* Publication du menu */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6">
+        <Card className="card-hover p-8">
+          <CardContent className="p-0">
             <div className="flex flex-col h-full">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-900 mb-4">
+              <div className="flex h-12 w-12 items-center justify-center border border-[#E5E5E5] text-[#666666] mb-4">
                 <Plus className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Publier le menu
-              </h3>
-              <p className="text-sm text-slate-600 mb-4 flex-1">
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Publier le menu</h3>
+              <p className="text-sm text-[#666666] mb-4 flex-1 font-light">
                 Générez le PDF et le QR code pour vos clients
               </p>
               <Button
                 onClick={handleNavigateToPublication}
                 variant="outline"
-                className="w-full border-slate-300 hover:bg-slate-50"
+                className="w-full"
               >
                 Gérer la publication
                 <ArrowRight className="ml-2 h-4 w-4" />

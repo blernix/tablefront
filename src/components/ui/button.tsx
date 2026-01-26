@@ -5,24 +5,25 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#0066FF] disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-blue-600 text-white shadow-sm hover:bg-blue-700',
-        destructive: 'bg-red-600 text-white shadow-sm hover:bg-red-700',
-        outline: 'border border-slate-300 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-400',
-        secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200',
-        ghost: 'text-slate-700 hover:bg-slate-100',
-        link: 'text-blue-600 underline-offset-4 hover:underline hover:text-blue-700',
-        success: 'bg-green-600 text-white shadow-sm hover:bg-green-700',
+        default: 'bg-[#0066FF] text-white border border-[#0066FF] hover:bg-white hover:text-[#0066FF]',
+        destructive: 'bg-red-500 text-white border border-red-500 hover:bg-white hover:text-red-500',
+        outline:
+          'border border-[#E5E5E5] text-[#2A2A2A] hover:border-[#0066FF] hover:text-[#0066FF] bg-white dark:bg-[#1A1A1A] dark:text-[#FAFAFA] dark:border-[#2A2A2A]',
+        secondary: 'bg-[#FAFAFA] text-[#2A2A2A] border border-[#E5E5E5] hover:bg-white dark:bg-[#1A1A1A] dark:text-[#FAFAFA] dark:border-[#2A2A2A] dark:hover:bg-[#1F1F1F]',
+        ghost: 'text-[#666666] hover:text-[#0066FF] hover:bg-[#FAFAFA] dark:text-[#999999] dark:hover:bg-[#1A1A1A]',
+        link: 'text-[#0066FF] underline-offset-4 hover:underline',
+        success: 'bg-emerald-600 text-white border border-emerald-600 hover:bg-white hover:text-emerald-600',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-8 px-3 text-xs',
-        lg: 'h-12 px-6 text-base',
-        icon: 'h-10 w-10',
-        'icon-sm': 'h-8 w-8',
+        default: 'h-12 px-8 py-4',
+        sm: 'h-10 px-6 py-3 text-xs',
+        lg: 'h-14 px-12 py-6 text-base',
+        icon: 'h-12 w-12',
+        'icon-sm': 'h-10 w-10',
       },
     },
     defaultVariants: {
@@ -33,8 +34,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
 }

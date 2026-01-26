@@ -1,24 +1,19 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Montserrat } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
 import './globals.css';
 
-const cormorant = Cormorant_Garamond({
+const inter = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-cormorant',
-});
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-montserrat',
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
   title: 'TableMaster - Administration Restaurant',
-  description: 'Plateforme d\'administration pour restaurants - gestion des réservations, menus et paramètres',
+  description:
+    "Plateforme d'administration pour restaurants - gestion des réservations, menus et paramètres",
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -33,27 +28,21 @@ export const metadata: Metadata = {
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [
-      { url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' },
-    ],
+    apple: [{ url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' }],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: '#FAFAFA',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className="light" data-theme="light">
+    <html lang="fr" data-theme="light">
       <head>
         <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
         <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
@@ -61,7 +50,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body className={`${montserrat.className} ${cormorant.variable} antialiased`}>
+      <body className={`${inter.className} font-light antialiased bg-[#FAFAFA] text-[#2A2A2A]`}>
         <QueryProvider>
           {children}
           <Toaster position="top-right" richColors />

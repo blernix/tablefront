@@ -1,19 +1,37 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { apiClient } from '@/lib/api';
-import { Restaurant } from '@/types';
+import { useMenuData } from '@/hooks/useMenuData';
 import QrCodeDisplay from '@/components/menu/QrCodeDisplay';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Upload, FileText, CheckCircle, AlertCircle, Download, Eye, Smartphone, Table, Printer, Share2, QrCode, FileUp } from 'lucide-react';
+import {
+  Upload,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  Download,
+  Eye,
+  Smartphone,
+  Table,
+  Printer,
+  Share2,
+  QrCode,
+  FileUp,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
+/**
+ * Onglet de publication du menu
+ * Gestion du PDF et du QR code
+ */
 export default function PublicationTab() {
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Data hooks (centralized API calls)
+  const { restaurant, isLoading, refetch } = useMenuData();
+
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<{
@@ -21,33 +39,6 @@ export default function PublicationTab() {
     message: string;
   }>({ type: null, message: '' });
   const [isGeneratingQrCode, setIsGeneratingQrCode] = useState(false);
-  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
-
-  useEffect(() => {
-    fetchRestaurant();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
-
-  const fetchRestaurant = async () => {
-    // Prevent multiple simultaneous calls
-    if (isFetchingRef.current) {
-      console.log('Already fetching restaurant data, skipping...');
-      return;
-    }
-
-    try {
-      isFetchingRef.current = true;
-      setIsLoading(true);
-      const response = await apiClient.getMyRestaurant();
-      setRestaurant(response.restaurant);
-    } catch (err) {
-      console.error('Error fetching restaurant:', err);
-      toast.error('Erreur lors du chargement des informations du restaurant');
-    } finally {
-      setIsLoading(false);
-      isFetchingRef.current = false;
-    }
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -98,8 +89,8 @@ export default function PublicationTab() {
       if (fileInput) fileInput.value = '';
 
       // Refresh restaurant data
-      await fetchRestaurant();
-      
+      await refetch();
+
       toast.success('Menu PDF mis à jour avec succès');
     } catch (err) {
       setUploadStatus({
@@ -117,7 +108,7 @@ export default function PublicationTab() {
       setIsGeneratingQrCode(true);
       await apiClient.generateMenuQrCode();
       toast.success('QR code généré avec succès !');
-      await fetchRestaurant();
+      await refetch();
     } catch (err) {
       console.error('Error generating QR code:', err);
       toast.error('Erreur lors de la génération du QR code');
@@ -129,9 +120,9 @@ export default function PublicationTab() {
   if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-20 bg-slate-200 rounded-lg" />
-        <div className="h-64 bg-slate-200 rounded-lg" />
-        <div className="h-48 bg-slate-200 rounded-lg" />
+        <div className="h-20 bg-[#E5E5E5]" />
+        <div className="h-64 bg-[#E5E5E5]" />
+        <div className="h-48 bg-[#E5E5E5]" />
       </div>
     );
   }
@@ -141,37 +132,40 @@ export default function PublicationTab() {
   return (
     <div className="space-y-8 pb-20 md:pb-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">PDF & QR Codes</h1>
-        <p className="text-slate-600 mt-1">
+      <div className="relative">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
+        <h1 className="text-2xl font-light text-[#2A2A2A] pt-4">PDF & QR Codes</h1>
+        <p className="text-[#666666] mt-1 font-light">
           Publiez votre menu en ligne et générez des QR codes pour vos tables
         </p>
       </div>
 
       {/* PDF Upload Section */}
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileUp className="h-5 w-5" />
+      <Card className="p-8">
+        <CardHeader className="p-0 pb-6">
+          <CardTitle className="flex items-center gap-2 font-light text-[#2A2A2A]">
+            <div className="h-8 w-8 border border-[#E5E5E5] flex items-center justify-center">
+              <FileUp className="h-5 w-5 text-[#0066FF]" />
+            </div>
             Menu PDF
           </CardTitle>
-          <CardDescription>
-            {hasPdf 
-              ? 'Votre menu PDF est disponible sur votre site web' 
-              : 'Téléchargez votre menu au format PDF pour l\'affichage en ligne'}
+          <CardDescription className="text-[#666666] font-light">
+            {hasPdf
+              ? 'Votre menu PDF est disponible sur votre site web'
+              : "Téléchargez votre menu au format PDF pour l'affichage en ligne"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Current PDF Status */}
           {hasPdf ? (
             <div className="space-y-6">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600">
+              <div className="flex items-center gap-4 p-6 bg-[#FAFAFA] border border-emerald-600">
+                <div className="flex h-14 w-14 items-center justify-center border border-emerald-600 bg-emerald-600">
                   <FileText className="h-7 w-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-lg text-slate-900">Menu PDF disponible</p>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <p className="font-medium text-lg text-[#2A2A2A]">Menu PDF disponible</p>
+                  <p className="text-sm text-[#666666] mt-1 font-light">
                     Votre menu est visible sur votre site web et accessible via QR code
                   </p>
                   <div className="flex items-center gap-4 mt-3">
@@ -179,7 +173,7 @@ export default function PublicationTab() {
                       href={restaurant!.menu.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E5E5] text-sm font-medium text-[#2A2A2A] hover:border-[#0066FF] transition-colors"
                     >
                       <Eye className="h-4 w-4" />
                       Voir le menu
@@ -187,7 +181,7 @@ export default function PublicationTab() {
                     <a
                       href={restaurant!.menu.pdfUrl}
                       download={`menu-${restaurant!.name.replace(/\s+/g, '-').toLowerCase()}.pdf`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white border border-emerald-600 text-sm font-medium hover:bg-white hover:text-emerald-600 transition-colors"
                     >
                       <Download className="h-4 w-4" />
                       Télécharger
@@ -195,21 +189,22 @@ export default function PublicationTab() {
                   </div>
                 </div>
               </div>
-              
-              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-                <p className="text-sm font-medium text-amber-800">
-                  ⚠️ Note : Le téléchargement d&apos;un nouveau PDF remplacera le menu actuel. Le QR code restera valide.
+
+              <div className="bg-[#FAFAFA] border border-amber-600 p-4">
+                <p className="text-sm font-medium text-amber-600">
+                  ⚠️ Note : Le téléchargement d&apos;un nouveau PDF remplacera le menu actuel. Le QR
+                  code restera valide.
                 </p>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500">
+            <div className="flex items-center gap-4 p-6 bg-[#FAFAFA] border border-amber-600">
+              <div className="flex h-14 w-14 items-center justify-center border border-amber-600 bg-amber-600">
                 <FileText className="h-7 w-7 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-lg text-slate-900">Aucun menu PDF</p>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="font-medium text-lg text-[#2A2A2A]">Aucun menu PDF</p>
+                <p className="text-sm text-[#666666] mt-1 font-light">
                   Téléchargez un PDF pour activer le mode PDF et générer des QR codes
                 </p>
               </div>
@@ -218,7 +213,7 @@ export default function PublicationTab() {
 
           {/* Upload Form */}
           <div className="space-y-4">
-            <Label htmlFor="pdf-upload" className="text-sm font-medium text-slate-900">
+            <Label htmlFor="pdf-upload">
               {hasPdf ? 'Remplacer le menu PDF' : 'Télécharger un menu PDF'}
             </Label>
             <div className="relative">
@@ -228,18 +223,19 @@ export default function PublicationTab() {
                 accept="application/pdf"
                 onChange={handleFileChange}
                 disabled={isUploading}
-                className="pl-10 py-6 border-2 border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300 rounded-xl"
+                className="pl-10 py-6 border border-[#E5E5E5] focus:border-[#0066FF] transition-colors"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FileText className="w-5 h-5 text-slate-500" />
+                <FileText className="w-5 h-5 text-[#666666]" />
               </div>
             </div>
             {selectedFile && (
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-sm font-medium text-slate-900">
-                  📄 Fichier sélectionné : <span className="font-semibold">{selectedFile.name}</span>
+              <div className="bg-[#FAFAFA] p-4 border border-[#E5E5E5]">
+                <p className="text-sm font-medium text-[#2A2A2A]">
+                  📄 Fichier sélectionné :{' '}
+                  <span className="font-semibold">{selectedFile.name}</span>
                 </p>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-[#666666] mt-1">
                   Taille : {(selectedFile.size / 1024 / 1024).toFixed(2)} Mo
                 </p>
               </div>
@@ -248,14 +244,14 @@ export default function PublicationTab() {
 
           {uploadStatus.type && (
             <div
-              className={`flex items-center gap-3 rounded-xl p-4 border-2 ${
+              className={`flex items-center gap-3 p-4 border ${
                 uploadStatus.type === 'success'
-                  ? 'bg-green-50 border-green-200 text-green-800'
-                  : 'bg-red-50 border-red-200 text-red-800'
+                  ? 'bg-[#FAFAFA] border-emerald-600 text-emerald-600'
+                  : 'bg-[#FAFAFA] border-red-600 text-red-600'
               }`}
             >
               {uploadStatus.type === 'success' ? (
-                <CheckCircle className="h-6 w-6 text-green-600" />
+                <CheckCircle className="h-6 w-6 text-emerald-600" />
               ) : (
                 <AlertCircle className="h-6 w-6 text-red-600" />
               )}
@@ -266,13 +262,29 @@ export default function PublicationTab() {
           <Button
             onClick={handleUpload}
             disabled={!selectedFile || isUploading}
-            className="w-full py-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-lg shadow-sm hover:shadow transition-all duration-300"
+            className="w-full py-6 font-medium text-base"
           >
             {isUploading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Téléchargement en cours...
               </span>
@@ -298,76 +310,76 @@ export default function PublicationTab() {
           />
 
           {/* Guide d'utilisation */}
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <QrCode className="h-5 w-5" />
+          <Card className="p-8">
+            <CardHeader className="p-0 pb-6">
+              <CardTitle className="flex items-center gap-2 font-light text-[#2A2A2A]">
+                <div className="h-8 w-8 border border-[#E5E5E5] flex items-center justify-center">
+                  <QrCode className="h-5 w-5 text-[#0066FF]" />
+                </div>
                 Guide d&apos;utilisation
               </CardTitle>
-              <CardDescription>
-                Comment utiliser efficacement vos QR codes
-              </CardDescription>
+              <CardDescription className="text-[#666666] font-light">Comment utiliser efficacement vos QR codes</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                    <Table className="h-6 w-6 text-slate-900" />
+                  <div className="flex h-12 w-12 items-center justify-center border border-[#E5E5E5]">
+                    <Table className="h-6 w-6 text-[#666666]" />
                   </div>
-                  <h3 className="font-semibold text-slate-900">Pour les tables</h3>
-                  <ul className="space-y-2 text-sm text-slate-600">
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Pour les tables</h3>
+                  <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-emerald-600 mt-1.5 flex-shrink-0"></div>
                       <span>Imprimez un QR code par table</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-emerald-600 mt-1.5 flex-shrink-0"></div>
                       <span>Utilisez un support rigide et imperméable</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-slate-900 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-emerald-600 mt-1.5 flex-shrink-0"></div>
                       <span>Placez-le bien visible sur la table</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <Printer className="h-6 w-6 text-green-600" />
+                  <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF]">
+                    <Printer className="h-6 w-6 text-[#0066FF]" />
                   </div>
-                  <h3 className="font-semibold text-slate-900">Impression</h3>
-                  <ul className="space-y-2 text-sm text-slate-600">
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Impression</h3>
+                  <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                       <span>Téléchargez en PNG pour l&apos;impression numérique</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                       <span>Utilisez SVG pour l&apos;impression vectorielle</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                       <span>Testez la lecture avant impression en série</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
-                    <Share2 className="h-6 w-6 text-purple-600" />
+                  <div className="flex h-12 w-12 items-center justify-center border border-[#E5E5E5]">
+                    <Share2 className="h-6 w-6 text-[#666666]" />
                   </div>
-                  <h3 className="font-semibold text-slate-900">Marketing</h3>
-                  <ul className="space-y-2 text-sm text-slate-600">
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Marketing</h3>
+                  <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#666666] mt-1.5 flex-shrink-0"></div>
                       <span>Ajoutez aux cartes de visite et flyers</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#666666] mt-1.5 flex-shrink-0"></div>
                       <span>Intégrez dans les vitrines et menus extérieurs</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-[#666666] mt-1.5 flex-shrink-0"></div>
                       <span>Partagez sur les réseaux sociaux</span>
                     </li>
                   </ul>
@@ -377,48 +389,51 @@ export default function PublicationTab() {
           </Card>
         </>
       ) : (
-        <Card className="border-slate-200 shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <QrCode className="h-5 w-5" />
+        <Card className="p-8">
+          <CardHeader className="p-0 pb-6">
+            <CardTitle className="flex items-center gap-2 font-light text-[#2A2A2A]">
+              <div className="h-8 w-8 border border-[#E5E5E5] flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-[#666666]" />
+              </div>
               QR Codes
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-[#666666] font-light">
               Les QR codes seront disponibles après le téléchargement de votre menu PDF
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="rounded-xl bg-amber-50 border border-amber-200 p-6">
+          <CardContent className="space-y-6 p-0">
+            <div className="bg-[#FAFAFA] border border-amber-600 p-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                <div className="flex h-12 w-12 items-center justify-center border border-amber-600">
                   <Smartphone className="h-6 w-6 text-amber-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-slate-900">QR Codes non disponibles</h3>
-                  <p className="text-sm text-slate-600 mt-1">
-                    Les QR codes nécessitent un menu PDF pour fonctionner. Téléchargez d&apos;abord votre menu PDF ci-dessus.
+                  <h3 className="font-medium text-[#2A2A2A]">QR Codes non disponibles</h3>
+                  <p className="text-sm text-[#666666] mt-1 font-light">
+                    Les QR codes nécessitent un menu PDF pour fonctionner. Téléchargez d&apos;abord
+                    votre menu PDF ci-dessus.
                   </p>
                 </div>
               </div>
             </div>
-            
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-6">
-              <h4 className="font-semibold text-slate-900 mb-2">Pourquoi utiliser les QR codes ?</h4>
-              <ul className="space-y-2 text-sm text-slate-600">
+
+            <div className="bg-white border border-[#E5E5E5] p-6">
+              <h4 className="text-xs font-medium text-[#666666] mb-2 uppercase tracking-[0.2em]">Pourquoi utiliser les QR codes ?</h4>
+              <ul className="space-y-2 text-sm text-[#666666] font-light">
                 <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                   <span>Économisez sur l&apos;impression des menus</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                   <span>Mettez à jour votre menu en temps réel</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                   <span>Offrez une expérience moderne à vos clients</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
                   <span>Réduisez les contacts physiques</span>
                 </li>
               </ul>

@@ -24,11 +24,21 @@ export default function CalendarViewImproved({
   currentMonth,
   onMonthChange,
   onQuickCreate,
-  maxCapacity = 50
+  maxCapacity = 50,
 }: CalendarViewImprovedProps) {
   const monthNames = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
   ];
 
   const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -52,7 +62,7 @@ export default function CalendarViewImproved({
     const month = currentMonth.getMonth();
     const dateStr = new Date(year, month, day).toISOString().split('T')[0];
 
-    return blockedDays.some(block => {
+    return blockedDays.some((block) => {
       const blockDate = new Date(block.date).toISOString().split('T')[0];
       return blockDate === dateStr;
     });
@@ -64,19 +74,19 @@ export default function CalendarViewImproved({
     const month = currentMonth.getMonth();
     const dateStr = new Date(year, month, day).toISOString().split('T')[0];
 
-    const dayReservations = reservations.filter(r => {
+    const dayReservations = reservations.filter((r) => {
       const resDate = new Date(r.date).toISOString().split('T')[0];
       return resDate === dateStr && r.status !== 'cancelled';
     });
 
     // Lunch: 11:00 - 15:00
-    const lunchReservations = dayReservations.filter(r => {
+    const lunchReservations = dayReservations.filter((r) => {
       const hour = parseInt(r.time.split(':')[0]);
       return hour >= 11 && hour < 15;
     });
 
     // Dinner: 18:00 - 23:00
-    const dinnerReservations = dayReservations.filter(r => {
+    const dinnerReservations = dayReservations.filter((r) => {
       const hour = parseInt(r.time.split(':')[0]);
       return hour >= 18 && hour < 24;
     });
@@ -90,12 +100,12 @@ export default function CalendarViewImproved({
       totalGuests,
       lunch: {
         count: lunchReservations.length,
-        guests: lunchGuests
+        guests: lunchGuests,
       },
       dinner: {
         count: dinnerReservations.length,
-        guests: dinnerGuests
-      }
+        guests: dinnerGuests,
+      },
     };
   };
 
@@ -139,11 +149,7 @@ export default function CalendarViewImproved({
     const today = new Date();
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    return (
-      today.getFullYear() === year &&
-      today.getMonth() === month &&
-      today.getDate() === day
-    );
+    return today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
   };
 
   const daysInMonth = getDaysInMonth(currentMonth);
@@ -183,25 +189,13 @@ export default function CalendarViewImproved({
           </h2>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePreviousMonth}
-          >
+          <Button variant="outline" size="sm" onClick={handlePreviousMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onMonthChange(new Date())}
-          >
+          <Button variant="outline" size="sm" onClick={() => onMonthChange(new Date())}>
             Aujourd&apos;hui
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNextMonth}
-          >
+          <Button variant="outline" size="sm" onClick={handleNextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -210,7 +204,7 @@ export default function CalendarViewImproved({
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1 md:gap-2">
         {/* Day names */}
-        {dayNames.map(day => (
+        {dayNames.map((day) => (
           <div
             key={day}
             className="text-center text-xs md:text-sm font-semibold text-slate-600 py-2"
@@ -256,10 +250,12 @@ export default function CalendarViewImproved({
               >
                 {/* Day number */}
                 <div className="flex items-start justify-between w-full">
-                  <div className={cn(
-                    'text-xs md:text-sm font-semibold',
-                    isTodayDate ? 'text-blue-600' : 'text-slate-900'
-                  )}>
+                  <div
+                    className={cn(
+                      'text-xs md:text-sm font-semibold',
+                      isTodayDate ? 'text-blue-600' : 'text-slate-900'
+                    )}
+                  >
                     {day}
                   </div>
 
@@ -304,9 +300,7 @@ export default function CalendarViewImproved({
 
                     {/* Total */}
                     <div className="text-xs space-y-0.5">
-                      <div className="font-medium text-slate-700">
-                        {stats.total} rés.
-                      </div>
+                      <div className="font-medium text-slate-700">{stats.total} rés.</div>
                       <div className="text-slate-600 text-[10px] md:text-xs">
                         {stats.totalGuests} pers.
                       </div>

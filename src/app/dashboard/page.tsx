@@ -107,11 +107,13 @@ export default function DashboardPage() {
     if (!restaurant) return 0;
     if (restaurant.tablesConfig.mode === 'detailed' && restaurant.tablesConfig.tables) {
       return restaurant.tablesConfig.tables.reduce(
-        (sum, table) => sum + (table.quantity * table.capacity),
+        (sum, table) => sum + table.quantity * table.capacity,
         0
       );
     }
-    return (restaurant.tablesConfig.totalTables || 0) * (restaurant.tablesConfig.averageCapacity || 0);
+    return (
+      (restaurant.tablesConfig.totalTables || 0) * (restaurant.tablesConfig.averageCapacity || 0)
+    );
   };
 
   const getTotalTables = () => {
@@ -151,11 +153,10 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-semibold text-slate-900">Tableau de bord</h1>
-        <p className="mt-2 text-slate-600">
-          Bienvenue, {restaurant?.name}
-        </p>
+      <div className="relative">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
+        <h1 className="text-4xl font-light text-[#2A2A2A] pt-4">Tableau de bord</h1>
+        <p className="mt-2 text-[#666666] font-light">Bienvenue, {restaurant?.name}</p>
       </div>
 
       {/* Quick Actions */}
@@ -164,7 +165,11 @@ export default function DashboardPage() {
           <Plus className="h-4 w-4" />
           Nouvelle réservation
         </Button>
-        <Button variant="outline" onClick={() => router.push('/dashboard/reservations')} className="w-full sm:w-auto">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/reservations')}
+          className="w-full sm:w-auto"
+        >
           <Calendar className="h-4 w-4" />
           Voir le calendrier
         </Button>
@@ -172,74 +177,85 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="card-hover">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Réservations du jour</CardTitle>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
-              <Calendar className="h-5 w-5 text-blue-600" />
+        <Card className="card-hover p-8">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
+            <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+              Réservations du jour
+            </CardTitle>
+            <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
+              <Calendar className="h-5 w-5 text-[#0066FF]" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-slate-900">{stats?.today.reservations || 0}</div>
-            <p className="mt-1 text-sm text-slate-600">
+          <CardContent className="p-0 pt-4">
+            <div className="text-3xl font-light text-[#2A2A2A]">
+              {stats?.today.reservations || 0}
+            </div>
+            <p className="mt-1 text-sm text-[#666666]">
               {stats?.today.guests || 0} {(stats?.today.guests || 0) > 1 ? 'convives' : 'convive'}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="card-hover">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Cette semaine</CardTitle>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+        <Card className="card-hover p-8">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
+            <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+              Cette semaine
+            </CardTitle>
+            <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
+              <TrendingUp className="h-5 w-5 text-[#0066FF]" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-slate-900">{stats?.thisWeek.reservations || 0}</div>
-            <p className="mt-1 text-sm text-slate-600">
+          <CardContent className="p-0 pt-4">
+            <div className="text-3xl font-light text-[#2A2A2A]">
+              {stats?.thisWeek.reservations || 0}
+            </div>
+            <p className="mt-1 text-sm text-[#666666]">
               {stats?.thisWeek.avgOccupation || 0}% d&apos;occupation
             </p>
           </CardContent>
         </Card>
 
-        <Card className="card-hover">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Menu</CardTitle>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50">
+        <Card className="card-hover p-8">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
+            <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+              Menu
+            </CardTitle>
+            <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
               <Utensils className="h-5 w-5 text-amber-600" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-slate-900">{stats?.menu.dishes || 0}</div>
-            <p className="mt-1 text-sm text-slate-600">
-              {stats?.menu.categories || 0} {(stats?.menu.categories || 0) > 1 ? 'catégories' : 'catégorie'}
+          <CardContent className="p-0 pt-4">
+            <div className="text-3xl font-light text-[#2A2A2A]">{stats?.menu.dishes || 0}</div>
+            <p className="mt-1 text-sm text-[#666666]">
+              {stats?.menu.categories || 0}{' '}
+              {(stats?.menu.categories || 0) > 1 ? 'catégories' : 'catégorie'}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="card-hover">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Revenu estimé</CardTitle>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
-              <Euro className="h-5 w-5 text-green-600" />
+        <Card className="card-hover p-8">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
+            <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+              Revenu estimé
+            </CardTitle>
+            <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
+              <Euro className="h-5 w-5 text-emerald-600" />
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 pt-4">
             {restaurant?.reservationConfig?.averagePrice ? (
               <>
-                <div className="text-3xl font-semibold text-green-600">
+                <div className="text-3xl font-light text-emerald-600">
                   {stats?.today.estimatedRevenue?.toFixed(2) || '0.00'}€
                 </div>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-1 text-sm text-[#666666]">
                   {stats?.thisWeek.estimatedRevenue?.toFixed(2) || '0.00'}€ cette semaine
                 </p>
               </>
             ) : (
               <>
-                <div className="text-3xl font-semibold text-slate-400">--</div>
-                <p className="mt-1 text-sm text-slate-600">
-                  Configurez le prix moyen
-                </p>
+                <div className="text-3xl font-light text-[#666666]">--</div>
+                <p className="mt-1 text-sm text-[#666666]">Configurez le prix moyen</p>
               </>
             )}
           </CardContent>
@@ -256,7 +272,11 @@ export default function DashboardPage() {
                 <CardTitle>Réservations à venir</CardTitle>
                 <CardDescription>Aujourd&apos;hui</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/reservations')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/dashboard/reservations')}
+              >
                 Voir tout
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -268,16 +288,17 @@ export default function DashboardPage() {
                 {stats.today.upcomingReservations.map((reservation) => (
                   <div
                     key={reservation._id}
-                    className="flex items-center gap-4 rounded-lg border border-slate-200 p-4 transition-colors hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
+                    className="flex items-center gap-4 border border-[#E5E5E5] p-4 transition-colors hover:border-[#0066FF] hover:bg-[#FAFAFA] cursor-pointer"
                     onClick={() => router.push('/dashboard/reservations')}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                      <Clock className="h-5 w-5 text-slate-600" />
+                    <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
+                      <Clock className="h-5 w-5 text-[#666666]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-900">{reservation.customerName}</p>
-                      <p className="text-sm text-slate-600">
-                        {reservation.time} • {reservation.numberOfGuests} {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
+                      <p className="font-medium text-[#2A2A2A]">{reservation.customerName}</p>
+                      <p className="text-sm text-[#666666]">
+                        {reservation.time} • {reservation.numberOfGuests}{' '}
+                        {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
                       </p>
                     </div>
                     <Badge variant={getStatusBadgeVariant(reservation.status)}>
@@ -304,7 +325,11 @@ export default function DashboardPage() {
                 <CardTitle>Informations restaurant</CardTitle>
                 <CardDescription>Vos coordonnées</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/settings/basic-info')}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/dashboard/settings/basic-info')}
+              >
                 Modifier
               </Button>
             </div>
@@ -312,33 +337,41 @@ export default function DashboardPage() {
           <CardContent className="space-y-4">
             <div className="grid gap-4">
               <div>
-                <p className="text-sm font-medium text-slate-600">Nom</p>
-                <p className="mt-1 text-sm text-slate-900">{restaurant?.name}</p>
+                <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">Nom</p>
+                <p className="mt-1 text-sm text-[#2A2A2A]">{restaurant?.name}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-600">Adresse</p>
-                <p className="mt-1 text-sm text-slate-900">{restaurant?.address}</p>
+                <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+                  Adresse
+                </p>
+                <p className="mt-1 text-sm text-[#2A2A2A]">{restaurant?.address}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Téléphone</p>
-                  <p className="mt-1 text-sm text-slate-900">{restaurant?.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-600">Email</p>
-                  <p className="mt-1 text-sm text-slate-900 truncate">{restaurant?.email}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">Capacité</p>
-                  <p className="mt-1 text-sm text-slate-900">
-                    {getTotalCapacity()} places
+                  <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+                    Téléphone
                   </p>
+                  <p className="mt-1 text-sm text-[#2A2A2A]">{restaurant?.phone}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Tables</p>
-                  <p className="mt-1 text-sm text-slate-900">
+                  <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+                    Email
+                  </p>
+                  <p className="mt-1 text-sm text-[#2A2A2A] truncate">{restaurant?.email}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+                    Capacité
+                  </p>
+                  <p className="mt-1 text-sm text-[#2A2A2A]">{getTotalCapacity()} places</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+                    Tables
+                  </p>
+                  <p className="mt-1 text-sm text-[#2A2A2A]">
                     {getTotalTables()} {getTotalTables() > 1 ? 'tables' : 'table'}
                   </p>
                 </div>

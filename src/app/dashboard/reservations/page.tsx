@@ -8,10 +8,11 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
 import { formatDate } from '@/lib/formatters';
-import { Reservation } from '@/types';
+import { Reservation, Restaurant } from '@/types';
 import { useRealtimeReservationsManager } from '@/hooks/useRealtimeReservations';
 import { useReservationsFilters } from '@/hooks/useReservationsFilters';
 import { useRestaurantCapacity } from '@/hooks/useRestaurantCapacity';
+import { useRestaurantInfo, isTimeWithinOpeningHours, getAvailableTimeSlots } from '@/hooks/useRestaurantInfo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,7 +31,7 @@ import { CapacityIndicator } from '@/components/reservations/CapacityIndicator';
 import { SearchWithSuggestions } from '@/components/reservations/SearchWithSuggestions';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-const formSchema = z.object({
+const createFormSchema = (restaurant: Restaurant | null) => z.object({
   customerName: z.string().min(1, 'Le nom est requis'),
   customerEmail: z.string().email('Email invalide'),
   customerPhone: z.string().min(1, 'Le téléphone est requis'),
@@ -39,9 +40,33 @@ const formSchema = z.object({
   numberOfGuests: z.string().min(1, 'Le nombre de personnes est requis'),
   status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']),
   notes: z.string().optional(),
+}).refine((data) => {
+  // Skip validation if no restaurant data or if config doesn't enforce opening hours
+  if (!restaurant?.openingHours || !restaurant?.reservationConfig?.useOpeningHours) {
+    return true;
+  }
+
+  // Get day of week from selected date
+  const selectedDate = new Date(data.date);
+  const dayOfWeek = selectedDate.getDay();
+
+  // Validate time against opening hours
+  return isTimeWithinOpeningHours(restaurant, dayOfWeek, data.time);
+}, {
+  message: "L'heure sélectionnée n'est pas dans les horaires d'ouverture du restaurant",
+  path: ['time'],
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  date: string;
+  time: string;
+  numberOfGuests: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  notes?: string;
+};
 
 const statusLabels = {
   pending: { label: 'En attente', variant: 'warning' as const },
@@ -83,18 +108,30 @@ export default function ReservationsPage() {
   // Use our new hooks
   const filters = useReservationsFilters(reservations);
   const capacity = useRestaurantCapacity(filters.filteredReservations);
+  const { restaurant, isLoading: isLoadingRestaurant } = useRestaurantInfo();
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(createFormSchema(restaurant)),
+    defaultValues: {
+      status: 'pending',
+    },
+  });
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      status: 'pending',
-    },
-  });
+    watch,
+  } = form;
+
+  // Watch selected date to show available times
+  const selectedFormDate = watch('date');
+
+  // Update form resolver when restaurant data changes
+  useEffect(() => {
+    form.clearErrors();
+  }, [restaurant, form]);
 
   // Load initial data
   useEffect(() => {
@@ -133,7 +170,7 @@ export default function ReservationsPage() {
   const quickFilters: QuickFilter[] = [
     {
       id: 'today',
-      label: 'Aujourd&apos;hui',
+      label: "Aujourd'hui",
       action: () => filters.setQuickFilter(filters.quickFilter === 'today' ? null : 'today'),
       isActive: filters.quickFilter === 'today',
     },
@@ -426,8 +463,8 @@ export default function ReservationsPage() {
   if (isLoading && !showForm) {
     return (
       <div className="space-y-6 animate-pulse p-4 md:p-6">
-        <div className="h-20 bg-slate-200 rounded-lg" />
-        <div className="h-40 bg-slate-200 rounded-lg" />
+        <div className="h-20 bg-[#E5E5E5]" />
+        <div className="h-40 bg-[#E5E5E5]" />
       </div>
     );
   }
@@ -435,25 +472,26 @@ export default function ReservationsPage() {
   return (
     <div className="space-y-6 p-4 md:p-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
+        <div className="pt-4">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-semibold text-slate-900">Réservations</h1>
+            <h1 className="text-3xl font-light text-[#2A2A2A]">Réservations</h1>
             <div className="flex items-center gap-2">
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  isConnected ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                className={`inline-flex items-center px-2 py-1 border text-xs font-medium uppercase tracking-[0.1em] ${
+                  isConnected ? 'border-emerald-600 text-emerald-600' : 'border-amber-600 text-amber-600'
                 }`}
                 title={isConnected ? 'Connecté en temps réel' : 'Connexion temps réel inactive'}
               >
                 <span
-                  className={`w-2 h-2 rounded-full mr-1 ${isConnected ? 'bg-green-500' : 'bg-yellow-500'}`}
+                  className={`w-2 h-2 mr-1 ${isConnected ? 'bg-emerald-600' : 'bg-amber-600'}`}
                 />
                 {isConnected ? 'Temps réel' : 'Hors ligne'}
               </span>
             </div>
           </div>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-[#666666] font-light">
             {filters.filteredReservations.length} réservation
             {filters.filteredReservations.length > 1 ? 's' : ''}
           </p>
@@ -535,6 +573,34 @@ export default function ReservationsPage() {
                   <Label htmlFor="time">Heure *</Label>
                   <Input id="time" type="time" {...register('time')} disabled={isSaving} />
                   {errors.time && <p className="text-sm text-destructive">{errors.time.message}</p>}
+                  {selectedFormDate && restaurant && restaurant.reservationConfig?.useOpeningHours && (() => {
+                    const date = new Date(selectedFormDate);
+                    const dayOfWeek = date.getDay();
+                    const availableSlots = getAvailableTimeSlots(restaurant, dayOfWeek);
+                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                    const dayName = dayNames[dayOfWeek] as keyof typeof restaurant.openingHours;
+                    const isClosed = restaurant.openingHours[dayName]?.closed;
+
+                    if (isClosed) {
+                      return (
+                        <p className="text-sm text-amber-600">
+                          Restaurant fermé ce jour
+                        </p>
+                      );
+                    }
+
+                    if (availableSlots.length > 0) {
+                      const firstSlot = availableSlots[0];
+                      const lastSlot = availableSlots[availableSlots.length - 1];
+                      return (
+                        <p className="text-sm text-slate-600">
+                          Horaires disponibles : {firstSlot} - {lastSlot}
+                        </p>
+                      );
+                    }
+
+                    return null;
+                  })()}
                 </div>
 
                 <div className="space-y-2">
@@ -792,6 +858,7 @@ export default function ReservationsPage() {
               currentWeek={currentWeek}
               onWeekChange={setCurrentWeek}
               onReservationClick={handleReservationClickFromCalendar}
+              restaurant={restaurant}
             />
           )}
 
@@ -803,6 +870,7 @@ export default function ReservationsPage() {
               onReservationClick={handleReservationClickFromCalendar}
               onQuickCreate={handleQuickCreateFromDay}
               maxCapacity={50}
+              restaurant={restaurant}
             />
           )}
         </>
@@ -821,11 +889,11 @@ export default function ReservationsPage() {
 
       {/* Email Confirmation Modal */}
       {emailConfirmationModal.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+        <div className="fixed inset-0 bg-[#0A0A0A] bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border border-[#E5E5E5] max-w-md w-full p-8 space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Confirmer l&apos;action</h3>
-              <p className="mt-2 text-sm text-gray-600">
+              <h3 className="text-lg font-light text-[#2A2A2A]">Confirmer l&apos;action</h3>
+              <p className="mt-2 text-sm text-[#666666]">
                 Voulez-vous envoyer un email de confirmation au client ?
               </p>
             </div>
@@ -836,9 +904,9 @@ export default function ReservationsPage() {
                 id="sendEmailCheckbox"
                 checked={sendEmail}
                 onChange={(e) => setSendEmail(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300"
+                className="h-4 w-4 border-[#E5E5E5]"
               />
-              <label htmlFor="sendEmailCheckbox" className="text-sm text-gray-700">
+              <label htmlFor="sendEmailCheckbox" className="text-sm text-[#2A2A2A]">
                 Envoyer un email au client
               </label>
             </div>
