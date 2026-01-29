@@ -25,15 +25,15 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/logo.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' }],
+    apple: [{ url: '/logo.png', sizes: '152x152', type: 'image/png' }],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FAFAFA',
+  themeColor: '#0066FF',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -44,8 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" data-theme="light">
       <head>
-        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" type="image/png" href="/logo.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

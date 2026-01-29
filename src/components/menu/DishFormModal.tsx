@@ -12,11 +12,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Plus, 
-  Trash2, 
+import {
+  Plus,
+  Trash2,
   ImageIcon,
-  Loader2
+  Loader2,
+  Upload,
+  X
 } from 'lucide-react';
 import ImageUpload from '@/components/ui/image-upload';
 import Image from 'next/image';
@@ -57,6 +59,8 @@ const DishFormModal = ({
   const [variationPrice, setVariationPrice] = useState('');
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string | undefined>(dish?.photoUrl);
   const [photoHasChanged, setPhotoHasChanged] = useState(false);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const {
     register,
@@ -95,6 +99,8 @@ const DishFormModal = ({
     setVariationPrice('');
     setCurrentPhotoUrl(dish?.photoUrl);
     setPhotoHasChanged(false);
+    setSelectedPhotoFile(null);
+    setPhotoPreview(null);
   }, [dish, reset, initialCategoryId]);
 
   useEffect(() => {
@@ -110,6 +116,38 @@ const DishFormModal = ({
   useEffect(() => {
     setCurrentPhotoUrl(dish?.photoUrl);
   }, [dish]);
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Le fichier doit être une image');
+      return;
+    }
+
+    // Validate file size (5MB)
+    const sizeMB = file.size / (1024 * 1024);
+    if (sizeMB > 5) {
+      toast.error('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
+
+    setSelectedPhotoFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setSelectedPhotoFile(null);
+    setPhotoPreview(null);
+  };
 
   const handleAddVariation = () => {
     if (!variationName || !variationPrice) {
@@ -201,8 +239,20 @@ const DishFormModal = ({
         await apiClient.updateDish(dish._id, dishData);
         toast.success(`Plat "${data.name}" modifié avec succès`);
       } else {
-        await apiClient.createDish(dishData);
-        toast.success(`Plat "${data.name}" créé avec succès`);
+        // Create dish first
+        const response = await apiClient.createDish(dishData);
+
+        // Then upload photo if selected
+        if (selectedPhotoFile) {
+          try {
+            await apiClient.uploadDishPhoto(response.dish._id, selectedPhotoFile);
+            toast.success(`Plat "${data.name}" créé avec photo`);
+          } catch (err) {
+            toast.warning(`Plat créé mais erreur lors de l'upload de la photo: ${err instanceof Error ? err.message : 'Erreur inconnue'}`);
+          }
+        } else {
+          toast.success(`Plat "${data.name}" créé avec succès`);
+        }
       }
 
       // Fermer la modal et rafraîchir les données
@@ -307,10 +357,11 @@ const DishFormModal = ({
           </p>
         </div>
 
-        {/* Photo Section - Only in edit mode */}
-        {dish && (
-          <div className="space-y-2 border-t pt-4">
-            <Label>Photo du plat</Label>
+        {/* Photo Section */}
+        <div className="space-y-2 border-t pt-4">
+          <Label>Photo du plat</Label>
+          {dish ? (
+            // Edit mode - upload photo immediately
             <div className="max-w-xs">
               <ImageUpload
                 currentImageUrl={currentPhotoUrl}
@@ -321,11 +372,64 @@ const DishFormModal = ({
                 maxSizeMB={5}
               />
             </div>
-            <p className="text-xs text-slate-500">
-              La photo sera visible dans le menu détaillé
-            </p>
-          </div>
-        )}
+          ) : (
+            // Create mode - select photo to upload on submit
+            <div className="max-w-xs space-y-3">
+              {photoPreview ? (
+                <div className="relative w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50">
+                  <Image
+                    src={photoPreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={handleRemovePhoto}
+                    disabled={isSubmitting}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="relative w-full aspect-video rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                    <ImageIcon className="h-10 w-10 mb-2" />
+                    <p className="text-sm">Aucune image</p>
+                  </div>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoSelect}
+                className="hidden"
+                id="photo-upload"
+                disabled={isSubmitting}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('photo-upload')?.click()}
+                disabled={isSubmitting}
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                {photoPreview ? 'Remplacer l\'image' : 'Ajouter une image'}
+              </Button>
+              <p className="text-xs text-gray-500">
+                Formats acceptés : JPG, PNG, WebP, GIF • Max 5MB
+              </p>
+            </div>
+          )}
+          <p className="text-xs text-slate-500">
+            La photo sera visible dans le menu détaillé
+          </p>
+        </div>
 
         {/* Variations Section */}
         <div className="space-y-3 border-t pt-4">

@@ -1,678 +1,708 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  Sparkles,
-  CheckCircle,
+  Check,
   ArrowRight,
-  Utensils,
-  Settings,
   Calendar,
-  Menu,
+  Menu as MenuIcon,
   Bell,
   BarChart3,
   Clock,
   Users,
+  Building2,
+  ChefHat,
+  Store,
+  Zap,
+  Shield,
+  Smartphone,
 } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-zinc-900">
-      {/* Header/Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-900/90 backdrop-blur-sm border-b border-zinc-800">
-        <div className="container mx-auto px-8 py-6">
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#E5E5E5]">
+        <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-emerald-600 rounded-full flex items-center justify-center">
-                <Utensils className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-2xl font-light text-zinc-200 tracking-tight">TableMaster</span>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#0066FF]" />
+              <span className="text-xl font-light text-[#2A2A2A]">TableMaster</span>
             </div>
 
-            {/* Nav Links */}
-            <div className="hidden md:flex items-center gap-10">
-              <a
-                href="#features"
-                className="text-zinc-400 hover:text-emerald-500 font-light text-lg transition-colors duration-300"
-              >
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-[#666666] hover:text-[#0066FF] font-light">
                 Fonctionnalités
               </a>
-              <a
-                href="#how-it-works"
-                className="text-zinc-400 hover:text-emerald-500 font-light text-lg transition-colors duration-300"
-              >
-                Comment ça marche
-              </a>
-              <a
-                href="#pricing"
-                className="text-zinc-400 hover:text-emerald-500 font-light text-lg transition-colors duration-300"
-              >
+              <a href="#pricing" className="text-[#666666] hover:text-[#0066FF] font-light">
                 Tarifs
+              </a>
+              <a href="#faq" className="text-[#666666] hover:text-[#0066FF] font-light">
+                FAQ
               </a>
               <Link
                 href="/login"
-                className="text-zinc-400 hover:text-emerald-500 font-light text-lg transition-colors duration-300"
+                className="px-6 py-2 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
               >
                 Connexion
               </Link>
-            </div>
-
-            {/* CTA Button */}
-            <div className="flex items-center">
-              <a href="#contact">
-                <button className="bg-emerald-600 hover:bg-emerald-500 text-white font-normal px-8 py-4 rounded-lg transition-colors duration-300">
-                  <span className="flex items-center">
-                    Demander une démo
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </span>
-                </button>
-              </a>
             </div>
           </nav>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 px-8 container mx-auto">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Hero Content */}
-            <div className="space-y-10">
-              {/* Badge */}
-              <div className="inline-flex items-center px-5 py-2 bg-zinc-800 text-emerald-500 rounded-full text-sm font-normal border border-zinc-700">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Solution sur-mesure pour votre restaurant
+      <section className="pt-32 pb-20 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="inline-block px-4 py-1 border border-[#E5E5E5] text-[#666666] text-sm font-light">
+                Solution de gestion pour restaurants
               </div>
 
-              {/* Titre */}
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-light text-zinc-200 leading-tight tracking-tight">
-                Votre site web
-                <span className="block mt-3 text-emerald-500 font-normal">professionnel</span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-light text-[#2A2A2A] leading-tight">
+                Gérez votre restaurant
+                <span className="block text-[#0066FF] font-normal mt-2">en toute simplicité</span>
               </h1>
 
-              {/* Description */}
-              <p className="text-2xl text-zinc-400 leading-relaxed font-light">
-                Je développe votre site vitrine sur-mesure pour votre restaurant. En option, ajoutez{' '}
-                <strong className="text-emerald-500 font-normal">TableMaster</strong> : un tableau
-                de bord complet pour gérer vos menus, réservations et paramètres en toute autonomie.
+              <p className="text-xl text-[#666666] leading-relaxed font-light">
+                TableMaster centralise la gestion de vos menus, réservations et paramètres dans une
+                interface claire et efficace. Gagnez du temps au quotidien.
               </p>
 
-              {/* Boutons */}
-              <div className="flex flex-col sm:flex-row gap-5 pt-6">
-                <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-normal py-6 px-10 rounded-lg transition-colors duration-300">
-                  Démarrer mon projet
-                  <ArrowRight className="ml-3 w-5 h-5 inline" />
-                </button>
-
-                <button className="border-2 border-zinc-600 hover:border-emerald-600 text-zinc-200 hover:text-emerald-500 font-normal py-6 px-10 rounded-lg transition-all duration-300">
-                  Comment ça marche
-                </button>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
+                >
+                  Commencer gratuitement
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Link>
+                <a
+                  href="#features"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-[#E5E5E5] text-[#2A2A2A] font-light hover:border-[#0066FF] transition-colors"
+                >
+                  Voir les fonctionnalités
+                </a>
               </div>
 
-              {/* Benefits */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-10">
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-emerald-500" />
-                  <span className="text-lg font-light text-zinc-300">Site web sur-mesure</span>
+              <div className="grid grid-cols-2 gap-4 pt-8">
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF]" />
+                  <span className="text-sm font-light text-[#666666]">Sans engagement</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-emerald-500" />
-                  <span className="text-lg font-light text-zinc-300">Design professionnel</span>
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF]" />
+                  <span className="text-sm font-light text-[#666666]">Support inclus</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-emerald-500" />
-                  <span className="text-lg font-light text-zinc-300">
-                    Option dashboard (+50€/mois)
-                  </span>
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF]" />
+                  <span className="text-sm font-light text-[#666666]">Mises à jour gratuites</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <CheckCircle className="w-6 h-6 text-emerald-500" />
-                  <span className="text-lg font-light text-zinc-300">Support personnalisé</span>
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF]" />
+                  <span className="text-sm font-light text-[#666666]">Sécurisé & fiable</span>
                 </div>
               </div>
             </div>
 
-            {/* Hero Visual */}
-            <div className="relative">
-              <div className="rounded-3xl overflow-hidden border border-zinc-700 bg-zinc-800">
-                <div className="aspect-video flex items-center justify-center p-12">
-                  <div className="text-center">
-                    <div className="inline-block p-8 bg-zinc-800 rounded-3xl mb-8 border border-zinc-700">
-                      <div className="w-24 h-24 mx-auto bg-emerald-600 rounded-full flex items-center justify-center">
-                        <BarChart3 className="w-12 h-12 text-white" />
-                      </div>
-                    </div>
-                    <h3 className="text-4xl font-light text-zinc-200 mb-4">
-                      Dashboard TableMaster
-                    </h3>
-                    <p className="text-zinc-400 text-lg">
-                      Gérez votre restaurant en toute simplicité
-                    </p>
-                  </div>
-                </div>
+            <div className="bg-white border-2 border-[#E5E5E5] p-8">
+              <div className="relative aspect-square bg-[#FAFAFA] overflow-hidden">
+                <Image
+                  src="/hero_tablemaster.png"
+                  alt="TableMaster Dashboard"
+                  fill
+                  className="object-contain"
+                  priority
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="relative py-32 bg-zinc-900 overflow-hidden">
-        <div className="container mx-auto px-8 relative z-10">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center px-5 py-2 bg-zinc-800 text-emerald-500 rounded-full text-sm font-normal mb-8 border border-zinc-700">
-              <Settings className="w-4 h-4 mr-2" />
-              Un service clé en main
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-zinc-200 mb-8 leading-tight">
-              Comment ça marche ?
+      {/* Bénéfices Clés */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Pourquoi TableMaster ?
             </h2>
-            <p className="text-2xl text-zinc-400 max-w-3xl mx-auto leading-relaxed font-light">
-              Un processus simple en 3 étapes pour digitaliser votre restaurant
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Une solution pensée pour simplifier votre quotidien
             </p>
           </div>
 
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-            {/* Step 1 */}
-            <div className="relative group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mb-8 text-white text-3xl font-light">
-                  1
-                </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Vous me contactez</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light">
-                  Parlez-moi de votre restaurant, vos besoins et vos attentes. Je vous présente les
-                  fonctionnalités de TableMaster.
-                </p>
-              </div>
-              {/* Arrow */}
-              <div className="hidden md:block absolute top-1/2 -right-5 transform -translate-y-1/2 z-10">
-                <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="border border-[#E5E5E5] p-8">
+              <Zap className="w-12 h-12 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Rapide & efficace</h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Interface intuitive pour gérer vos opérations en quelques clics. Pas de formation
+                nécessaire.
+              </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="relative group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mb-8 text-white text-3xl font-light">
-                  2
-                </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Je développe votre site</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light">
-                  Je crée votre site web professionnel sur-mesure avec votre menu, photos,
-                  informations et système de réservation intégré.
-                </p>
-              </div>
-              {/* Arrow */}
-              <div className="hidden md:block absolute top-1/2 -right-5 transform -translate-y-1/2 z-10">
-                <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-              </div>
+            <div className="border border-[#E5E5E5] p-8">
+              <Shield className="w-12 h-12 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Sécurisé</h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Vos données sont protégées et sauvegardées automatiquement. Conformité RGPD garantie.
+              </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mb-8 text-white text-3xl font-light">
-                  3
-                </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Vous gérez en autonomie</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light">
-                  Avec l&apos;option TableMaster (50€/mois), gérez vos menus, réservations, horaires
-                  et recevez des notifications en temps réel. Sinon, je m&apos;occupe des mises à
-                  jour pour vous !
-                </p>
-              </div>
+            <div className="border border-[#E5E5E5] p-8">
+              <Smartphone className="w-12 h-12 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Accessible partout</h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Application web responsive, accessible depuis n&apos;importe quel appareil. Notifications
+                push incluses.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="relative py-32 bg-zinc-900">
-        <div className="container mx-auto px-8">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center px-5 py-2 bg-zinc-800 text-emerald-500 rounded-full text-sm font-normal mb-8 border border-zinc-700">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Tout ce dont vous avez besoin
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-zinc-200 mb-8 leading-tight">
-              Les fonctionnalités de TableMaster
+      {/* À qui ça s'adresse */}
+      <section className="py-20 bg-[#FAFAFA]">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Pour qui ?
             </h2>
-            <p className="text-2xl text-zinc-400 max-w-3xl mx-auto leading-relaxed font-light">
-              Un tableau de bord complet pour gérer tous les aspects de votre restaurant
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              TableMaster s&apos;adapte à tous les types d&apos;établissements
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 - Reservations */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <Calendar className="w-8 h-8 text-emerald-500" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white border border-[#E5E5E5] p-6 text-center">
+              <ChefHat className="w-10 h-10 text-[#0066FF] mx-auto mb-4" />
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Restaurants</h3>
+              <p className="text-sm text-[#666666] font-light">
+                Gastronomique, traditionnel, bistronomique
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-6 text-center">
+              <Store className="w-10 h-10 text-[#0066FF] mx-auto mb-4" />
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Brasseries</h3>
+              <p className="text-sm text-[#666666] font-light">
+                Service continu et forte affluence
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-6 text-center">
+              <Building2 className="w-10 h-10 text-[#0066FF] mx-auto mb-4" />
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Cafés & Salons</h3>
+              <p className="text-sm text-[#666666] font-light">
+                Brunch, afternoon tea, petite restauration
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-6 text-center">
+              <Users className="w-10 h-10 text-[#0066FF] mx-auto mb-4" />
+              <h3 className="text-lg font-light text-[#2A2A2A] mb-2">Traiteurs</h3>
+              <p className="text-sm text-[#666666] font-light">
+                Événements et prestations sur-mesure
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fonctionnalités */}
+      <section id="features" className="py-20 bg-white">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Fonctionnalités complètes
+            </h2>
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Tout ce dont vous avez besoin pour gérer votre établissement
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Réservations */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <Calendar className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Gestion des réservations</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Calendrier en temps réel, confirmations automatiques, gestion des couverts et
+                disponibilités.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Vue calendrier intuitive</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Emails de confirmation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Gestion des statuts</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Menu */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <MenuIcon className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Menu digital & QR Code</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Créez et modifiez votre menu facilement. Générez un QR code pour vos clients.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Catégories & plats illimités</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Photos et descriptions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Export PDF automatique</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Notifications */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <Bell className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Notifications en temps réel</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Soyez alerté instantanément de chaque nouvelle réservation ou modification.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Push notifications (PWA)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Emails automatiques</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Alertes personnalisables</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Statistiques */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <BarChart3 className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Tableau de bord analytique</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Suivez vos performances avec des statistiques claires et actionnables.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Taux d&apos;occupation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Revenus estimés</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Rapports hebdomadaires</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Horaires */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <Clock className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Horaires & fermetures</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Configurez vos horaires d&apos;ouverture et gérez les fermetures exceptionnelles.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Horaires par jour</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Jours de fermeture</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Périodes de vacances</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Tables */}
+            <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+              <Users className="w-10 h-10 text-[#0066FF] mb-6" />
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Configuration des tables</h3>
+              <p className="text-[#666666] font-light mb-6 leading-relaxed">
+                Gérez votre capacité avec précision selon votre organisation.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Mode simple ou détaillé</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Gestion des couverts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Types de tables</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Preuve Sociale (Fictive) */}
+      <section className="py-20 bg-[#FAFAFA]">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Ils nous font confiance
+            </h2>
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Des restaurateurs satisfaits à travers la France
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <div className="mb-6">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
+                  ))}
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Gestion des réservations</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Recevez et gérez toutes vos réservations en temps réel avec statuts (en attente,
-                  confirmée, annulée, terminée).
+                <p className="text-[#666666] font-light leading-relaxed">
+                  &quot;TableMaster a transformé notre gestion quotidienne. Interface claire, fonctionnalités
+                  complètes. Je recommande vivement.&quot;
                 </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Calendrier temps réel
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Confirmation par email
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Gestion des couverts
-                  </li>
-                </ul>
+              </div>
+              <div>
+                <p className="text-[#2A2A2A] font-normal">Sophie Martin</p>
+                <p className="text-sm text-[#666666] font-light">Le Jardin Gourmand, Paris</p>
               </div>
             </div>
 
-            {/* Feature 2 - Menu */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <Menu className="w-8 h-8 text-emerald-500" />
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <div className="mb-6">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
+                  ))}
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Menu digital & QR Code</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Créez et modifiez votre menu en quelques clics. Générez un QR code pour que vos
-                  clients consultent le menu facilement.
+                <p className="text-[#666666] font-light leading-relaxed">
+                  &quot;Simplicité et efficacité. Les notifications en temps réel changent vraiment la donne
+                  pour gérer les réservations.&quot;
                 </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Catégories personnalisables
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Photos des plats
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Menu PDF téléchargeable
-                  </li>
-                </ul>
+              </div>
+              <div>
+                <p className="text-[#2A2A2A] font-normal">Jean Dupont</p>
+                <p className="text-sm text-[#666666] font-light">Brasserie du Port, Lyon</p>
               </div>
             </div>
 
-            {/* Feature 3 - Notifications */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <Bell className="w-8 h-8 text-emerald-500" />
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <div className="mb-6">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
+                  ))}
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Notifications Push (PWA)</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Recevez des notifications instantanées sur votre téléphone pour chaque nouvelle
-                  réservation ou modification.
+                <p className="text-[#666666] font-light leading-relaxed">
+                  &quot;Le menu digital avec QR code est un vrai plus pour nos clients. Simple à mettre à
+                  jour, toujours à jour.&quot;
                 </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Alertes en temps réel
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Installable sur mobile
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Fonctionne hors ligne
-                  </li>
-                </ul>
+              </div>
+              <div>
+                <p className="text-[#2A2A2A] font-normal">Marie Lefevre</p>
+                <p className="text-sm text-[#666666] font-light">Chez Marie, Bordeaux</p>
               </div>
             </div>
+          </div>
 
-            {/* Feature 4 - Opening Hours */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <Clock className="w-8 h-8 text-emerald-500" />
+          <div className="mt-16 text-center">
+            <div className="inline-block border border-[#E5E5E5] px-8 py-4">
+              <div className="flex items-center gap-12">
+                <div>
+                  <p className="text-4xl font-light text-[#2A2A2A]">50+</p>
+                  <p className="text-sm text-[#666666] font-light mt-1">Restaurants</p>
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Horaires & Fermetures</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Configurez vos horaires d&apos;ouverture et bloquez des jours pour les fermetures
-                  exceptionnelles (vacances, jours fériés).
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Horaires par jour
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Jours bloqués
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Fermetures périodes
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Feature 5 - Tables */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <Users className="w-8 h-8 text-emerald-500" />
+                <div>
+                  <p className="text-4xl font-light text-[#2A2A2A]">10k+</p>
+                  <p className="text-sm text-[#666666] font-light mt-1">Réservations</p>
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">Configuration des tables</h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Gérez votre capacité avec un système simple (nombre total) ou détaillé (types de
-                  tables avec capacités différentes).
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Mode simple ou détaillé
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Capacité totale
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Taux d&apos;occupation
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Feature 6 - Dashboard */}
-            <div className="group">
-              <div className="bg-zinc-800 rounded-3xl p-10 border border-zinc-700 hover:border-emerald-600/50 transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-emerald-600/20 rounded-2xl flex items-center justify-center mb-8">
-                  <BarChart3 className="w-8 h-8 text-emerald-500" />
+                <div>
+                  <p className="text-4xl font-light text-[#2A2A2A]">99%</p>
+                  <p className="text-sm text-[#666666] font-light mt-1">Satisfaction</p>
                 </div>
-                <h3 className="text-3xl font-light text-zinc-200 mb-6">
-                  Statistiques en temps réel
-                </h3>
-                <p className="text-zinc-400 text-lg leading-relaxed font-light mb-6">
-                  Visualisez vos réservations du jour, de la semaine, votre taux d&apos;occupation
-                  et vos revenus estimés.
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Réservations aujourd&apos;hui
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Revenus estimés
-                  </li>
-                  <li className="flex items-center text-zinc-300">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                    Taux de remplissage
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="relative py-32 bg-zinc-900">
-        <div className="container mx-auto px-8">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center px-5 py-2 bg-zinc-800 text-emerald-500 rounded-full text-sm font-normal mb-8 border border-zinc-700">
-              💰 Option TableMaster
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-zinc-200 mb-8 leading-tight">
-              Gérez votre restaurant en autonomie
+      {/* Pricing */}
+      <section id="pricing" className="py-20 bg-white">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Tarif simple et transparent
             </h2>
-            <p className="text-2xl text-zinc-400 max-w-3xl mx-auto leading-relaxed font-light">
-              Ajoutez TableMaster à votre site web pour gérer vous-même menus, réservations et
-              paramètres.
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Une formule unique qui inclut toutes les fonctionnalités
             </p>
           </div>
 
           <div className="max-w-2xl mx-auto">
-            <div className="bg-zinc-800 rounded-3xl p-12 border border-zinc-700">
-              <div className="text-center mb-10">
-                <h3 className="text-4xl font-light text-zinc-200 mb-6">Option TableMaster</h3>
-                <div className="flex items-baseline justify-center gap-2">
-                  <span className="text-7xl font-light text-emerald-500">50€</span>
-                  <span className="text-2xl text-zinc-400">/mois</span>
+            <div className="border-2 border-[#0066FF] bg-white p-12">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-light text-[#2A2A2A] mb-6">Formule Complète</h3>
+                <div className="flex items-baseline justify-center gap-2 mb-2">
+                  <span className="text-6xl font-light text-[#0066FF]">50€</span>
+                  <span className="text-xl text-[#666666]">/mois</span>
                 </div>
-                <p className="text-zinc-400 mt-6 text-lg">En complément de votre site web</p>
+                <p className="text-[#666666] font-light">Sans engagement • Résiliable à tout moment</p>
               </div>
 
-              <div className="space-y-6 mb-10">
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Accès complet au dashboard TableMaster</span>
+              <div className="space-y-4 mb-10">
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Toutes les fonctionnalités incluses</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Gestion illimitée des réservations</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Réservations illimitées</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Notifications push en temps réel (PWA)</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Menu digital avec QR code</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Gestion autonome du menu & QR code</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Notifications push en temps réel</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Configuration horaires & fermetures</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Statistiques et rapports</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Statistiques & analyses en temps réel</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Support technique prioritaire</span>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-300">
-                  <CheckCircle className="w-6 h-6 text-emerald-500 flex-shrink-0" />
-                  <span className="text-lg font-light">Support technique inclus</span>
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Mises à jour automatiques</span>
                 </div>
               </div>
 
-              <div className="bg-zinc-700/30 rounded-2xl p-8 mb-10 border border-zinc-700">
-                <p className="text-zinc-400 text-center text-lg leading-relaxed font-light">
-                  <strong className="text-emerald-500 font-normal">💡 Bon à savoir :</strong>{' '}
-                  TableMaster est une option ajoutée à votre site web. Si vous préférez gérer vos
-                  contenus vous-même, je m&apos;occupe des mises à jour pour vous sans frais
-                  supplémentaires.
-                </p>
-              </div>
+              <Link
+                href="/login"
+                className="block w-full text-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
+              >
+                Commencer maintenant
+              </Link>
 
-              <a href="#contact" className="block">
-                <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-normal py-6 rounded-lg transition-colors duration-300">
-                  <span className="flex items-center justify-center">
-                    En savoir plus
-                    <ArrowRight className="ml-3 w-5 h-5" />
-                  </span>
-                </button>
-              </a>
-
-              <p className="text-center text-zinc-500 text-sm mt-8">
-                Sans engagement • Résiliable à tout moment • Site web vendu séparément
+              <p className="text-center text-[#666666] text-sm mt-6 font-light">
+                Essai gratuit 14 jours • Aucune carte bancaire requise
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact/CTA Section */}
-      <section id="contact" className="relative py-32 bg-zinc-900 overflow-hidden">
-        <div className="container mx-auto px-8 relative z-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center px-5 py-2 bg-emerald-600/20 text-emerald-500 rounded-full text-sm font-normal mb-10 border border-emerald-600/30">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Prêt à digitaliser votre restaurant ?
-            </div>
-
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-zinc-200 mb-10 leading-tight">
-              Discutons de votre projet
-              <span className="block mt-3 text-emerald-500 font-normal">ensemble</span>
+      {/* FAQ */}
+      <section id="faq" className="py-20 bg-[#FAFAFA]">
+        <div className="container mx-auto max-w-4xl px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Questions fréquentes
             </h2>
-
-            <p className="text-2xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-              Contactez-moi pour parler de votre restaurant et découvrir comment TableMaster peut
-              simplifier votre gestion quotidienne.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link href="/login" className="group">
-                <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-normal py-7 px-14 rounded-lg transition-colors duration-300">
-                  <span className="flex items-center justify-center">
-                    Démarrer maintenant
-                    <ArrowRight className="ml-4 w-6 h-6" />
-                  </span>
-                </button>
-              </Link>
-            </div>
-
-            <p className="text-zinc-500 text-sm mt-10">
-              <span className="text-emerald-500">✓</span> Réponse sous 24h •{' '}
-              <span className="text-emerald-500">✓</span> Démonstration gratuite •{' '}
-              <span className="text-emerald-500">✓</span> Accompagnement personnalisé
+            <p className="text-xl text-[#666666] font-light">
+              Tout ce que vous devez savoir sur TableMaster
             </p>
           </div>
+
+          <div className="space-y-6">
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Puis-je essayer TableMaster gratuitement ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Oui, vous bénéficiez de 14 jours d&apos;essai gratuit sans engagement. Aucune carte bancaire
+                n&apos;est requise pour démarrer.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Puis-je résilier à tout moment ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Absolument. Il n&apos;y a aucun engagement de durée. Vous pouvez arrêter votre abonnement quand
+                vous le souhaitez depuis votre tableau de bord.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Les mises à jour sont-elles incluses ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Oui, toutes les mises à jour et nouvelles fonctionnalités sont incluses gratuitement dans
+                votre abonnement.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Mes données sont-elles sécurisées ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Vos données sont hébergées en France, chiffrées et sauvegardées quotidiennement. Nous
+                sommes conformes au RGPD.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Avez-vous un support client ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Oui, notre équipe support est disponible par email et chat. Les clients premium bénéficient
+                d&apos;un support prioritaire.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E5E5E5] p-8">
+              <h3 className="text-xl font-normal text-[#2A2A2A] mb-3">
+                Puis-je importer mes données existantes ?
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed">
+                Oui, nous pouvons vous aider à migrer vos données depuis votre système actuel. Contactez
+                notre équipe pour en discuter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-6">
+            Prêt à simplifier la gestion de votre restaurant ?
+          </h2>
+          <p className="text-xl text-[#666666] font-light mb-10 max-w-2xl mx-auto">
+            Rejoignez les restaurateurs qui font confiance à TableMaster pour gérer leur activité au
+            quotidien.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex items-center px-10 py-5 bg-[#0066FF] text-white text-lg font-light hover:bg-[#0052CC] transition-colors"
+          >
+            Essayer gratuitement 14 jours
+            <ArrowRight className="ml-3 w-5 h-5" />
+          </Link>
+          <p className="text-sm text-[#666666] font-light mt-6">
+            Sans carte bancaire • Installation en 5 minutes • Support inclus
+          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-zinc-900 text-white py-20 border-t border-zinc-800">
-        <div className="container mx-auto px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            {/* Brand */}
+      <footer className="bg-[#FAFAFA] border-t border-[#E5E5E5] py-16">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center">
-                  <Utensils className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-light text-zinc-200">TableMaster</span>
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-6 h-6 bg-[#0066FF]" />
+                <span className="text-lg font-light text-[#2A2A2A]">TableMaster</span>
               </div>
-              <p className="text-zinc-400 mb-8 leading-relaxed font-light">
-                Solution sur-mesure pour la digitalisation de votre restaurant. Site web + tableau
-                de bord complet.
+              <p className="text-[#666666] font-light leading-relaxed text-sm">
+                Solution de gestion complète pour restaurants et établissements de restauration.
               </p>
             </div>
 
-            {/* Links */}
             <div>
-              <h3 className="font-light text-white mb-8 text-xl">Navigation</h3>
-              <ul className="space-y-4">
+              <h3 className="font-normal text-[#2A2A2A] mb-4">Produit</h3>
+              <ul className="space-y-3">
                 <li>
-                  <a
-                    href="#features"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
+                  <a href="#features" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
                     Fonctionnalités
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#how-it-works"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Comment ça marche
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
+                  <a href="#pricing" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
                     Tarifs
                   </a>
                 </li>
                 <li>
-                  <Link
-                    href="/login"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
+                  <a href="#faq" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-normal text-[#2A2A2A] mb-4">Support</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link href="/login" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
                     Connexion
                   </Link>
                 </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-light text-white mb-8 text-xl">Service</h3>
-              <ul className="space-y-4">
                 <li>
-                  <a
-                    href="#contact"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Nous contacter
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#contact"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Demander une démo
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Support
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
+                  <a href="#" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
                     Documentation
                   </a>
                 </li>
+                <li>
+                  <a href="#" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-light text-white mb-8 text-xl">Légal</h3>
-              <ul className="space-y-4">
+              <h3 className="font-normal text-[#2A2A2A] mb-4">Légal</h3>
+              <ul className="space-y-3">
                 <li>
-                  <a
-                    href="#"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Conditions d&apos;utilisation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
-                    Politique de confidentialité
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-zinc-400 hover:text-emerald-500 font-light transition-colors duration-300"
-                  >
+                  <a href="#" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
                     Mentions légales
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
+                    Confidentialité
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-[#666666] hover:text-[#0066FF] font-light text-sm">
+                    CGU
                   </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-zinc-800 mt-12 pt-8 text-center text-zinc-500">
-            <p>&copy; {new Date().getFullYear()} TableMaster. Tous droits réservés.</p>
-            <p className="text-sm mt-3 font-light">
-              Solution sur-mesure pour restaurants • Développé avec passion
+          <div className="border-t border-[#E5E5E5] pt-8 text-center">
+            <p className="text-[#666666] text-sm font-light">
+              © {new Date().getFullYear()} TableMaster. Tous droits réservés.
             </p>
           </div>
         </div>
