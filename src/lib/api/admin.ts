@@ -9,6 +9,32 @@ export class AdminApi extends ApiClient {
         active: number;
         inactive: number;
         recent: number;
+        byAccountType: {
+          managed: number;
+          selfService: number;
+        };
+      };
+      subscriptions: {
+        byPlan: {
+          starter: number;
+          pro: number;
+        };
+        byStatus: {
+          active: number;
+          trial: number;
+          pastDue: number;
+          cancelled: number;
+        };
+        activeSubscriptions: number;
+      };
+      revenue: {
+        mrr: number;
+        breakdown: {
+          starter: number;
+          pro: number;
+        };
+        activeStarterCount: number;
+        activeProCount: number;
       };
       users: {
         total: number;
@@ -17,12 +43,17 @@ export class AdminApi extends ApiClient {
         server: number;
       };
       reservations: {
+        total: number;
+        thisMonth: number;
         recent: number;
+        averageQuotaUsage: number;
       };
       topRestaurants: Array<{
         restaurantId: string;
         restaurantName: string;
         reservationCount: number;
+        accountType?: string;
+        subscriptionPlan?: string;
       }>;
     };
   }> {

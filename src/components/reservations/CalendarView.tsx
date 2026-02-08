@@ -3,6 +3,7 @@
 import { Reservation } from '@/types';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getLocalDateString } from '@/lib/formatters';
 
 interface CalendarViewProps {
   reservations: Reservation[];
@@ -56,10 +57,10 @@ export default function CalendarView({
   const getDayStats = (day: number) => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+    const dateStr = getLocalDateString(new Date(year, month, day));
 
     const dayReservations = reservations.filter((r) => {
-      const resDate = new Date(r.date).toISOString().split('T')[0];
+      const resDate = getLocalDateString(r.date);
       return resDate === dateStr && r.status !== 'cancelled';
     });
 

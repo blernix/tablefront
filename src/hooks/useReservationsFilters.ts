@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Reservation } from '@/types';
 import { isToday, isThisWeek } from 'date-fns';
+import { getLocalDateString } from '@/lib/formatters';
 
 export type QuickFilterType = 'today' | 'week' | 'pending' | null;
 
@@ -43,11 +44,11 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
 
       // Date range filter
       if (dateRangeStart) {
-        const resDate = new Date(r.date).toISOString().split('T')[0];
+        const resDate = getLocalDateString(r.date);
         if (resDate < dateRangeStart) return false;
       }
       if (dateRangeEnd) {
-        const resDate = new Date(r.date).toISOString().split('T')[0];
+        const resDate = getLocalDateString(r.date);
         if (resDate > dateRangeEnd) return false;
       }
 
@@ -83,6 +84,19 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
     return Array.from(new Set(reservations.map(r => r.customerName))).sort();
   }, [reservations]);
 
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (statusFilter) count++;
+    if (searchTerm) count++;
+    if (dateRangeStart) count++;
+    if (dateRangeEnd) count++;
+    if (minGuests) count++;
+    if (maxGuests) count++;
+    if (quickFilter) count++;
+    return count;
+  }, [statusFilter, searchTerm, dateRangeStart, dateRangeEnd, minGuests, maxGuests, quickFilter]);
+
   return {
     filteredReservations,
     statusFilter,
@@ -100,6 +114,7 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
     quickFilter,
     setQuickFilter,
     clearAllFilters,
-    suggestions
+    suggestions,
+    activeFilterCount
   };
 };

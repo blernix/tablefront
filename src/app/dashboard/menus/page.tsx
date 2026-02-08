@@ -6,23 +6,26 @@ import TabNavigation from '@/components/menus/TabNavigation';
 import DashboardTab from '@/components/menus/DashboardTab';
 import PlatsTab from '@/components/menus/PlatsTab';
 import PublicationTab from '@/components/menus/PublicationTab';
+import { FeatureUpgradeSection } from '@/features';
 
 function MenusContent() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'dashboard';
 
   return (
-    <div className="flex flex-col h-full min-h-screen">
-      {/* Desktop: onglets en haut, Mobile: bottom-bar */}
-      <TabNavigation activeTab={activeTab} />
+    <FeatureUpgradeSection feature="menus">
+      <div className="flex flex-col h-full min-h-screen">
+        {/* Desktop: onglets en haut, Mobile: bottom-bar */}
+        <TabNavigation activeTab={activeTab} />
 
-      {/* Contenu de l'onglet actif */}
-      <div className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 pt-4 md:pt-6">
-        {activeTab === 'dashboard' && <DashboardTab />}
-        {activeTab === 'plats' && <PlatsTab />}
-        {activeTab === 'publication' && <PublicationTab />}
+        {/* Contenu de l'onglet actif */}
+        <div className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 pt-4 md:pt-6">
+          {activeTab === 'dashboard' && <DashboardTab />}
+          {activeTab === 'plats' && <PlatsTab />}
+          {activeTab === 'publication' && <PublicationTab />}
+        </div>
       </div>
-    </div>
+    </FeatureUpgradeSection>
   );
 }
 

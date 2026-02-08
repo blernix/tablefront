@@ -4,9 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Utensils, Calendar, Settings, X } from 'lucide-react';
+import { LayoutDashboard, Utensils, Calendar, Settings, X, Users, CalendarX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
+import { useRestaurantStore, useRestaurantPlan } from '@/store/restaurantStore';
+import { useCanAccessMenus, useFeatureAccess } from '@/features';
 
 const navigation = [
   {
@@ -20,6 +23,18 @@ const navigation = [
     href: '/dashboard/reservations',
     icon: Calendar,
     allowedRoles: ['admin', 'restaurant', 'server'] as const,
+  },
+  {
+    name: 'Gestion des serveurs',
+    href: '/dashboard/settings/servers',
+    icon: Users,
+    allowedRoles: ['admin', 'restaurant'] as const,
+  },
+  {
+    name: 'Fermetures exceptionnelles',
+    href: '/dashboard/settings/closures',
+    icon: CalendarX,
+    allowedRoles: ['admin', 'restaurant'] as const,
   },
   {
     name: 'Menus',
@@ -40,21 +55,68 @@ interface DashboardSidebarProps {
   setIsMobileMenuOpen: (open: boolean) => void;
 }
 
+// Skeleton component for loading state
+function SidebarSkeleton() {
+  return (
+    <div className="fixed inset-y-0 left-0 z-50 w-64 border-r border-[#E5E5E5] bg-white md:relative">
+      {/* Header skeleton */}
+      <div className="relative flex h-16 items-center justify-between border-b border-[#E5E5E5] px-6">
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-slate-200" />
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 bg-slate-200 rounded" />
+          <div className="h-6 w-32 bg-slate-200 rounded" />
+        </div>
+      </div>
+      
+      {/* Navigation skeleton */}
+      <nav className="flex-1 space-y-1 p-4">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="h-12 bg-slate-100 rounded animate-pulse" />
+        ))}
+      </nav>
+      
+      {/* Footer skeleton */}
+      <div className="border-t border-[#E5E5E5] p-4">
+        <div className="flex items-center gap-3 border border-[#E5E5E5] bg-[#FAFAFA] px-3 py-2">
+          <div className="h-8 w-8 bg-slate-200 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <div className="h-3 w-24 bg-slate-200 rounded" />
+            <div className="h-2 w-16 bg-slate-200 rounded" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardSidebar({
   isMobileMenuOpen,
   setIsMobileMenuOpen,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { user } = useAuthStore();
+  const { restaurant, isLoading } = useRestaurantStore();
+  const { isSelfService } = useRestaurantPlan();
+  const menuAccess = useFeatureAccess('menus');
+  const canAccessMenus = menuAccess.hasAccess;
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  // Filter navigation based on user role - memoized to prevent recalculation
+  // Filter navigation based on user role and feature access
   const filteredNavigation = useMemo(() => {
-    return navigation.filter((item) =>
+    let filtered = navigation.filter((item) =>
       user?.role ? item.allowedRoles.includes(user.role as any) : false
     );
+
+    // Keep "Menus" for all users (marketing approach)
+    // We'll show it with a Pro badge if user doesn't have access
+    return filtered;
   }, [user?.role]);
+
+  // Show skeleton while loading
+  if (isLoading) {
+    return <SidebarSkeleton />;
+  }
 
   return (
     <>
@@ -117,7 +179,14 @@ export default function DashboardSidebar({
                     isActive ? 'text-[#0066FF]' : 'text-[#666666] group-hover:text-[#2A2A2A]'
                   )}
                 />
-                {item.name}
+                <div className="flex items-center justify-between flex-1">
+                  <span>{item.name}</span>
+                  {item.name === 'Menus' && !canAccessMenus && (
+                    <Badge variant="outline" className="ml-2 text-xs border-[#0066FF] text-[#0066FF]">
+                      {menuAccess.reason === 'account-type' ? 'Managed' : 'Pro'}
+                    </Badge>
+                  )}
+                </div>
               </Link>
             );
           })}

@@ -1,24 +1,28 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Reservation } from '@/types';
+import { Reservation, Restaurant } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Users, TrendingUp, AlertCircle, DollarSign } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { getLocalDateString } from '@/lib/formatters';
+import { calculateDailyTheoreticalCapacity } from '@/lib/capacityCalculations';
 
 interface CalendarStatsProps {
   reservations: Reservation[];
   currentMonth: Date;
   maxCapacity?: number;
   averagePrice?: number;
+  restaurant?: Restaurant | null;
 }
 
 export const CalendarStats = ({
   reservations,
   currentMonth,
   maxCapacity = 50,
-  averagePrice = 25
+  averagePrice = 25,
+  restaurant = null
 }: CalendarStatsProps) => {
   const stats = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
@@ -46,17 +50,36 @@ export const CalendarStats = ({
 
     // Days in month
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd }).length;
+    const daysInMonthArray = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-    // Occupation rate (based on max capacity per day)
-    const maxMonthCapacity = maxCapacity * daysInMonth;
-    const occupationRate = maxMonthCapacity > 0
-      ? ((totalGuests / maxMonthCapacity) * 100).toFixed(1)
+    // Calculate theoretical capacity for the month if restaurant data available
+    let totalTheoreticalCapacity = 0;
+    let displayCapacity = maxCapacity; // Use simultaneous capacity for display
+    
+    if (restaurant) {
+      totalTheoreticalCapacity = daysInMonthArray.reduce((total, day) => {
+        const dateStr = getLocalDateString(day);
+        const dailyCapacity = calculateDailyTheoreticalCapacity(restaurant, dateStr);
+        return total + dailyCapacity.totalTheoreticalCapacity;
+      }, 0);
+      // Keep displayCapacity as simultaneous capacity for consistency
+      displayCapacity = maxCapacity;
+    } else {
+      // Fallback to simultaneous capacity
+      totalTheoreticalCapacity = maxCapacity * daysInMonth;
+      displayCapacity = maxCapacity;
+    }
+
+    // Occupation rate (based on simultaneous capacity for the month for consistency)
+    const totalSimultaneousCapacity = maxCapacity * daysInMonth;
+    const occupationRate = totalSimultaneousCapacity > 0
+      ? ((totalGuests / totalSimultaneousCapacity) * 100).toFixed(1)
       : '0';
 
     // Find busiest day
     const reservationsByDay: Record<string, Reservation[]> = {};
     monthReservations.forEach(r => {
-      const dateKey = new Date(r.date).toISOString().split('T')[0];
+      const dateKey = getLocalDateString(r.date);
       if (!reservationsByDay[dateKey]) {
         reservationsByDay[dateKey] = [];
       }
@@ -92,11 +115,12 @@ export const CalendarStats = ({
       estimatedRevenue,
       avgGuestsPerReservation,
       occupationRate,
+      displayCapacity,
       busiestDay: busiestDayFormatted,
       busiestDayGuests: busiestDay.guests,
       statusBreakdown
     };
-  }, [reservations, currentMonth, maxCapacity, averagePrice]);
+  }, [reservations, currentMonth, maxCapacity, averagePrice, restaurant]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -150,7 +174,7 @@ export const CalendarStats = ({
                 {stats.occupationRate}%
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                Capacité max: {maxCapacity}/jour
+                Capacité max: {stats.displayCapacity}/jour
               </p>
             </div>
             <div className={`h-12 w-12 rounded-full flex items-center justify-center ${

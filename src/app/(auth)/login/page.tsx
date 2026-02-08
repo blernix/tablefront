@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import TwoFactorVerificationModal from '@/components/modals/TwoFactorVerificationModal';
 import { TwoFactorRequiredError } from '@/lib/api/auth';
 import { AuthResponse } from '@/types';
+import AuthNavbar from '@/components/auth/AuthNavbar';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -141,17 +142,25 @@ export default function LoginPage() {
   const displayError = error || localError;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-6">
-      <div className="w-full max-w-md">
-        {/* Logo & Title */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-[#0066FF]" />
-            <span className="text-2xl font-light text-[#2A2A2A]">TableMaster</span>
+    <>
+      <AuthNavbar activePage="login" />
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-6 pt-24 md:pt-6">
+        <div className="w-full max-w-md">
+          {/* Logo & Title - hidden on desktop since navbar shows logo */}
+          <div className="text-center mb-12 md:hidden">
+            <div className="inline-flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-[#0066FF]" />
+              <span className="text-2xl font-light text-[#2A2A2A]">TableMaster</span>
+            </div>
+            <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
+            <p className="text-[#666666] font-light">Accédez à votre espace d&apos;administration</p>
           </div>
-          <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
-          <p className="text-[#666666] font-light">Accédez à votre espace d&apos;administration</p>
-        </div>
+          
+          {/* Desktop title */}
+          <div className="text-center mb-12 hidden md:block">
+            <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
+            <p className="text-[#666666] font-light">Accédez à votre espace d&apos;administration</p>
+          </div>
 
         {/* Form */}
         <div className="bg-white border border-[#E5E5E5] p-8">
@@ -236,6 +245,7 @@ export default function LoginPage() {
           email={twoFactorData.email}
         />
       )}
-    </div>
+      </div>
+    </>
   );
 }

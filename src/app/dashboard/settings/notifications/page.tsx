@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import type { NotificationPreferences } from '@/types';
 import { Bell, BellOff, Check, Loader2, AlertCircle } from 'lucide-react';
+import { UpgradeCTA, useIsStarter } from '@/features';
 
 
 export default function NotificationsSettingsPage() {
@@ -23,6 +24,7 @@ export default function NotificationsSettingsPage() {
     loadPreferences,
   } = usePushNotifications();
 
+  const isStarter = useIsStarter();
   const [localPreferences, setLocalPreferences] = useState(preferences);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -209,23 +211,29 @@ export default function NotificationsSettingsPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="email-enabled" className="font-medium">
-                    Notifications email
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Activer/désactiver toutes les notifications email
-                  </p>
+              {isStarter ? (
+                <div className="mb-4">
+                  <UpgradeCTA feature="automated-emails" type="banner" />
                 </div>
-                <input
-                  type="checkbox"
-                  id="email-enabled"
-                  checked={localPreferences.emailEnabled}
-                  onChange={(e) => handlePreferenceChange('emailEnabled', e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="email-enabled" className="font-medium">
+                      Notifications email
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      Activer/désactiver toutes les notifications email
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="email-enabled"
+                    checked={localPreferences.emailEnabled}
+                    onChange={(e) => handlePreferenceChange('emailEnabled', e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Event-specific preferences */}

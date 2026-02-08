@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { UserPlus, Trash2, Edit2, Eye, EyeOff } from 'lucide-react';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
+import { FeatureUpgradeSection } from '@/features';
 
 export default function ServersPage() {
   const router = useRouter();
@@ -164,7 +165,8 @@ export default function ServersPage() {
   }
 
   return (
-    <div className="p-8">
+    <FeatureUpgradeSection feature="team-management">
+      <div className="p-8">
       <div className="space-y-4 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
@@ -434,5 +436,6 @@ export default function ServersPage() {
         isLoading={isDeleting}
       />
     </div>
-  );
+  </FeatureUpgradeSection>
+);
 }

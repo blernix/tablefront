@@ -8,6 +8,7 @@ import { ServersApi } from './servers';
 import { ClosuresApi } from './closures';
 import { AdminApi } from './admin';
 import { NotificationsApi } from './notifications';
+import { BillingApi } from './billing';
 
 class UnifiedApiClient {
   private baseClient: ApiClient;
@@ -20,6 +21,7 @@ class UnifiedApiClient {
   public closures: ClosuresApi;
   public admin: AdminApi;
   public notifications: NotificationsApi;
+  public billing: BillingApi;
 
   constructor(baseUrl: string) {
     this.baseClient = new ApiClient(baseUrl);
@@ -32,6 +34,7 @@ class UnifiedApiClient {
     this.closures = new ClosuresApi(baseUrl);
     this.admin = new AdminApi(baseUrl);
     this.notifications = new NotificationsApi(baseUrl);
+    this.billing = new BillingApi(baseUrl);
   }
 
   // Delegate token and callback management to all modules
@@ -46,6 +49,7 @@ class UnifiedApiClient {
     this.closures.setToken(token);
     this.admin.setToken(token);
     this.notifications.setToken(token);
+    this.billing.setToken(token);
   }
 
   setOnUnauthorized(callback: () => void) {
@@ -59,6 +63,7 @@ class UnifiedApiClient {
     this.closures.setOnUnauthorized(callback);
     this.admin.setOnUnauthorized(callback);
     this.notifications.setOnUnauthorized(callback);
+    this.billing.setOnUnauthorized(callback);
   }
 
   // Delegate healthCheck to base client

@@ -4,6 +4,7 @@ import { Reservation, DayBlock } from '@/types';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, Ban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getLocalDateString } from '@/lib/formatters';
 
 interface CalendarViewImprovedProps {
   reservations: Reservation[];
@@ -60,10 +61,10 @@ export default function CalendarViewImproved({
   const isDayBlocked = (day: number) => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+    const dateStr = getLocalDateString(new Date(year, month, day));
 
     return blockedDays.some((block) => {
-      const blockDate = new Date(block.date).toISOString().split('T')[0];
+      const blockDate = getLocalDateString(block.date);
       return blockDate === dateStr;
     });
   };
@@ -72,10 +73,10 @@ export default function CalendarViewImproved({
   const getServiceStats = (day: number) => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+    const dateStr = getLocalDateString(new Date(year, month, day));
 
     const dayReservations = reservations.filter((r) => {
-      const resDate = new Date(r.date).toISOString().split('T')[0];
+      const resDate = getLocalDateString(r.date);
       return resDate === dateStr && r.status !== 'cancelled';
     });
 
@@ -181,21 +182,28 @@ export default function CalendarViewImproved({
   return (
     <div className="bg-white rounded-lg shadow-md border border-slate-200 p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 space-y-2 md:space-y-0">
         <div className="flex items-center gap-3">
           <CalendarIcon className="h-6 w-6 text-slate-700" />
-          <h2 className="text-2xl font-bold text-slate-900">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-900">
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </h2>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handlePreviousMonth}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handlePreviousMonth}
+            className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => onMonthChange(new Date())}>
-            Aujourd&apos;hui
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleNextMonth}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleNextMonth}
+            className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell } from 'lucide-react';
+import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download } from 'lucide-react';
 
 const settingsCategories = [
   {
@@ -49,10 +49,31 @@ const settingsCategories = [
     available: true,
   },
   {
+    title: 'Intégrations',
+    description: 'Widget, WordPress, Wix, Shopify et plus',
+    icon: Code2,
+    href: '/dashboard/settings/integrations',
+    available: true,
+  },
+  {
+    title: 'Apparence du widget',
+    description: 'Personnalisez couleurs, police et style',
+    icon: Palette,
+    href: '/dashboard/settings/widget',
+    available: true,
+  },
+  {
     title: 'Notifications',
     description: 'Gérez vos préférences de notifications push et email',
     icon: Bell,
     href: '/dashboard/settings/notifications',
+    available: true,
+  },
+  {
+    title: 'Export des données',
+    description: 'Exportez vos réservations par mois ou année',
+    icon: Download,
+    href: '/dashboard/settings/export',
     available: true,
   },
 ];

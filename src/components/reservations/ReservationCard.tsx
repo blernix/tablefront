@@ -2,7 +2,7 @@
 
 import { Reservation } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Users, Phone, Mail, Edit2, Trash2, StickyNote } from 'lucide-react';
+import { Clock, Users, Phone, Mail, Edit2, Trash2, StickyNote, Check, X, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,11 @@ interface ReservationCardProps {
   onDelete?: (reservation: Reservation) => void;
   onClick?: () => void;
   showActions?: boolean;
+  // Status change actions
+  onConfirm?: (reservation: Reservation) => void;
+  onCancel?: (reservation: Reservation) => void;
+  onComplete?: (reservation: Reservation) => void;
+  onStatusChange?: (reservation: Reservation, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => void;
 }
 
 const statusConfig = {
@@ -52,7 +57,11 @@ export const ReservationCard = ({
   onEdit,
   onDelete,
   onClick,
-  showActions = true
+  showActions = true,
+  onConfirm,
+  onCancel,
+  onComplete,
+  onStatusChange
 }: ReservationCardProps) => {
   const config = statusConfig[reservation.status];
 
@@ -102,6 +111,64 @@ export const ReservationCard = ({
             </p>
           </div>
         )}
+
+        {/* Quick actions for compact view */}
+        {(onConfirm || onCancel || onComplete) && (
+          <div className="mt-3 pt-3 border-t border-slate-100 flex gap-2">
+            {reservation.status === 'pending' && onConfirm && (
+              <button
+                className="flex-1 py-1.5 px-2 bg-emerald-500 text-white text-xs font-medium rounded hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onConfirm(reservation);
+                }}
+                title="Confirmer la réservation"
+              >
+                <Check className="h-3 w-3" />
+                Confirmer
+              </button>
+            )}
+            {reservation.status === 'pending' && onCancel && (
+              <button
+                className="flex-1 py-1.5 px-2 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel(reservation);
+                }}
+                title="Refuser la réservation"
+              >
+                <X className="h-3 w-3" />
+                Refuser
+              </button>
+            )}
+            {reservation.status === 'confirmed' && onComplete && (
+              <button
+                className="flex-1 py-1.5 px-2 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onComplete(reservation);
+                }}
+                title="Marquer comme terminée"
+              >
+                <CheckCircle className="h-3 w-3" />
+                Terminer
+              </button>
+            )}
+            {reservation.status === 'confirmed' && onCancel && (
+              <button
+                className="flex-1 py-1.5 px-2 bg-amber-500 text-white text-xs font-medium rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel(reservation);
+                }}
+                title="Annuler la réservation"
+              >
+                <X className="h-3 w-3" />
+                Annuler
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -119,36 +186,100 @@ export const ReservationCard = ({
             {config.label}
           </Badge>
         </div>
-        {showActions && (onEdit || onDelete) && (
-          <div className="flex gap-2">
-            {onEdit && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(reservation);
-                }}
-                title="Modifier"
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(reservation);
-                }}
-                title="Supprimer"
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            )}
-          </div>
-        )}
+        <div className="flex flex-col items-end gap-2">
+          {/* Quick actions */}
+          {(onConfirm || onCancel || onComplete) && (
+            <div className="flex gap-2">
+              {reservation.status === 'pending' && onConfirm && (
+                <Button
+                  size="sm"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onConfirm(reservation);
+                  }}
+                  title="Confirmer la réservation"
+                >
+                  <Check className="h-3 w-3 mr-1" />
+                  Confirmer
+                </Button>
+              )}
+              {reservation.status === 'pending' && onCancel && (
+                <Button
+                  size="sm"
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCancel(reservation);
+                  }}
+                  title="Refuser la réservation"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Refuser
+                </Button>
+              )}
+              {reservation.status === 'confirmed' && onComplete && (
+                <Button
+                  size="sm"
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onComplete(reservation);
+                  }}
+                  title="Marquer comme terminée"
+                >
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Terminer
+                </Button>
+              )}
+              {reservation.status === 'confirmed' && onCancel && (
+                <Button
+                  size="sm"
+                  className="bg-amber-500 hover:bg-amber-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCancel(reservation);
+                  }}
+                  title="Annuler la réservation"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Annuler
+                </Button>
+              )}
+            </div>
+          )}
+          {/* Edit/Delete actions */}
+          {showActions && (onEdit || onDelete) && (
+            <div className="flex gap-2">
+              {onEdit && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(reservation);
+                  }}
+                  title="Modifier"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(reservation);
+                  }}
+                  title="Supprimer"
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Details */}

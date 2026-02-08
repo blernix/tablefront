@@ -15,7 +15,8 @@ import {
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { getAvailableTimeSlots } from '@/hooks/useRestaurantInfo';
+import { getLocalDateString } from '@/lib/formatters';
+import { getAvailableTimeSlots } from '@/store/restaurantStore';
 
 interface WeekViewProps {
   reservations: Reservation[];
@@ -23,6 +24,7 @@ interface WeekViewProps {
   onWeekChange: (date: Date) => void;
   onReservationClick?: (reservation: Reservation) => void;
   restaurant?: Restaurant | null;
+  maxCapacity?: number;
 }
 
 export const WeekView = ({
@@ -31,6 +33,7 @@ export const WeekView = ({
   onWeekChange,
   onReservationClick,
   restaurant,
+  maxCapacity = 50,
 }: WeekViewProps) => {
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
@@ -82,10 +85,10 @@ export const WeekView = ({
 
   // Get reservations for a specific day and hour
   const getReservationsForSlot = (day: Date, hour: number) => {
-    const dayStr = day.toISOString().split('T')[0];
+    const dayStr = getLocalDateString(day);
 
     return reservations.filter((r) => {
-      const resDate = new Date(r.date).toISOString().split('T')[0];
+      const resDate = getLocalDateString(r.date);
       if (resDate !== dayStr || r.status === 'cancelled') return false;
 
       const resHour = parseInt(r.time.split(':')[0]);
@@ -106,25 +109,63 @@ export const WeekView = ({
     }
   };
 
+  const getOccupancyColor = (guests: number) => {
+    if (guests === 0) return 'bg-slate-100';
+    const percentage = (guests / maxCapacity) * 100;
+    if (percentage < 30) return 'bg-green-100';
+    if (percentage < 60) return 'bg-yellow-100';
+    if (percentage < 90) return 'bg-orange-100';
+    return 'bg-red-100';
+  };
+
+  const getOccupancyBar = (guests: number) => {
+    if (guests === 0) return null;
+    const percentage = Math.min((guests / maxCapacity) * 100, 100);
+    let color = 'bg-green-400';
+    if (percentage >= 90) color = 'bg-red-500';
+    else if (percentage >= 60) color = 'bg-orange-400';
+    else if (percentage >= 30) color = 'bg-yellow-400';
+    return (
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 overflow-hidden rounded-b">
+        <div 
+          className={`h-full ${color} transition-all`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md border border-slate-200 p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 space-y-2 md:space-y-0">
         <div className="flex items-center gap-3">
           <Calendar className="h-6 w-6 text-slate-700" />
           <h2 className="text-xl md:text-2xl font-bold text-slate-900">
-            Semaine du {format(weekStart, 'd', { locale: fr })} au{' '}
-            {format(weekEnd, 'd MMMM yyyy', { locale: fr })}
+            <span className="md:hidden">
+              Sem. {format(weekStart, 'd', { locale: fr })}-{format(weekEnd, 'd MMM', { locale: fr })}
+            </span>
+            <span className="hidden md:inline">
+              Semaine du {format(weekStart, 'd', { locale: fr })} au{' '}
+              {format(weekEnd, 'd MMMM yyyy', { locale: fr })}
+            </span>
           </h2>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handlePreviousWeek}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handlePreviousWeek}
+            className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={handleToday}>
-            Aujourd&apos;hui
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleNextWeek}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleNextWeek}
+            className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -183,11 +224,12 @@ export const WeekView = ({
                 const hasReservations = slotReservations.length > 0;
                 const closed = isDayClosed(day);
 
+                const totalGuests = slotReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
                 return (
                   <div
                     key={`${day.toISOString()}-${hour}`}
                     className={cn(
-                      'min-h-[60px] border border-slate-200 rounded p-1',
+                      'min-h-[60px] border border-slate-200 rounded p-1 relative',
                       isToday(day) ? 'bg-blue-50/30' : 'bg-white',
                       hasReservations ? 'bg-slate-50' : '',
                       closed ? 'bg-slate-100 opacity-50' : ''
@@ -210,6 +252,7 @@ export const WeekView = ({
                         </div>
                       </button>
                     ))}
+                    {getOccupancyBar(totalGuests)}
                   </div>
                 );
               })}
@@ -219,7 +262,7 @@ export const WeekView = ({
       </div>
 
       {/* Legend */}
-      <div className="mt-6 pt-4 border-t">
+      <div className="mt-6 pt-4 border-t space-y-3">
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
@@ -232,6 +275,24 @@ export const WeekView = ({
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-slate-100 border border-slate-300 rounded"></div>
             <span className="text-slate-600">Terminée</span>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-4 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-1 bg-green-400 rounded"></div>
+            <span className="text-slate-600">Faible (&lt;30%)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-1 bg-yellow-400 rounded"></div>
+            <span className="text-slate-600">Moyen (30-60%)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-1 bg-orange-400 rounded"></div>
+            <span className="text-slate-600">Élevé (60-90%)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-1 bg-red-500 rounded"></div>
+            <span className="text-slate-600">Complet (&gt;90%)</span>
           </div>
         </div>
       </div>

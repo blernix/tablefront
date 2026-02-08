@@ -58,11 +58,40 @@ export interface Restaurant {
   status: 'active' | 'inactive';
   logoUrl?: string;
   googleReviewLink?: string;
+  accountType: 'managed' | 'self-service';
+  subscription?: {
+    plan: 'starter' | 'pro' | 'enterprise';
+    status: 'trial' | 'active' | 'past_due' | 'cancelled' | 'expired';
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    currentPeriodStart?: string;
+    currentPeriodEnd?: string;
+    cancelAtPeriodEnd?: boolean;
+    trialEndsAt?: string;
+  };
+  widgetConfig?: {
+    primaryColor?: string;
+    secondaryColor?: string;
+    fontFamily?: string;
+    borderRadius?: string;
+    // Button specific colors
+    buttonBackgroundColor?: string;
+    buttonTextColor?: string;
+    buttonHoverColor?: string;
+    // Floating button general configs
+    buttonText?: string;
+    buttonPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    buttonStyle?: 'round' | 'square' | 'minimal';
+    buttonIcon?: boolean;
+    modalWidth?: string;
+    modalHeight?: string;
+  };
   menu: {
     displayMode: 'pdf' | 'detailed' | 'both';
     pdfUrl?: string;
     qrCodeGenerated?: boolean;
-  };
+   };
+  publicSlug?: string; // Vanity URL slug
   openingHours: OpeningHours;
   tablesConfig: {
     mode: 'simple' | 'detailed';

@@ -14,7 +14,7 @@ export const useRealtimeReservations = (
   options: UseRealtimeReservationsOptions = {}
 ) => {
   const {
-    enabled = false, // ⚠️ TEMPORARILY DISABLED SSE to debug fetch issues
+    enabled = true, // ✅ SSE enabled for real-time dashboard updates
     onEvent,
     onError,
     onConnected,
@@ -106,6 +106,8 @@ export const useRealtimeReservations = (
     // Handle errors
     eventSource.onerror = (error) => {
       console.error('SSE connection error:', error);
+      console.error('EventSource readyState:', eventSource.readyState);
+      console.error('EventSource url:', eventSource.url);
       onErrorRef.current?.(error);
 
       // Close the connection
@@ -164,26 +166,8 @@ export const useRealtimeReservations = (
     // Connect on mount
     connect();
 
-    // Handle page visibility changes
-    const handleVisibilityChange = () => {
-      if (document.hidden && eventSourceRef.current) {
-        console.log('Page hidden, closing SSE connection');
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-        onDisconnectedRef.current?.();
-      } else if (!document.hidden && !eventSourceRef.current) {
-        console.log('Page visible, reconnecting SSE');
-        connect();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     // Cleanup on unmount
     return () => {
-      // Remove visibility listener
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-
       // Close SSE connection
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -214,7 +198,11 @@ export const useRealtimeReservations = (
 };
 
 // Hook for managing reservations with real-time updates
-export const useRealtimeReservationsManager = () => {
+export const useRealtimeReservationsManager = (params?: {
+  startDate?: string;
+  endDate?: string;
+  status?: string;
+}) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -311,20 +299,20 @@ export const useRealtimeReservationsManager = () => {
 
     try {
       isLoadingRef.current = true;
-      const response = await apiClient.getReservations();
+      const response = await apiClient.getReservations(params);
       setReservations(response.reservations);
     } catch (error) {
       console.error('Error refreshing reservations:', error);
     } finally {
       isLoadingRef.current = false;
     }
-  }, []);
+  }, [params]);
 
-  // Load initial reservations ONCE on mount
+  // Load initial reservations and refresh when params change
   useEffect(() => {
     refreshReservations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps - only run once on mount
+  }, [params?.startDate, params?.endDate, params?.status]);
 
   return {
     reservations,

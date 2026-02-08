@@ -21,8 +21,49 @@ const nextConfig = {
   },
   async headers() {
     return [
+      // Headers for embed pages (allow iframe embedding from any origin)
       {
-        source: '/:path*',
+        source: '/embed/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'no-referrer-when-downgrade'
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*'
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, OPTIONS'
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-Requested-With, Content-Type, x-api-key'
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors *;"
+          }
+          // Note: NO X-Frame-Options header = allows embedding in iframes
+        ],
+      },
+      // Headers for all other pages (secure, no iframe embedding)
+      // IMPORTANT: This pattern must NOT match /embed/* paths
+      {
+        source: '/((?!embed).*)',
         headers: [
           {
             key: 'X-DNS-Prefetch-Control',

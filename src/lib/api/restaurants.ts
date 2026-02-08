@@ -107,6 +107,13 @@ export class RestaurantsApi extends ApiClient {
       categories: number;
       dishes: number;
     };
+    quota?: {
+      current: number;
+      limit: number;
+      remaining: number;
+      percentage: number;
+      isUnlimited: boolean;
+    };
   }> {
     return this.request('/api/restaurant/dashboard-stats');
   }
@@ -179,4 +186,69 @@ export class RestaurantsApi extends ApiClient {
       method: 'POST',
     });
   }
-}
+
+  async updateWidgetConfig(data: {
+    primaryColor?: string;
+    secondaryColor?: string;
+    fontFamily?: string;
+    borderRadius?: string;
+    // Button specific colors
+    buttonBackgroundColor?: string;
+    buttonTextColor?: string;
+    buttonHoverColor?: string;
+    // Floating button general configs
+    buttonText?: string;
+    buttonPosition?: 'bottom-right';
+    buttonStyle?: 'round' | 'square' | 'minimal';
+    buttonIcon?: boolean;
+    modalWidth?: string;
+    modalHeight?: string;
+  }): Promise<{
+    message: string;
+    widgetConfig: {
+      primaryColor?: string;
+      secondaryColor?: string;
+      fontFamily?: string;
+      borderRadius?: string;
+      // Button specific colors
+      buttonBackgroundColor?: string;
+      buttonTextColor?: string;
+      buttonHoverColor?: string;
+      // Floating button general configs
+      buttonText?: string;
+    buttonPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+      buttonStyle?: 'round' | 'square' | 'minimal';
+      buttonIcon?: boolean;
+      modalWidth?: string;
+      modalHeight?: string;
+     };
+     restaurant: Restaurant;
+   }> {
+     return this.request('/api/restaurant/widget-config', {
+       method: 'PUT',
+       body: JSON.stringify(data),
+     });
+   }
+
+   // Vérifier la disponibilité d'un slug
+   async checkSlugAvailability(slug: string): Promise<{
+     available: boolean;
+     message: string;
+   }> {
+     return this.request(`/api/public/check-slug-availability/${slug}`, {
+       method: 'GET',
+     });
+   }
+
+   // Mettre à jour le slug personnalisé (Pro uniquement)
+   async updateSlug(data: { slug: string }): Promise<{
+     message: string;
+     slug: string;
+     available: boolean;
+   }> {
+     return this.request('/api/restaurant/slug', {
+       method: 'PUT',
+       body: JSON.stringify(data),
+     });
+   }
+ }

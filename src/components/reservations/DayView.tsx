@@ -7,7 +7,9 @@ import { ChevronLeft, ChevronRight, Calendar, Plus, Users, Clock } from 'lucide-
 import { format, addDays, subDays, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { getAvailableTimeSlots } from '@/hooks/useRestaurantInfo';
+import { getLocalDateString } from '@/lib/formatters';
+import { getAvailableTimeSlots } from '@/store/restaurantStore';
+import { calculateDailyCapacityAdvanced } from '@/hooks/useRestaurantCapacity';
 
 interface DayViewProps {
   reservations: Reservation[];
@@ -106,15 +108,18 @@ export const DayView = ({
   };
 
   // Get reservations for current day
+  const currentDayStr = getLocalDateString(currentDay);
   const dayReservations = reservations.filter((r) => {
-    const resDate = new Date(r.date).toISOString().split('T')[0];
-    const currentDayStr = currentDay.toISOString().split('T')[0];
+    const resDate = getLocalDateString(r.date);
     return resDate === currentDayStr && r.status !== 'cancelled';
   });
 
+  // Calculate advanced capacity data if restaurant available
+  const advancedCapacity = restaurant ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant) : null;
+
   // Calculate stats
   const totalGuests = dayReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-  const occupationRate = maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0;
+  const occupationRate = advancedCapacity?.dailyOccupationPercentage ?? (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
 
   // Get reservations for a specific time slot
   const getReservationsForTime = (hour: number, minute: number) => {
@@ -155,12 +160,17 @@ export const DayView = ({
       {/* Header */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-4">
+           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 space-y-2 md:space-y-0">
             <div className="flex items-center gap-3">
               <Calendar className="h-6 w-6 text-slate-700" />
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 capitalize">
-                  {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900 capitalize">
+                  <span className="md:hidden">
+                    {format(currentDay, 'EEE d MMM', { locale: fr })}
+                  </span>
+                  <span className="hidden md:inline">
+                    {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
+                  </span>
                 </h2>
                 {isToday(currentDay) && (
                   <p className="text-sm text-blue-600 font-medium mt-1">Aujourd&apos;hui</p>
@@ -168,13 +178,20 @@ export const DayView = ({
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handlePreviousDay}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handlePreviousDay}
+                className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={handleToday}>
-                Aujourd&apos;hui
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleNextDay}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleNextDay}
+                className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -221,7 +238,14 @@ export const DayView = ({
           });
 
           const serviceGuests = serviceReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-          const serviceCapacity = maxCapacity / 2; // Half capacity per service
+          let serviceCapacity = maxCapacity / 2; // Half capacity per service fallback
+          if (advancedCapacity) {
+            if (service.name === 'Déjeuner') {
+              serviceCapacity = advancedCapacity.serviceCapacities.lunch.maxCapacity;
+            } else if (service.name === 'Dîner') {
+              serviceCapacity = advancedCapacity.serviceCapacities.dinner.maxCapacity;
+            }
+          }
           const serviceOccupation =
             serviceCapacity > 0 ? (serviceGuests / serviceCapacity) * 100 : 0;
 
@@ -254,19 +278,25 @@ export const DayView = ({
                   </div>
                 </div>
 
-                {/* Capacity Bar */}
-                <div className="w-full bg-slate-200 rounded-full h-2 mb-4">
-                  <div
-                    className={cn(
-                      'h-2 rounded-full transition-all',
-                      serviceOccupation >= 90
-                        ? 'bg-red-500'
-                        : serviceOccupation >= 70
-                          ? 'bg-amber-500'
-                          : 'bg-green-500'
-                    )}
-                    style={{ width: `${Math.min(serviceOccupation, 100)}%` }}
-                  />
+                {/* Capacity Bar with numeric indicator */}
+                <div className="space-y-1 mb-4">
+                  <div className="flex justify-between text-xs text-slate-600">
+                    <span>{serviceGuests} / {serviceCapacity} couverts</span>
+                    <span>{serviceOccupation.toFixed(0)}%</span>
+                  </div>
+                  <div className="w-full bg-slate-200 rounded-full h-2">
+                    <div
+                      className={cn(
+                        'h-2 rounded-full transition-all',
+                        serviceOccupation >= 90
+                          ? 'bg-red-500'
+                          : serviceOccupation >= 70
+                            ? 'bg-amber-500'
+                            : 'bg-green-500'
+                      )}
+                      style={{ width: `${Math.min(serviceOccupation, 100)}%` }}
+                    />
+                  </div>
                 </div>
 
                 {/* Timeline */}
@@ -331,6 +361,21 @@ export const DayView = ({
                       </div>
                     );
                   })}
+                </div>
+                {/* Occupancy legend */}
+                <div className="flex flex-wrap gap-3 text-xs mt-4 pt-3 border-t border-slate-100">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-slate-600">Faible (&lt;70%)</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                    <span className="text-slate-600">Moyen (70-90%)</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span className="text-slate-600">Élevé (&gt;90%)</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

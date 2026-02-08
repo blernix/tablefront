@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Reservation } from '@/types';
+import { Reservation, Restaurant } from '@/types';
 import { ReservationCard } from './ReservationCard';
 import { SwipeableCard } from './SwipeableCard';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
@@ -10,45 +10,53 @@ import { ReservationDetailView } from './ReservationDetailView';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CapacityIndicator } from './CapacityIndicator';
 import { calculateDailyCapacity } from '@/hooks/useRestaurantCapacity';
+import { getServiceFromTime } from '@/lib/capacityCalculations';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import { getLocalDateString } from '@/lib/formatters';
 
 interface ReservationsListViewProps {
   reservations: Reservation[];
   onConfirm: (reservation: Reservation) => void;
   onCancel: (reservation: Reservation) => void;
+  onComplete?: (reservation: Reservation) => void;
   onEdit?: (reservation: Reservation) => void;
   onDelete?: (reservation: Reservation) => void;
   onStatusChange?: (reservation: Reservation, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => void;
+  restaurant?: Restaurant | null;
 }
 
 export const ReservationsListView = ({
   reservations,
   onConfirm,
   onCancel,
+  onComplete,
   onEdit,
   onDelete,
-  onStatusChange
+  onStatusChange,
+  restaurant
 }: ReservationsListViewProps) => {
   const router = useRouter();
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
-  // Group reservations by date
-  const reservationsByDate = useMemo(() => {
-    const grouped: Record<string, Reservation[]> = {};
+  // Group reservations by date and service
+  const reservationsByDateAndService = useMemo(() => {
+    const grouped: Record<string, { lunch: Reservation[], dinner: Reservation[] }> = {};
 
     reservations.forEach(reservation => {
-      const dateKey = new Date(reservation.date).toISOString().split('T')[0];
+      const dateKey = getLocalDateString(reservation.date);
       if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
+        grouped[dateKey] = { lunch: [], dinner: [] };
       }
-      grouped[dateKey].push(reservation);
+      const service = getServiceFromTime(reservation.time);
+      grouped[dateKey][service].push(reservation);
     });
 
-    // Sort reservations within each date by time
+    // Sort reservations within each service by time
     Object.keys(grouped).forEach(dateKey => {
-      grouped[dateKey].sort((a, b) => a.time.localeCompare(b.time));
+      grouped[dateKey].lunch.sort((a, b) => a.time.localeCompare(b.time));
+      grouped[dateKey].dinner.sort((a, b) => a.time.localeCompare(b.time));
     });
 
     return grouped;
@@ -56,8 +64,8 @@ export const ReservationsListView = ({
 
   // Sort dates
   const sortedDates = useMemo(() => {
-    return Object.keys(reservationsByDate).sort();
-  }, [reservationsByDate]);
+    return Object.keys(reservationsByDateAndService).sort();
+  }, [reservationsByDateAndService]);
 
   const formatDate = (dateKey: string) => {
     const date = new Date(dateKey);
@@ -100,8 +108,9 @@ export const ReservationsListView = ({
       {/* Mobile View */}
       <div className="md:hidden space-y-6">
         {sortedDates.map(dateKey => {
-          const dayReservations = reservationsByDate[dateKey];
-          const capacity = calculateDailyCapacity(dayReservations, dateKey);
+          const services = reservationsByDateAndService[dateKey];
+          const allDayReservations = [...services.lunch, ...services.dinner];
+          const capacity = calculateDailyCapacity(allDayReservations, dateKey, restaurant);
 
           return (
             <div key={dateKey} className="space-y-3">
@@ -112,31 +121,76 @@ export const ReservationsListView = ({
                   {formatDate(dateKey)}
                 </h3>
                 <span className="text-sm text-slate-500">
-                  ({dayReservations.length})
+                  ({allDayReservations.length})
                 </span>
               </div>
 
               {/* Capacity Indicator */}
               <CapacityIndicator
                 currentGuests={capacity.totalGuests}
-                maxCapacity={capacity.maxCapacity}
+                maxCapacity={capacity._advanced?.maxDailyCapacity || capacity.maxCapacity}
+                maxDailyCapacity={capacity._advanced?.maxDailyCapacity}
+                simultaneousCapacity={capacity._advanced?.maxSimultaneousCapacity}
+                serviceCapacities={capacity._advanced?.serviceCapacities}
               />
 
-              {/* Reservations */}
-              {dayReservations.map(reservation => (
-                <SwipeableCard
-                  key={reservation._id}
-                  onSwipeRight={() => handleSwipeRight(reservation)}
-                  onSwipeLeft={() => handleSwipeLeft(reservation)}
-                  disabled={reservation.status === 'completed'}
-                >
-                  <ReservationCard
-                    reservation={reservation}
-                    variant="compact"
-                    onClick={() => setSelectedReservation(reservation)}
-                  />
-                </SwipeableCard>
-              ))}
+              {/* Service du midi */}
+              {services.lunch.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2">
+                    <h4 className="text-md font-medium text-slate-700">Service du midi</h4>
+                    <span className="text-sm text-slate-500">({services.lunch.length})</span>
+                  </div>
+                  {services.lunch.map(reservation => (
+                    <SwipeableCard
+                      key={reservation._id}
+                      onSwipeRight={() => handleSwipeRight(reservation)}
+                      onSwipeLeft={() => handleSwipeLeft(reservation)}
+                      disabled={reservation.status === 'completed'}
+                    >
+                      <ReservationCard
+                        reservation={reservation}
+                        variant="compact"
+                        onClick={() => setSelectedReservation(reservation)}
+                        onConfirm={() => onConfirm(reservation)}
+                        onCancel={() => onCancel(reservation)}
+                        onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                        onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                        onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                      />
+                    </SwipeableCard>
+                  ))}
+                </div>
+              )}
+
+              {/* Service du soir */}
+              {services.dinner.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2">
+                    <h4 className="text-md font-medium text-slate-700">Service du soir</h4>
+                    <span className="text-sm text-slate-500">({services.dinner.length})</span>
+                  </div>
+                  {services.dinner.map(reservation => (
+                    <SwipeableCard
+                      key={reservation._id}
+                      onSwipeRight={() => handleSwipeRight(reservation)}
+                      onSwipeLeft={() => handleSwipeLeft(reservation)}
+                      disabled={reservation.status === 'completed'}
+                    >
+                      <ReservationCard
+                        reservation={reservation}
+                        variant="compact"
+                        onClick={() => setSelectedReservation(reservation)}
+                        onConfirm={() => onConfirm(reservation)}
+                        onCancel={() => onCancel(reservation)}
+                        onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                        onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                        onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                      />
+                    </SwipeableCard>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
@@ -145,8 +199,9 @@ export const ReservationsListView = ({
       {/* Desktop View */}
       <div className="hidden md:block space-y-4">
         {sortedDates.map(dateKey => {
-          const dayReservations = reservationsByDate[dateKey];
-          const capacity = calculateDailyCapacity(dayReservations, dateKey);
+          const services = reservationsByDateAndService[dateKey];
+          const allDayReservations = [...services.lunch, ...services.dinner];
+          const capacity = calculateDailyCapacity(allDayReservations, dateKey, restaurant);
 
           return (
             <Card key={dateKey}>
@@ -158,36 +213,80 @@ export const ReservationsListView = ({
                       {formatDate(dateKey)}
                     </CardTitle>
                     <CardDescription>
-                      {dayReservations.length} réservation{dayReservations.length > 1 ? 's' : ''}
+                      {allDayReservations.length} réservation{allDayReservations.length > 1 ? 's' : ''}
+                      {' '}(midi: {services.lunch.length}, soir: {services.dinner.length})
                     </CardDescription>
                   </div>
                   <CapacityIndicator
                     currentGuests={capacity.totalGuests}
-                    maxCapacity={capacity.maxCapacity}
+                    maxCapacity={capacity._advanced?.maxDailyCapacity || capacity.maxCapacity}
+                    maxDailyCapacity={capacity._advanced?.maxDailyCapacity}
+                    simultaneousCapacity={capacity._advanced?.maxSimultaneousCapacity}
+                    serviceCapacities={capacity._advanced?.serviceCapacities}
                     className="w-64"
                   />
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                {dayReservations.map(reservation => (
-                  <div
-                    key={reservation._id}
-                    className="transition-all hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
-                    onClick={() => router.push(`/dashboard/reservations/${reservation._id}`)}
-                  >
-                    <ReservationCard
-                      reservation={reservation}
-                      variant="full"
-                      showActions={true}
-                      onEdit={onEdit ? () => {
-                        onEdit(reservation);
-                      } : undefined}
-                      onDelete={onDelete ? () => {
-                        onDelete(reservation);
-                      } : undefined}
-                    />
+                {/* Service du midi */}
+                {services.lunch.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-lg font-semibold text-slate-900">Service du midi</h4>
+                      <span className="text-sm text-slate-500">({services.lunch.length})</span>
+                    </div>
+                    <div className="space-y-3">
+                      {services.lunch.map(reservation => (
+                        <div
+                          key={reservation._id}
+                          className="transition-all hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
+                          onClick={() => router.push(`/dashboard/reservations/${reservation._id}`)}
+                        >
+                          <ReservationCard
+                            reservation={reservation}
+                            variant="full"
+                            showActions={true}
+                            onConfirm={() => onConfirm(reservation)}
+                            onCancel={() => onCancel(reservation)}
+                            onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                            onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                            onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+
+                {/* Service du soir */}
+                {services.dinner.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-lg font-semibold text-slate-900">Service du soir</h4>
+                      <span className="text-sm text-slate-500">({services.dinner.length})</span>
+                    </div>
+                    <div className="space-y-3">
+                      {services.dinner.map(reservation => (
+                        <div
+                          key={reservation._id}
+                          className="transition-all hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
+                          onClick={() => router.push(`/dashboard/reservations/${reservation._id}`)}
+                        >
+                          <ReservationCard
+                            reservation={reservation}
+                            variant="full"
+                            showActions={true}
+                            onConfirm={() => onConfirm(reservation)}
+                            onCancel={() => onCancel(reservation)}
+                            onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                            onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                            onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           );

@@ -8,20 +8,36 @@ import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 import { useAdminRestaurants, useDeleteRestaurant } from '@/hooks/api/useAdminRestaurants';
 import AdminRestaurantsSkeleton from '@/components/skeleton/AdminRestaurantsSkeleton';
+import { ManageSubscriptionDialog } from '@/components/admin/ManageSubscriptionDialog';
+import { getRestaurantPlanDisplay } from '@/features';
 import { Restaurant } from '@/types';
 interface RestaurantItemProps {
   restaurant: Restaurant;
   onView: (id: string) => void;
   onDelete: (restaurant: Restaurant) => void;
+  onManageSubscription: (restaurant: Restaurant) => void;
 }
 
-const RestaurantItem = memo(function RestaurantItem({ restaurant, onView, onDelete }: RestaurantItemProps) {
+const RestaurantItem = memo(function RestaurantItem({ restaurant, onView, onDelete, onManageSubscription }: RestaurantItemProps) {
+  const planDisplay = getRestaurantPlanDisplay(restaurant);
+  const isSelfService = restaurant.accountType === 'self-service';
+
   return (
     <div
       className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-3 sm:p-4 hover:bg-gray-50 space-y-3 sm:space-y-0"
     >
       <div className="flex-1">
-        <h3 className="font-medium">{restaurant.name}</h3>
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-medium">{restaurant.name}</h3>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.accountTypeBadgeClass}`}>
+            {planDisplay.accountTypeDisplay}
+          </span>
+          {restaurant.subscription?.plan && (
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.badgeClass}`}>
+              {planDisplay.name}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-muted-foreground">{restaurant.address}</p>
         <p className="text-sm text-muted-foreground">
           {restaurant.phone} • {restaurant.email}
@@ -39,6 +55,15 @@ const RestaurantItem = memo(function RestaurantItem({ restaurant, onView, onDele
         </div>
       </div>
       <div className="flex gap-2 mt-3 sm:mt-0">
+        {isSelfService && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => onManageSubscription(restaurant)}
+          >
+            Gérer abonnement
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"
@@ -65,6 +90,12 @@ export default function RestaurantsPage() {
   const { data, isLoading, error, refetch } = useAdminRestaurants(page, limit);
   const deleteMutation = useDeleteRestaurant();
 
+  // Manage subscription dialog state
+  const [subscriptionDialog, setSubscriptionDialog] = useState<{
+    open: boolean;
+    restaurant: Restaurant | null;
+  }>({ open: false, restaurant: null });
+
   const restaurants = data?.restaurants || [];
   const pagination = data?.pagination;
 
@@ -82,6 +113,10 @@ export default function RestaurantsPage() {
 
   const handleView = (id: string) => {
     router.push(`/admin/restaurants/${id}`);
+  };
+
+  const handleManageSubscription = (restaurant: Restaurant) => {
+    setSubscriptionDialog({ open: true, restaurant });
   };
 
   return (
@@ -123,6 +158,7 @@ export default function RestaurantsPage() {
                       restaurant={restaurant}
                       onView={handleView}
                       onDelete={handleDelete}
+                      onManageSubscription={handleManageSubscription}
                     />
                   ))}
                </div>
@@ -161,6 +197,19 @@ export default function RestaurantsPage() {
         itemName={itemToDelete?.name}
         isLoading={isDeleting || deleteMutation.isPending}
       />
+
+      {/* Manage Subscription Dialog */}
+      {subscriptionDialog.restaurant && (
+        <ManageSubscriptionDialog
+          open={subscriptionDialog.open}
+          onOpenChange={(open) => setSubscriptionDialog({ open, restaurant: null })}
+          restaurantId={subscriptionDialog.restaurant._id}
+          restaurantName={subscriptionDialog.restaurant.name}
+          currentPlan={subscriptionDialog.restaurant.subscription?.plan}
+          currentStatus={subscriptionDialog.restaurant.subscription?.status}
+          onSuccess={() => refetch()}
+        />
+      )}
     </>
   );
 }

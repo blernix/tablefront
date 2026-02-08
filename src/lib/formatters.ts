@@ -107,3 +107,26 @@ export const capitalize = (text: string): string => {
   if (!text) return '';
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 };
+
+/**
+ * Get local date string in YYYY-MM-DD format (timezone-safe)
+ * @param date - Date object or string
+ * @returns Date string in YYYY-MM-DD format based on local timezone
+ */
+export const getLocalDateString = (date: Date | string): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * Compare two dates by their local date (ignore time/timezone)
+ * @param date1 - First date
+ * @param date2 - Second date
+ * @returns True if dates represent the same calendar day in local timezone
+ */
+export const isSameLocalDate = (date1: Date | string, date2: Date | string): boolean => {
+  return getLocalDateString(date1) === getLocalDateString(date2);
+};
