@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Reservation } from '@/types';
 import { ReservationDetailView } from '@/components/reservations/ReservationDetailView';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 
 export default function ReservationDetailPage({
   params
@@ -15,9 +16,12 @@ export default function ReservationDetailPage({
   params: { id: string }
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [actionProcessed, setActionProcessed] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const loadReservation = async () => {
@@ -36,6 +40,45 @@ export default function ReservationDetailPage({
 
     loadReservation();
   }, [params.id, router]);
+
+  // Handle action from notification (confirm/cancel)
+  useEffect(() => {
+    if (isLoading || actionProcessed || !reservation) return;
+
+    const action = searchParams.get('action');
+    if (!action || (action !== 'confirm' && action !== 'cancel')) return;
+
+    // Process the action
+    const processAction = async () => {
+      try {
+        setIsUpdating(true);
+        const status = action === 'confirm' ? 'confirmed' : 'cancelled';
+        await apiClient.updateReservation(reservation._id, {
+          status,
+          sendEmail: true
+        });
+
+        const statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
+        toast.success(`Réservation ${statusLabel} depuis la notification`);
+
+        // Refresh reservation data
+        const response = await apiClient.getReservation(params.id);
+        setReservation(response.reservation);
+
+        // Remove action from URL to prevent re-execution
+        const newUrl = window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
+      } catch (error) {
+        console.error('Error processing notification action:', error);
+        toast.error(`Erreur lors de la ${action === 'confirm' ? 'confirmation' : 'annulation'}`);
+      } finally {
+        setIsUpdating(false);
+        setActionProcessed(true);
+      }
+    };
+
+    processAction();
+  }, [isLoading, actionProcessed, reservation, searchParams, params.id]);
 
   const handleStatusChange = async (status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
     if (!reservation) return;
@@ -71,12 +114,12 @@ export default function ReservationDetailPage({
     router.push(`/dashboard/reservations?edit=${params.id}`);
   };
 
-  const handleDelete = async () => {
-    if (!reservation) return;
+  const handleDelete = () => {
+    setIsDeleteModalOpen(true);
+  };
 
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer la réservation de ${reservation.customerName} ?`)) {
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!reservation) return;
 
     try {
       setIsUpdating(true);
@@ -121,6 +164,16 @@ export default function ReservationDetailPage({
         onEdit={handleEdit}
         onDelete={handleDelete}
         onStatusChange={isUpdating ? undefined : handleStatusChange}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Supprimer la réservation"
+        itemName={reservation ? `la réservation de ${reservation.customerName}` : undefined}
+        description="Êtes-vous sûr de vouloir supprimer définitivement cette réservation ? Cette action est irréversible."
+        isLoading={isUpdating}
       />
     </div>
   );

@@ -166,6 +166,9 @@ export default function ReservationsPage() {
     status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
     formData?: FormData;
     callback?: () => Promise<void>;
+    modalTitle?: string;
+    modalMessage?: string;
+    showEmailOption?: boolean;
   }>({
     show: false,
     action: 'create',
@@ -320,8 +323,24 @@ export default function ReservationsPage() {
     reservation?: Reservation,
     status?: 'pending' | 'confirmed' | 'cancelled' | 'completed',
     formData?: FormData,
-    callback?: () => Promise<void>
+    callback?: () => Promise<void>,
+    options?: {
+      modalTitle?: string;
+      modalMessage?: string;
+      showEmailOption?: boolean;
+    }
   ) => {
+    // Définir les valeurs par défaut selon l'action
+    const defaultOptions = {
+      modalTitle: action === 'delete' 
+        ? 'Supprimer la réservation' 
+        : 'Confirmer l\'action',
+      modalMessage: action === 'delete'
+        ? `Êtes-vous sûr de vouloir supprimer définitivement la réservation de ${reservation?.customerName} ? Cette action est irréversible.`
+        : 'Voulez-vous envoyer un email de confirmation au client ?',
+      showEmailOption: action !== 'delete'
+    };
+    
     setEmailConfirmationModal({
       show: true,
       action,
@@ -329,8 +348,11 @@ export default function ReservationsPage() {
       status,
       formData,
       callback,
+      modalTitle: options?.modalTitle || defaultOptions.modalTitle,
+      modalMessage: options?.modalMessage || defaultOptions.modalMessage,
+      showEmailOption: options?.showEmailOption !== undefined ? options.showEmailOption : defaultOptions.showEmailOption,
     });
-    setSendEmail(true);
+    setSendEmail(action !== 'delete');
   };
 
   const closeEmailConfirmationModal = () => {
@@ -454,11 +476,7 @@ export default function ReservationsPage() {
   };
 
   const handleDelete = (reservation: Reservation) => {
-    if (
-      confirm(`Êtes-vous sûr de vouloir supprimer la réservation de ${reservation.customerName} ?`)
-    ) {
-      openEmailConfirmationModal('delete', reservation);
-    }
+    openEmailConfirmationModal('delete', reservation);
   };
 
   const handleStatusChange = (
@@ -1345,25 +1363,27 @@ export default function ReservationsPage() {
       {emailConfirmationModal.show && (
         <div className="fixed inset-0 bg-[#0A0A0A] bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border border-[#E5E5E5] max-w-md w-full p-8 space-y-4">
-            <div>
-              <h3 className="text-lg font-light text-[#2A2A2A]">Confirmer l&apos;action</h3>
-              <p className="mt-2 text-sm text-[#666666]">
-                Voulez-vous envoyer un email de confirmation au client ?
-              </p>
-            </div>
+             <div>
+               <h3 className="text-lg font-light text-[#2A2A2A]">{emailConfirmationModal.modalTitle || 'Confirmer l\'action'}</h3>
+               <p className="mt-2 text-sm text-[#666666]">
+                 {emailConfirmationModal.modalMessage || 'Voulez-vous envoyer un email de confirmation au client ?'}
+               </p>
+             </div>
 
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="sendEmailCheckbox"
-                checked={sendEmail}
-                onChange={(e) => setSendEmail(e.target.checked)}
-                className="h-4 w-4 border-[#E5E5E5]"
-              />
-              <label htmlFor="sendEmailCheckbox" className="text-sm text-[#2A2A2A]">
-                Envoyer un email au client
-              </label>
-            </div>
+             {emailConfirmationModal.showEmailOption !== false && (
+               <div className="flex items-center gap-3">
+                 <input
+                   type="checkbox"
+                   id="sendEmailCheckbox"
+                   checked={sendEmail}
+                   onChange={(e) => setSendEmail(e.target.checked)}
+                   className="h-4 w-4 border-[#E5E5E5]"
+                 />
+                 <label htmlFor="sendEmailCheckbox" className="text-sm text-[#2A2A2A]">
+                   Envoyer un email au client
+                 </label>
+               </div>
+             )}
 
             <div className="flex gap-3 pt-4">
               <Button

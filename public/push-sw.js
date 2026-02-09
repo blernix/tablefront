@@ -69,6 +69,10 @@ self.addEventListener('notificationclick', function(event) {
     // You can add custom handling for different actions here
     if (event.action === 'view_reservation' && notificationData.reservationId) {
       url = `/dashboard/reservations/${notificationData.reservationId}`;
+    } else if (event.action === 'confirm_reservation' && notificationData.reservationId) {
+      url = `/dashboard/reservations/${notificationData.reservationId}?action=confirm`;
+    } else if (event.action === 'cancel_reservation' && notificationData.reservationId) {
+      url = `/dashboard/reservations/${notificationData.reservationId}?action=cancel`;
     }
   }
 

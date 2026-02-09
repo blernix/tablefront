@@ -11,9 +11,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'TableMaster - Administration Restaurant',
+  title: 'TableMaster - Système de Réservation sans Commission | 39€/mois',
   description:
-    "Plateforme d'administration pour restaurants - gestion des réservations, menus et paramètres",
+    "Stoppez les 15% de commission sur vos réservations. Installation 1 minute. Gérez réservations et avis Google depuis mobile. Tarif fixe 39€/mois. Sans engagement, résiliable à tout moment.",
+  keywords: 'réservation restaurant, système réservation, alternative TheFork, sans commission, widget réservation, avis Google restaurant',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

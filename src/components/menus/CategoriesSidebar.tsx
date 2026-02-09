@@ -10,6 +10,7 @@ import { MenuCategory, Dish } from '@/types';
 import { countDishesInCategory } from '@/lib/menu-helpers';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/api';
+import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 
 interface CategoriesSidebarProps {
   categories: MenuCategory[];
@@ -40,6 +41,9 @@ export function CategoriesSidebar({
   const [dragOverCategoryId, setDragOverCategoryId] = useState<string | null>(null);
   const [localCategories, setLocalCategories] = useState(categories);
   const editCategoryInputRef = useRef<HTMLInputElement>(null);
+  // Delete modal state
+  const [categoryToDelete, setCategoryToDelete] = useState<{id: string, name: string} | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Sync local categories with props
   useEffect(() => {
@@ -107,15 +111,23 @@ export function CategoriesSidebar({
     }
   };
 
-  const handleDeleteCategory = async (id: string, name: string) => {
-    if (!confirm(`Supprimer la catégorie "${name}" ?`)) return;
+  const handleDeleteCategory = (id: string, name: string) => {
+    setCategoryToDelete({ id, name });
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!categoryToDelete) return;
 
     try {
-      await apiClient.deleteCategory(id);
-      toast.success(`Catégorie "${name}" supprimée`);
+      await apiClient.deleteCategory(categoryToDelete.id);
+      toast.success(`Catégorie "${categoryToDelete.name}" supprimée`);
       onRefetch();
     } catch (err) {
       toast.error('Erreur lors de la suppression');
+    } finally {
+      setIsDeleteModalOpen(false);
+      setCategoryToDelete(null);
     }
   };
 
@@ -376,6 +388,15 @@ export function CategoriesSidebar({
           </div>
         </CardContent>
       </Card>
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDeleteCategory}
+        title="Supprimer la catégorie"
+        itemName={categoryToDelete?.name}
+        description="Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible."
+      />
     </div>
   );
 }
