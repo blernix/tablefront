@@ -39,8 +39,8 @@ export default function DashboardHeader({ onToggleMobileMenu }: DashboardHeaderP
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        {/* Notifications (future feature) */}
-        <Button variant="ghost" size="icon" className="relative">
+        {/* Notifications */}
+        <Button variant="ghost" size="icon" className="relative" onClick={() => router.push('/dashboard/settings/notifications')} title="Notifications">
           <Bell className="h-5 w-5" />
           {/* <span className="absolute right-2 top-2 h-2 w-2 bg-red-600" /> */}
         </Button>

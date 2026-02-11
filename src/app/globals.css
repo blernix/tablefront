@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import tarteaucitron CSS */
+@import url('/tarteaucitron/tarteaucitron.css');
+
 @layer base {
   :root {
     /* Swiss Clean Design - Light Mode (Default) */
@@ -344,11 +347,141 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
+ @keyframes shimmer {
+   0% {
+     background-position: -200% 0;
+   }
+   100% {
+     background-position: 200% 0;
+   }
+ }
+
+ /* Tarteaucitron CSS Overrides for Swiss Clean Design */
+ .tarteaucitronGroupName {
+   font-weight: 400 !important;
+   color: #2A2A2A !important;
+ }
+ 
+ .tarteaucitronLine {
+   border-color: #E5E5E5 !important;
+ }
+ 
+ .tarteaucitronTitle {
+   font-weight: 400 !important;
+   font-size: 1.25rem !important;
+   color: #2A2A2A !important;
+   margin-bottom: 1rem !important;
+ }
+ 
+ .tarteaucitronInfo {
+   background-color: #FAFAFA !important;
+   border: 1px solid #E5E5E5 !important;
+   border-radius: 2px !important;
+   padding: 1rem !important;
+ }
+ 
+ .tarteaucitronAllow {
+   background-color: #0066FF !important;
+   color: white !important;
+   border-radius: 2px !important;
+   font-weight: 300 !important;
+   padding: 0.5rem 1rem !important;
+   border: none !important;
+ }
+ 
+ .tarteaucitronDeny {
+   background-color: transparent !important;
+   color: #2A2A2A !important;
+   border: 1px solid #E5E5E5 !important;
+   border-radius: 2px !important;
+   font-weight: 300 !important;
+   padding: 0.5rem 1rem !important;
+ }
+ 
+ .tarteaucitronDeny:hover {
+   border-color: #0066FF !important;
+   color: #0066FF !important;
+ }
+ 
+ .tarteaucitronMainLine {
+   background-color: #FAFAFA !important;
+   border: 2px solid #E5E5E5 !important;
+   border-radius: 2px !important;
+   padding: 1.5rem !important;
+   max-width: 600px !important;
+   margin: 0 auto 1rem auto !important;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+ }
+ 
+ .tarteaucitronBanner {
+   background-color: #FAFAFA !important;
+   border-top: 2px solid #E5E5E5 !important;
+   padding: 1.5rem !important;
+ }
+ 
+ .tarteaucitronPreference {
+   background-color: white !important;
+   border: 2px solid #E5E5E5 !important;
+   border-radius: 2px !important;
+   padding: 1.5rem !important;
+   max-width: 600px !important;
+   margin: 0 auto !important;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+ }
+ 
+ .tarteaucitronCTAButton {
+   background-color: #0066FF !important;
+   color: white !important;
+   border-radius: 2px !important;
+   font-weight: 300 !important;
+   padding: 0.75rem 1.5rem !important;
+   border: none !important;
+ }
+ 
+ .tarteaucitronCTAPersonnalize {
+   background-color: transparent !important;
+   color: #2A2A2A !important;
+   border: 1px solid #E5E5E5 !important;
+   border-radius: 2px !important;
+   font-weight: 300 !important;
+   padding: 0.75rem 1.5rem !important;
+ }
+ 
+ .tarteaucitronCTAPersonnalize:hover {
+   border-color: #0066FF !important;
+   color: #0066FF !important;
+ }
+ 
+ .tarteaucitronIcon {
+   background-color: #0066FF !important;
+   border-radius: 50% !important;
+   width: 44px !important;
+   height: 44px !important;
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   box-shadow: 0 2px 8px rgba(0, 102, 255, 0.3) !important;
+ }
+ 
+ .tarteaucitronIcon svg {
+   fill: white !important;
+   width: 20px !important;
+   height: 20px !important;
+ }
+ 
+ /* Mobile responsiveness */
+ @media (max-width: 640px) {
+   .tarteaucitronBanner {
+     padding: 1rem !important;
+   }
+   
+   .tarteaucitronMainLine {
+     padding: 1rem !important;
+     margin: 0 1rem 1rem 1rem !important;
+   }
+   
+   .tarteaucitronTitle {
+     font-size: 1rem !important;
+   }
+ }
+

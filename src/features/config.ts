@@ -161,6 +161,13 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Notifications SMS pour réservations',
     isVisible: true,
   },
+  'google-review-link': {
+    feature: 'google-review-link',
+    allowedPlans: ['managed', 'pro', 'enterprise'],
+    allowedAccountTypes: ['managed', 'self-service'],
+    description: 'Lien Google pour demander des avis automatiques',
+    isVisible: true,
+  },
   
   // Support & Priority Features
   'priority-support': {
@@ -204,7 +211,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
     limitations: {
       maxLocations: 1,
       maxUsers: 2,
-      maxReservationsPerMonth: 500,
+      maxReservationsPerMonth: 400,
     },
   },
   'pro': {
@@ -231,6 +238,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       'menu-pdf-upload',
       'menu-detailed-mode',
       'menu-both-mode',
+      'google-review-link',
     ],
     limitations: {
       maxLocations: 3,
@@ -267,6 +275,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       'menu-pdf-upload',
       'menu-detailed-mode',
       'menu-both-mode',
+      'google-review-link',
     ],
     limitations: {
       maxLocations: 10,
@@ -300,6 +309,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       'dedicated-account-manager',
       'custom-development',
       'multiple-locations',
+      'google-review-link',
     ],
     limitations: {
       maxLocations: 10,

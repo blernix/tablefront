@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Utensils, Calendar, Settings, X, Users, CalendarX } from 'lucide-react';
+import { LayoutDashboard, Utensils, Calendar, Settings, X, Users, CalendarX, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
@@ -41,6 +41,12 @@ const navigation = [
     href: '/dashboard/menus?tab=dashboard',
     icon: Utensils,
     allowedRoles: ['admin', 'restaurant'] as const,
+  },
+  {
+    name: 'Contact',
+    href: '/dashboard/contact',
+    icon: MessageSquare,
+    allowedRoles: ['restaurant', 'server'] as const,
   },
   {
     name: 'Paramètres',

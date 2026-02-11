@@ -36,7 +36,6 @@ import { Plus, Ban, List, Calendar as CalendarIcon, X, Filter, Search, Users, Ch
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import CalendarViewImproved from '@/components/reservations/CalendarViewImproved';
-import { CalendarStats } from '@/components/reservations/CalendarStats';
 import { ReservationsStats } from '@/components/reservations/ReservationsStats';
 import { WeekView } from '@/components/reservations/WeekView';
 import { DayView } from '@/components/reservations/DayView';
@@ -173,7 +172,24 @@ export default function ReservationsPage() {
     show: false,
     action: 'create',
   });
-  const [sendEmail, setSendEmail] = useState(true);
+  const [dontAskAgain, setDontAskAgain] = useState(false);
+
+  // Load preference from localStorage
+  useEffect(() => {
+    const hidePref = localStorage.getItem('tablemaster_hide_email_confirmation');
+    if (hidePref === 'true') {
+      setDontAskAgain(true);
+    }
+  }, []);
+
+  // Save preference to localStorage when it changes
+  useEffect(() => {
+    if (dontAskAgain) {
+      localStorage.setItem('tablemaster_hide_email_confirmation', 'true');
+    } else {
+      localStorage.removeItem('tablemaster_hide_email_confirmation');
+    }
+  }, [dontAskAgain]);
 
   // Use our new hooks
   const filters = useReservationsFilters(reservations);
@@ -318,54 +334,13 @@ export default function ReservationsPage() {
     reset();
   };
 
-  const openEmailConfirmationModal = (
+  const executeReservationAction = async (
     action: 'create' | 'update' | 'status' | 'delete',
     reservation?: Reservation,
     status?: 'pending' | 'confirmed' | 'cancelled' | 'completed',
     formData?: FormData,
-    callback?: () => Promise<void>,
-    options?: {
-      modalTitle?: string;
-      modalMessage?: string;
-      showEmailOption?: boolean;
-    }
+    callback?: () => Promise<void>
   ) => {
-    // Définir les valeurs par défaut selon l'action
-    const defaultOptions = {
-      modalTitle: action === 'delete' 
-        ? 'Supprimer la réservation' 
-        : 'Confirmer l\'action',
-      modalMessage: action === 'delete'
-        ? `Êtes-vous sûr de vouloir supprimer définitivement la réservation de ${reservation?.customerName} ? Cette action est irréversible.`
-        : 'Voulez-vous envoyer un email de confirmation au client ?',
-      showEmailOption: action !== 'delete'
-    };
-    
-    setEmailConfirmationModal({
-      show: true,
-      action,
-      reservation,
-      status,
-      formData,
-      callback,
-      modalTitle: options?.modalTitle || defaultOptions.modalTitle,
-      modalMessage: options?.modalMessage || defaultOptions.modalMessage,
-      showEmailOption: options?.showEmailOption !== undefined ? options.showEmailOption : defaultOptions.showEmailOption,
-    });
-    setSendEmail(action !== 'delete');
-  };
-
-  const closeEmailConfirmationModal = () => {
-    setEmailConfirmationModal({
-      show: false,
-      action: 'create',
-    });
-    setSendEmail(true);
-  };
-
-  const confirmActionWithEmail = async () => {
-    const { action, reservation, status, formData, callback } = emailConfirmationModal;
-
     try {
       setIsSaving(true);
 
@@ -374,7 +349,7 @@ export default function ReservationsPage() {
           if (reservation && status) {
             await apiClient.updateReservation(reservation._id, {
               status,
-              sendEmail,
+              // sendEmail is always true on backend
             });
             const statusLabelsText = {
               confirmed: 'confirmée',
@@ -383,7 +358,7 @@ export default function ReservationsPage() {
               pending: 'mise à jour',
             };
             toast.success(
-              `Réservation de ${reservation.customerName} ${statusLabelsText[status]}${sendEmail ? ' - Email envoyé' : ''}`
+              `Réservation de ${reservation.customerName} ${statusLabelsText[status]}`
             );
           }
           break;
@@ -399,10 +374,10 @@ export default function ReservationsPage() {
               numberOfGuests,
               status: formData.status,
               notes: formData.notes || '',
-              sendEmail,
+              // sendEmail is always true on backend
             };
             await apiClient.updateReservation(reservation._id, reservationData);
-            toast.success(`Réservation modifiée${sendEmail ? ' - Email envoyé' : ''}`);
+            toast.success('Réservation modifiée');
           }
           break;
         case 'create':
@@ -417,10 +392,10 @@ export default function ReservationsPage() {
               numberOfGuests,
               status: formData.status,
               notes: formData.notes || '',
-              sendEmail,
+              // sendEmail is always true on backend
             };
             await apiClient.createReservation(reservationData);
-            toast.success(`Réservation créée${sendEmail ? ' - Email envoyé' : ''}`);
+            toast.success('Réservation créée');
           }
           break;
         case 'delete':
@@ -436,6 +411,69 @@ export default function ReservationsPage() {
       }
 
       refreshReservations();
+    } catch (error) {
+      console.error('Error executing reservation action:', error);
+      toast.error('Une erreur est survenue');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const openEmailConfirmationModal = (
+    action: 'create' | 'update' | 'status' | 'delete',
+    reservation?: Reservation,
+    status?: 'pending' | 'confirmed' | 'cancelled' | 'completed',
+    formData?: FormData,
+    callback?: () => Promise<void>,
+    options?: {
+      modalTitle?: string;
+      modalMessage?: string;
+      showEmailOption?: boolean;
+    }
+  ) => {
+    // Si l'utilisateur a choisi "Ne plus me demander" et ce n'est pas une suppression
+    if (dontAskAgain && action !== 'delete') {
+      executeReservationAction(action, reservation, status, formData, callback);
+      return;
+    }
+
+    // Définir les valeurs par défaut selon l'action
+    const defaultOptions = {
+      modalTitle: action === 'delete' 
+        ? 'Supprimer la réservation' 
+        : 'Confirmer l\'action',
+      modalMessage: action === 'delete'
+        ? `Êtes-vous sûr de vouloir supprimer définitivement la réservation de ${reservation?.customerName} ? Cette action est irréversible.`
+        : 'Un email sera envoyé au client pour confirmer cette action.',
+      showEmailOption: action !== 'delete'
+    };
+    
+    setEmailConfirmationModal({
+      show: true,
+      action,
+      reservation,
+      status,
+      formData,
+      callback,
+      modalTitle: options?.modalTitle || defaultOptions.modalTitle,
+      modalMessage: options?.modalMessage || defaultOptions.modalMessage,
+      showEmailOption: options?.showEmailOption !== undefined ? options.showEmailOption : defaultOptions.showEmailOption,
+    });
+  };
+
+  const closeEmailConfirmationModal = () => {
+    setEmailConfirmationModal({
+      show: false,
+      action: 'create',
+    });
+  };
+
+  const confirmActionWithEmail = async () => {
+    const { action, reservation, status, formData, callback } = emailConfirmationModal;
+
+    try {
+      setIsSaving(true);
+      await executeReservationAction(action, reservation, status, formData, callback);
       closeEmailConfirmationModal();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'opération");
@@ -971,13 +1009,13 @@ export default function ReservationsPage() {
       {!showForm && (
         <div className="space-y-4">
            {/* Filtres et recherche */}
-           <div className="flex flex-col sm:flex-row gap-3 w-full">
+           <div className="flex flex-col sm:grid sm:grid-cols-2 sm:grid-rows-2 gap-3 w-full">
               {/* Bouton filtres avancés */}
                <Button 
                  variant="outline" 
                  size="sm" 
                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                 className="flex-shrink-0"
+                 className="flex-shrink-0 order-1 sm:order-none sm:row-start-1 sm:col-start-1"
                >
                  <Filter className="h-4 w-4 mr-2" />
                  Filtres
@@ -988,18 +1026,8 @@ export default function ReservationsPage() {
                  )}
                </Button>
              
-              {/* Recherche avec suggestions */}
-              <div className="relative flex-1 max-w-full sm:max-w-md">
-                 <SearchWithSuggestions
-                   value={filters.searchTerm}
-                   onChange={filters.setSearchTerm}
-                   suggestions={filters.suggestions}
-                   placeholder="Rechercher..."
-                 />
-              </div>
-             
               {/* Quick Filters intégrés avec scroll mobile */}
-              <div className="w-full sm:flex-initial">
+              <div className="w-full sm:flex-initial order-3 sm:order-none sm:row-start-1 sm:col-start-2">
                 <div className="flex gap-2 overflow-x-auto pb-2 mx-0 px-0 sm:mx-0 sm:px-0 sm:pb-0">
                   {quickFilters.map((filter) => (
                     <Button
@@ -1013,6 +1041,16 @@ export default function ReservationsPage() {
                     </Button>
                   ))}
                 </div>
+              </div>
+
+              {/* Recherche avec suggestions */}
+              <div className="relative flex-1 max-w-full sm:max-w-full order-2 sm:order-none sm:row-start-2 sm:col-span-2">
+                 <SearchWithSuggestions
+                   value={filters.searchTerm}
+                   onChange={filters.setSearchTerm}
+                   suggestions={filters.suggestions}
+                   placeholder="Rechercher..."
+                 />
               </div>
            </div>
            
@@ -1255,9 +1293,8 @@ export default function ReservationsPage() {
 
       {/* Calendar Stats */}
       {!showForm && viewMode === 'calendar' && (
-        <CalendarStats
+        <ReservationsStats
           reservations={filters.filteredReservations}
-          currentMonth={currentMonth}
           maxCapacity={getMaxCapacityFromRestaurant(restaurant)}
           averagePrice={25}
           restaurant={restaurant}
@@ -1370,20 +1407,20 @@ export default function ReservationsPage() {
                </p>
              </div>
 
-             {emailConfirmationModal.showEmailOption !== false && (
-               <div className="flex items-center gap-3">
-                 <input
-                   type="checkbox"
-                   id="sendEmailCheckbox"
-                   checked={sendEmail}
-                   onChange={(e) => setSendEmail(e.target.checked)}
-                   className="h-4 w-4 border-[#E5E5E5]"
-                 />
-                 <label htmlFor="sendEmailCheckbox" className="text-sm text-[#2A2A2A]">
-                   Envoyer un email au client
-                 </label>
-               </div>
-             )}
+              {emailConfirmationModal.showEmailOption !== false && (
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="dontAskAgainCheckbox"
+                    checked={dontAskAgain}
+                    onChange={(e) => setDontAskAgain(e.target.checked)}
+                    className="h-4 w-4 border-[#E5E5E5]"
+                  />
+                  <label htmlFor="dontAskAgainCheckbox" className="text-sm text-[#2A2A2A]">
+                    Ne plus me demander
+                  </label>
+                </div>
+              )}
 
             <div className="flex gap-3 pt-4">
               <Button

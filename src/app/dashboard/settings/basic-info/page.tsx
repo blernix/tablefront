@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { apiClient } from '@/lib/api';
 import { Restaurant } from '@/types';
+import { useHasFeature } from '@/features/hooks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,6 +31,8 @@ export default function BasicInfoPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
+
+  const hasGoogleReviewFeature = useHasFeature('google-review-link');
 
   const {
     register,
@@ -182,7 +185,7 @@ export default function BasicInfoPage() {
                 type="url"
                 {...register('googleReviewLink')}
                 placeholder="https://g.page/votre-restaurant/review"
-                disabled={isSaving}
+                disabled={isSaving || !hasGoogleReviewFeature}
               />
               {errors.googleReviewLink && (
                 <p className="text-sm text-destructive">{errors.googleReviewLink.message}</p>
@@ -190,6 +193,11 @@ export default function BasicInfoPage() {
               <p className="text-xs text-muted-foreground">
                 Ce lien sera envoyé aux clients après leur visite pour qu&apos;ils laissent un avis Google
               </p>
+              {!hasGoogleReviewFeature && (
+                <p className="text-sm text-amber-600 mt-2">
+                  Cette fonctionnalité nécessite un abonnement Pro ou supérieur.
+                </p>
+              )}
             </div>
 
             {successMessage && (

@@ -97,7 +97,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-white border-2 border-[#E5E5E5] p-8">
+            <div className="bg-white border-2 border-[#E5E5E5] p-8 hidden lg:block">
               <div className="relative aspect-square bg-[#FAFAFA] overflow-hidden">
                 <Image
                   src="/hero_tablemaster.png"
@@ -556,7 +556,7 @@ export default function HomePage() {
               <ul className="space-y-4 mb-10">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">75 réservations / mois</span>
+                  <span className="text-[#666666] font-light">400 réservations / mois</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -622,10 +622,10 @@ export default function HomePage() {
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Comptes serveurs illimités</span>
                 </li>
-                <li className="flex items-start gap-3">
+                {/* <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Statistiques avancées</span>
-                </li>
+                </li> */}
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Support prioritaire</span>
@@ -708,72 +708,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Preuve Sociale */}
+      {/* Statistiques */}
       <section className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
-              Ils nous font confiance
+              Nos chiffres clés
             </h2>
             <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-              Des restaurateurs satisfaits à travers la France
+              Des résultats concrets pour nos restaurants partenaires
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#FAFAFA] border border-[#E5E5E5] p-8">
-              <div className="mb-6">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
-                  ))}
-                </div>
-                <p className="text-[#666666] font-light leading-relaxed">
-                  &quot;Enfin une solution abordable ! Le widget s&apos;est intégré parfaitement sur notre
-                  site. Les clients adorent la simplicité de réservation.&quot;
-                </p>
-              </div>
-              <div>
-                <p className="text-[#2A2A2A] font-normal">Sophie Martin</p>
-                <p className="text-sm text-[#666666] font-light">Le Jardin Gourmand, Paris</p>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
+              <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">90%</div>
+              <p className="text-sm font-light text-[#666666]">Clients satisfaits</p>
             </div>
-
-            <div className="bg-[#FAFAFA] border border-[#E5E5E5] p-8">
-              <div className="mb-6">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
-                  ))}
-                </div>
-                <p className="text-[#666666] font-light leading-relaxed">
-                  &quot;Les notifications push sont un game changer. Plus de réservations ratées.
-                  Et le prix est imbattable comparé à la concurrence.&quot;
-                </p>
-              </div>
-              <div>
-                <p className="text-[#2A2A2A] font-normal">Jean Dupont</p>
-                <p className="text-sm text-[#666666] font-light">Brasserie du Port, Lyon</p>
-              </div>
+            
+            <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
+              <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">55+</div>
+              <p className="text-sm font-light text-[#666666]">Restaurants actifs</p>
             </div>
-
-            <div className="bg-[#FAFAFA] border border-[#E5E5E5] p-8">
-              <div className="mb-6">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-5 h-5 bg-[#0066FF]" />
-                  ))}
-                </div>
-                <p className="text-[#666666] font-light leading-relaxed">
-                  &quot;Les emails automatiques qui demandent des avis Google ont boosté notre note.
-                  Simple, efficace, et très bon rapport qualité-prix.&quot;
-                </p>
-              </div>
-              <div>
-                <p className="text-[#2A2A2A] font-normal">Marie Lefevre</p>
-                <p className="text-sm text-[#666666] font-light">Chez Marie, Bordeaux</p>
-              </div>
+            
+            <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
+              <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">99%</div>
+              <p className="text-sm font-light text-[#666666]">Disponibilité système</p>
             </div>
+            
+            <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
+              <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">30%</div>
+              <p className="text-sm font-light text-[#666666]">Avis Google en plus</p>
+            </div>
+          </div>
+          
+          <div className="mt-12 text-center">
+            <p className="text-[#666666] font-light text-sm">
+              Basé sur les retours de nos clients et nos analyses internes
+            </p>
           </div>
         </div>
       </section>
@@ -868,19 +840,19 @@ export default function HomePage() {
               <h3 className="font-normal mb-4">Légal</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-white font-light text-sm">
+                  <Link href="/legal" className="text-white/70 hover:text-white font-light text-sm">
                     Mentions légales
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-white font-light text-sm">
+                  <Link href="/privacy" className="text-white/70 hover:text-white font-light text-sm">
                     Confidentialité
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-white font-light text-sm">
-                    CGU
-                  </a>
+                  <Link href="/cookies" className="text-white/70 hover:text-white font-light text-sm">
+                    Cookies
+                  </Link>
                 </li>
               </ul>
             </div>

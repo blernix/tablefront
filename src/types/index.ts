@@ -233,7 +233,6 @@ export interface CreateReservationInput {
   numberOfGuests: number;
   status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
-  sendEmail?: boolean;
 }
 
 export interface UpdateReservationInput {
@@ -245,7 +244,6 @@ export interface UpdateReservationInput {
   numberOfGuests?: number;
   status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
-  sendEmail?: boolean;
 }
 
 export interface DayBlock {

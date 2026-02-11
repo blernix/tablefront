@@ -65,9 +65,11 @@ export default function SignupPage() {
           </p>
             <p className="text-xs text-[#999999] mt-4">
             En créant un compte, vous acceptez nos{' '}
-            <a href="#" className="text-[#0066FF] hover:underline">conditions d&apos;utilisation</a>{' '}
-            et notre{' '}
-            <a href="#" className="text-[#0066FF] hover:underline">politique de confidentialité</a>.
+            <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">conditions générales de vente</a>
+            , nos{' '}
+            <a href="/legal" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">conditions d&apos;utilisation</a>
+            {' '}et notre{' '}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">politique de confidentialité</a>.
           </p>
         </div>
 

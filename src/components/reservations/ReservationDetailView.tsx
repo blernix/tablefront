@@ -64,6 +64,61 @@ export const ReservationDetailView = ({
 
   const formattedDate = format(new Date(reservation.date), 'EEEE d MMMM yyyy', { locale: fr });
 
+  // Configuration des actions rapides selon le statut
+  const getQuickActions = () => {
+    if (!onStatusChange) return [];
+
+    switch (reservation.status) {
+      case 'pending':
+        return [
+          {
+            label: 'Confirmer',
+            icon: <Check className="h-4 w-4 mr-2" />,
+            variant: 'success' as const,
+            handler: () => onStatusChange('confirmed')
+          },
+          {
+            label: 'Annuler',
+            icon: <XCircle className="h-4 w-4 mr-2" />,
+            variant: 'destructive' as const,
+            handler: () => onStatusChange('cancelled')
+          }
+        ];
+      case 'confirmed':
+        return [
+          {
+            label: 'Terminer',
+            icon: <CheckCircle className="h-4 w-4 mr-2" />,
+            variant: 'outline' as const,
+            handler: () => onStatusChange('completed')
+          },
+          {
+            label: 'Annuler',
+            icon: <XCircle className="h-4 w-4 mr-2" />,
+            variant: 'destructive' as const,
+            handler: () => onStatusChange('cancelled')
+          }
+        ];
+      case 'cancelled':
+        // Optionnel: permettre de re-confirmer une réservation annulée
+        return [
+          {
+            label: 'Re-confirmer',
+            icon: <Check className="h-4 w-4 mr-2" />,
+            variant: 'success' as const,
+            handler: () => onStatusChange('confirmed')
+          }
+        ];
+      case 'completed':
+        // Aucune action rapide pour les réservations terminées
+        return [];
+      default:
+        return [];
+    }
+  };
+
+  const quickActions = getQuickActions();
+
   return (
     <div className="space-y-6">
       {/* Header Card */}
@@ -182,43 +237,24 @@ export const ReservationDetailView = ({
       )}
 
       {/* Quick Actions */}
-      {onStatusChange && (
+      {quickActions.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Actions rapides</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {reservation.status !== 'confirmed' && (
+              {quickActions.map((action, index) => (
                 <Button
-                  variant="success"
+                  key={index}
+                  variant={action.variant}
                   size="sm"
-                  onClick={() => onStatusChange('confirmed')}
+                  onClick={action.handler}
                 >
-                  <Check className="h-4 w-4 mr-2" />
-                  Confirmer
+                  {action.icon}
+                  {action.label}
                 </Button>
-              )}
-              {reservation.status !== 'cancelled' && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => onStatusChange('cancelled')}
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Annuler
-                </Button>
-              )}
-              {reservation.status === 'confirmed' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onStatusChange('completed')}
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Terminer
-                </Button>
-              )}
+              ))}
             </div>
           </CardContent>
         </Card>

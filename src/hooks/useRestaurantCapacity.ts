@@ -51,9 +51,17 @@ export const calculateDailyCapacityAdvanced = (
   
   // Calculate theoretical capacity based on opening hours
   const theoreticalCapacity = calculateDailyTheoreticalCapacity(restaurant, date);
+  console.debug('[Capacity] theoreticalCapacity:', { 
+    lunchCapacity: theoreticalCapacity.lunchCapacity,
+    dinnerCapacity: theoreticalCapacity.dinnerCapacity,
+    totalTheoreticalCapacity: theoreticalCapacity.totalTheoreticalCapacity,
+    maxSimultaneousCapacity: theoreticalCapacity.maxSimultaneousCapacity,
+    availableSlots: theoreticalCapacity.availableSlots
+  });
   
   // Calculate service occupation
   const serviceOccupation = calculateServiceOccupation(reservations, restaurant, date);
+  console.debug('[Capacity] serviceOccupation:', serviceOccupation);
   
   // Filter reservations for this date
   const dayReservations = reservations.filter(r => {
@@ -72,6 +80,8 @@ export const calculateDailyCapacityAdvanced = (
   const dailyPercentage = theoreticalCapacity.totalTheoreticalCapacity > 0
     ? (totalGuests / theoreticalCapacity.totalTheoreticalCapacity) * 100
     : 0;
+  
+  console.debug('[Capacity] maxSimultaneousCapacity:', maxSimultaneousCapacity, 'maxDailyCapacity:', theoreticalCapacity.totalTheoreticalCapacity, 'equal?', maxSimultaneousCapacity === theoreticalCapacity.totalTheoreticalCapacity);
 
   return {
     // Backward compatibility properties

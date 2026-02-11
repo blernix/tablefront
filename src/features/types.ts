@@ -34,6 +34,7 @@ export type Feature =
   | 'webhook-integrations'     // Intégrations webhook
   | 'automated-emails'         // Emails automatisés
   | 'sms-notifications'        // Notifications SMS
+  | 'google-review-link'        // Lien Google pour avis automatiques
   
   // Support & Priority
   | 'priority-support'         // Support prioritaire

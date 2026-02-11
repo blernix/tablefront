@@ -194,6 +194,10 @@ class UnifiedApiClient {
     return this.restaurants.generateMenuQrCode();
   }
 
+  async sendContactMessage(data: { subject: string; category: 'question' | 'problem' | 'other'; message: string }) {
+    return this.restaurants.sendContactMessage(data);
+  }
+
   // Legacy method compatibility - delegate to menus module
   async uploadMenuPdf(file: File) {
     return this.menus.uploadMenuPdf(file);

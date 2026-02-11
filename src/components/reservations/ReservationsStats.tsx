@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Reservation, Restaurant } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Users, TrendingUp, AlertCircle, DollarSign } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { getLocalDateString } from '@/lib/formatters';
 import { calculateDailyTheoreticalCapacity } from '@/lib/capacityCalculations';
@@ -14,19 +14,51 @@ interface ReservationsStatsProps {
   maxCapacity?: number;
   averagePrice?: number;
   restaurant?: Restaurant | null;
+  currentMonth?: Date; // Optional: filter by month
 }
 
 export const ReservationsStats = ({
   reservations,
   maxCapacity = 50,
   averagePrice = 25,
-  restaurant = null
+  restaurant = null,
+  currentMonth
 }: ReservationsStatsProps) => {
   const stats = useMemo(() => {
     // Filter out cancelled reservations
     const validReservations = reservations.filter(r => r.status !== 'cancelled');
     
-    if (validReservations.length === 0) {
+    // Apply month filter if currentMonth is provided
+    let filteredReservations = validReservations;
+    let daysArray: string[] = [];
+    let daysCount = 0;
+    
+    if (currentMonth) {
+      const monthStart = startOfMonth(currentMonth);
+      const monthEnd = endOfMonth(currentMonth);
+      filteredReservations = validReservations.filter(r => {
+        const resDate = new Date(r.date);
+        return resDate >= monthStart && resDate <= monthEnd;
+      });
+      const daysInMonthArray = eachDayOfInterval({ start: monthStart, end: monthEnd });
+      daysArray = daysInMonthArray.map(day => getLocalDateString(day));
+      daysCount = daysArray.length;
+    } else {
+      // Use all days between first and last reservation for accurate capacity calculation
+      if (filteredReservations.length > 0) {
+        const dates = filteredReservations.map(r => new Date(r.date).getTime());
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+        const allDaysArray = eachDayOfInterval({ start: minDate, end: maxDate });
+        daysArray = allDaysArray.map(day => getLocalDateString(day));
+        daysCount = daysArray.length;
+      } else {
+        daysArray = [];
+        daysCount = 0;
+      }
+    }
+    
+    if (filteredReservations.length === 0) {
       return {
         totalReservations: 0,
         totalGuests: 0,
@@ -34,6 +66,7 @@ export const ReservationsStats = ({
         avgGuestsPerReservation: '0',
         occupationRate: '0',
         displayCapacity: maxCapacity,
+        simultaneousCapacity: maxCapacity,
         busiestDay: '-',
         busiestDayGuests: 0,
         busiestDayDate: '',
@@ -47,10 +80,10 @@ export const ReservationsStats = ({
     }
 
     // Total reservations
-    const totalReservations = validReservations.length;
+    const totalReservations = filteredReservations.length;
 
     // Total guests
-    const totalGuests = validReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
+    const totalGuests = filteredReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
 
     // Estimated revenue
     const estimatedRevenue = totalGuests * averagePrice;
@@ -61,44 +94,39 @@ export const ReservationsStats = ({
       : '0';
 
     // Calculate date range
-    const dates = validReservations.map(r => new Date(r.date).getTime());
+    const dates = filteredReservations.map(r => new Date(r.date).getTime());
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
     const dateRange = minDate.getTime() === maxDate.getTime() 
       ? format(minDate, 'd MMMM yyyy', { locale: fr })
       : `${format(minDate, 'd MMM', { locale: fr })} - ${format(maxDate, 'd MMMM yyyy', { locale: fr })}`;
 
-    // Get unique dates for capacity calculations
-    const uniqueDates = Array.from(new Set(validReservations.map(r => getLocalDateString(r.date))));
-    const daysCount = uniqueDates.length;
-    
     // Calculate theoretical capacity for the period
     let totalTheoreticalCapacity = 0;
     let displayCapacity = maxCapacity;
     
     if (restaurant) {
-      totalTheoreticalCapacity = uniqueDates.reduce((total, dateStr) => {
+      totalTheoreticalCapacity = daysArray.reduce((total, dateStr) => {
         const dailyCapacity = calculateDailyTheoreticalCapacity(restaurant, dateStr);
         return total + dailyCapacity.totalTheoreticalCapacity;
       }, 0);
       
-      // Use simultaneous capacity for display consistency
-      displayCapacity = maxCapacity;
+      // Calculate average daily capacity (capacity per day based on opening hours)
+      displayCapacity = daysCount > 0 ? Math.round(totalTheoreticalCapacity / daysCount) : maxCapacity;
     } else {
       // Fallback to simultaneous capacity per day
       totalTheoreticalCapacity = maxCapacity * daysCount;
       displayCapacity = maxCapacity;
     }
 
-    // Occupation rate (based on simultaneous capacity for consistency)
-    const totalSimultaneousCapacity = maxCapacity * daysCount;
-    const occupationRate = totalSimultaneousCapacity > 0
-      ? ((totalGuests / totalSimultaneousCapacity) * 100).toFixed(1)
+    // Occupation rate (based on total theoretical capacity for the period)
+    const occupationRate = totalTheoreticalCapacity > 0
+      ? ((totalGuests / totalTheoreticalCapacity) * 100).toFixed(1)
       : '0';
 
     // Find busiest day
     const reservationsByDay: Record<string, Reservation[]> = {};
-    validReservations.forEach(r => {
+    filteredReservations.forEach(r => {
       const dateKey = getLocalDateString(r.date);
       if (!reservationsByDay[dateKey]) {
         reservationsByDay[dateKey] = [];
@@ -124,9 +152,9 @@ export const ReservationsStats = ({
 
     // Status breakdown
     const statusBreakdown = {
-      pending: validReservations.filter(r => r.status === 'pending').length,
-      confirmed: validReservations.filter(r => r.status === 'confirmed').length,
-      completed: validReservations.filter(r => r.status === 'completed').length,
+      pending: filteredReservations.filter(r => r.status === 'pending').length,
+      confirmed: filteredReservations.filter(r => r.status === 'confirmed').length,
+      completed: filteredReservations.filter(r => r.status === 'completed').length,
     };
 
     return {
@@ -136,13 +164,14 @@ export const ReservationsStats = ({
       avgGuestsPerReservation,
       occupationRate,
       displayCapacity,
+      simultaneousCapacity: maxCapacity,
       busiestDay: busiestDayFormatted,
       busiestDayGuests: busiestDay.guests,
       busiestDayDate: busiestDay.date,
       dateRange,
       statusBreakdown
     };
-  }, [reservations, maxCapacity, averagePrice, restaurant]);
+  }, [reservations, maxCapacity, averagePrice, restaurant, currentMonth]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -195,9 +224,9 @@ export const ReservationsStats = ({
               <p className="text-2xl font-bold text-slate-900 mt-1">
                 {stats.occupationRate}%
               </p>
-              <p className="text-xs text-slate-500 mt-1">
-                Capacité max: {stats.displayCapacity}/jour
-              </p>
+               <p className="text-xs text-slate-500 mt-1">
+                 Capacité max: {stats.simultaneousCapacity}/créneau
+               </p>
             </div>
             <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
               parseFloat(stats.occupationRate) >= 70 ? 'bg-amber-50' : 'bg-slate-50'

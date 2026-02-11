@@ -101,10 +101,12 @@ export const calculateDailyTheoreticalCapacity = (
   
   // Calculate available time slots
   const allSlots = calculateAvailableTimeSlots(daySchedule, reservationDuration);
+  console.debug('[Capacity] allSlots:', { allSlots, reservationDuration, daySchedule });
   
   // Separate slots by service
   const lunchSlots = allSlots.filter(slot => getServiceFromTime(slot) === 'lunch');
   const dinnerSlots = allSlots.filter(slot => getServiceFromTime(slot) === 'dinner');
+  console.debug('[Capacity] lunchSlots:', lunchSlots.length, 'dinnerSlots:', dinnerSlots.length);
   
   // Calculate theoretical capacity per service
   const lunchCapacity = lunchSlots.length * maxSimultaneousCapacity;
@@ -244,11 +246,28 @@ export const calculateServiceOccupation = (
   result.overall.guests = result.lunch.guests + result.dinner.guests;
   result.overall.reservationCount = result.lunch.reservationCount + result.dinner.reservationCount;
   
-  // Calculate occupied slots (simplified: each reservation occupies one slot)
-  // In reality, multiple reservations can share a slot if they're at the same time
-  // For now, we'll assume each reservation occupies a unique slot
-  result.lunch.occupiedSlots = Math.min(result.lunch.reservationCount, result.lunch.totalSlots);
-  result.dinner.occupiedSlots = Math.min(result.dinner.reservationCount, result.dinner.totalSlots);
+  // Calculate occupied slots using actual slot grouping
+  // Multiple reservations can share a slot if they're at similar times
+  const slotsMap = groupReservationsByTimeSlot(reservations, restaurant, date);
+  console.debug('[Capacity] slotsMap size:', slotsMap.size);
+  console.debug('[Capacity] slotsMap entries:', Array.from(slotsMap.entries()).map(([slot, res]) => ({ slot, reservations: res.length, service: getServiceFromTime(slot) })));
+  let lunchOccupiedSlots = 0;
+  let dinnerOccupiedSlots = 0;
+  
+  for (const [slotStartTime, slotReservations] of slotsMap.entries()) {
+    if (slotReservations.length > 0) {
+      const service = getServiceFromTime(slotStartTime);
+      if (service === 'lunch') {
+        lunchOccupiedSlots++;
+      } else {
+        dinnerOccupiedSlots++;
+      }
+    }
+  }
+  console.debug('[Capacity] lunchOccupiedSlots:', lunchOccupiedSlots, 'dinnerOccupiedSlots:', dinnerOccupiedSlots);
+  
+  result.lunch.occupiedSlots = Math.min(lunchOccupiedSlots, result.lunch.totalSlots);
+  result.dinner.occupiedSlots = Math.min(dinnerOccupiedSlots, result.dinner.totalSlots);
   
   // Calculate occupation rate based on theoretical capacity (guests / theoretical capacity)
   const totalTheoreticalCapacity = theoretical.totalTheoreticalCapacity;
@@ -257,4 +276,39 @@ export const calculateServiceOccupation = (
     : 0;
   
   return result;
+};
+
+/**
+ * Sort reservations by status (pending → confirmed → completed) and then by time
+ * Excludes cancelled reservations unless specifically requested
+ * @param reservations - Array of reservations to sort
+ * @param includeCancelled - Whether to include cancelled reservations (default: false)
+ * @returns Sorted array of reservations
+ */
+export const sortReservations = (
+  reservations: Reservation[],
+  includeCancelled: boolean = false
+): Reservation[] => {
+  // Filter out cancelled reservations unless explicitly requested
+  const filteredReservations = includeCancelled
+    ? reservations
+    : reservations.filter(r => r.status !== 'cancelled');
+
+  // Define status priority: pending (1), confirmed (2), completed (3), cancelled (4)
+  const statusPriority: Record<string, number> = {
+    pending: 1,
+    confirmed: 2,
+    completed: 3,
+    cancelled: 4
+  };
+
+  // Sort by status priority first, then by time
+  return filteredReservations.sort((a, b) => {
+    // Compare by status priority
+    const statusDiff = statusPriority[a.status] - statusPriority[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    
+    // If same status, compare by time
+    return a.time.localeCompare(b.time);
+  });
 };

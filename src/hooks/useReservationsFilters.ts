@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Reservation } from '@/types';
 import { isToday, isThisWeek } from 'date-fns';
 import { getLocalDateString } from '@/lib/formatters';
+import { sortReservations } from '@/lib/capacityCalculations';
 
 export type QuickFilterType = 'today' | 'week' | 'pending' | null;
 
@@ -15,7 +16,7 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
   const [quickFilter, setQuickFilter] = useState<QuickFilterType>(null);
 
   const filteredReservations = useMemo(() => {
-    return reservations.filter(r => {
+    const filtered = reservations.filter(r => {
       // Status filter
       if (statusFilter && r.status !== statusFilter) return false;
 
@@ -58,6 +59,11 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
 
       return true;
     });
+
+    // Sort reservations by status (pending → confirmed → completed) then by time
+    // Include cancelled reservations only when explicitly filtering by cancelled status
+    const includeCancelled = statusFilter === 'cancelled';
+    return sortReservations(filtered, includeCancelled);
   }, [
     reservations,
     statusFilter,

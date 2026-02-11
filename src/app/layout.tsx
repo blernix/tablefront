@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
+import TarteaucitronProvider from '@/components/TarteaucitronProvider';
 import './globals.css';
 
 const inter = Inter({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={`${inter.className} font-light antialiased bg-[#FAFAFA] text-[#2A2A2A]`}>
+        <TarteaucitronProvider />
         <QueryProvider>
           {children}
           <Toaster position="top-right" richColors />

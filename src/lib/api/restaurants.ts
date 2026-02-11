@@ -240,15 +240,27 @@ export class RestaurantsApi extends ApiClient {
      });
    }
 
-   // Mettre à jour le slug personnalisé (Pro uniquement)
-   async updateSlug(data: { slug: string }): Promise<{
-     message: string;
-     slug: string;
-     available: boolean;
-   }> {
-     return this.request('/api/restaurant/slug', {
-       method: 'PUT',
-       body: JSON.stringify(data),
-     });
-   }
- }
+    // Mettre à jour le slug personnalisé (Pro uniquement)
+    async updateSlug(data: { slug: string }): Promise<{
+      message: string;
+      slug: string;
+      available: boolean;
+    }> {
+      return this.request('/api/restaurant/slug', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    }
+
+    // Envoyer un message de contact à l'équipe TableMaster
+    async sendContactMessage(data: {
+      subject: string;
+      category: 'question' | 'problem' | 'other';
+      message: string;
+    }): Promise<{ message: string }> {
+      return this.request('/api/restaurant/contact', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    }
+  }

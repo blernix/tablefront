@@ -28,6 +28,7 @@ interface AccountFormData {
   ownerEmail: string;
   ownerPassword: string;
   confirmPassword: string;
+  acceptedTerms: boolean;
 }
 
 interface FormErrors {
@@ -38,6 +39,7 @@ interface FormErrors {
   ownerEmail?: string;
   ownerPassword?: string;
   confirmPassword?: string;
+  acceptedTerms?: string;
 }
 
 const PLANS: Record<PlanType, PlanInfo> = {
@@ -46,7 +48,7 @@ const PLANS: Record<PlanType, PlanInfo> = {
     name: 'Starter',
     price: 39,
     features: [
-      '50 réservations par mois',
+      '400 réservations par mois',
       'Widget standard',
       'Gestion horaires et jours fermés',
       'Support par email',
@@ -84,6 +86,89 @@ const validatePassword = (password: string): { valid: boolean; message?: string 
   }
   return { valid: true };
 };
+
+// Plan selection step component
+interface PlanSelectionStepProps {
+  selectedPlan: PlanType;
+  onPlanSelect: (plan: PlanType) => void;
+  onNext: () => void;
+}
+
+function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: PlanSelectionStepProps) {
+  return (
+    <div className="space-y-8">
+      <div className="text-center">
+        <h3 className="text-2xl font-semibold text-gray-900">Choisissez votre offre</h3>
+        <p className="mt-2 text-gray-600">
+          Sélectionnez le plan qui correspond le mieux aux besoins de votre restaurant.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {Object.values(PLANS).map((plan) => (
+          <div
+            key={plan.id}
+            className={cn(
+              'relative border rounded-xl p-6 transition-all duration-300 cursor-pointer',
+              selectedPlan === plan.id
+                ? 'border-blue-500 ring-2 ring-blue-200 bg-blue-50'
+                : 'border-gray-300 hover:border-blue-300 hover:bg-blue-50/50',
+              plan.popular && 'border-blue-300'
+            )}
+            onClick={() => onPlanSelect(plan.id)}
+          >
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Populaire
+                </span>
+              </div>
+            )}
+
+            <div className="text-center">
+              <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
+              <div className="mt-4 flex items-baseline justify-center">
+                <span className="text-3xl font-bold text-gray-900">{plan.price}€</span>
+                <span className="ml-1 text-gray-600">/mois</span>
+              </div>
+            </div>
+
+            <ul className="mt-6 space-y-3">
+              {plan.features.map((feature, index) => (
+                <li key={index} className="flex items-start">
+                  <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                className={cn(
+                  'w-full py-2 px-4 rounded-lg font-medium transition-colors',
+                  selectedPlan === plan.id
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                )}
+                onClick={() => onPlanSelect(plan.id)}
+              >
+                {selectedPlan === plan.id ? 'Sélectionné' : 'Choisir'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center pt-4">
+        <Button onClick={onNext} className="min-w-32">
+          Continuer
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 // Step indicator component
 interface StepIndicatorProps {
@@ -150,96 +235,6 @@ function StepIndicator({ steps, currentStep, onStepClick }: StepIndicatorProps) 
             <div className="text-xs mt-1">{step.description}</div>
           </div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-// Plan selection step
-interface PlanSelectionStepProps {
-  selectedPlan: PlanType;
-  onPlanSelect: (plan: PlanType) => void;
-  onNext: () => void;
-}
-
-function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: PlanSelectionStepProps) {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-2xl font-semibold text-gray-900">Choisissez votre plan</h3>
-        <p className="mt-2 text-gray-600">
-          Sélectionnez le plan qui correspond à vos besoins. Vous pouvez changer à tout moment.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {Object.values(PLANS).map((plan) => (
-          <div
-            key={plan.id}
-            onClick={() => onPlanSelect(plan.id)}
-            className={cn(
-              'relative cursor-pointer rounded-xl border-2 p-6 transition-all duration-300 hover:shadow-lg',
-              selectedPlan === plan.id
-                ? 'border-blue-600 bg-blue-50/50'
-                : 'border-gray-200 hover:border-blue-300'
-            )}
-          >
-            {plan.popular && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="inline-flex rounded-full bg-blue-600 px-4 py-1 text-xs font-semibold text-white">
-                  Populaire
-                </span>
-              </div>
-            )}
-
-            <div className="flex flex-col h-full">
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-lg font-semibold text-gray-900">{plan.name}</span>
-                  {selectedPlan === plan.id && (
-                    <Check className="w-5 h-5 text-blue-600" />
-                  )}
-                </div>
-
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">{plan.price}€</span>
-                  <span className="text-gray-600 ml-2">/mois</span>
-                </div>
-
-                <ul className="space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start text-sm">
-                      <Check className="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
-                  {plan.id === 'pro' ? (
-                    <>
-                      <span className="font-medium text-green-600">✓ Recommandé</span> pour les établissements actifs
-                    </>
-                  ) : (
-                    <>
-                      <span className="font-medium text-blue-600">✓ Parfait</span> pour débuter
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex justify-between pt-6">
-        <div></div> {/* Spacer for alignment */}
-        <Button onClick={onNext} className="min-w-32">
-          Continuer
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
       </div>
     </div>
   );
@@ -414,7 +409,8 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
     return (
       emailValid &&
       passwordValidation.valid &&
-      passwordsMatch
+      passwordsMatch &&
+      data.acceptedTerms
     );
   };
 
@@ -520,6 +516,36 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
             Utilisez un mot de passe unique pour TableMaster. Nous vous recommandons d&apos;utiliser un gestionnaire de mots de passe pour générer et stocker des mots de passe sécurisés.
           </p>
         </div>
+
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <input
+              type="checkbox"
+              id="acceptedTerms"
+              checked={data.acceptedTerms}
+              onChange={(e) => onChange({ acceptedTerms: e.target.checked })}
+              className="mt-1 mr-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label htmlFor="acceptedTerms" className="text-sm text-gray-700">
+              J&apos;accepte les{' '}
+              <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                Conditions Générales de Vente
+              </a>
+              , les{' '}
+              <a href="/legal#cgu" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                Conditions Générales d&apos;Utilisation
+              </a>
+              {' '}et la{' '}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                Politique de Confidentialité
+              </a>
+              . *
+            </label>
+          </div>
+          {errors.acceptedTerms && (
+            <p className="mt-2 text-sm text-red-600">{errors.acceptedTerms}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-between pt-6">
@@ -569,6 +595,7 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
     ownerEmail: '',
     ownerPassword: '',
     confirmPassword: '',
+    acceptedTerms: false,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -682,6 +709,10 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
 
+    if (!accountData.acceptedTerms) {
+      newErrors.acceptedTerms = 'Vous devez accepter les conditions générales pour continuer';
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -703,6 +734,7 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
           restaurantEmail: restaurantData.restaurantEmail,
           ownerEmail: accountData.ownerEmail,
           ownerPassword: accountData.ownerPassword,
+          acceptedTerms: accountData.acceptedTerms,
           plan: selectedPlan,
         }),
       });
@@ -785,16 +817,20 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
 
       {/* Additional info */}
       <div className="mt-8 text-center text-sm text-gray-600">
-        <p>
-          En continuant, vous acceptez nos{' '}
-          <a href="#" className="text-blue-600 hover:text-blue-500 underline">
-            conditions d&apos;utilisation
-          </a>{' '}
-          et notre{' '}
-          <a href="#" className="text-blue-600 hover:text-blue-500 underline">
-            politique de confidentialité
-          </a>.
-        </p>
+         <p>
+           En continuant, vous acceptez nos{' '}
+           <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
+             conditions générales de vente
+           </a>
+           , nos{' '}
+           <a href="/legal#cgu" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
+             conditions d&apos;utilisation
+           </a>
+           {' '}et notre{' '}
+           <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
+             politique de confidentialité
+           </a>.
+         </p>
         <p className="mt-2">
           Vous serez redirigé vers Stripe pour finaliser le paiement de manière sécurisée.
         </p>

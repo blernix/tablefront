@@ -54,8 +54,7 @@ export default function ReservationDetailPage({
         setIsUpdating(true);
         const status = action === 'confirm' ? 'confirmed' : 'cancelled';
         await apiClient.updateReservation(reservation._id, {
-          status,
-          sendEmail: true
+          status
         });
 
         const statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
@@ -86,8 +85,7 @@ export default function ReservationDetailPage({
     try {
       setIsUpdating(true);
       await apiClient.updateReservation(reservation._id, {
-        status,
-        sendEmail: true
+        status
       });
 
       const statusLabels = {
@@ -97,7 +95,7 @@ export default function ReservationDetailPage({
         pending: 'mise en attente',
       };
 
-      toast.success(`Réservation ${statusLabels[status]} - Email envoyé`);
+      toast.success(`Réservation ${statusLabels[status]}`);
 
       // Refresh reservation data
       const response = await apiClient.getReservation(params.id);

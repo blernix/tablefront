@@ -1,9 +1,9 @@
 'use client';
 
 import { useSwipeable } from 'react-swipeable';
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { Check, XCircle } from 'lucide-react';
+import { Check, XCircle, CheckCircle } from 'lucide-react';
 
 interface SwipeableCardProps {
   children: React.ReactNode;
@@ -11,6 +11,11 @@ interface SwipeableCardProps {
   onSwipeLeft?: () => void;  // Annuler
   rightLabel?: string;
   leftLabel?: string;
+  rightIcon?: ReactNode;
+  leftIcon?: ReactNode;
+  rightColor?: string; // Classe Tailwind pour la couleur
+  leftColor?: string;  // Classe Tailwind pour la couleur
+  sameActionOnBothSides?: boolean; // Si vrai, les deux directions déclenchent onSwipeRight
   disabled?: boolean;
   className?: string;
 }
@@ -21,6 +26,11 @@ export const SwipeableCard = ({
   onSwipeLeft,
   rightLabel = 'Confirmer',
   leftLabel = 'Annuler',
+  rightIcon = <Check className="h-5 w-5" />,
+  leftIcon = <XCircle className="h-5 w-5" />,
+  rightColor = 'text-green-600',
+  leftColor = 'text-red-600',
+  sameActionOnBothSides = false,
   disabled = false,
   className
 }: SwipeableCardProps) => {
@@ -38,8 +48,12 @@ export const SwipeableCard = ({
     },
     onSwipedLeft: () => {
       if (disabled) return;
-      if (swipeOffset < -100 && onSwipeLeft) {
-        onSwipeLeft();
+      if (swipeOffset < -100) {
+        if (sameActionOnBothSides && onSwipeRight) {
+          onSwipeRight();
+        } else if (!sameActionOnBothSides && onSwipeLeft) {
+          onSwipeLeft();
+        }
       }
       setSwipeOffset(0);
       setIsSwiping(false);
@@ -73,23 +87,25 @@ export const SwipeableCard = ({
         {/* Right swipe action (confirm) */}
         <div
           className={cn(
-            'flex items-center gap-2 text-green-600 font-semibold transition-opacity duration-200',
+            'flex items-center gap-2 font-semibold transition-opacity duration-200',
+            rightColor,
             showRightAction ? 'opacity-100' : 'opacity-0'
           )}
         >
-          <Check className="h-5 w-5" />
+          {rightIcon}
           <span className="hidden sm:inline">{rightLabel}</span>
         </div>
 
         {/* Left swipe action (cancel) */}
         <div
           className={cn(
-            'flex items-center gap-2 text-red-600 font-semibold transition-opacity duration-200',
+            'flex items-center gap-2 font-semibold transition-opacity duration-200',
+            leftColor,
             showLeftAction ? 'opacity-100' : 'opacity-0'
           )}
         >
           <span className="hidden sm:inline">{leftLabel}</span>
-          <XCircle className="h-5 w-5" />
+          {leftIcon}
         </div>
       </div>
 

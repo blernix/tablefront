@@ -42,6 +42,8 @@ export default function EmbedReservationPage() {
   const [numberOfGuests, setNumberOfGuests] = useState(2);
   const [notes, setNotes] = useState('');
   const [honeypot, setHoneypot] = useState(''); // Bot detection field - should stay empty
+  const [consentDataProcessing, setConsentDataProcessing] = useState(false);
+  const [consentMarketing, setConsentMarketing] = useState(false);
 
   // UI state
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
@@ -162,6 +164,12 @@ export default function EmbedReservationPage() {
       return;
     }
 
+    // Validate data processing consent
+    if (!consentDataProcessing) {
+      setError('Vous devez accepter le traitement de vos données pour effectuer une réservation.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -179,6 +187,8 @@ export default function EmbedReservationPage() {
           time: selectedTime,
           numberOfGuests,
           notes: notes.trim(),
+          consentDataProcessing: consentDataProcessing,
+          consentMarketing: consentMarketing,
           _honeypot: honeypot, // Bot detection field
         }),
       });
@@ -494,6 +504,41 @@ export default function EmbedReservationPage() {
           )}
         </div>
 
+        {/* RGPD Consent Section */}
+        <div className="tm-gdpr-consent">
+          <div className="tm-consent-item">
+            <input
+              type="checkbox"
+              id="consent-data-processing"
+              checked={consentDataProcessing}
+              onChange={(e) => setConsentDataProcessing(e.target.checked)}
+              required
+            />
+            <label htmlFor="consent-data-processing">
+              J&apos;accepte que mes données personnelles (nom, email, téléphone) soient traitées par TableMaster et transmises au restaurant {restaurant?.name} pour gérer ma réservation. 
+              <a href="https://tablemaster.fr/privacy" target="_blank" rel="noopener noreferrer" className="tm-privacy-link">
+                Politique de confidentialité
+              </a>
+            </label>
+          </div>
+          
+          <div className="tm-consent-item">
+            <input
+              type="checkbox"
+              id="consent-marketing"
+              checked={consentMarketing}
+              onChange={(e) => setConsentMarketing(e.target.checked)}
+            />
+            <label htmlFor="consent-marketing">
+              J&apos;accepte de recevoir des offres spéciales et des actualités du restaurant {restaurant?.name} par email (optionnel)
+            </label>
+          </div>
+          
+          <p className="tm-consent-note">
+            Vos données sont protégées conformément au RGPD. Vous pouvez exercer vos droits d&apos;accès, de rectification et d&apos;opposition en contactant le restaurant.
+          </p>
+        </div>
+
         <button type="submit" className="tm-button tm-button-submit" disabled={isSubmitting}>
           {isSubmitting ? 'Réservation en cours...' : 'Réserver'}
         </button>
@@ -689,6 +734,57 @@ export default function EmbedReservationPage() {
           font-size: 13px;
           color: #666;
           font-style: italic;
+        }
+
+        /* RGPD Consent Styles */
+        .tm-gdpr-consent {
+          margin-top: 24px;
+          padding: 20px;
+          background: #f9f9f9;
+          border-radius: var(--tm-border-radius);
+          border: 1px solid #e5e5e5;
+        }
+
+        .tm-consent-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+
+        .tm-consent-item input[type="checkbox"] {
+          margin-top: 4px;
+          flex-shrink: 0;
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .tm-consent-item label {
+          font-size: 14px;
+          line-height: 1.5;
+          color: #444;
+          cursor: pointer;
+        }
+
+        .tm-privacy-link {
+          color: var(--tm-primary-color);
+          text-decoration: underline;
+          margin-left: 4px;
+          font-weight: 500;
+        }
+
+        .tm-privacy-link:hover {
+          text-decoration: none;
+        }
+
+        .tm-consent-note {
+          font-size: 13px;
+          color: #666;
+          margin-top: 16px;
+          padding-top: 16px;
+          border-top: 1px solid #eee;
+          line-height: 1.5;
         }
 
         /* Reset all styles to prevent conflicts */

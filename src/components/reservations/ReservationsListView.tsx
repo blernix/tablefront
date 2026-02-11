@@ -13,7 +13,7 @@ import { calculateDailyCapacity } from '@/hooks/useRestaurantCapacity';
 import { getServiceFromTime } from '@/lib/capacityCalculations';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Check, XCircle, CheckCircle } from 'lucide-react';
 import { getLocalDateString } from '@/lib/formatters';
 
 interface ReservationsListViewProps {
@@ -53,11 +53,8 @@ export const ReservationsListView = ({
       grouped[dateKey][service].push(reservation);
     });
 
-    // Sort reservations within each service by time
-    Object.keys(grouped).forEach(dateKey => {
-      grouped[dateKey].lunch.sort((a, b) => a.time.localeCompare(b.time));
-      grouped[dateKey].dinner.sort((a, b) => a.time.localeCompare(b.time));
-    });
+    // Reservations are already sorted by status (pending → confirmed → completed) then by time
+    // via the useReservationsFilters hook, so we maintain that order
 
     return grouped;
   }, [reservations]);
@@ -72,22 +69,84 @@ export const ReservationsListView = ({
     return format(date, 'EEEE d MMMM yyyy', { locale: fr });
   };
 
-  const handleSwipeRight = (reservation: Reservation) => {
-    if (reservation.status !== 'confirmed') {
-      onConfirm(reservation);
-    }
-  };
 
-  const handleSwipeLeft = (reservation: Reservation) => {
-    if (reservation.status !== 'cancelled') {
-      onCancel(reservation);
-    }
-  };
 
   const handleDetailStatusChange = (status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
     if (selectedReservation && onStatusChange) {
       onStatusChange(selectedReservation, status);
       setSelectedReservation(null);
+    }
+  };
+
+  const getSwipeConfig = (reservation: Reservation) => {
+    switch (reservation.status) {
+      case 'pending':
+        // Vérifier que les handlers existent
+        if (!onConfirm || !onCancel) {
+          return {
+            disabled: true,
+            rightAction: null,
+            leftAction: null,
+            sameActionOnBothSides: false
+          };
+        }
+        return {
+          disabled: false,
+          rightAction: {
+            label: 'Confirmer',
+            icon: <Check className="h-5 w-5" />,
+            color: 'text-green-600',
+            handler: () => onConfirm(reservation)
+          },
+          leftAction: {
+            label: 'Annuler',
+            icon: <XCircle className="h-5 w-5" />,
+            color: 'text-red-600',
+            handler: () => onCancel(reservation)
+          },
+          sameActionOnBothSides: false
+        };
+      case 'confirmed':
+        // Vérifier que le handler existe
+        if (!onComplete) {
+          return {
+            disabled: true,
+            rightAction: null,
+            leftAction: null,
+            sameActionOnBothSides: false
+          };
+        }
+        return {
+          disabled: false,
+          rightAction: {
+            label: 'Terminer',
+            icon: <CheckCircle className="h-5 w-5" />,
+            color: 'text-blue-600',
+            handler: () => onComplete(reservation)
+          },
+          leftAction: {
+            label: 'Terminer',
+            icon: <CheckCircle className="h-5 w-5" />,
+            color: 'text-blue-600',
+            handler: () => onComplete(reservation)
+          },
+          sameActionOnBothSides: true
+        };
+      case 'cancelled':
+      case 'completed':
+        return {
+          disabled: true,
+          rightAction: null,
+          leftAction: null,
+          sameActionOnBothSides: false
+        };
+      default:
+        return {
+          disabled: true,
+          rightAction: null,
+          leftAction: null,
+          sameActionOnBothSides: false
+        };
     }
   };
 
@@ -141,13 +200,22 @@ export const ReservationsListView = ({
                     <h4 className="text-md font-medium text-slate-700">Service du midi</h4>
                     <span className="text-sm text-slate-500">({services.lunch.length})</span>
                   </div>
-                  {services.lunch.map(reservation => (
-                    <SwipeableCard
-                      key={reservation._id}
-                      onSwipeRight={() => handleSwipeRight(reservation)}
-                      onSwipeLeft={() => handleSwipeLeft(reservation)}
-                      disabled={reservation.status === 'completed'}
-                    >
+                  {services.lunch.map(reservation => {
+                    const config = getSwipeConfig(reservation);
+                    return (
+                      <SwipeableCard
+                        key={reservation._id}
+                        onSwipeRight={config.rightAction?.handler}
+                        onSwipeLeft={config.sameActionOnBothSides ? config.rightAction?.handler : config.leftAction?.handler}
+                        disabled={config.disabled}
+                        rightLabel={config.rightAction?.label}
+                        leftLabel={config.leftAction?.label}
+                        rightIcon={config.rightAction?.icon}
+                        leftIcon={config.leftAction?.icon}
+                        rightColor={config.rightAction?.color}
+                        leftColor={config.leftAction?.color}
+                        sameActionOnBothSides={config.sameActionOnBothSides}
+                      >
                       <ReservationCard
                         reservation={reservation}
                         variant="compact"
@@ -156,10 +224,10 @@ export const ReservationsListView = ({
                         onCancel={() => onCancel(reservation)}
                         onComplete={onComplete ? () => onComplete(reservation) : undefined}
                         onEdit={onEdit ? () => onEdit(reservation) : undefined}
-                        onDelete={onDelete ? () => onDelete(reservation) : undefined}
-                      />
-                    </SwipeableCard>
-                  ))}
+                         onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                       />
+                     </SwipeableCard>
+                    ); })}
                 </div>
               )}
 
@@ -170,25 +238,34 @@ export const ReservationsListView = ({
                     <h4 className="text-md font-medium text-slate-700">Service du soir</h4>
                     <span className="text-sm text-slate-500">({services.dinner.length})</span>
                   </div>
-                  {services.dinner.map(reservation => (
-                    <SwipeableCard
-                      key={reservation._id}
-                      onSwipeRight={() => handleSwipeRight(reservation)}
-                      onSwipeLeft={() => handleSwipeLeft(reservation)}
-                      disabled={reservation.status === 'completed'}
-                    >
-                      <ReservationCard
-                        reservation={reservation}
-                        variant="compact"
-                        onClick={() => setSelectedReservation(reservation)}
-                        onConfirm={() => onConfirm(reservation)}
-                        onCancel={() => onCancel(reservation)}
-                        onComplete={onComplete ? () => onComplete(reservation) : undefined}
-                        onEdit={onEdit ? () => onEdit(reservation) : undefined}
-                        onDelete={onDelete ? () => onDelete(reservation) : undefined}
-                      />
-                    </SwipeableCard>
-                  ))}
+                  {services.dinner.map(reservation => {
+                    const config = getSwipeConfig(reservation);
+                    return (
+                      <SwipeableCard
+                        key={reservation._id}
+                        onSwipeRight={config.rightAction?.handler}
+                        onSwipeLeft={config.sameActionOnBothSides ? config.rightAction?.handler : config.leftAction?.handler}
+                        disabled={config.disabled}
+                        rightLabel={config.rightAction?.label}
+                        leftLabel={config.leftAction?.label}
+                        rightIcon={config.rightAction?.icon}
+                        leftIcon={config.leftAction?.icon}
+                        rightColor={config.rightAction?.color}
+                        leftColor={config.leftAction?.color}
+                        sameActionOnBothSides={config.sameActionOnBothSides}
+                      >
+                        <ReservationCard
+                          reservation={reservation}
+                          variant="compact"
+                          onClick={() => setSelectedReservation(reservation)}
+                          onConfirm={() => onConfirm(reservation)}
+                          onCancel={() => onCancel(reservation)}
+                          onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                          onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                          onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                        />
+                      </SwipeableCard>
+                    ); })}
                 </div>
               )}
             </div>
