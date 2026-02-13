@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AuthNavbar from '@/components/auth/AuthNavbar';
+import Footer from '@/components/layout/Footer';
 
 export default function CookiesPage() {
   const [tarteaucitronReady, setTarteaucitronReady] = useState(false);
@@ -11,7 +12,7 @@ export default function CookiesPage() {
     if (typeof window === 'undefined') return;
 
     const handleTarteaucitronReady = () => {
-      console.log('tac.root_available event received - tarteaucitron is ready');
+
       setTarteaucitronReady(true);
     };
 
@@ -34,7 +35,7 @@ export default function CookiesPage() {
         typeof t.userInterface.closePanel === 'function';
       
       if (hasRequiredMethods && (hasJob || hasServices)) {
-        console.log('Tarteaucitron already ready on mount');
+
         setTarteaucitronReady(true);
         return true;
       }
@@ -90,25 +91,9 @@ export default function CookiesPage() {
     const isReady = hasRequiredMethods && (hasJob || hasServices);
     
     if (!isReady) {
-      console.log('Tarteaucitron not ready:', {
-        hasUserInterface: !!hasUserInterface,
-        hasRequiredMethods,
-        hasJob: hasJob && t.job?.length,
-        hasServices: hasServices && Object.keys(t.services).length,
-        hasRootElement,
-        tarteaucitronExists: !!window.tarteaucitron,
-        userInterfaceMethods: hasUserInterface ? {
-          openPanel: typeof t.userInterface.openPanel,
-          respondAll: typeof t.userInterface.respondAll,
-          closePanel: typeof t.userInterface.closePanel
-        } : 'no userInterface'
-      });
+
     } else {
-      console.log('Tarteaucitron is ready:', {
-        hasRequiredMethods,
-        hasServices: hasServices && Object.keys(t.services).length,
-        hasRootElement
-      });
+
     }
     
     return isReady;
@@ -121,13 +106,13 @@ export default function CookiesPage() {
         return;
       }
       
-      console.log('Opening cookie panel...');
+
       
       // S'assurer que l'interface utilisateur est initialisée
       if (typeof window.tarteaucitron.userInterface.jsSizing === 'function') {
         try {
           window.tarteaucitron.userInterface.jsSizing('main');
-          console.log('Called jsSizing to initialize UI');
+
         } catch (jsError) {
           console.warn('jsSizing failed, continuing anyway:', jsError);
         }
@@ -140,11 +125,11 @@ export default function CookiesPage() {
       const tryOpenPanel = () => {
         try {
           window.tarteaucitron.userInterface.openPanel();
-          console.log('Cookie panel opened successfully');
+
         } catch (error) {
           retryCount++;
           if (retryCount < maxRetries) {
-            console.log(`Retry ${retryCount}/${maxRetries} opening panel...`);
+
             setTimeout(tryOpenPanel, 100 * retryCount); // Backoff exponentiel
           } else {
             console.error('Error opening cookie panel after retries:', error);
@@ -169,13 +154,13 @@ export default function CookiesPage() {
         return;
       }
       
-      console.log('Accepting all cookies...');
+
       
       // S'assurer que l'interface utilisateur est initialisée
       if (typeof window.tarteaucitron.userInterface.jsSizing === 'function') {
         try {
           window.tarteaucitron.userInterface.jsSizing('main');
-          console.log('Called jsSizing to initialize UI');
+
         } catch (jsError) {
           console.warn('jsSizing failed, continuing anyway:', jsError);
         }
@@ -189,11 +174,11 @@ export default function CookiesPage() {
         try {
           window.tarteaucitron.userInterface.respondAll(true);
           window.tarteaucitron.userInterface.closePanel();
-          console.log('All cookies accepted successfully');
+
         } catch (error) {
           retryCount++;
           if (retryCount < maxRetries) {
-            console.log(`Retry ${retryCount}/${maxRetries} accepting all...`);
+
             setTimeout(tryAcceptAll, 100 * retryCount); // Backoff exponentiel
           } else {
             console.error('Error accepting all cookies after retries:', error);
@@ -218,13 +203,13 @@ export default function CookiesPage() {
         return;
       }
       
-      console.log('Refusing all cookies...');
+
       
       // S'assurer que l'interface utilisateur est initialisée
       if (typeof window.tarteaucitron.userInterface.jsSizing === 'function') {
         try {
           window.tarteaucitron.userInterface.jsSizing('main');
-          console.log('Called jsSizing to initialize UI');
+
         } catch (jsError) {
           console.warn('jsSizing failed, continuing anyway:', jsError);
         }
@@ -238,11 +223,11 @@ export default function CookiesPage() {
         try {
           window.tarteaucitron.userInterface.respondAll(false);
           window.tarteaucitron.userInterface.closePanel();
-          console.log('All cookies refused successfully');
+
         } catch (error) {
           retryCount++;
           if (retryCount < maxRetries) {
-            console.log(`Retry ${retryCount}/${maxRetries} refusing all...`);
+
             setTimeout(tryRefuseAll, 100 * retryCount); // Backoff exponentiel
           } else {
             console.error('Error refusing all cookies after retries:', error);
@@ -436,94 +421,6 @@ export default function CookiesPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#2A2A2A] text-white py-16 px-6">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <h3 className="text-2xl font-light mb-4">TableMaster</h3>
-              <p className="text-white/70 font-light text-sm leading-relaxed">
-                La solution de réservation sans commission pour les restaurants. 
-                Tarif fixe, sans engagement.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-normal mb-4">Produit</h3>
-              <ul className="space-y-3">
-                <li>
-                  <a href="/#features" className="text-white/70 hover:text-white font-light text-sm">
-                    Fonctionnalités
-                  </a>
-                </li>
-                <li>
-                  <a href="/#pricing" className="text-white/70 hover:text-white font-light text-sm">
-                    Tarifs
-                  </a>
-                </li>
-                <li>
-                  <a href="https://docs.tablemaster.fr" className="text-white/70 hover:text-white font-light text-sm">
-                    Documentation
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-normal mb-4">Compte</h3>
-              <ul className="space-y-3">
-                <li>
-                   <Link href="/signup" className="text-white/70 hover:text-white font-light text-sm">
-                     S&apos;inscrire
-                   </Link>
-                </li>
-                <li>
-                  <Link href="/login" className="text-white/70 hover:text-white font-light text-sm">
-                    Connexion
-                  </Link>
-                </li>
-                <li>
-                  <a href="mailto:contact@tablemaster.fr" className="text-white/70 hover:text-white font-light text-sm">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-normal mb-4">Légal</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link href="/legal" className="text-white/70 hover:text-white font-light text-sm">
-                    Mentions légales
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/privacy" className="text-white/70 hover:text-white font-light text-sm">
-                    Confidentialité
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/cookies" className="text-white/70 hover:text-white font-light text-sm">
-                    Cookies
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/cgv" className="text-white/70 hover:text-white font-light text-sm">
-                    Conditions Générales de Vente
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-white/70 text-sm font-light">
-              © {new Date().getFullYear()} TableMaster. Tous droits réservés.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <Footer />    </div>
   );
 }

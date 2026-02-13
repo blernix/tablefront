@@ -1,36 +1,63 @@
 {
-  "name": "TableMaster - Gestion Restaurant",
+  "name": "TableMaster - Système de Réservation",
   "short_name": "TableMaster",
-  "description": "Application de gestion de restaurant - réservations, menus et paramètres",
+  "description": "Gérez vos réservations sans commission. Installation 1 minute, tarif fixe 39€/mois.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#FAFAFA",
   "theme_color": "#0066FF",
   "orientation": "portrait-primary",
+  "categories": ["business", "food", "productivity"],
+  "lang": "fr-FR",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/favicon/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/favicon/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/logo.png",
+      "src": "/favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/favicon/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo_600.png",
+      "sizes": "600x600",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo_1200.png",
+      "sizes": "1200x1200",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

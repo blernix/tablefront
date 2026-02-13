@@ -29,9 +29,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      console.log('[AuthStore] Attempting login for:', email);
+
       const response = await apiClient.login(email, password);
-      console.log('[AuthStore] Login response:', { user: response.user, token: response.token?.substring(0, 10) + '...' });
+
        set({
         user: response.user,
         token: response.token,
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           cookieString += '; Secure';
         }
         document.cookie = cookieString;
-        console.log('[AuthStore] Cookie synced after login');
+
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
@@ -103,7 +103,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         cookieString += '; Secure';
       }
       document.cookie = cookieString;
-      console.log('[AuthStore] Cookie synced in setUser');
+
     }
   },
 
@@ -128,7 +128,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           const exp = payload.exp ? new Date(payload.exp * 1000) : null;
           const now = new Date();
           if (exp && exp.getTime() <= now.getTime()) {
-            console.log('[AuthStore] Token expired on init, clearing auth');
+
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             document.cookie = 'token=; path=/; max-age=0';
@@ -148,7 +148,7 @@ export const useAuthStore = create<AuthState>((set) => ({
               cookieString += '; Secure';
             }
             document.cookie = cookieString;
-            console.log('[AuthStore] Cookie synced on init');
+
           }
         } catch (error) {
           console.error('Failed to parse user from localStorage:', error);
@@ -162,7 +162,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Register unauthorized callback
       apiClient.setOnUnauthorized(() => {
-        console.log('Token expired or invalid, forcing logout...');
+
         // Clear local storage and cookies
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -203,7 +203,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             cookieString += '; Secure';
           }
           document.cookie = cookieString;
-          console.log('[AuthStore] Cookie synced');
+
         } catch (error) {
           console.error('Failed to sync cookie:', error);
         }

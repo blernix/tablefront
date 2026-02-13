@@ -43,7 +43,7 @@ export default function ServersPage() {
   const loadServers = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-      console.log('Already fetching servers data, skipping...');
+
       return;
     }
 
@@ -51,8 +51,8 @@ export default function ServersPage() {
       isFetchingRef.current = true;
       setLoading(true);
       const response = await apiClient.getServerUsers();
-      console.log('[ServersPage] Servers loaded:', response.servers);
-      console.log('[ServersPage] Server IDs:', response.servers.map(s => ({ id: s.id, email: s.email })));
+
+
       setServers(response.servers);
     } catch (error: any) {
       toast.error(error.message || 'Erreur lors du chargement des serveurs');

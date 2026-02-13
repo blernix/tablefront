@@ -14,41 +14,30 @@ export default function TarteaucitronProvider() {
   const [tarteaucitronReady, setTarteaucitronReady] = useState(false);
 
    useEffect(() => {
-    // Initialize tarteaucitron after script loads
-    if (scriptLoaded && typeof window !== 'undefined' && window.tarteaucitron) {
-      console.log('Tarteaucitron script loaded, initializing...');
-      
-      // Check if already initialized
-      if (window.tarteaucitron.job) {
-        console.log('Tarteaucitron already initialized');
-        setTarteaucitronReady(true);
-        return;
-      }
+     // Initialize tarteaucitron after script loads
+     if (scriptLoaded && typeof window !== 'undefined' && window.tarteaucitron) {
+       // Check if already initialized
+       if (window.tarteaucitron.job) {
+         setTarteaucitronReady(true);
+         return;
+       }
       
        // Listen for when tarteaucitron root is available
-       const handleRootAvailable = () => {
-         console.log('tac.root_available event - tarteaucitron UI should be visible');
-         console.log('Root element check:', document.querySelector('.tarteaucitronRoot') !== null);
-         console.log('Banner element check:', document.querySelector('.tarteaucitronBanner') !== null);
-         console.log('MainLine element check:', document.querySelector('.tarteaucitronMainLine') !== null);
-         console.log('Job array:', window.tarteaucitron.job);
-         console.log('Services:', Object.keys(window.tarteaucitron.services));
-       };
+        const handleRootAvailable = () => {
+          // tarteaucitron UI ready
+        };
        window.addEventListener('tac.root_available', handleRootAvailable);
        
        // Listen for when banner opens
-       const handleOpenAlert = () => {
-         console.log('tac.open_alert event - banner should be visible');
-         const alertBigEl = document.querySelector('#tarteaucitronAlertBig') as HTMLElement;
-         console.log('AlertBig element:', alertBigEl);
-         console.log('AlertBig display style:', alertBigEl?.style.display);
-       };
+        const handleOpenAlert = () => {
+          // banner opened
+        };
        window.addEventListener('tac.open_alert', handleOpenAlert);
        
        // Listen for when banner closes
-       const handleCloseAlert = () => {
-         console.log('tac.close_alert event - banner closed');
-       };
+        const handleCloseAlert = () => {
+          // banner closed
+        };
        window.addEventListener('tac.close_alert', handleCloseAlert);
       
        // Define custom services BEFORE initialization
@@ -60,16 +49,14 @@ export default function TarteaucitronProvider() {
          uri: '',
          needConsent: false, // Mandatory, no consent required
          cookies: ['token', 'auth', 'session', 'next-auth.session-token'],
-         js: function () {
-           'use strict';
-           // Nothing to load, session cookies are handled by the server
-           console.log('Session service loaded');
-         },
-         fallback: function () {
-           'use strict';
-           // No fallback needed for mandatory service
-           console.log('Session service fallback (should not happen)');
-         }
+          js: function () {
+            'use strict';
+            // Nothing to load, session cookies are handled by the server
+          },
+          fallback: function () {
+            'use strict';
+            // No fallback needed for mandatory service
+          }
        };
        
        // Widget service (mandatory, no consent needed)
@@ -80,16 +67,14 @@ export default function TarteaucitronProvider() {
          uri: '',
          needConsent: false, // Mandatory, no consent required
          cookies: ['tablemaster_widget', 'reservation_session'],
-         js: function () {
-           'use strict';
-           // Widget is loaded by the embed script, nothing to do here
-           console.log('Widget service loaded');
-         },
-         fallback: function () {
-           'use strict';
-           // No fallback needed for mandatory service
-           console.log('Widget service fallback (should not happen)');
-         }
+          js: function () {
+            'use strict';
+            // Widget is loaded by the embed script, nothing to do here
+          },
+          fallback: function () {
+            'use strict';
+            // No fallback needed for mandatory service
+          }
        };
        
        // Analytics placeholder service (optional, requires consent)
@@ -101,25 +86,20 @@ export default function TarteaucitronProvider() {
          uri: '',
          needConsent: true, // Optional, requires consent
          cookies: ['_ga', '_gid', '_gat'],
-         js: function () {
-           'use strict';
-           // We don't actually load analytics, this is just a placeholder for GDPR compliance
-           console.log('Analytics service loaded (placeholder)');
-         },
-         fallback: function () {
-           'use strict';
-           console.log('Analytics service fallback');
-         }
+          js: function () {
+            'use strict';
+            // We don't actually load analytics, this is just a placeholder for GDPR compliance
+          },
+          fallback: function () {
+            'use strict';
+          }
        };
        
-       console.log('Custom services defined:', Object.keys(window.tarteaucitron.services));
+        // Define job array - this tells tarteaucitron which services to manage
+        // Without this, the banner won't show because job.length === 0
+        window.tarteaucitron.job = ['session', 'widget', 'analytics'];
        
-       // Define job array - this tells tarteaucitron which services to manage
-       // Without this, the banner won't show because job.length === 0
-       window.tarteaucitron.job = ['session', 'widget', 'analytics'];
-      
-      console.log('Calling tarteaucitron.init with configuration');
-      window.tarteaucitron.init({
+        window.tarteaucitron.init({
         privacyUrl: '/privacy',
         language: 'fr',
          orientation: 'bottom', // popup, middle, bottom, top
@@ -172,32 +152,22 @@ export default function TarteaucitronProvider() {
         services: {},
         
         // Callbacks
-        onAccept: function() {
-          console.log('Tarteaucitron: Cookies accepted');
-          console.log('Root element exists:', document.querySelector('.tarteaucitronRoot') !== null);
-          setTarteaucitronReady(true);
-        },
-        onDecline: function() {
-          console.log('Tarteaucitron: Cookies declined');
-          console.log('Root element exists:', document.querySelector('.tarteaucitronRoot') !== null);
-          setTarteaucitronReady(true);
-        },
+         onAccept: function() {
+           setTarteaucitronReady(true);
+         },
+         onDecline: function() {
+           setTarteaucitronReady(true);
+         },
        });
         
-        // Set ready after a short delay to ensure UI is initialized
-        setTimeout(() => {
-          if (window.tarteaucitron.userInterface) {
-            console.log('Tarteaucitron userInterface available');
-            console.log('Available services:', Object.keys(window.tarteaucitron.services || {}).length);
-            console.log('Custom services check:', {
-              session: window.tarteaucitron.services?.session,
-              widget: window.tarteaucitron.services?.widget
-            });
-            setTarteaucitronReady(true);
-          } else {
-            console.warn('Tarteaucitron userInterface not available after initialization');
-          }
-        }, 500);
+         // Set ready after a short delay to ensure UI is initialized
+         setTimeout(() => {
+           if (window.tarteaucitron.userInterface) {
+             setTarteaucitronReady(true);
+           } else {
+             console.warn('Tarteaucitron userInterface not available after initialization');
+           }
+         }, 500);
         
          // Cleanup function
          return () => {
@@ -224,17 +194,15 @@ export default function TarteaucitronProvider() {
      }
    }, [tarteaucitronReady, scriptLoaded]);
 
-   console.log('TarteaucitronProvider rendering');
-   return (
+    return (
     <>
       {/* Load tarteaucitron JS */}
       <Script
         src="/tarteaucitron/tarteaucitron.js"
         strategy="afterInteractive"
-        onLoad={() => {
-          console.log('Tarteaucitron script loaded');
-          setScriptLoaded(true);
-        }}
+         onLoad={() => {
+           setScriptLoaded(true);
+         }}
       />
     </>
   );

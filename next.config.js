@@ -5,11 +5,19 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 });
 
+const { withSentryConfig } = require('@sentry/nextjs');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['storage.googleapis.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        pathname: '/**',
+      },
+    ],
   },
   async rewrites() {
     return [
@@ -99,4 +107,15 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig);
+const sentryWebpackPluginOptions = {
+  org: process.env.SENTRY_ORG || 'tablemaster',
+  project: process.env.SENTRY_PROJECT || 'javascript-nextjs',
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  transpileClientSDK: true,
+  tunnelRoute: '/monitoring',
+  hideSourceMaps: true,
+};
+
+module.exports = withSentryConfig(withPWA(nextConfig), sentryWebpackPluginOptions);

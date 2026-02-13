@@ -26,14 +26,7 @@ export const CapacityIndicator = ({
   simultaneousCapacity,
   serviceCapacities
 }: CapacityIndicatorProps) => {
-  console.debug('[CapacityIndicator] props:', {
-    currentGuests,
-    maxCapacity,
-    maxDailyCapacity,
-    simultaneousCapacity,
-    serviceCapacities,
-    equality: maxDailyCapacity === simultaneousCapacity
-  });
+
   // Determine which capacity to display
   const displayCapacity = maxDailyCapacity !== undefined ? maxDailyCapacity : maxCapacity;
   const hasAdvancedData = maxDailyCapacity !== undefined || simultaneousCapacity !== undefined;

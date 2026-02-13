@@ -101,12 +101,12 @@ export const calculateDailyTheoreticalCapacity = (
   
   // Calculate available time slots
   const allSlots = calculateAvailableTimeSlots(daySchedule, reservationDuration);
-  console.debug('[Capacity] allSlots:', { allSlots, reservationDuration, daySchedule });
+
   
   // Separate slots by service
   const lunchSlots = allSlots.filter(slot => getServiceFromTime(slot) === 'lunch');
   const dinnerSlots = allSlots.filter(slot => getServiceFromTime(slot) === 'dinner');
-  console.debug('[Capacity] lunchSlots:', lunchSlots.length, 'dinnerSlots:', dinnerSlots.length);
+
   
   // Calculate theoretical capacity per service
   const lunchCapacity = lunchSlots.length * maxSimultaneousCapacity;
@@ -249,8 +249,8 @@ export const calculateServiceOccupation = (
   // Calculate occupied slots using actual slot grouping
   // Multiple reservations can share a slot if they're at similar times
   const slotsMap = groupReservationsByTimeSlot(reservations, restaurant, date);
-  console.debug('[Capacity] slotsMap size:', slotsMap.size);
-  console.debug('[Capacity] slotsMap entries:', Array.from(slotsMap.entries()).map(([slot, res]) => ({ slot, reservations: res.length, service: getServiceFromTime(slot) })));
+
+
   let lunchOccupiedSlots = 0;
   let dinnerOccupiedSlots = 0;
   
@@ -264,7 +264,7 @@ export const calculateServiceOccupation = (
       }
     }
   }
-  console.debug('[Capacity] lunchOccupiedSlots:', lunchOccupiedSlots, 'dinnerOccupiedSlots:', dinnerOccupiedSlots);
+
   
   result.lunch.occupiedSlots = Math.min(lunchOccupiedSlots, result.lunch.totalSlots);
   result.dinner.occupiedSlots = Math.min(dinnerOccupiedSlots, result.dinner.totalSlots);

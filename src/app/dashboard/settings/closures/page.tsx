@@ -59,7 +59,7 @@ export default function ClosuresPage() {
   const fetchClosures = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-      console.log('Already fetching closures data, skipping...');
+
       return;
     }
 

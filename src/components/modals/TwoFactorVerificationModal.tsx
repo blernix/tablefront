@@ -62,11 +62,11 @@ const TwoFactorVerificationModal = ({
   const handleVerifyCode = () => {
     if (!validateVerificationCode()) return;
     
-    console.log('[2FA Modal] Verifying code:', { tempToken: tempToken?.substring(0, 20) + '...', verificationCode });
+
     
     verifyLogin({ tempToken, token: verificationCode }, {
       onSuccess: (data) => {
-        console.log('[2FA Modal] Verification successful:', { user: data.user, tokenPreview: data.token?.substring(0, 20) + '...' });
+
         toast.success('Connexion réussie !');
         if (onSuccess) onSuccess(data);
         handleClose();

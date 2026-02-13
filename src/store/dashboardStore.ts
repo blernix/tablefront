@@ -78,7 +78,7 @@ export const useDashboardStore = create<DashboardStore>()(
         set({ isLoading: true, error: null });
         
         try {
-          console.log('[DashboardStore] Fetching dashboard stats...');
+
           const stats = await apiClient.getDashboardStats();
           
           set({

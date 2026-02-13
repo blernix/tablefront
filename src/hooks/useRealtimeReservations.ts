@@ -72,14 +72,14 @@ export const useRealtimeReservations = (
 
     // Handle connection open
     eventSource.onopen = () => {
-      console.log('SSE connection established');
+
       retryCountRef.current = 0;
       onConnectedRef.current?.();
     };
 
     // Handle connected event from server
     eventSource.addEventListener('connected', (event) => {
-      console.log('SSE connected event received:', event.data);
+
       onConnectedRef.current?.();
     });
 
@@ -87,7 +87,7 @@ export const useRealtimeReservations = (
     const handleReservationEvent = (eventType: string) => (event: MessageEvent) => {
       try {
         const eventData: ReservationEvent = JSON.parse(event.data);
-        console.log(`SSE event received: ${eventType}`, eventData);
+
 
         // Call the provided callback
         onEventRef.current?.(eventData);
@@ -128,7 +128,7 @@ export const useRealtimeReservations = (
         retryCountRef.current += 1;
         
         reconnectTimeoutRef.current = setTimeout(() => {
-          console.log(`Attempting to reconnect SSE... (retry ${retryCountRef.current}, delay ${delay}ms)`);
+
           connect();
         }, delay);
       }
@@ -138,7 +138,7 @@ export const useRealtimeReservations = (
   // Function to manually disconnect
   const disconnect = useCallback(() => {
     if (eventSourceRef.current) {
-      console.log('Manually disconnecting SSE');
+
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
@@ -264,12 +264,12 @@ export const useRealtimeReservationsManager = (params?: {
 
   // Memoize SSE callbacks to prevent reconnections
   const handleConnected = useCallback(() => {
-    console.log('SSE connected');
+
     setIsConnected(true);
   }, []);
 
   const handleDisconnected = useCallback(() => {
-    console.log('SSE disconnected');
+
     setIsConnected(false);
   }, []);
 
@@ -293,7 +293,7 @@ export const useRealtimeReservationsManager = (params?: {
   const refreshReservations = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isLoadingRef.current) {
-      console.log('Already loading reservations, skipping...');
+
       return;
     }
 

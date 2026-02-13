@@ -43,7 +43,7 @@ export default function BlockedDaysPage() {
   const fetchDayBlocks = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-      console.log('Already fetching day blocks data, skipping...');
+
       return;
     }
 

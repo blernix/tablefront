@@ -112,7 +112,7 @@ export default function WidgetSettingsPage() {
    useEffect(() => {
      const widgetConfig = restaurant?.widgetConfig;
      if (widgetConfig) {
-       console.log('[DEBUG] Setting form values from widget config:', widgetConfig);
+
         // Form colors
         setPrimaryColor(widgetConfig.primaryColor || '#000000');
         setSecondaryColor(widgetConfig.secondaryColor || '#2A2A2A');
@@ -132,12 +132,12 @@ export default function WidgetSettingsPage() {
        setModalWidth(widgetConfig.modalWidth || '500px');
        setModalHeight(widgetConfig.modalHeight || '600px');
      } else if (restaurant) {
-       console.log('[DEBUG] No widgetConfig found, using defaults');
+
      }
    }, [restaurant]);
 
    useEffect(() => {
-     console.log('[DEBUG] Restaurant updated:', restaurant?.accountType, restaurant?.subscription?.plan);
+
    }, [restaurant]);
 
     const handleReset = () => {
@@ -160,11 +160,11 @@ export default function WidgetSettingsPage() {
      setModalWidth('500px');
      setModalHeight('600px');
      
-     console.log('[DEBUG] Reset to default values');
+
    };
 
     const checkSlugAvailability = async (slug: string) => {
-      console.log('[DEBUG] checkSlugAvailability called with:', slug);
+
       if (!slug || slug.length < 3) {
         setSlugAvailability(null);
         return;
@@ -173,17 +173,16 @@ export default function WidgetSettingsPage() {
       setIsCheckingAvailability(true);
       
       try {
-        console.log('[DEBUG] Fetching slug availability from API');
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/public/check-slug-availability/${slug}`);
         const data = await response.json();
-        console.log('[DEBUG] Slug availability response:', data);
+
         
         setSlugAvailability({
           available: data.available,
           message: data.message
         });
       } catch (error) {
-        console.error('[DEBUG] Error checking slug availability:', error);
         setSlugAvailability({
           available: false,
           message: 'Erreur lors de la vérification'
@@ -194,7 +193,7 @@ export default function WidgetSettingsPage() {
     };
 
     const handleCustomSlugChange = (value: string) => {
-      console.log('[DEBUG] handleCustomSlugChange called with:', value);
+
       const cleanedValue = value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
       setCustomSlug(cleanedValue);
      
@@ -207,7 +206,7 @@ export default function WidgetSettingsPage() {
    };
 
     const handleSlugUpdate = async () => {
-      console.log('[DEBUG] handleSlugUpdate called');
+
       if (!customSlug || customSlug.length < 3) {
         setError('Le slug doit faire au moins 3 caractères');
         return;
@@ -255,21 +254,7 @@ export default function WidgetSettingsPage() {
      setIsSaving(true);
 
       try {
-        console.log('[DEBUG] Sending widget config:', {
-          primaryColor,
-          secondaryColor,
-          fontFamily,
-          borderRadius,
-          buttonBackgroundColor,
-          buttonTextColor,
-          buttonHoverColor,
-          buttonText,
-          buttonPosition,
-          buttonStyle,
-          buttonIcon,
-          modalWidth,
-          modalHeight,
-        });
+
         
         await apiClient.restaurants.updateWidgetConfig({
           // Form colors
@@ -311,7 +296,7 @@ export default function WidgetSettingsPage() {
   }
 
     // Check if user has access using feature flag system
-    console.log('[DEBUG] Feature access check - widget-customization:', canCustomizeWidget);
+
     const isProUser = canCustomizeWidget;
 
   return (
@@ -368,7 +353,7 @@ export default function WidgetSettingsPage() {
         <nav className="flex space-x-8">
           <button
             type="button"
-             onClick={() => { console.log('[DEBUG] Switching to floating-button tab'); setActiveTab('floating-button'); }}
+             onClick={() => { setActiveTab('floating-button'); }}
             className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'floating-button'
                 ? 'border-[#0066FF] text-[#0066FF]'
@@ -380,7 +365,7 @@ export default function WidgetSettingsPage() {
           </button>
           <button
             type="button"
-             onClick={() => { console.log('[DEBUG] Switching to form tab'); setActiveTab('form'); }}
+             onClick={() => { setActiveTab('form'); }}
             className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'form'
                 ? 'border-[#0066FF] text-[#0066FF]'
@@ -392,7 +377,7 @@ export default function WidgetSettingsPage() {
           </button>
           <button
             type="button"
-             onClick={() => { console.log('[DEBUG] Switching to advanced tab'); setActiveTab('advanced'); }}
+              onClick={() => { setActiveTab('advanced'); }}
             className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'advanced'
                 ? 'border-[#0066FF] text-[#0066FF]'

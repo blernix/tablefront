@@ -2,17 +2,16 @@
 // Handles push events and notification clicks
 
 self.addEventListener('push', function(event) {
-  console.log('[Push SW] Push event received:', event);
-
+  // Push event received
   if (!event.data) {
-    console.log('[Push SW] Push event has no data');
+    // Push event has no data
     return;
   }
 
   let data;
   try {
     data = event.data.json();
-    console.log('[Push SW] Push data:', data);
+    // Push data parsed
   } catch (error) {
     console.error('[Push SW] Failed to parse push data:', error);
     return;
@@ -35,7 +34,7 @@ self.addEventListener('push', function(event) {
   event.waitUntil(
     self.registration.showNotification(title, options)
       .then(() => {
-        console.log('[Push SW] Notification shown:', title);
+         // Notification shown
       })
       .catch(error => {
         console.error('[Push SW] Failed to show notification:', error);
@@ -44,7 +43,7 @@ self.addEventListener('push', function(event) {
 });
 
 self.addEventListener('notificationclick', function(event) {
-  console.log('[Push SW] Notification click:', event.notification);
+  // Notification clicked
 
   event.notification.close();
 
@@ -65,7 +64,7 @@ self.addEventListener('notificationclick', function(event) {
 
   // Handle button actions if present
   if (event.action) {
-    console.log('[Push SW] Action clicked:', event.action);
+    // Action clicked
     // You can add custom handling for different actions here
     if (event.action === 'view_reservation' && notificationData.reservationId) {
       url = `/dashboard/reservations/${notificationData.reservationId}`;
@@ -85,13 +84,13 @@ self.addEventListener('notificationclick', function(event) {
       // Check if there's already a window/tab open with the target URL
       for (const client of clientList) {
         if (client.url === url || client.url.includes(url.split('?')[0])) {
-          console.log('[Push SW] Found existing client:', client.url);
+          // Found existing client
           return client.focus();
         }
       }
       
       // If no matching client found, open a new window/tab
-      console.log('[Push SW] Opening new client for URL:', url);
+      // Opening new client
       return clients.openWindow(url);
     }).catch(error => {
       console.error('[Push SW] Error handling notification click:', error);
@@ -102,13 +101,13 @@ self.addEventListener('notificationclick', function(event) {
 });
 
 self.addEventListener('pushsubscriptionchange', function(event) {
-  console.log('[Push SW] Subscription changed:', event);
+  // Subscription changed
 
   // Handle subscription change (e.g., when subscription expires)
   // In a real implementation, you would send the new subscription to your server
   event.waitUntil(
     Promise.resolve().then(async () => {
-      console.log('[Push SW] Push subscription changed, new subscription:', event.newSubscription);
+      // Push subscription changed
       // You could send the new subscription to your server here
       // await fetch('/api/notifications/subscribe', {
       //   method: 'POST',
@@ -122,20 +121,20 @@ self.addEventListener('pushsubscriptionchange', function(event) {
 
 // Log service worker lifecycle events
 self.addEventListener('install', function(event) {
-  console.log('[Push SW] Service worker installed');
+  // Service worker installed
   // Skip waiting to activate immediately
   self.skipWaiting();
 });
 
 self.addEventListener('activate', function(event) {
-  console.log('[Push SW] Service worker activated');
+  // Service worker activated
   // Take control of all clients immediately
   event.waitUntil(self.clients.claim());
 });
 
 // Handle messages from the main thread
 self.addEventListener('message', function(event) {
-  console.log('[Push SW] Message received:', event.data);
+  // Message received
   
   if (event.data && event.data.type === 'GET_SUBSCRIPTION') {
     // Return current subscription to the client

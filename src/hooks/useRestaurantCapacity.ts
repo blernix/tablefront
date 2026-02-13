@@ -12,29 +12,21 @@ import {
  * Calculate maximum capacity from restaurant tables configuration
  */
 export const getMaxCapacityFromRestaurant = (restaurant: Restaurant | null | undefined): number => {
-  console.log('[DEBUG] getMaxCapacityFromRestaurant called with restaurant:', restaurant);
   if (!restaurant?.tablesConfig) {
-    console.log('[DEBUG] No tablesConfig or restaurant, returning default 50');
     return 50; // Default fallback
   }
 
-  console.log('[DEBUG] tablesConfig:', restaurant.tablesConfig);
   const { mode, totalTables, averageCapacity, tables } = restaurant.tablesConfig;
 
   if (mode === 'simple' && totalTables && averageCapacity) {
-    const capacity = totalTables * averageCapacity;
-    console.log('[DEBUG] Simple mode capacity:', totalTables, '*', averageCapacity, '=', capacity);
-    return capacity;
+    return totalTables * averageCapacity;
   }
 
   if (mode === 'detailed' && tables && tables.length > 0) {
-    const capacity = tables.reduce((total, table) => total + (table.quantity * table.capacity), 0);
-    console.log('[DEBUG] Detailed mode capacity:', capacity, 'from tables:', tables);
-    return capacity;
+    return tables.reduce((total, table) => total + (table.quantity * table.capacity), 0);
   }
 
   // Fallback to existing configuration or default
-  console.log('[DEBUG] Fallback to default 50');
   return 50;
 };
 
@@ -51,17 +43,9 @@ export const calculateDailyCapacityAdvanced = (
   
   // Calculate theoretical capacity based on opening hours
   const theoreticalCapacity = calculateDailyTheoreticalCapacity(restaurant, date);
-  console.debug('[Capacity] theoreticalCapacity:', { 
-    lunchCapacity: theoreticalCapacity.lunchCapacity,
-    dinnerCapacity: theoreticalCapacity.dinnerCapacity,
-    totalTheoreticalCapacity: theoreticalCapacity.totalTheoreticalCapacity,
-    maxSimultaneousCapacity: theoreticalCapacity.maxSimultaneousCapacity,
-    availableSlots: theoreticalCapacity.availableSlots
-  });
   
   // Calculate service occupation
   const serviceOccupation = calculateServiceOccupation(reservations, restaurant, date);
-  console.debug('[Capacity] serviceOccupation:', serviceOccupation);
   
   // Filter reservations for this date
   const dayReservations = reservations.filter(r => {
@@ -81,7 +65,7 @@ export const calculateDailyCapacityAdvanced = (
     ? (totalGuests / theoreticalCapacity.totalTheoreticalCapacity) * 100
     : 0;
   
-  console.debug('[Capacity] maxSimultaneousCapacity:', maxSimultaneousCapacity, 'maxDailyCapacity:', theoreticalCapacity.totalTheoreticalCapacity, 'equal?', maxSimultaneousCapacity === theoreticalCapacity.totalTheoreticalCapacity);
+
 
   return {
     // Backward compatibility properties

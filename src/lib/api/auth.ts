@@ -15,7 +15,7 @@ export class TwoFactorRequiredError extends Error {
 
 export class AuthApi extends ApiClient {
   async login(email: string, password: string): Promise<AuthResponse> {
-    console.log('[API] Login attempt for:', email);
+
     try {
       const response = await this.request<AuthResponse | TwoFactorAuthResponse>('/api/auth/login', {
         method: 'POST',
@@ -25,7 +25,7 @@ export class AuthApi extends ApiClient {
       // Check if 2FA is required
       if ('requiresTwoFactor' in response && response.requiresTwoFactor) {
         const twoFactorResponse = response as TwoFactorAuthResponse;
-        console.log('[API] 2FA required for:', email);
+
         throw new TwoFactorRequiredError(
           twoFactorResponse.tempToken,
           twoFactorResponse.userId,
@@ -36,7 +36,7 @@ export class AuthApi extends ApiClient {
       
       // Normal login success
       const authResponse = response as AuthResponse;
-      console.log('[API] Login response:', { user: authResponse.user, tokenLength: authResponse.token?.length, tokenPreview: authResponse.token?.substring(0, 20) + '...' });
+
       if (!authResponse.token) {
         console.error('[API] Login response missing token!', authResponse);
         throw new Error('Server did not return authentication token');
@@ -120,12 +120,12 @@ export class AuthApi extends ApiClient {
   }
 
   async verifyTwoFactorLogin(tempToken: string, token: string): Promise<AuthResponse> {
-    console.log('[AuthApi] verifyTwoFactorLogin called:', { tempToken: tempToken?.substring(0, 20) + '...', token });
+
     const response = await this.request<AuthResponse>('/api/2fa/verify-login', {
       method: 'POST',
       body: JSON.stringify({ tempToken, token }),
     });
-    console.log('[AuthApi] verifyTwoFactorLogin response:', { user: response.user, tokenPreview: response.token?.substring(0, 20) + '...' });
+
     // Set token after successful verification
     this.setToken(response.token);
     return response;

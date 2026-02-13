@@ -44,7 +44,7 @@ export default function ReservationConfigPage() {
   const fetchRestaurant = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-      console.log('Already fetching restaurant data, skipping...');
+
       return;
     }
 

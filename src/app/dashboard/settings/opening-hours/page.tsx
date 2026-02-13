@@ -46,7 +46,7 @@ export default function OpeningHoursPage() {
   const fetchOpeningHours = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-      console.log('Already fetching opening hours data, skipping...');
+
       return;
     }
 

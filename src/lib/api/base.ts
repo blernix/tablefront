@@ -23,7 +23,7 @@ export class ApiClient {
   }
 
   setToken(token: string | null) {
-    console.log('[API] setToken called:', token ? `token length: ${token.length}` : 'null');
+
 
     // Validate token format if provided
     if (token && token.split('.').length !== 3) {
@@ -38,12 +38,7 @@ export class ApiClient {
         const exp = payload.exp ? new Date(payload.exp * 1000) : null;
         const now = new Date();
         const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
-        console.log(`[API] Token payload:`, {
-          userId: payload.userId,
-          email: payload.email,
-          exp: exp?.toISOString(),
-          timeLeft: timeLeft !== null ? `${Math.floor(timeLeft / 60)}m ${Math.floor(timeLeft % 60)}s` : 'none'
-        });
+
       } catch (e) {
         console.warn('[API] Failed to decode token payload:', e);
       }
@@ -60,12 +55,12 @@ export class ApiClient {
           cookieString += '; Secure';
         }
         document.cookie = cookieString;
-        console.log('[API] Cookie synced with token, document.cookie after:', document.cookie.substring(0, 100));
+
       } else {
         localStorage.removeItem('token');
         // Clear cookie
         document.cookie = 'token=; path=/; max-age=0';
-        console.log('[API] Token cleared, document.cookie after:', document.cookie);
+
       }
     }
   }
@@ -78,7 +73,7 @@ export class ApiClient {
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
       if (storedToken !== this.token) {
-        console.log(`[API] Token sync: updating from localStorage (changed: ${!!this.token} -> ${!!storedToken})`);
+
         this.token = storedToken;
         // Log token expiration after sync
         if (storedToken) {
@@ -87,11 +82,7 @@ export class ApiClient {
             const exp = payload.exp ? new Date(payload.exp * 1000) : null;
             const now = new Date();
             const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
-            console.log(`[API] Synced token expiration:`, {
-              exp: exp?.toISOString(),
-              timeLeft: timeLeft !== null ? `${Math.floor(timeLeft / 60)}m ${Math.floor(timeLeft % 60)}s` : 'none',
-              expired: timeLeft !== null && timeLeft <= 0
-            });
+
           } catch (e) {
             console.warn('[API] Failed to decode synced token:', e);
           }
@@ -121,7 +112,7 @@ export class ApiClient {
 
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
-      console.log(`[API] Request to ${endpoint} with token (length: ${this.token.length})`);
+
     } else {
       console.warn(`[API] Request to ${endpoint} without token`);
     }
@@ -140,12 +131,6 @@ export class ApiClient {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout (increased from 30s)
 
-        console.log(`[API] 🚀 Sending request to ${endpoint}`, {
-          method: options.method || 'GET',
-          hasToken: !!this.token,
-          concurrent: ApiClient.pendingRequests,
-          peak: ApiClient.maxConcurrentRequests
-        });
         startTime = Date.now();
 
         response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -157,11 +142,7 @@ export class ApiClient {
 
         const duration = Date.now() - startTime;
         ApiClient.pendingRequests--; // Request completed
-        console.log(`[API] ✅ Received response from ${endpoint} in ${duration}ms`, {
-          status: response.status,
-          concurrent: ApiClient.pendingRequests,
-          peak: ApiClient.maxConcurrentRequests
-        });
+
 
         clearTimeout(timeoutId);
         break; // Success, exit retry loop
@@ -216,13 +197,13 @@ export class ApiClient {
       // Skip for auth endpoints (login, logout, password reset)
       const isAuthEndpoint = endpoint.includes('/api/auth/');
       if (response.status === 401 && this.onUnauthorizedCallback && !isAuthEndpoint) {
-        console.log(`[API] 401 Unauthorized for ${endpoint}, attempting token refresh`);
+
 
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
             // Wait for ongoing refresh - store promise reference before await
-            console.log('[API] Waiting for ongoing token refresh...');
+
             const currentRefreshPromise = this.refreshPromise;
             if (!currentRefreshPromise) {
               console.warn('[API] No refresh promise found, retrying request');
@@ -230,7 +211,7 @@ export class ApiClient {
             }
             await currentRefreshPromise;
             // After refresh, retry the request with new token
-            console.log('[API] Token refresh completed, retrying request');
+
             return this.request<T>(endpoint, options);
           } else {
             this.isRefreshing = true;
@@ -239,7 +220,7 @@ export class ApiClient {
 
             // Update token
             this.setToken(refreshResult.token);
-            console.log('[API] Token refreshed successfully, retrying request');
+
 
             // Clear refresh state
             this.isRefreshing = false;
@@ -254,7 +235,7 @@ export class ApiClient {
           this.isRefreshing = false;
           this.refreshPromise = null;
           // Trigger logout
-          console.log(`[API] Triggering logout due to failed refresh`);
+
           this.onUnauthorizedCallback();
         }
       }
@@ -293,13 +274,13 @@ export class ApiClient {
       // Skip for auth endpoints (login, logout, password reset)
       const isAuthEndpoint = endpoint.includes('/api/auth/');
       if (response.status === 401 && this.onUnauthorizedCallback && !isAuthEndpoint) {
-        console.log(`[API] 401 Unauthorized for ${endpoint} (upload), attempting token refresh`);
+
 
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
             // Wait for ongoing refresh - store promise reference before await
-            console.log('[API] Waiting for ongoing token refresh...');
+
             const currentRefreshPromise = this.refreshPromise;
             if (!currentRefreshPromise) {
               console.warn('[API] No refresh promise found, retrying upload');
@@ -307,7 +288,7 @@ export class ApiClient {
             }
             await currentRefreshPromise;
             // After refresh, retry the upload with new token
-            console.log('[API] Token refresh completed, retrying upload');
+
             return this.uploadFile<T>(endpoint, file, fieldName);
           } else {
             this.isRefreshing = true;
@@ -316,7 +297,7 @@ export class ApiClient {
 
             // Update token
             this.setToken(refreshResult.token);
-            console.log('[API] Token refreshed successfully, retrying upload');
+
 
             // Clear refresh state
             this.isRefreshing = false;
@@ -331,7 +312,7 @@ export class ApiClient {
           this.isRefreshing = false;
           this.refreshPromise = null;
           // Trigger logout
-          console.log(`[API] Triggering logout due to failed refresh`);
+
           this.onUnauthorizedCallback();
         }
       }
@@ -342,11 +323,11 @@ export class ApiClient {
   }
 
   async refreshToken(): Promise<{ token: string }> {
-    console.log('[API] Refreshing token');
+
     const response = await this.request<{ token: string }>('/api/auth/refresh', {
       method: 'POST',
     });
-    console.log('[API] Token refreshed successfully');
+
 
     // Validate the returned token
     if (!response.token || response.token.split('.').length !== 3) {

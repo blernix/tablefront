@@ -70,7 +70,7 @@ export default function QrCodeDisplay({
           url: qrCodeUrl,
         });
       } catch (err) {
-        console.log('Share cancelled');
+
       }
     } else {
       handleCopyUrl();

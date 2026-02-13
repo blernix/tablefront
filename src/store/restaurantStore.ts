@@ -55,15 +55,9 @@ export const useRestaurantStore = create<RestaurantStore>()(
         set({ isLoading: true, error: null });
         
         try {
-          console.log('[RestaurantStore] Fetching restaurant info...');
+
           const response = await apiClient.getMyRestaurant();
-          console.log('[RestaurantStore] Restaurant data received:', {
-            id: response.restaurant?._id,
-            name: response.restaurant?.name,
-            accountType: response.restaurant?.accountType,
-            plan: response.restaurant?.subscription?.plan,
-            updatedAt: response.restaurant?.updatedAt
-          });
+
           
           set({
             restaurant: response.restaurant,
