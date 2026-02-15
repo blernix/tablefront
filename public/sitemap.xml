@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/</loc>
+    <loc>https://tablemaster.fr/</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/legal</loc>
+    <loc>https://tablemaster.fr/legal</loc>
     <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/privacy</loc>
+    <loc>https://tablemaster.fr/privacy</loc>
     <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/cookies</loc>
+    <loc>https://tablemaster.fr/cookies</loc>
     <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/cgv</loc>
+    <loc>https://tablemaster.fr/cgv</loc>
     <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/signup</loc>
+    <loc>https://tablemaster.fr/signup</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tablemaster.killian-lecrut.com/login</loc>
+    <loc>https://tablemaster.fr/login</loc>
     <lastmod>2026-02-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

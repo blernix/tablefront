@@ -6,7 +6,12 @@ import TarteaucitronProvider from '@/components/TarteaucitronProvider';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 import './globals.css';
-import { getPageMetadata, organizationStructuredData, productStructuredData, proProductStructuredData } from '@/config/metadata';
+import {
+  getPageMetadata,
+  organizationStructuredData,
+  productStructuredData,
+  proProductStructuredData,
+} from '@/config/metadata';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const pathname = headersList.get('x-invoke-path') || '/';
   const metadata = getPageMetadata(pathname);
   return {
-    metadataBase: new URL('https://tablemaster.killian-lecrut.com'),
+    metadataBase: new URL('https://tablemaster.fr'),
     ...metadata,
   };
 }
@@ -33,7 +38,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = await headers();
   const pathname = headersList.get('x-invoke-path') || '/';
-  
+
   // Mapping des noms de pages pour le fil d'Ariane
   const pageNames: Record<string, string> = {
     '/': 'Accueil',
@@ -45,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     '/login': 'Connexion',
     '/dashboard': 'Tableau de Bord',
   };
-  
+
   const breadcrumbStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -54,21 +59,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         '@type': 'ListItem',
         position: 1,
         name: 'Accueil',
-        item: 'https://tablemaster.killian-lecrut.com',
+        item: 'https://tablemaster.fr',
       },
     ],
   };
-  
+
   // Ajouter la page courante si ce n'est pas l'accueil
   if (pathname !== '/' && pageNames[pathname]) {
     breadcrumbStructuredData.itemListElement.push({
       '@type': 'ListItem',
       position: 2,
       name: pageNames[pathname],
-      item: `https://tablemaster.killian-lecrut.com${pathname}`,
+      item: `https://tablemaster.fr${pathname}`,
     });
   }
-  
+
   return (
     <html lang="fr" data-theme="light">
       <head>

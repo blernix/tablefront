@@ -4,16 +4,17 @@ import { headers } from 'next/headers';
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const pathname = headersList.get('x-invoke-path') || '/';
-  
+
   if (pathname.includes('/signup')) {
     return {
       title: 'Inscription - TableMaster',
-      description: 'Créez votre compte TableMaster en 2 minutes. Commencez à gérer vos réservations sans commission.',
+      description:
+        'Créez votre compte TableMaster en 2 minutes. Commencez à gérer vos réservations sans commission.',
       openGraph: {
         title: 'Inscription - TableMaster',
         description: 'Créez votre compte TableMaster en 2 minutes.',
         type: 'website',
-        url: 'https://tablemaster.killian-lecrut.com/signup',
+        url: 'https://tablemaster.fr/signup',
       },
       twitter: {
         card: 'summary',
@@ -22,16 +23,17 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     };
   }
-  
+
   if (pathname.includes('/login')) {
     return {
       title: 'Connexion - TableMaster',
-      description: 'Connectez-vous à votre compte TableMaster pour gérer vos réservations, paramètres et statistiques.',
+      description:
+        'Connectez-vous à votre compte TableMaster pour gérer vos réservations, paramètres et statistiques.',
       openGraph: {
         title: 'Connexion - TableMaster',
         description: 'Connectez-vous à votre compte TableMaster.',
         type: 'website',
-        url: 'https://tablemaster.killian-lecrut.com/login',
+        url: 'https://tablemaster.fr/login',
       },
       twitter: {
         card: 'summary',
@@ -40,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     };
   }
-  
+
   // Default auth metadata
   return {
     title: 'TableMaster - Authentification',

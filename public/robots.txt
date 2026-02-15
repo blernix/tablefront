@@ -7,4 +7,4 @@ Disallow: /*.json$
 Disallow: /*.js$
 
 # Sitemap
-Sitemap: https://tablemaster.killian-lecrut.com/sitemap.xml
+Sitemap: https://tablemaster.fr/sitemap.xml

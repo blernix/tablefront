@@ -5,12 +5,14 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Mentions Légales - TableMaster',
-  description: 'Mentions légales du site TableMaster. Éditeur, hébergement, propriété intellectuelle, limites de responsabilité.',
+  description:
+    'Mentions légales du site TableMaster. Éditeur, hébergement, propriété intellectuelle, limites de responsabilité.',
   openGraph: {
     title: 'Mentions Légales - TableMaster',
-    description: 'Mentions légales du site TableMaster. Éditeur, hébergement, propriété intellectuelle.',
+    description:
+      'Mentions légales du site TableMaster. Éditeur, hébergement, propriété intellectuelle.',
     type: 'article',
-    url: 'https://tablemaster.killian-lecrut.com/legal',
+    url: 'https://tablemaster.fr/legal',
   },
   twitter: {
     card: 'summary',
@@ -28,220 +30,305 @@ export default function LegalPage() {
         <div className="bg-white border-2 border-[#E5E5E5] p-10">
           <div className="mb-10">
             <h1 className="text-4xl font-light text-[#2A2A2A] mb-4">Mentions Légales</h1>
-             <p className="text-[#666666] font-light">
-               Dernière mise à jour : 11/01/2026
-             </p>
-             <p className="text-[#666666] font-light text-sm mt-2">
-               Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l&apos;économie numérique.
-             </p>
+            <p className="text-[#666666] font-light">Dernière mise à jour : 11/01/2026</p>
+            <p className="text-[#666666] font-light text-sm mt-2">
+              Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance
+              en l&apos;économie numérique.
+            </p>
           </div>
 
           <div className="space-y-8 font-light text-[#666666] leading-relaxed">
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">1. Éditeur du site</h2>
-               <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                 <p className="font-light">
-                   <strong>KIKIDEV</strong><br />
-                   Forme juridique : Entrepreneur Individuel<br />
-                   SIREN : 922 893 169<br />
-                   SIRET : 922 893 169 00016<br />
-                   
-                   Code APE : 62.01Z - Programmation informatique<br />
-                   Adresse : CESSON, France<br />
-                   Email : <a href="mailto:contact@tablemaster.fr" className="text-[#0066FF] hover:underline">contact@tablemaster.fr</a><br />
-                   Téléphone : 06 41 97 03 83
-                 </p>
-                </div>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">2. Directeur de publication</h2>
-                <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                  <p className="font-light">
-                    Le directeur de publication du site est <strong>Killian Lecrut</strong>, en sa qualité d&apos;entrepreneur individuel.
-                  </p>
-                </div>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">3. Hébergement</h2>
-               <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                 <p className="font-light">
-                   <strong>Hostinger International Ltd.</strong><br />
-                   Adresse : 61 Lordou Vironos Street, 6023 Larnaca, Chypre<br />
-                   Serveur : France<br />
-                   Site web : <a href="https://www.hostinger.fr" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">www.hostinger.fr</a>
-                 </p>
-               </div>
-             </section>
-
-             <section>
-                <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">4. Propriété intellectuelle</h2>
-               <p>
-                  L&apos;ensemble du contenu de ce site (textes, images, logos, code source) est la propriété exclusive de KIKIDEV, sauf mention contraire.
-                 Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, est strictement interdite
-                 sans l&apos;autorisation écrite préalable de l&apos;éditeur.
-               </p>
-               <p className="mt-2">
-                 La marque « TableMaster », le logo et tous les éléments graphiques du site sont la propriété exclusive de KIKIDEV.
-                 Toute utilisation non autorisée de ces éléments constitue une contrefaçon et pourra être poursuivie conformément à la loi.
-               </p>
-             </section>
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">1. Éditeur du site</h2>
+              <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
+                <p className="font-light">
+                  <strong>KIKIDEV</strong>
+                  <br />
+                  Forme juridique : Entrepreneur Individuel
+                  <br />
+                  SIREN : 922 893 169
+                  <br />
+                  SIRET : 922 893 169 00016
+                  <br />
+                  Code APE : 62.01Z - Programmation informatique
+                  <br />
+                  Adresse : CESSON, France
+                  <br />
+                  Email :{' '}
+                  <a
+                    href="mailto:contact@tablemaster.fr"
+                    className="text-[#0066FF] hover:underline"
+                  >
+                    contact@tablemaster.fr
+                  </a>
+                  <br />
+                  Téléphone : 06 41 97 03 83
+                </p>
+              </div>
+            </section>
 
             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">5. Limitation de responsabilité</h2>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                2. Directeur de publication
+              </h2>
+              <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
+                <p className="font-light">
+                  Le directeur de publication du site est <strong>Killian Lecrut</strong>, en sa
+                  qualité d&apos;entrepreneur individuel.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">3. Hébergement</h2>
+              <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
+                <p className="font-light">
+                  <strong>Hostinger International Ltd.</strong>
+                  <br />
+                  Adresse : 61 Lordou Vironos Street, 6023 Larnaca, Chypre
+                  <br />
+                  Serveur : France
+                  <br />
+                  Site web :{' '}
+                  <a
+                    href="https://www.hostinger.fr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0066FF] hover:underline"
+                  >
+                    www.hostinger.fr
+                  </a>
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                4. Propriété intellectuelle
+              </h2>
               <p>
-                TableMaster s&apos;efforce d&apos;assurer au mieux de ses possibilités, l&apos;exactitude et la mise à jour des informations diffusées sur ce site,
-                dont elle se réserve le droit de corriger, à tout moment et sans préavis, le contenu.
+                L&apos;ensemble du contenu de ce site (textes, images, logos, code source) est la
+                propriété exclusive de KIKIDEV, sauf mention contraire. Toute reproduction,
+                représentation, modification, publication ou adaptation, totale ou partielle, est
+                strictement interdite sans l&apos;autorisation écrite préalable de l&apos;éditeur.
               </p>
               <p className="mt-2">
-                Toutefois, TableMaster ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition sur ce site.
-                En conséquence, TableMaster décline toute responsabilité :
+                La marque « TableMaster », le logo et tous les éléments graphiques du site sont la
+                propriété exclusive de KIKIDEV. Toute utilisation non autorisée de ces éléments
+                constitue une contrefaçon et pourra être poursuivie conformément à la loi.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                5. Limitation de responsabilité
+              </h2>
+              <p>
+                TableMaster s&apos;efforce d&apos;assurer au mieux de ses possibilités,
+                l&apos;exactitude et la mise à jour des informations diffusées sur ce site, dont
+                elle se réserve le droit de corriger, à tout moment et sans préavis, le contenu.
+              </p>
+              <p className="mt-2">
+                Toutefois, TableMaster ne peut garantir l&apos;exactitude, la précision ou
+                l&apos;exhaustivité des informations mises à disposition sur ce site. En
+                conséquence, TableMaster décline toute responsabilité :
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-2">
-                <li>pour toute imprécision, inexactitude ou omission relative aux informations disponibles sur le site ;</li>
-                <li>pour tous dommages résultant d&apos;une intrusion frauduleuse d&apos;un tiers ayant entraîné une modification des informations mises à disposition sur le site ;</li>
-                <li>                 et plus généralement pour tous dommages, directs ou indirects, quelles qu&apos;en soient les causes, origines, natures ou conséquences,
-                  provoqués à raison de l&apos;accès de quiconque au site ou de l&apos;impossibilité d&apos;y accéder.</li>
+                <li>
+                  pour toute imprécision, inexactitude ou omission relative aux informations
+                  disponibles sur le site ;
+                </li>
+                <li>
+                  pour tous dommages résultant d&apos;une intrusion frauduleuse d&apos;un tiers
+                  ayant entraîné une modification des informations mises à disposition sur le site ;
+                </li>
+                <li>
+                  {' '}
+                  et plus généralement pour tous dommages, directs ou indirects, quelles qu&apos;en
+                  soient les causes, origines, natures ou conséquences, provoqués à raison de
+                  l&apos;accès de quiconque au site ou de l&apos;impossibilité d&apos;y accéder.
+                </li>
               </ul>
             </section>
 
             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">6. Liens hypertextes</h2>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">6. Liens hypertextes</h2>
               <p>
-                 Le site peut contenir des liens hypertextes vers d&apos;autres sites. TableMaster n&apos;exerce aucun contrôle sur ces sites et décline toute responsabilité
-                concernant leur contenu, leur accessibilité, leur fonctionnement et leurs pratiques en matière de protection des données personnelles.
+                Le site peut contenir des liens hypertextes vers d&apos;autres sites. TableMaster
+                n&apos;exerce aucun contrôle sur ces sites et décline toute responsabilité
+                concernant leur contenu, leur accessibilité, leur fonctionnement et leurs pratiques
+                en matière de protection des données personnelles.
               </p>
               <p className="mt-2">
-                La création de liens hypertextes vers le site tablemaster.fr est soumise à l&apos;autorisation préalable et écrite de TableMaster.
+                La création de liens hypertextes vers le site tablemaster.fr est soumise à
+                l&apos;autorisation préalable et écrite de TableMaster.
               </p>
             </section>
 
             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">7. Loi applicable et juridiction compétente</h2>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                7. Loi applicable et juridiction compétente
+              </h2>
               <p>
-                Les présentes mentions légales sont soumises au droit français. En cas de litige, et à défaut de résolution amiable,
-                les tribunaux français seront seuls compétents.
+                Les présentes mentions légales sont soumises au droit français. En cas de litige, et
+                à défaut de résolution amiable, les tribunaux français seront seuls compétents.
               </p>
             </section>
 
             <section id="cgu">
-                <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">8. Conditions Générales d&apos;Utilisation (CGU)</h2>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                8. Conditions Générales d&apos;Utilisation (CGU)
+              </h2>
               <p>
-                 L&apos;utilisation de la plateforme TableMaster est soumise à l&apos;acceptation de nos Conditions Générales d&apos;Utilisation.
-                Vous pouvez consulter nos CGU en cliquant sur le lien ci-dessous :
+                L&apos;utilisation de la plateforme TableMaster est soumise à l&apos;acceptation de
+                nos Conditions Générales d&apos;Utilisation. Vous pouvez consulter nos CGU en
+                cliquant sur le lien ci-dessous :
               </p>
               <div className="mt-4 p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                 <Link 
-                   href="/cgv" 
-                   className="text-[#0066FF] hover:underline font-light"
-                 >
-                   Consulter nos Conditions Générales de Vente et d&apos;Utilisation
-                 </Link>
+                <Link href="/cgv" className="text-[#0066FF] hover:underline font-light">
+                  Consulter nos Conditions Générales de Vente et d&apos;Utilisation
+                </Link>
               </div>
             </section>
 
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">9. Gestion des cookies</h2>
-               <p>
-                 Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, smartphone, tablette) lors de la visite d&apos;un site web.
-                 Il permet de conserver des informations sur votre navigation.
-               </p>
-               <p className="mt-2">
-                 Nous utilisons des cookies pour :
-               </p>
-               <ul className="list-disc pl-6 space-y-2 mt-2">
-                 <li>Maintenir votre session utilisateur (cookies strictement nécessaires)</li>
-                 <li>Analyser l&apos;audience du site via Google Analytics (cookies analytiques)</li>
-                 <li>Enregistrer vos préférences de consentement</li>
-               </ul>
-               <p className="mt-2">
-                 Vous pouvez gérer vos préférences à tout moment via notre{' '}
-                 <Link href="/cookies" className="text-[#0066FF] hover:underline">page de gestion des cookies</Link>.
-               </p>
-             </section>
-
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">10. Services tiers utilisés</h2>
-               <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                 <p className="font-light mb-2">
-                   <strong>Brevo</strong><br />
-                   Le formulaire de contact utilise le service Brevo pour l&apos;envoi d&apos;emails.
-                   <br />
-                   Finalité : Transmission de votre message vers notre email
-                   <br />
-                   Données : Nom, email, téléphone, entreprise, message
-                   <br />
-                   Stockage : Transit uniquement, pas de stockage permanent
-                   <br />
-                   Confidentialité : <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">Brevo Privacy Policy</a>
-                 </p>
-                 <p className="font-light mt-4">
-                   <strong>Google Analytics</strong><br />
-                   Analyse de l&apos;audience du site.
-                   <br />
-                   Finalité : Statistiques de fréquentation
-                   <br />
-                   Anonymisation : Les adresses IP sont anonymisées
-                   <br />
-                   Confidentialité : <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">Google Privacy Policy</a>
-                 </p>
-               </div>
-             </section>
-
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">11. Données personnelles</h2>
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">9. Gestion des cookies</h2>
               <p>
-                Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée et au Règlement Général sur la Protection des Données (RGPD),
-                vous disposez d&apos;un droit d&apos;accès, de rectification, de suppression et d&apos;opposition aux données personnelles vous concernant.
+                Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur,
+                smartphone, tablette) lors de la visite d&apos;un site web. Il permet de conserver
+                des informations sur votre navigation.
+              </p>
+              <p className="mt-2">Nous utilisons des cookies pour :</p>
+              <ul className="list-disc pl-6 space-y-2 mt-2">
+                <li>Maintenir votre session utilisateur (cookies strictement nécessaires)</li>
+                <li>Analyser l&apos;audience du site via Google Analytics (cookies analytiques)</li>
+                <li>Enregistrer vos préférences de consentement</li>
+              </ul>
+              <p className="mt-2">
+                Vous pouvez gérer vos préférences à tout moment via notre{' '}
+                <Link href="/cookies" className="text-[#0066FF] hover:underline">
+                  page de gestion des cookies
+                </Link>
+                .
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                10. Services tiers utilisés
+              </h2>
+              <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
+                <p className="font-light mb-2">
+                  <strong>Brevo</strong>
+                  <br />
+                  Le formulaire de contact utilise le service Brevo pour l&apos;envoi d&apos;emails.
+                  <br />
+                  Finalité : Transmission de votre message vers notre email
+                  <br />
+                  Données : Nom, email, téléphone, entreprise, message
+                  <br />
+                  Stockage : Transit uniquement, pas de stockage permanent
+                  <br />
+                  Confidentialité :{' '}
+                  <a
+                    href="https://www.brevo.com/legal/privacypolicy/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0066FF] hover:underline"
+                  >
+                    Brevo Privacy Policy
+                  </a>
+                </p>
+                <p className="font-light mt-4">
+                  <strong>Google Analytics</strong>
+                  <br />
+                  Analyse de l&apos;audience du site.
+                  <br />
+                  Finalité : Statistiques de fréquentation
+                  <br />
+                  Anonymisation : Les adresses IP sont anonymisées
+                  <br />
+                  Confidentialité :{' '}
+                  <a
+                    href="https://policies.google.com/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0066FF] hover:underline"
+                  >
+                    Google Privacy Policy
+                  </a>
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">11. Données personnelles</h2>
+              <p>
+                Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée et au
+                Règlement Général sur la Protection des Données (RGPD), vous disposez d&apos;un
+                droit d&apos;accès, de rectification, de suppression et d&apos;opposition aux
+                données personnelles vous concernant.
               </p>
               <p className="mt-2">
-                Pour exercer ces droits ou pour toute question relative à la protection de vos données personnelles,
-                 vous pouvez nous contacter à l&apos;adresse :{' '}
-                 <a href="mailto:contact@tablemaster.fr" className="text-[#0066FF] hover:underline">contact@tablemaster.fr</a>
+                Pour exercer ces droits ou pour toute question relative à la protection de vos
+                données personnelles, vous pouvez nous contacter à l&apos;adresse :{' '}
+                <a href="mailto:contact@tablemaster.fr" className="text-[#0066FF] hover:underline">
+                  contact@tablemaster.fr
+                </a>
               </p>
               <p className="mt-2">
                 Pour plus d&apos;informations, consultez notre{' '}
                 <Link href="/privacy" className="text-[#0066FF] hover:underline">
                   Politique de Confidentialité
                 </Link>
-                 .
-               </p>
-             </section>
+                .
+              </p>
+            </section>
 
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">12. Modifications</h2>
-               <p>
-                 Nous nous réservons le droit de modifier ces mentions légales à tout moment. La version en vigueur est celle publiée sur cette page.
-                 Nous vous invitons à la consulter régulièrement. En cas de modification substantielle, nous vous en informerons par un avis sur notre page d&apos;accueil.
-               </p>
-             </section>
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">12. Modifications</h2>
+              <p>
+                Nous nous réservons le droit de modifier ces mentions légales à tout moment. La
+                version en vigueur est celle publiée sur cette page. Nous vous invitons à la
+                consulter régulièrement. En cas de modification substantielle, nous vous en
+                informerons par un avis sur notre page d&apos;accueil.
+              </p>
+            </section>
 
-             <section>
-               <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">13. Nous contacter</h2>
-               <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
-                 <p className="font-light">
-                   Pour toute question relative à ces mentions légales, à notre politique de confidentialité,
-                   ou pour exercer vos droits sur vos données personnelles, vous pouvez nous contacter :
-                 </p>
-                 <p className="font-light mt-2">
-                   Email : <a href="mailto:contact@tablemaster.fr" className="text-[#0066FF] hover:underline">contact@tablemaster.fr</a><br />
-                   Téléphone : 06 41 97 03 83<br />
-                   Courrier : KIKIDEV - CESSON, France
-                 </p>
-               </div>
-             </section>
-           </div>
+            <section>
+              <h2 className="text-2xl font-light text-[#2A2A2A] mb-4">13. Nous contacter</h2>
+              <div className="p-4 bg-[#FAFAFA] border border-[#E5E5E5]">
+                <p className="font-light">
+                  Pour toute question relative à ces mentions légales, à notre politique de
+                  confidentialité, ou pour exercer vos droits sur vos données personnelles, vous
+                  pouvez nous contacter :
+                </p>
+                <p className="font-light mt-2">
+                  Email :{' '}
+                  <a
+                    href="mailto:contact@tablemaster.fr"
+                    className="text-[#0066FF] hover:underline"
+                  >
+                    contact@tablemaster.fr
+                  </a>
+                  <br />
+                  Téléphone : 06 41 97 03 83
+                  <br />
+                  Courrier : KIKIDEV - CESSON, France
+                </p>
+              </div>
+            </section>
+          </div>
 
           <div className="mt-12 pt-8 border-t border-[#E5E5E5] flex justify-between">
-            <Link 
-              href="/privacy" 
+            <Link
+              href="/privacy"
               className="inline-flex items-center text-[#0066FF] hover:underline font-light"
             >
               ← Politique de confidentialité
             </Link>
-            <Link 
-              href="/cookies" 
+            <Link
+              href="/cookies"
               className="inline-flex items-center text-[#0066FF] hover:underline font-light"
             >
               Gestion des cookies →
@@ -257,8 +344,8 @@ export default function LegalPage() {
             <div>
               <h3 className="text-2xl font-light mb-4">TableMaster</h3>
               <p className="text-white/70 font-light text-sm leading-relaxed">
-                La solution de réservation sans commission pour les restaurants. 
-                Tarif fixe, sans engagement.
+                La solution de réservation sans commission pour les restaurants. Tarif fixe, sans
+                engagement.
               </p>
             </div>
 
@@ -266,7 +353,10 @@ export default function LegalPage() {
               <h3 className="font-normal mb-4">Produit</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="/#features" className="text-white/70 hover:text-white font-light text-sm">
+                  <a
+                    href="/#features"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
                     Fonctionnalités
                   </a>
                 </li>
@@ -276,7 +366,10 @@ export default function LegalPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://docs.tablemaster.fr" className="text-white/70 hover:text-white font-light text-sm">
+                  <a
+                    href="https://docs.tablemaster.fr"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
                     Documentation
                   </a>
                 </li>
@@ -287,8 +380,11 @@ export default function LegalPage() {
               <h3 className="font-normal mb-4">Compte</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/signup" className="text-white/70 hover:text-white font-light text-sm">
-                     S&apos;inscrire
+                  <Link
+                    href="/signup"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
+                    S&apos;inscrire
                   </Link>
                 </li>
                 <li>
@@ -297,7 +393,10 @@ export default function LegalPage() {
                   </Link>
                 </li>
                 <li>
-                  <a href="mailto:contact@tablemaster.fr" className="text-white/70 hover:text-white font-light text-sm">
+                  <a
+                    href="mailto:contact@tablemaster.fr"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
                     Contact
                   </a>
                 </li>
@@ -313,12 +412,18 @@ export default function LegalPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/privacy" className="text-white/70 hover:text-white font-light text-sm">
+                  <Link
+                    href="/privacy"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
                     Confidentialité
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cookies" className="text-white/70 hover:text-white font-light text-sm">
+                  <Link
+                    href="/cookies"
+                    className="text-white/70 hover:text-white font-light text-sm"
+                  >
                     Cookies
                   </Link>
                 </li>
@@ -337,7 +442,7 @@ export default function LegalPage() {
             </p>
           </div>
         </div>
-       </footer>
+      </footer>
     </div>
   );
 }
