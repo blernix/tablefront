@@ -30,7 +30,13 @@ export default function DashboardHeader({ onToggleMobileMenu }: DashboardHeaderP
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-[#E5E5E5] bg-white px-4 sm:px-6">
       {/* Mobile menu button */}
-      <Button variant="ghost" size="icon" className="md:hidden" onClick={onToggleMobileMenu}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        onClick={onToggleMobileMenu}
+        data-tour="mobile-menu-toggle"
+      >
         <Menu className="h-5 w-5" />
       </Button>
 
@@ -40,7 +46,13 @@ export default function DashboardHeader({ onToggleMobileMenu }: DashboardHeaderP
       {/* Actions */}
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative" onClick={() => router.push('/dashboard/settings/notifications')} title="Notifications">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          onClick={() => router.push('/dashboard/settings/notifications')}
+          title="Notifications"
+        >
           <Bell className="h-5 w-5" />
           {/* <span className="absolute right-2 top-2 h-2 w-2 bg-red-600" /> */}
         </Button>

@@ -55,6 +55,19 @@ export class AdminApi extends ApiClient {
         accountType?: string;
         subscriptionPlan?: string;
       }>;
+      abandonedSignups: {
+        total: number;
+        byDay: Array<{
+          _id: string;
+          count: number;
+          restaurants: Array<{
+            id: string;
+            name: string;
+            email: string;
+            createdAt: string;
+          }>;
+        }>;
+      };
     };
   }> {
     return this.request('/api/admin/dashboard');

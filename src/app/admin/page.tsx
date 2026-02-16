@@ -14,7 +14,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     if (!isAuthenticated) {
       router.push('/login');
       return;

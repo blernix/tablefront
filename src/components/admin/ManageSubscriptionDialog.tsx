@@ -12,6 +12,8 @@ interface ManageSubscriptionDialogProps {
   restaurantName: string;
   currentPlan?: 'starter' | 'pro' | 'enterprise';
   currentStatus?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
@@ -24,6 +26,8 @@ export function ManageSubscriptionDialog({
   restaurantName,
   currentPlan,
   currentStatus,
+  stripeCustomerId,
+  stripeSubscriptionId,
   open,
   onOpenChange,
   onSuccess,
@@ -32,10 +36,58 @@ export function ManageSubscriptionDialog({
   const [plan, setPlan] = useState<'starter' | 'pro' | 'enterprise'>(currentPlan || 'starter');
   const [days, setDays] = useState<string>('30');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [syncInfo, setSyncInfo] = useState<{
+    hasStripeSubscription?: boolean;
+    note?: string;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+  } | null>(null);
+  const [syncStatus, setSyncStatus] = useState<{
+    inSync?: boolean;
+    differences?: Record<string, any>;
+    lastSync?: string;
+    loading?: boolean;
+  } | null>(null);
+
+  const checkSyncStatus = async () => {
+    try {
+      setSyncStatus((prev) => ({ ...prev, loading: true }));
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/restaurants/${restaurantId}/subscription/sync-status`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error?.message || 'Erreur lors de la vérification de synchronisation'
+        );
+      }
+
+      const data = await response.json();
+      setSyncStatus({
+        inSync: data.inSync,
+        differences: data.differences,
+        lastSync: data.lastSync,
+        loading: false,
+      });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erreur de vérification');
+      setSyncStatus((prev) => ({ ...prev, loading: false }));
+    }
+  };
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
+      setSyncInfo(null);
+      setSyncStatus(null);
 
       const payload: any = { action };
 
@@ -52,27 +104,48 @@ export function ManageSubscriptionDialog({
         payload.days = daysNumber;
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/restaurants/${restaurantId}/subscription/manage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/restaurants/${restaurantId}/subscription/manage`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Erreur lors de la gestion de l\'abonnement');
+        throw new Error(errorData.error?.message || "Erreur lors de la gestion de l'abonnement");
       }
 
       const data = await response.json();
 
+      // Store sync information
+      if (data.syncInfo || data.subscription) {
+        setSyncInfo({
+          hasStripeSubscription: data.syncInfo?.hasStripeSubscription,
+          note: data.syncInfo?.note,
+          stripeCustomerId: data.subscription?.stripeCustomerId,
+          stripeSubscriptionId: data.subscription?.stripeSubscriptionId,
+        });
+      }
+
       toast.success(data.message || 'Abonnement mis à jour avec succès');
-      onOpenChange(false);
+
+      // Call success callback to refresh parent data
       onSuccess?.();
+
+      // Auto-check sync status after update
+      setTimeout(() => {
+        checkSyncStatus();
+      }, 1000);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Erreur lors de la gestion de l\'abonnement');
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de la gestion de l'abonnement"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -142,7 +215,8 @@ export function ManageSubscriptionDialog({
         {action === 'cancel' && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-sm text-red-700">
-              ⚠️ L&apos;abonnement sera annulé mais restera actif jusqu&apos;à la fin de la période en cours.
+              ⚠️ L&apos;abonnement sera annulé mais restera actif jusqu&apos;à la fin de la période
+              en cours.
             </p>
           </div>
         )}
@@ -150,7 +224,8 @@ export function ManageSubscriptionDialog({
         {action === 'change_plan' && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-700">
-              💡 Le changement de plan est immédiat. Le quota de réservations sera mis à jour automatiquement.
+              💡 Le changement de plan est immédiat. Le quota de réservations sera mis à jour
+              automatiquement.
             </p>
           </div>
         )}
@@ -166,10 +241,113 @@ export function ManageSubscriptionDialog({
         {action === 'extend_subscription' && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <p className="text-sm text-yellow-700">
-              🎁 Offre des jours gratuits au restaurant. La période d&apos;abonnement sera prolongée.
+              🎁 Offre des jours gratuits au restaurant. La période d&apos;abonnement sera
+              prolongée.
             </p>
           </div>
         )}
+
+        {/* Stripe Information Section */}
+        <div className="border-t pt-4 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-medium text-sm">Informations Stripe</h4>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={checkSyncStatus}
+              disabled={syncStatus?.loading}
+            >
+              {syncStatus?.loading ? 'Vérification...' : 'Vérifier synchronisation'}
+            </Button>
+          </div>
+
+          {/* Current Stripe IDs */}
+          {(stripeCustomerId || stripeSubscriptionId) && (
+            <div className="bg-gray-50 rounded-lg p-3 mb-3">
+              <p className="text-xs text-gray-600 mb-1">IDs Stripe actuels :</p>
+              {stripeCustomerId && (
+                <p className="text-xs font-mono break-all">
+                  Customer: <span className="text-blue-600">{stripeCustomerId}</span>
+                </p>
+              )}
+              {stripeSubscriptionId && (
+                <p className="text-xs font-mono break-all">
+                  Subscription: <span className="text-blue-600">{stripeSubscriptionId}</span>
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Sync Info from last action */}
+          {syncInfo && (
+            <div
+              className={`rounded-lg p-3 mb-3 ${syncInfo.hasStripeSubscription ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'}`}
+            >
+              <p className="text-xs font-medium mb-1">
+                {syncInfo.hasStripeSubscription
+                  ? '✅ Synchronisé avec Stripe'
+                  : '⚠️ Synchronisation partielle'}
+              </p>
+              <p className="text-xs">{syncInfo.note}</p>
+              {syncInfo.stripeCustomerId && (
+                <p className="text-xs font-mono break-all mt-1">
+                  Customer ID: <span className="text-blue-600">{syncInfo.stripeCustomerId}</span>
+                </p>
+              )}
+              {syncInfo.stripeSubscriptionId && (
+                <p className="text-xs font-mono break-all">
+                  Subscription ID:{' '}
+                  <span className="text-blue-600">{syncInfo.stripeSubscriptionId}</span>
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Sync Status Check Results */}
+          {syncStatus && !syncStatus.loading && (
+            <div
+              className={`rounded-lg p-3 ${syncStatus.inSync ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-medium">
+                  {syncStatus.inSync
+                    ? '✅ Synchronisation vérifiée'
+                    : '❌ Désynchronisation détectée'}
+                </p>
+                {syncStatus.lastSync && (
+                  <p className="text-xs text-gray-500">
+                    {new Date(syncStatus.lastSync).toLocaleDateString('fr-FR')}
+                  </p>
+                )}
+              </div>
+
+              {!syncStatus.inSync && syncStatus.differences && (
+                <div className="mt-2">
+                  <p className="text-xs font-medium mb-1">Différences :</p>
+                  <div className="space-y-1">
+                    {Object.entries(syncStatus.differences).map(([key, diff]: [string, any]) => (
+                      <div key={key} className="text-xs bg-white rounded p-2 border">
+                        <p className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}</p>
+                        <p>
+                          MongoDB:{' '}
+                          <span className="text-red-600">{JSON.stringify(diff.mongo)}</span>
+                        </p>
+                        <p>
+                          Stripe:{' '}
+                          <span className="text-green-600">{JSON.stringify(diff.stripe)}</span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {syncStatus.inSync && (
+                <p className="text-xs">Les données MongoDB et Stripe sont synchronisées.</p>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-end gap-3 pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>

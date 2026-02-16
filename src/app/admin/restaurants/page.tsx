@@ -9,6 +9,7 @@ import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 import { useAdminRestaurants, useDeleteRestaurant } from '@/hooks/api/useAdminRestaurants';
 import AdminRestaurantsSkeleton from '@/components/skeleton/AdminRestaurantsSkeleton';
 import { ManageSubscriptionDialog } from '@/components/admin/ManageSubscriptionDialog';
+import { StripeSyncBadge } from '@/components/admin/StripeSyncBadge';
 import { getRestaurantPlanDisplay } from '@/features';
 import { Restaurant } from '@/types';
 interface RestaurantItemProps {
@@ -18,25 +19,33 @@ interface RestaurantItemProps {
   onManageSubscription: (restaurant: Restaurant) => void;
 }
 
-const RestaurantItem = memo(function RestaurantItem({ restaurant, onView, onDelete, onManageSubscription }: RestaurantItemProps) {
+const RestaurantItem = memo(function RestaurantItem({
+  restaurant,
+  onView,
+  onDelete,
+  onManageSubscription,
+}: RestaurantItemProps) {
   const planDisplay = getRestaurantPlanDisplay(restaurant);
   const isSelfService = restaurant.accountType === 'self-service';
 
   return (
-    <div
-      className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-3 sm:p-4 hover:bg-gray-50 space-y-3 sm:space-y-0"
-    >
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-3 sm:p-4 hover:bg-gray-50 space-y-3 sm:space-y-0">
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="font-medium">{restaurant.name}</h3>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.accountTypeBadgeClass}`}>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.accountTypeBadgeClass}`}
+          >
             {planDisplay.accountTypeDisplay}
           </span>
           {restaurant.subscription?.plan && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.badgeClass}`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.badgeClass}`}
+            >
               {planDisplay.name}
             </span>
           )}
+          <StripeSyncBadge restaurant={restaurant} />
         </div>
         <p className="text-sm text-muted-foreground">{restaurant.address}</p>
         <p className="text-sm text-muted-foreground">
@@ -56,26 +65,14 @@ const RestaurantItem = memo(function RestaurantItem({ restaurant, onView, onDele
       </div>
       <div className="flex gap-2 mt-3 sm:mt-0">
         {isSelfService && (
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => onManageSubscription(restaurant)}
-          >
+          <Button variant="default" size="sm" onClick={() => onManageSubscription(restaurant)}>
             Gérer abonnement
           </Button>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onView(restaurant._id)}
-        >
+        <Button variant="outline" size="sm" onClick={() => onView(restaurant._id)}>
           Voir
         </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() => onDelete(restaurant)}
-        >
+        <Button variant="destructive" size="sm" onClick={() => onDelete(restaurant)}>
           Supprimer
         </Button>
       </div>
@@ -100,7 +97,14 @@ export default function RestaurantsPage() {
   const pagination = data?.pagination;
 
   // Delete confirmation hook
-  const { isOpen: isDeleteModalOpen, itemToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+  const {
+    isOpen: isDeleteModalOpen,
+    itemToDelete,
+    isDeleting,
+    openDeleteModal,
+    closeDeleteModal,
+    confirmDelete,
+  } = useDeleteConfirm({
     onDelete: async (id) => {
       await deleteMutation.mutateAsync(id);
     },
@@ -126,9 +130,7 @@ export default function RestaurantsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Restaurants</CardTitle>
-              <CardDescription>
-                Gérez les restaurants et leurs utilisateurs
-              </CardDescription>
+              <CardDescription>Gérez les restaurants et leurs utilisateurs</CardDescription>
             </div>
             <Button onClick={() => router.push('/admin/restaurants/new')}>
               Nouveau Restaurant
@@ -150,41 +152,37 @@ export default function RestaurantsPage() {
               Aucun restaurant. Créez-en un pour commencer.
             </div>
           ) : (
-             <div className="space-y-6">
-               <div className="space-y-4">
-                  {restaurants.map((restaurant) => (
-                    <RestaurantItem
-                      key={restaurant._id}
-                      restaurant={restaurant}
-                      onView={handleView}
-                      onDelete={handleDelete}
-                      onManageSubscription={handleManageSubscription}
-                    />
-                  ))}
-               </div>
-               {pagination && pagination.pages > 1 && (
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-                   <Button
-                     variant="outline"
-                     onClick={() => setPage(page - 1)}
-                     disabled={page <= 1}
-                   >
-                     Précédent
-                   </Button>
-                   <span className="text-sm text-gray-600">
-                     Page {pagination.page} sur {pagination.pages}
-                   </span>
-                   <Button
-                     variant="outline"
-                     onClick={() => setPage(page + 1)}
-                     disabled={page >= pagination.pages}
-                   >
-                     Suivant
-                   </Button>
-                 </div>
-               )}
-             </div>
-            )}
+            <div className="space-y-6">
+              <div className="space-y-4">
+                {restaurants.map((restaurant) => (
+                  <RestaurantItem
+                    key={restaurant._id}
+                    restaurant={restaurant}
+                    onView={handleView}
+                    onDelete={handleDelete}
+                    onManageSubscription={handleManageSubscription}
+                  />
+                ))}
+              </div>
+              {pagination && pagination.pages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                  <Button variant="outline" onClick={() => setPage(page - 1)} disabled={page <= 1}>
+                    Précédent
+                  </Button>
+                  <span className="text-sm text-gray-600">
+                    Page {pagination.page} sur {pagination.pages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage(page + 1)}
+                    disabled={page >= pagination.pages}
+                  >
+                    Suivant
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -207,6 +205,8 @@ export default function RestaurantsPage() {
           restaurantName={subscriptionDialog.restaurant.name}
           currentPlan={subscriptionDialog.restaurant.subscription?.plan}
           currentStatus={subscriptionDialog.restaurant.subscription?.status}
+          stripeCustomerId={subscriptionDialog.restaurant.subscription?.stripeCustomerId}
+          stripeSubscriptionId={subscriptionDialog.restaurant.subscription?.stripeSubscriptionId}
           onSuccess={() => refetch()}
         />
       )}

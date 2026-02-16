@@ -16,9 +16,7 @@ export default function SignupPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-3xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-light text-[#2A2A2A] mb-4">
-              Rejoignez TableMaster
-            </h1>
+            <h1 className="text-4xl font-light text-[#2A2A2A] mb-4">Rejoignez TableMaster</h1>
             <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
               Simplifiez la gestion de vos réservations en quelques minutes seulement.
             </p>
@@ -55,8 +53,8 @@ export default function SignupPage() {
           <div className="mt-10 text-center">
             <p className="text-[#666666]">
               Vous avez déjà un compte ?{' '}
-              <Link 
-                href="/login" 
+              <Link
+                href="/login"
                 className="font-medium text-[#0066FF] hover:text-[#0052CC] transition-colors"
               >
                 Connectez-vous ici
@@ -64,11 +62,33 @@ export default function SignupPage() {
             </p>
             <p className="text-xs text-[#999999] mt-4">
               En créant un compte, vous acceptez nos{' '}
-              <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">conditions générales de vente</a>
+              <a
+                href="/cgv"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#0066FF] hover:underline"
+              >
+                conditions générales de vente
+              </a>
               , nos{' '}
-              <a href="/legal" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">conditions d&apos;utilisation</a>
-              {' '}et notre{' '}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">politique de confidentialité</a>.
+              <a
+                href="/legal"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#0066FF] hover:underline"
+              >
+                conditions d&apos;utilisation
+              </a>{' '}
+              et notre{' '}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#0066FF] hover:underline"
+              >
+                politique de confidentialité
+              </a>
+              .
             </p>
           </div>
 

@@ -61,7 +61,8 @@ export default function ForgotPasswordPage() {
                 <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
                   <p className="font-medium">Email envoyé!</p>
                   <p className="mt-1">
-                    Si cet email existe dans notre système, vous recevrez un lien pour réinitialiser votre mot de passe.
+                    Si cet email existe dans notre système, vous recevrez un lien pour réinitialiser
+                    votre mot de passe.
                   </p>
                   <p className="mt-2">
                     Vous allez être redirigé vers la page de connexion dans 5 secondes...
@@ -72,7 +73,11 @@ export default function ForgotPasswordPage() {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" data-testid="forgot-password-form">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-4"
+                data-testid="forgot-password-form"
+              >
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -100,10 +105,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="mt-6 text-center text-sm">
-              <Link
-                href="/login"
-                className="text-primary hover:text-primary/80 hover:underline"
-              >
+              <Link href="/login" className="text-primary hover:text-primary/80 hover:underline">
                 Retour à la connexion
               </Link>
             </div>

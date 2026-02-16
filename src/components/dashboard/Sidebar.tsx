@@ -4,7 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Utensils, Calendar, Settings, X, Users, CalendarX, MessageSquare } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Utensils,
+  Calendar,
+  Settings,
+  X,
+  Users,
+  CalendarX,
+  MessageSquare,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
@@ -73,14 +82,14 @@ function SidebarSkeleton() {
           <div className="h-6 w-32 bg-slate-200 rounded" />
         </div>
       </div>
-      
+
       {/* Navigation skeleton */}
       <nav className="flex-1 space-y-1 p-4">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="h-12 bg-slate-100 rounded animate-pulse" />
         ))}
       </nav>
-      
+
       {/* Footer skeleton */}
       <div className="border-t border-[#E5E5E5] p-4">
         <div className="flex items-center gap-3 border border-[#E5E5E5] bg-[#FAFAFA] px-3 py-2">
@@ -178,6 +187,7 @@ export default function DashboardSidebar({
                     ? 'border-[#0066FF] bg-[#FAFAFA] text-[#0066FF]'
                     : 'border-transparent text-[#666666] hover:bg-[#FAFAFA] hover:text-[#2A2A2A]'
                 )}
+                data-tour={item.name === 'Paramètres' ? 'sidebar-settings' : undefined}
               >
                 <Icon
                   className={cn(
@@ -188,7 +198,10 @@ export default function DashboardSidebar({
                 <div className="flex items-center justify-between flex-1">
                   <span>{item.name}</span>
                   {item.name === 'Menus' && !canAccessMenus && (
-                    <Badge variant="outline" className="ml-2 text-xs border-[#0066FF] text-[#0066FF]">
+                    <Badge
+                      variant="outline"
+                      className="ml-2 text-xs border-[#0066FF] text-[#0066FF]"
+                    >
                       {menuAccess.reason === 'account-type' ? 'Managed' : 'Pro'}
                     </Badge>
                   )}

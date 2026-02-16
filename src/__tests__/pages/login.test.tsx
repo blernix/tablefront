@@ -1,33 +1,33 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/navigation'
-import LoginPage from '@/app/(auth)/login/page'
-import { useAuthStore } from '@/store/authStore'
-import { apiClient } from '@/lib/api'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/navigation';
+import LoginPage from '@/app/(auth)/login/page';
+import { useAuthStore } from '@/store/authStore';
+import { apiClient } from '@/lib/api';
 
 // Mock dependencies
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
-}))
+}));
 
-jest.mock('@/store/authStore')
-jest.mock('@/lib/api')
+jest.mock('@/store/authStore');
+jest.mock('@/lib/api');
 
 jest.mock('next/link', () => {
   return function MockLink({ children, href }: { children: React.ReactNode; href: string }) {
-    return <a href={href}>{children}</a>
-  }
-})
+    return <a href={href}>{children}</a>;
+  };
+});
 
 describe('Login Page', () => {
-  const mockLogin = jest.fn()
-  const mockPush = jest.fn()
+  const mockLogin = jest.fn();
+  const mockPush = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.clearAllMocks();
 
-    const mockUseAuthStore = useAuthStore as jest.MockedFunction<typeof useAuthStore>
+    const mockUseAuthStore = useAuthStore as jest.MockedFunction<typeof useAuthStore>;
     mockUseAuthStore.mockReturnValue({
       user: null,
       token: null,
@@ -41,10 +41,10 @@ describe('Login Page', () => {
       clearError: jest.fn(),
       initAuth: jest.fn(),
       syncCookie: jest.fn(),
-    })
+    });
 
     // Mock Next.js router
-    const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>
+    const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
     mockUseRouter.mockReturnValue({
       push: mockPush,
       replace: jest.fn(),
@@ -52,19 +52,19 @@ describe('Login Page', () => {
       back: jest.fn(),
       forward: jest.fn(),
       refresh: jest.fn(),
-    })
-  })
+    });
+  });
 
   it('should render login form', () => {
-    render(<LoginPage />)
+    render(<LoginPage />);
 
-    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/mot de passe/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /connexion/i })).toBeInTheDocument()
-  })
+    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/mot de passe/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /connexion/i })).toBeInTheDocument();
+  });
 
   it('should handle successful login', async () => {
-    const mockApiLogin = apiClient.login as jest.MockedFunction<typeof apiClient.login>
+    const mockApiLogin = apiClient.login as jest.MockedFunction<typeof apiClient.login>;
     mockApiLogin.mockResolvedValue({
       token: 'test-token',
       user: {
@@ -76,72 +76,72 @@ describe('Login Page', () => {
         createdAt: '2024-01-01',
         updatedAt: '2024-01-01',
       },
-    })
+    });
 
-    render(<LoginPage />)
+    render(<LoginPage />);
 
-    const emailInput = screen.getByPlaceholderText(/email/i)
-    const passwordInput = screen.getByPlaceholderText(/mot de passe/i)
-    const submitButton = screen.getByRole('button', { name: /connexion/i })
+    const emailInput = screen.getByPlaceholderText(/email/i);
+    const passwordInput = screen.getByPlaceholderText(/mot de passe/i);
+    const submitButton = screen.getByRole('button', { name: /connexion/i });
 
-    await userEvent.type(emailInput, 'test@restaurant.com')
-    await userEvent.type(passwordInput, 'password123')
-    await userEvent.click(submitButton)
+    await userEvent.type(emailInput, 'test@restaurant.com');
+    await userEvent.type(passwordInput, 'password123');
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockApiLogin).toHaveBeenCalledWith('test@restaurant.com', 'password123')
+      expect(mockApiLogin).toHaveBeenCalledWith('test@restaurant.com', 'password123');
       expect(mockLogin).toHaveBeenCalledWith(
-         {
-           id: '1',
-           email: 'test@restaurant.com',
-           role: 'restaurant',
-           restaurantId: 'rest123',
-           status: 'active',
-           createdAt: '2024-01-01',
-           updatedAt: '2024-01-01',
-         },
+        {
+          id: '1',
+          email: 'test@restaurant.com',
+          role: 'restaurant',
+          restaurantId: 'rest123',
+          status: 'active',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01',
+        },
         'test-token'
-      )
-      expect(mockPush).toHaveBeenCalledWith('/dashboard')
-    })
-  })
+      );
+      expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    });
+  });
 
   it('should display error on failed login', async () => {
-    const mockApiLogin = apiClient.login as jest.MockedFunction<typeof apiClient.login>
-    mockApiLogin.mockRejectedValue(new Error('Invalid credentials'))
+    const mockApiLogin = apiClient.login as jest.MockedFunction<typeof apiClient.login>;
+    mockApiLogin.mockRejectedValue(new Error('Invalid credentials'));
 
-    render(<LoginPage />)
+    render(<LoginPage />);
 
-    const emailInput = screen.getByPlaceholderText(/email/i)
-    const passwordInput = screen.getByPlaceholderText(/mot de passe/i)
-    const submitButton = screen.getByRole('button', { name: /connexion/i })
+    const emailInput = screen.getByPlaceholderText(/email/i);
+    const passwordInput = screen.getByPlaceholderText(/mot de passe/i);
+    const submitButton = screen.getByRole('button', { name: /connexion/i });
 
-    await userEvent.type(emailInput, 'wrong@email.com')
-    await userEvent.type(passwordInput, 'wrongpassword')
-    await userEvent.click(submitButton)
+    await userEvent.type(emailInput, 'wrong@email.com');
+    await userEvent.type(passwordInput, 'wrongpassword');
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+    });
+  });
 
   it('should validate required fields', async () => {
-    render(<LoginPage />)
+    render(<LoginPage />);
 
-    const submitButton = screen.getByRole('button', { name: /connexion/i })
-    await userEvent.click(submitButton)
+    const submitButton = screen.getByRole('button', { name: /connexion/i });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
       // Form validation should prevent submission
-      expect(apiClient.login).not.toHaveBeenCalled()
-    })
-  })
+      expect(apiClient.login).not.toHaveBeenCalled();
+    });
+  });
 
   it('should have forgot password link pointing to correct URL', () => {
-    render(<LoginPage />)
+    render(<LoginPage />);
 
-    const forgotPasswordLink = screen.getByText('Mot de passe oublié?')
-    expect(forgotPasswordLink).toBeInTheDocument()
-    expect(forgotPasswordLink).toHaveAttribute('href', '/forgot-password')
-  })
-})
+    const forgotPasswordLink = screen.getByText('Mot de passe oublié?');
+    expect(forgotPasswordLink).toBeInTheDocument();
+    expect(forgotPasswordLink).toHaveAttribute('href', '/forgot-password');
+  });
+});

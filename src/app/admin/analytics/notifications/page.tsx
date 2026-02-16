@@ -5,26 +5,29 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BarChart3, 
-  Bell, 
-  Mail, 
-  Radio, 
-  TrendingUp, 
+import {
+  BarChart3,
+  Bell,
+  Mail,
+  Radio,
+  TrendingUp,
   TrendingDown,
   AlertCircle,
   CheckCircle,
   XCircle,
   Download,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
-import { useNotificationAnalytics, useExportNotificationAnalytics } from '@/hooks/api/useAdminAnalytics';
+import {
+  useNotificationAnalytics,
+  useExportNotificationAnalytics,
+} from '@/hooks/api/useAdminAnalytics';
 import AdminAnalyticsSkeleton from '@/components/skeleton/AdminAnalyticsSkeleton';
 
 export default function NotificationAnalyticsPage() {
   const router = useRouter();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
-  
+
   const { data, isLoading, error, refetch } = useNotificationAnalytics();
   const exportMutation = useExportNotificationAnalytics();
 
@@ -53,9 +56,12 @@ export default function NotificationAnalyticsPage() {
   };
 
   const getStatusBadge = (value: number) => {
-    if (value >= 90) return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Excellent</Badge>;
-    if (value >= 75) return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Bon</Badge>;
-    if (value >= 50) return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Moyen</Badge>;
+    if (value >= 90)
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Excellent</Badge>;
+    if (value >= 75)
+      return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Bon</Badge>;
+    if (value >= 50)
+      return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Moyen</Badge>;
     return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Critique</Badge>;
   };
 
@@ -66,7 +72,9 @@ export default function NotificationAnalyticsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold">Analytics Notifications</h2>
-            <p className="text-muted-foreground">Performance et suivi des notifications push, email et temps réel</p>
+            <p className="text-muted-foreground">
+              Performance et suivi des notifications push, email et temps réel
+            </p>
           </div>
           <div className="flex gap-2 flex-wrap justify-center sm:justify-end">
             <Button variant="outline" onClick={handleRefresh} disabled={isLoading}>
@@ -90,7 +98,12 @@ export default function NotificationAnalyticsPage() {
               <AlertCircle className="h-5 w-5" />
               <div>
                 <p className="font-medium">{error.message}</p>
-                <Button variant="ghost" size="sm" className="mt-2 text-red-700" onClick={handleRefresh}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 text-red-700"
+                  onClick={handleRefresh}
+                >
                   Réessayer
                 </Button>
               </div>
@@ -129,7 +142,9 @@ export default function NotificationAnalyticsPage() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">{analytics.summary.push?.count || 0} envoyées</p>
+                    <p className="text-sm font-medium">
+                      {analytics.summary.push?.count || 0} envoyées
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {analytics.summary.push?.delivered || 0} livrées
                     </p>
@@ -152,7 +167,9 @@ export default function NotificationAnalyticsPage() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">{analytics.summary.email?.count || 0} envoyés</p>
+                    <p className="text-sm font-medium">
+                      {analytics.summary.email?.count || 0} envoyés
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {analytics.summary.email?.delivered || 0} livrés
                     </p>
@@ -175,7 +192,9 @@ export default function NotificationAnalyticsPage() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">{analytics.summary.sse?.count || 0} événements</p>
+                    <p className="text-sm font-medium">
+                      {analytics.summary.sse?.count || 0} événements
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {analytics.summary.sse?.delivered || 0} livrés
                     </p>
@@ -208,15 +227,21 @@ export default function NotificationAnalyticsPage() {
                       </div>
                       <div className="flex items-center gap-4">
                         {getStatusBadge(typeData.deliveryRate * 100)}
-                        <span className="text-lg font-bold">{formatPercentage(typeData.deliveryRate)}</span>
+                        <span className="text-lg font-bold">
+                          {formatPercentage(typeData.deliveryRate)}
+                        </span>
                       </div>
                     </div>
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className={`h-full ${
-                          typeData.deliveryRate >= 0.9 ? 'bg-green-500' :
-                          typeData.deliveryRate >= 0.75 ? 'bg-yellow-500' :
-                          typeData.deliveryRate >= 0.5 ? 'bg-orange-500' : 'bg-red-500'
+                          typeData.deliveryRate >= 0.9
+                            ? 'bg-green-500'
+                            : typeData.deliveryRate >= 0.75
+                              ? 'bg-yellow-500'
+                              : typeData.deliveryRate >= 0.5
+                                ? 'bg-orange-500'
+                                : 'bg-red-500'
                         }`}
                         style={{ width: `${typeData.deliveryRate * 100}%` }}
                       />
@@ -246,11 +271,15 @@ export default function NotificationAnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Types d&apos;événements</CardTitle>
-              <CardDescription>Répartition des notifications par type d&apos;événement</CardDescription>
+              <CardDescription>
+                Répartition des notifications par type d&apos;événement
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {analytics.byEvent?.length === 0 ? (
-                <p className="text-center py-4 text-muted-foreground">Aucune donnée d&apos;événement</p>
+                <p className="text-center py-4 text-muted-foreground">
+                  Aucune donnée d&apos;événement
+                </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {analytics.byEvent?.map((event: any) => (
@@ -268,11 +297,16 @@ export default function NotificationAnalyticsPage() {
                         <Badge variant="outline">{event.count}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {event.event === 'reservation_created' && 'Lorsqu\'un client crée une réservation'}
-                        {event.event === 'reservation_confirmed' && 'Lorsqu\'une réservation est confirmée'}
-                        {event.event === 'reservation_cancelled' && 'Lorsqu\'une réservation est annulée'}
-                        {event.event === 'reservation_updated' && 'Lorsqu\'une réservation est modifiée'}
-                        {event.event === 'reservation_completed' && 'Lorsqu\'une réservation est terminée'}
+                        {event.event === 'reservation_created' &&
+                          "Lorsqu'un client crée une réservation"}
+                        {event.event === 'reservation_confirmed' &&
+                          "Lorsqu'une réservation est confirmée"}
+                        {event.event === 'reservation_cancelled' &&
+                          "Lorsqu'une réservation est annulée"}
+                        {event.event === 'reservation_updated' &&
+                          "Lorsqu'une réservation est modifiée"}
+                        {event.event === 'reservation_completed' &&
+                          "Lorsqu'une réservation est terminée"}
                         {event.event === 'general' && 'Notifications générales'}
                         {event.event === 'system' && 'Notifications système'}
                       </div>
@@ -291,15 +325,22 @@ export default function NotificationAnalyticsPage() {
             </CardHeader>
             <CardContent>
               {analytics.topRestaurants?.length === 0 ? (
-                <p className="text-center py-4 text-muted-foreground">Aucune donnée de restaurant</p>
+                <p className="text-center py-4 text-muted-foreground">
+                  Aucune donnée de restaurant
+                </p>
               ) : (
                 <div className="space-y-3">
                   {analytics.topRestaurants?.map((restaurant: any, index: number) => (
-                     <div key={restaurant.restaurantId} className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-3 space-y-2 sm:space-y-0">
+                    <div
+                      key={restaurant.restaurantId}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-3 space-y-2 sm:space-y-0"
+                    >
                       <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-gray-400 w-6">{index + 1}</span>
                         <div>
-                          <p className="font-medium">{restaurant.restaurantName || 'Restaurant inconnu'}</p>
+                          <p className="font-medium">
+                            {restaurant.restaurantName || 'Restaurant inconnu'}
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             ID: {restaurant.restaurantId.substring(0, 8)}...
                           </p>
@@ -334,19 +375,29 @@ export default function NotificationAnalyticsPage() {
                 <div className="space-y-4">
                   {analytics.recentStats?.slice(-10).map((day: any) => (
                     <div key={day.date} className="space-y-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
                         <span className="font-medium">
-                          {new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                          {new Date(day.date).toLocaleDateString('fr-FR', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short',
+                          })}
                         </span>
                         <div className="flex items-center gap-4">
                           <span className="text-sm text-muted-foreground">
                             {day.total} notifications
                           </span>
-                          <span className={`font-bold ${
-                            day.deliveryRate >= 0.9 ? 'text-green-600' :
-                            day.deliveryRate >= 0.75 ? 'text-yellow-600' :
-                            day.deliveryRate >= 0.5 ? 'text-orange-600' : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-bold ${
+                              day.deliveryRate >= 0.9
+                                ? 'text-green-600'
+                                : day.deliveryRate >= 0.75
+                                  ? 'text-yellow-600'
+                                  : day.deliveryRate >= 0.5
+                                    ? 'text-orange-600'
+                                    : 'text-red-600'
+                            }`}
+                          >
                             {formatPercentage(day.deliveryRate)}
                           </span>
                         </div>
@@ -356,13 +407,15 @@ export default function NotificationAnalyticsPage() {
                           <div
                             key={type.type}
                             className={`flex-1 rounded ${
-                              type.type === 'push' ? 'bg-blue-500' :
-                              type.type === 'email' ? 'bg-purple-500' :
-                              'bg-orange-500'
+                              type.type === 'push'
+                                ? 'bg-blue-500'
+                                : type.type === 'email'
+                                  ? 'bg-purple-500'
+                                  : 'bg-orange-500'
                             }`}
                             title={`${type.type}: ${type.count} (${type.delivered} livrées)`}
-                            style={{ 
-                              width: `${(type.count / day.total) * 100}%` 
+                            style={{
+                              width: `${(type.count / day.total) * 100}%`,
                             }}
                           />
                         ))}
@@ -393,17 +446,25 @@ export default function NotificationAnalyticsPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${
-                      (analytics.summary.push?.deliveryRate || 0) >= 0.9 ? 'text-green-600' :
-                      (analytics.summary.push?.deliveryRate || 0) >= 0.75 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
-                      {(analytics.summary.push?.deliveryRate || 0) >= 0.9 ? 'Opérationnel' :
-                       (analytics.summary.push?.deliveryRate || 0) >= 0.75 ? 'Partiel' : 'Problèmes'}
+                    <span
+                      className={`text-sm font-medium ${
+                        (analytics.summary.push?.deliveryRate || 0) >= 0.9
+                          ? 'text-green-600'
+                          : (analytics.summary.push?.deliveryRate || 0) >= 0.75
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
+                      {(analytics.summary.push?.deliveryRate || 0) >= 0.9
+                        ? 'Opérationnel'
+                        : (analytics.summary.push?.deliveryRate || 0) >= 0.75
+                          ? 'Partiel'
+                          : 'Problèmes'}
                     </span>
                     {getTrendIcon((analytics.summary.push?.deliveryRate || 0) * 100)}
                   </div>
                 </div>
-                
+
                 <div className="border rounded-lg p-4">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -415,17 +476,25 @@ export default function NotificationAnalyticsPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${
-                      (analytics.summary.email?.deliveryRate || 0) >= 0.9 ? 'text-green-600' :
-                      (analytics.summary.email?.deliveryRate || 0) >= 0.75 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
-                      {(analytics.summary.email?.deliveryRate || 0) >= 0.9 ? 'Opérationnel' :
-                       (analytics.summary.email?.deliveryRate || 0) >= 0.75 ? 'Partiel' : 'Problèmes'}
+                    <span
+                      className={`text-sm font-medium ${
+                        (analytics.summary.email?.deliveryRate || 0) >= 0.9
+                          ? 'text-green-600'
+                          : (analytics.summary.email?.deliveryRate || 0) >= 0.75
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
+                      {(analytics.summary.email?.deliveryRate || 0) >= 0.9
+                        ? 'Opérationnel'
+                        : (analytics.summary.email?.deliveryRate || 0) >= 0.75
+                          ? 'Partiel'
+                          : 'Problèmes'}
                     </span>
                     {getTrendIcon((analytics.summary.email?.deliveryRate || 0) * 100)}
                   </div>
                 </div>
-                
+
                 <div className="border rounded-lg p-4">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -437,12 +506,20 @@ export default function NotificationAnalyticsPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${
-                      (analytics.summary.sse?.deliveryRate || 0) >= 0.9 ? 'text-green-600' :
-                      (analytics.summary.sse?.deliveryRate || 0) >= 0.75 ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
-                      {(analytics.summary.sse?.deliveryRate || 0) >= 0.9 ? 'Opérationnel' :
-                       (analytics.summary.sse?.deliveryRate || 0) >= 0.75 ? 'Partiel' : 'Problèmes'}
+                    <span
+                      className={`text-sm font-medium ${
+                        (analytics.summary.sse?.deliveryRate || 0) >= 0.9
+                          ? 'text-green-600'
+                          : (analytics.summary.sse?.deliveryRate || 0) >= 0.75
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
+                      {(analytics.summary.sse?.deliveryRate || 0) >= 0.9
+                        ? 'Opérationnel'
+                        : (analytics.summary.sse?.deliveryRate || 0) >= 0.75
+                          ? 'Partiel'
+                          : 'Problèmes'}
                     </span>
                     {getTrendIcon((analytics.summary.sse?.deliveryRate || 0) * 100)}
                   </div>

@@ -7,11 +7,7 @@ import AdminSidebar from '@/components/admin/AdminSidebar';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, user, initAuth, isInitialized } = useAuthStore();
@@ -51,10 +47,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex overflow-hidden">
       {/* Sidebar */}
-      <AdminSidebar
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+      <AdminSidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
       {/* Main Content */}
       <main className="flex-1 w-full md:w-auto md:ml-64 transition-all duration-300">
@@ -70,9 +63,7 @@ export default function AdminLayout({
           <h1 className="text-lg font-semibold">TableMaster Admin</h1>
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
-          {children}
-        </div>
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">{children}</div>
       </main>
     </div>
   );

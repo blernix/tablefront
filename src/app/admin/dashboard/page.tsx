@@ -11,7 +11,11 @@ export default function AdminDashboardPage() {
   const { data, isLoading, error, refetch } = useAdminDashboard();
   const exportMutation = useExportData();
 
+  console.log('Dashboard data:', data);
+  console.log('Abandoned signups:', data?.stats?.abandonedSignups);
+
   const stats = data?.stats;
+  const abandoned = stats?.abandonedSignups;
 
   const handleExport = async (type: 'restaurants' | 'users' | 'reservations') => {
     try {
@@ -49,19 +53,25 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="border-green-200 bg-gradient-to-br from-green-50 to-white">
               <CardHeader className="pb-2">
-                <CardDescription className="text-green-700">Revenu Mensuel Récurrent</CardDescription>
+                <CardDescription className="text-green-700">
+                  Revenu Mensuel Récurrent
+                </CardDescription>
                 <CardTitle className="text-3xl text-green-600">{stats.revenue.mrr}€</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-green-600">
-                  <span>{stats.revenue.activeStarterCount} Starter · {stats.revenue.activeProCount} Pro</span>
+                  <span>
+                    {stats.revenue.activeStarterCount} Starter · {stats.revenue.activeProCount} Pro
+                  </span>
                 </div>
               </CardContent>
             </Card>
             <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-white">
               <CardHeader className="pb-2">
                 <CardDescription className="text-blue-700">Abonnements Actifs</CardDescription>
-                <CardTitle className="text-3xl text-blue-600">{stats.subscriptions.activeSubscriptions}</CardTitle>
+                <CardTitle className="text-3xl text-blue-600">
+                  {stats.subscriptions.activeSubscriptions}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-blue-600">
@@ -72,7 +82,9 @@ export default function AdminDashboardPage() {
             <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-white">
               <CardHeader className="pb-2">
                 <CardDescription className="text-purple-700">Réservations Totales</CardDescription>
-                <CardTitle className="text-3xl text-purple-600">{stats.reservations.total.toLocaleString()}</CardTitle>
+                <CardTitle className="text-3xl text-purple-600">
+                  {stats.reservations.total.toLocaleString()}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-purple-600">
@@ -83,7 +95,9 @@ export default function AdminDashboardPage() {
             <Card className="border-orange-200 bg-gradient-to-br from-orange-50 to-white">
               <CardHeader className="pb-2">
                 <CardDescription className="text-orange-700">Nouveaux Restaurants</CardDescription>
-                <CardTitle className="text-3xl text-orange-600">{stats.restaurants.recent}</CardTitle>
+                <CardTitle className="text-3xl text-orange-600">
+                  {stats.restaurants.recent}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-orange-600">
@@ -113,9 +127,15 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold">{stats.restaurants.byAccountType.managed}</p>
+                      <p className="text-2xl font-bold">
+                        {stats.restaurants.byAccountType.managed}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {((stats.restaurants.byAccountType.managed / stats.restaurants.total) * 100).toFixed(0)}%
+                        {(
+                          (stats.restaurants.byAccountType.managed / stats.restaurants.total) *
+                          100
+                        ).toFixed(0)}
+                        %
                       </p>
                     </div>
                   </div>
@@ -130,9 +150,15 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold">{stats.restaurants.byAccountType.selfService}</p>
+                      <p className="text-2xl font-bold">
+                        {stats.restaurants.byAccountType.selfService}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {((stats.restaurants.byAccountType.selfService / stats.restaurants.total) * 100).toFixed(0)}%
+                        {(
+                          (stats.restaurants.byAccountType.selfService / stats.restaurants.total) *
+                          100
+                        ).toFixed(0)}
+                        %
                       </p>
                     </div>
                   </div>
@@ -214,14 +240,18 @@ export default function AdminDashboardPage() {
                       <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
                       Paiement en retard
                     </span>
-                    <span className="text-lg font-bold">{stats.subscriptions.byStatus.pastDue}</span>
+                    <span className="text-lg font-bold">
+                      {stats.subscriptions.byStatus.pastDue}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium flex items-center gap-2">
                       <span className="w-2 h-2 bg-red-500 rounded-full"></span>
                       Annulés
                     </span>
-                    <span className="text-lg font-bold">{stats.subscriptions.byStatus.cancelled}</span>
+                    <span className="text-lg font-bold">
+                      {stats.subscriptions.byStatus.cancelled}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -236,19 +266,27 @@ export default function AdminDashboardPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Total (tous temps)</span>
-                    <span className="text-lg font-bold">{stats.reservations.total.toLocaleString()}</span>
+                    <span className="text-lg font-bold">
+                      {stats.reservations.total.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Ce mois-ci</span>
-                    <span className="text-lg font-bold">{stats.reservations.thisMonth.toLocaleString()}</span>
+                    <span className="text-lg font-bold">
+                      {stats.reservations.thisMonth.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">7 derniers jours</span>
-                    <span className="text-lg font-bold">{stats.reservations.recent.toLocaleString()}</span>
+                    <span className="text-lg font-bold">
+                      {stats.reservations.recent.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t">
                     <span className="text-sm font-medium">Utilisation quota moyenne (Starter)</span>
-                    <span className="text-lg font-bold text-blue-600">{stats.reservations.averageQuotaUsage}%</span>
+                    <span className="text-lg font-bold text-blue-600">
+                      {stats.reservations.averageQuotaUsage}%
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -269,8 +307,8 @@ export default function AdminDashboardPage() {
                     <span className="text-lg font-bold">{stats.users.admin}</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gray-600" 
+                    <div
+                      className="h-full bg-gray-600"
                       style={{ width: `${(stats.users.admin / stats.users.total) * 100}%` }}
                     />
                   </div>
@@ -281,8 +319,8 @@ export default function AdminDashboardPage() {
                     <span className="text-lg font-bold">{stats.users.restaurant}</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-blue-600" 
+                    <div
+                      className="h-full bg-blue-600"
                       style={{ width: `${(stats.users.restaurant / stats.users.total) * 100}%` }}
                     />
                   </div>
@@ -293,8 +331,8 @@ export default function AdminDashboardPage() {
                     <span className="text-lg font-bold">{stats.users.server}</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-green-600" 
+                    <div
+                      className="h-full bg-green-600"
                       style={{ width: `${(stats.users.server / stats.users.total) * 100}%` }}
                     />
                   </div>
@@ -307,17 +345,24 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>Restaurants les plus actifs</CardTitle>
-              <CardDescription>Top 5 des 30 derniers jours (par nombre de réservations)</CardDescription>
+              <CardDescription>
+                Top 5 des 30 derniers jours (par nombre de réservations)
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {stats.topRestaurants.length === 0 ? (
-                <p className="text-center py-4 text-muted-foreground">Aucune donnée de réservation</p>
+                <p className="text-center py-4 text-muted-foreground">
+                  Aucune donnée de réservation
+                </p>
               ) : (
                 <div className="space-y-3">
                   {stats.topRestaurants.map((restaurant: any, index: number) => {
                     const planDisplay = getPlanDisplay(restaurant.subscriptionPlan);
                     return (
-                      <div key={restaurant.restaurantId} className="flex items-center justify-between border-b pb-3">
+                      <div
+                        key={restaurant.restaurantId}
+                        className="flex items-center justify-between border-b pb-3"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           <span className="text-lg font-bold text-gray-400 w-6">{index + 1}</span>
                           <div className="flex-1">
@@ -328,12 +373,16 @@ export default function AdminDashboardPage() {
                                   Manuel
                                 </span>
                               ) : (
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.badgeClass}`}>
+                                <span
+                                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${planDisplay.badgeClass}`}
+                                >
                                   {planDisplay.name}
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground">{restaurant.restaurantId}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {restaurant.restaurantId}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -343,6 +392,93 @@ export default function AdminDashboardPage() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Abandoned Signups */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Inscriptions abandonnées</CardTitle>
+              <CardDescription>
+                {abandoned?.total || 0} comptes créés sans paiement complet (30 derniers jours)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!abandoned || abandoned.total === 0 ? (
+                <p className="text-center py-4 text-muted-foreground">
+                  Aucune inscription abandonnée récente
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 bg-red-50">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                          <span className="text-red-600 font-bold">⚠️</span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">Total abandonnées</h3>
+                          <p className="text-2xl font-bold text-red-700">{abandoned.total}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Comptes self-service inactifs sans abonnement Stripe
+                      </p>
+                    </div>
+                    <div className="border rounded-lg p-4 bg-amber-50">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                          <span className="text-amber-600 font-bold">📅</span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">Derniers 7 jours</h3>
+                          <p className="text-2xl font-bold text-amber-700">
+                            {abandoned.byDay.slice(0, 7).reduce((sum, day) => sum + day.count, 0)}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Tentatives d&apos;inscription récentes échouées
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <h4 className="font-medium mb-3">Répartition par jour</h4>
+                    <div className="space-y-2">
+                      {abandoned.byDay.map((day) => (
+                        <div
+                          key={day._id}
+                          className="flex items-center justify-between border-b pb-2"
+                        >
+                          <div>
+                            <p className="font-medium">
+                              {new Date(day._id).toLocaleDateString('fr-FR', {
+                                weekday: 'short',
+                                day: 'numeric',
+                                month: 'short',
+                              })}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {day.count} inscription{day.count > 1 ? 's' : ''}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              // TODO: Open modal with restaurant details
+                              console.log('Day details:', day);
+                            }}
+                          >
+                            Voir détails
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -364,20 +500,24 @@ export default function AdminDashboardPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">Restaurants</h3>
-                        <p className="text-sm text-muted-foreground">{stats?.restaurants.total} restaurants</p>
+                        <p className="text-sm text-muted-foreground">
+                          {stats?.restaurants.total} restaurants
+                        </p>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full"
                       onClick={() => handleExport('restaurants')}
                       disabled={isExporting}
                     >
-                      {exportMutation.variables === 'restaurants' && isExporting ? 'Exportation...' : 'Exporter CSV'}
+                      {exportMutation.variables === 'restaurants' && isExporting
+                        ? 'Exportation...'
+                        : 'Exporter CSV'}
                     </Button>
                   </div>
-                  
+
                   <div className="border rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -385,20 +525,24 @@ export default function AdminDashboardPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">Utilisateurs</h3>
-                        <p className="text-sm text-muted-foreground">{stats?.users.total} utilisateurs</p>
+                        <p className="text-sm text-muted-foreground">
+                          {stats?.users.total} utilisateurs
+                        </p>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full"
                       onClick={() => handleExport('users')}
                       disabled={isExporting}
                     >
-                      {exportMutation.variables === 'users' && isExporting ? 'Exportation...' : 'Exporter CSV'}
+                      {exportMutation.variables === 'users' && isExporting
+                        ? 'Exportation...'
+                        : 'Exporter CSV'}
                     </Button>
                   </div>
-                  
+
                   <div className="border rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -406,21 +550,25 @@ export default function AdminDashboardPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">Réservations</h3>
-                        <p className="text-sm text-muted-foreground">{stats?.reservations.total.toLocaleString()} total</p>
+                        <p className="text-sm text-muted-foreground">
+                          {stats?.reservations.total.toLocaleString()} total
+                        </p>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full"
                       onClick={() => handleExport('reservations')}
                       disabled={isExporting}
                     >
-                      {exportMutation.variables === 'reservations' && isExporting ? 'Exportation...' : 'Exporter CSV'}
+                      {exportMutation.variables === 'reservations' && isExporting
+                        ? 'Exportation...'
+                        : 'Exporter CSV'}
                     </Button>
                   </div>
                 </div>
-                
+
                 {exportMutation.error && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                     <p className="text-sm text-red-700">{exportMutation.error.message}</p>
@@ -434,9 +582,12 @@ export default function AdminDashboardPage() {
                     </Button>
                   </div>
                 )}
-                
+
                 <div className="text-sm text-muted-foreground pt-2 border-t">
-                  <p>Les fichiers CSV contiennent toutes les données disponibles. L&apos;export peut prendre quelques secondes.</p>
+                  <p>
+                    Les fichiers CSV contiennent toutes les données disponibles. L&apos;export peut
+                    prendre quelques secondes.
+                  </p>
                 </div>
               </div>
             </CardContent>

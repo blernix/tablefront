@@ -16,7 +16,8 @@ import Footer from '@/components/layout/Footer';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized } = useAuthStore();
+  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized } =
+    useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -136,8 +137,8 @@ export default function LoginPage() {
           {/* Logo & Title - hidden on desktop since navbar shows logo */}
           <div className="text-center mb-12 md:hidden">
             <div className="inline-flex items-center gap-3 mb-8">
-              <Image 
-                src="/logo_512.png" 
+              <Image
+                src="/logo_512.png"
                 alt="TableMaster Logo"
                 width={40}
                 height={40}
@@ -146,13 +147,17 @@ export default function LoginPage() {
               <span className="text-2xl font-light text-[#2A2A2A]">TableMaster</span>
             </div>
             <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
-            <p className="text-[#666666] font-light">Accédez à votre espace d&apos;administration</p>
+            <p className="text-[#666666] font-light">
+              Accédez à votre espace d&apos;administration
+            </p>
           </div>
-          
+
           {/* Desktop title */}
           <div className="text-center mb-12 hidden md:block">
             <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
-            <p className="text-[#666666] font-light">Accédez à votre espace d&apos;administration</p>
+            <p className="text-[#666666] font-light">
+              Accédez à votre espace d&apos;administration
+            </p>
           </div>
 
           {/* Form */}
@@ -219,7 +224,10 @@ export default function LoginPage() {
 
           {/* Back to home */}
           <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-[#666666] hover:text-[#0066FF] font-light transition-colors">
+            <Link
+              href="/"
+              className="text-sm text-[#666666] hover:text-[#0066FF] font-light transition-colors"
+            >
               ← Retour à l&apos;accueil
             </Link>
           </div>

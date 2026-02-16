@@ -14,7 +14,7 @@ import {
   ChevronDown,
   ChevronUp,
   Search,
-  Filter
+  Filter,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -64,7 +64,7 @@ export default function MonitoringPage() {
   const filteredRestaurants = useMemo(() => {
     if (!data?.restaurants) return [];
 
-    return data.restaurants.filter(restaurant => {
+    return data.restaurants.filter((restaurant) => {
       // Health filter
       if (healthFilter !== 'all' && restaurant.healthStatus !== healthFilter) {
         return false;
@@ -272,7 +272,7 @@ export default function MonitoringPage() {
 function RestaurantRow({
   restaurant,
   isExpanded,
-  onToggle
+  onToggle,
 }: {
   restaurant: MonitoringRestaurant;
   isExpanded: boolean;
@@ -315,7 +315,7 @@ function RestaurantRow({
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Aujourd\'hui';
+    if (diffDays === 0) return "Aujourd'hui";
     if (diffDays === 1) return 'Hier';
     if (diffDays < 7) return `Il y a ${diffDays} jours`;
     if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} semaines`;
@@ -326,10 +326,7 @@ function RestaurantRow({
     <div className={cn('border rounded-lg p-4', config.border, config.bg)}>
       {/* Main Row */}
       <div className="flex items-center gap-4">
-        <button
-          onClick={onToggle}
-          className="p-1 hover:bg-white/50 rounded"
-        >
+        <button onClick={onToggle} className="p-1 hover:bg-white/50 rounded">
           {isExpanded ? (
             <ChevronUp className="w-5 h-5 text-gray-600" />
           ) : (
@@ -373,12 +370,16 @@ function RestaurantRow({
             <Bell className="w-4 h-4 text-gray-500" />
             <div>
               <p className="text-sm text-gray-600">Taux notif.</p>
-              <p className={cn(
-                'font-semibold',
-                restaurant.metrics.notificationDeliveryRate >= 90 ? 'text-green-600' :
-                restaurant.metrics.notificationDeliveryRate >= 75 ? 'text-yellow-600' :
-                'text-red-600'
-              )}>
+              <p
+                className={cn(
+                  'font-semibold',
+                  restaurant.metrics.notificationDeliveryRate >= 90
+                    ? 'text-green-600'
+                    : restaurant.metrics.notificationDeliveryRate >= 75
+                      ? 'text-yellow-600'
+                      : 'text-red-600'
+                )}
+              >
                 {restaurant.metrics.notificationDeliveryRate}%
               </p>
             </div>
@@ -403,9 +404,7 @@ function RestaurantRow({
           {/* Problems */}
           {restaurant.metrics.problems.length > 0 && (
             <div className="bg-white/50 rounded-lg p-3">
-              <p className="text-sm font-medium text-gray-700 mb-2">
-                Problèmes détectés :
-              </p>
+              <p className="text-sm font-medium text-gray-700 mb-2">Problèmes détectés :</p>
               <ul className="space-y-1">
                 {restaurant.metrics.problems.map((problem: string, idx: number) => (
                   <li key={idx} className="flex items-center gap-2 text-sm text-red-700">
@@ -443,12 +442,16 @@ function RestaurantRow({
               </div>
               <div>
                 <p className="text-xs text-gray-600">Taux annulation</p>
-                <p className={cn(
-                  'text-lg font-semibold',
-                  restaurant.optionalMetrics.cancellationRate > 30 ? 'text-red-600' :
-                  restaurant.optionalMetrics.cancellationRate > 15 ? 'text-yellow-600' :
-                  'text-green-600'
-                )}>
+                <p
+                  className={cn(
+                    'text-lg font-semibold',
+                    restaurant.optionalMetrics.cancellationRate > 30
+                      ? 'text-red-600'
+                      : restaurant.optionalMetrics.cancellationRate > 15
+                        ? 'text-yellow-600'
+                        : 'text-green-600'
+                  )}
+                >
                   {restaurant.optionalMetrics.cancellationRate}%
                 </p>
               </div>
@@ -460,7 +463,7 @@ function RestaurantRow({
                 <p className="text-xl font-bold text-blue-600">
                   {restaurant.optionalMetrics.estimatedRevenue.toLocaleString('fr-FR', {
                     style: 'currency',
-                    currency: 'EUR'
+                    currency: 'EUR',
                   })}
                 </p>
               </div>
