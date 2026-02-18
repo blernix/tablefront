@@ -1,7 +1,7 @@
 /**
  * Génère un code court unique pour les URLs de type "vanity URL"
  * Version simplifiée pour le frontend
- * 
+ *
  * @param length - Longueur du code (défaut: 8)
  * @returns Code court unique
  */
@@ -16,7 +16,7 @@ export function generateShortCode(length: number = 8): string {
 
 /**
  * Génère un slug à partir d'un nom
- * 
+ *
  * @param name - Nom du restaurant
  * @returns Slug nettoyé
  */

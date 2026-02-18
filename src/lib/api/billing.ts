@@ -57,11 +57,17 @@ export class BillingApi extends ApiClient {
    * @param restaurantId The restaurant ID
    * @returns Checkout session URL and ID
    */
-  async createCheckoutSession(plan: 'starter' | 'pro', restaurantId: string): Promise<{ sessionId: string; url: string }> {
-    const response = await this.request<{ sessionId: string; url: string }>('/api/billing/create-checkout', {
-      method: 'POST',
-      body: JSON.stringify({ plan, restaurantId }),
-    });
+  async createCheckoutSession(
+    plan: 'starter' | 'pro',
+    restaurantId: string
+  ): Promise<{ sessionId: string; url: string }> {
+    const response = await this.request<{ sessionId: string; url: string }>(
+      '/api/billing/create-checkout',
+      {
+        method: 'POST',
+        body: JSON.stringify({ plan, restaurantId }),
+      }
+    );
     return response;
   }
 }

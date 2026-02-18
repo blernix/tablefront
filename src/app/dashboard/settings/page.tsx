@@ -3,7 +3,19 @@
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download } from 'lucide-react';
+import {
+  ChevronRight,
+  Building2,
+  Clock,
+  CalendarX,
+  Utensils,
+  Calendar,
+  Users,
+  Bell,
+  Code2,
+  Palette,
+  Download,
+} from 'lucide-react';
 
 const settingsCategories = [
   {
@@ -14,7 +26,7 @@ const settingsCategories = [
     available: true,
   },
   {
-    title: 'Horaires d\'ouverture',
+    title: "Horaires d'ouverture",
     description: 'Définissez vos horaires par jour de la semaine',
     icon: Clock,
     href: '/dashboard/settings/opening-hours',
@@ -85,9 +97,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
-        <p className="mt-2 text-gray-600">
-          Configurez votre restaurant
-        </p>
+        <p className="mt-2 text-gray-600">Configurez votre restaurant</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -108,21 +118,15 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <CardTitle className="text-base">{category.title}</CardTitle>
-                      <CardDescription className="mt-1">
-                        {category.description}
-                      </CardDescription>
+                      <CardDescription className="mt-1">{category.description}</CardDescription>
                     </div>
                   </div>
-                  {category.available && (
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  )}
+                  {category.available && <ChevronRight className="h-5 w-5 text-gray-400" />}
                 </div>
               </CardHeader>
               {!category.available && (
                 <CardContent>
-                  <p className="text-xs text-muted-foreground">
-                    Disponible prochainement
-                  </p>
+                  <p className="text-xs text-muted-foreground">Disponible prochainement</p>
                 </CardContent>
               )}
             </Card>

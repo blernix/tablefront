@@ -42,7 +42,9 @@ export function CategoriesSidebar({
   const [localCategories, setLocalCategories] = useState(categories);
   const editCategoryInputRef = useRef<HTMLInputElement>(null);
   // Delete modal state
-  const [categoryToDelete, setCategoryToDelete] = useState<{id: string, name: string} | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<{ id: string; name: string } | null>(
+    null
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Sync local categories with props
@@ -184,7 +186,9 @@ export function CategoriesSidebar({
       <Card className="p-6">
         <CardHeader className="pb-4 p-0">
           <CardTitle className="text-lg font-light text-[#2A2A2A]">Catégories</CardTitle>
-          <CardDescription className="text-[#666666] mt-1">Organisez vos plats par sections</CardDescription>
+          <CardDescription className="text-[#666666] mt-1">
+            Organisez vos plats par sections
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5 p-0 pt-4">
           {/* Create Category Form */}
@@ -263,7 +267,9 @@ export function CategoriesSidebar({
                         </div>
                       ) : (
                         <div>
-                          <p className="font-medium text-[#2A2A2A] text-base mb-1">{category.name}</p>
+                          <p className="font-medium text-[#2A2A2A] text-base mb-1">
+                            {category.name}
+                          </p>
                           <p className="text-xs text-[#666666] uppercase tracking-[0.1em]">
                             {dishCount} plat{dishCount !== 1 ? 's' : ''}
                           </p>

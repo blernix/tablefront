@@ -9,16 +9,20 @@ interface AnimatedWorkflowStepProps {
   className?: string;
 }
 
-export function AnimatedWorkflowStep({ children, delay = 0, className = "" }: AnimatedWorkflowStepProps) {
+export function AnimatedWorkflowStep({
+  children,
+  delay = 0,
+  className = '',
+}: AnimatedWorkflowStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.6, 
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{
+        duration: 0.6,
         delay,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
       className={className}
     >
@@ -38,20 +42,20 @@ export function AnimatedCircle({ children, delay = 0 }: AnimatedCircleProps) {
       initial={{ scale: 0.8, opacity: 0 }}
       whileInView={{ scale: 1, opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ 
-        duration: 0.5, 
+      transition={{
+        duration: 0.5,
         delay,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
       whileHover={{ scale: 1.05 }}
       className="w-16 h-16 bg-[#0066FF] text-white rounded-full flex items-center justify-center text-2xl font-light mx-auto"
     >
       <motion.div
         animate={{ scale: [1, 1.02, 1] }}
-        transition={{ 
-          duration: 2, 
-          repeat: Infinity, 
-          ease: "easeInOut"
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: 'easeInOut',
         }}
       >
         {children}
@@ -71,10 +75,10 @@ export function AnimatedTitle({ children, delay = 0 }: AnimatedTitleProps) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ 
-        duration: 0.5, 
+      transition={{
+        duration: 0.5,
         delay,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
       className="text-2xl font-light text-[#2A2A2A]"
     >
@@ -94,10 +98,10 @@ export function AnimatedText({ children, delay = 0 }: AnimatedTextProps) {
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ 
-        duration: 0.5, 
+      transition={{
+        duration: 0.5,
         delay,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
       className="text-[#666666] font-light leading-relaxed"
     >

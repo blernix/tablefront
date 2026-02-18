@@ -141,10 +141,7 @@ export default function AdminAnalyticsSkeleton() {
                 </div>
                 <div className="flex gap-1 h-6">
                   {Array.from({ length: 3 }).map((_, j) => (
-                    <div
-                      key={j}
-                      className="flex-1 rounded bg-gray-200 animate-pulse"
-                    />
+                    <div key={j} className="flex-1 rounded bg-gray-200 animate-pulse" />
                   ))}
                 </div>
               </div>

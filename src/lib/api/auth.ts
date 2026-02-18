@@ -15,13 +15,12 @@ export class TwoFactorRequiredError extends Error {
 
 export class AuthApi extends ApiClient {
   async login(email: string, password: string): Promise<AuthResponse> {
-
     try {
       const response = await this.request<AuthResponse | TwoFactorAuthResponse>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
-      
+
       // Check if 2FA is required
       if ('requiresTwoFactor' in response && response.requiresTwoFactor) {
         const twoFactorResponse = response as TwoFactorAuthResponse;
@@ -33,7 +32,7 @@ export class AuthApi extends ApiClient {
           twoFactorResponse.message
         );
       }
-      
+
       // Normal login success
       const authResponse = response as AuthResponse;
 
@@ -93,20 +92,27 @@ export class AuthApi extends ApiClient {
   }
 
   // Two-factor authentication methods
-  
+
   async getTwoFactorStatus(): Promise<{ twoFactorEnabled: boolean; hasRecoveryCodes: boolean }> {
     return this.request('/api/2fa/status', {
       method: 'GET',
     });
   }
 
-  async generateTwoFactorSetup(): Promise<{ secret: string; qrCodeUrl: string; recoveryCodes: string[] }> {
+  async generateTwoFactorSetup(): Promise<{
+    secret: string;
+    qrCodeUrl: string;
+    recoveryCodes: string[];
+  }> {
     return this.request('/api/2fa/setup/generate', {
       method: 'POST',
     });
   }
 
-  async enableTwoFactor(secret: string, token: string): Promise<{ message: string; recoveryCodes: string[] }> {
+  async enableTwoFactor(
+    secret: string,
+    token: string
+  ): Promise<{ message: string; recoveryCodes: string[] }> {
     return this.request('/api/2fa/setup/enable', {
       method: 'POST',
       body: JSON.stringify({ secret, token }),
@@ -120,7 +126,6 @@ export class AuthApi extends ApiClient {
   }
 
   async verifyTwoFactorLogin(tempToken: string, token: string): Promise<AuthResponse> {
-
     const response = await this.request<AuthResponse>('/api/2fa/verify-login', {
       method: 'POST',
       body: JSON.stringify({ tempToken, token }),

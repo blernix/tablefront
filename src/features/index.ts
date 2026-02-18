@@ -31,16 +31,11 @@ export {
 
 // Components
 export { FeatureGuard, withFeatureGuard } from './components/FeatureGuard';
-export { 
-  FeatureUpgradeSection, 
+export {
+  FeatureUpgradeSection,
   FormSectionWithUpgrade,
   ProBadge,
   StarterBadge,
-  EnterpriseBadge 
+  EnterpriseBadge,
 } from './components/FeatureUpgradeSection';
-export { 
-  UpgradeCTA,
-  useIsStarter,
-  useIsPro,
-  useIsEnterprise 
-} from './components/UpgradeCTA';
+export { UpgradeCTA, useIsStarter, useIsPro, useIsEnterprise } from './components/UpgradeCTA';

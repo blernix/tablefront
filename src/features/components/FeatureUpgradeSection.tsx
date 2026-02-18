@@ -28,16 +28,16 @@ interface FeatureUpgradeSectionProps {
 /**
  * Component that shows content with an upgrade overlay when user doesn't have access.
  * Perfect for marketing - shows Pro features but encourages upgrade.
- * 
+ *
  * @example
  * // Basic usage
  * <FeatureUpgradeSection feature="widget-customization">
  *   <WidgetCustomizerForm />
  * </FeatureUpgradeSection>
- * 
+ *
  * @example
  * // With custom title and description
- * <FeatureUpgradeSection 
+ * <FeatureUpgradeSection
  *   feature="advanced-analytics"
  *   title="Analytics Avancés"
  *   description="Suivez vos performances détaillées"
@@ -74,19 +74,22 @@ export const FeatureUpgradeSection = ({
 
   // User doesn't have access - show with upgrade overlay
   const defaultTitle = `Fonctionnalité ${access.requiredPlan?.toUpperCase() || 'Pro'}`;
-  const defaultDescription = access.reason === 'plan' && access.requiredPlan
-    ? `Disponible avec le plan ${access.requiredPlan}. ${access.currentPlan ? `Vous avez actuellement le plan ${access.currentPlan}.` : ''}`
-    : 'Cette fonctionnalité n\'est pas disponible avec votre abonnement actuel.';
+  const defaultDescription =
+    access.reason === 'plan' && access.requiredPlan
+      ? `Disponible avec le plan ${access.requiredPlan}. ${access.currentPlan ? `Vous avez actuellement le plan ${access.currentPlan}.` : ''}`
+      : "Cette fonctionnalité n'est pas disponible avec votre abonnement actuel.";
 
   return (
     <div className={cn('relative', className)}>
       {/* Content with overlay */}
-      <div className={cn(
-        'relative',
-        !access.hasAccess && 'opacity-60 pointer-events-none select-none'
-      )}>
+      <div
+        className={cn(
+          'relative',
+          !access.hasAccess && 'opacity-60 pointer-events-none select-none'
+        )}
+      >
         {children}
-        
+
         {/* Lock overlay (optional) */}
         {showLockOverlay && !access.hasAccess && (
           <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px] rounded-lg" />
@@ -95,36 +98,40 @@ export const FeatureUpgradeSection = ({
 
       {/* Upgrade banner */}
       {!access.hasAccess && (
-        <div className={cn(
-          'mt-4 rounded-lg border p-4',
-          access.reason === 'plan' 
-            ? 'border-amber-200 bg-amber-50' 
-            : 'border-slate-200 bg-slate-50'
-        )}>
+        <div
+          className={cn(
+            'mt-4 rounded-lg border p-4',
+            access.reason === 'plan'
+              ? 'border-amber-200 bg-amber-50'
+              : 'border-slate-200 bg-slate-50'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className={cn(
-              'flex h-8 w-8 items-center justify-center rounded-full',
-              access.reason === 'plan' 
-                ? 'bg-amber-100 text-amber-600' 
-                : 'bg-slate-100 text-slate-600'
-            )}>
-              {access.reason === 'plan' ? <Crown className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+            <div
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-full',
+                access.reason === 'plan'
+                  ? 'bg-amber-100 text-amber-600'
+                  : 'bg-slate-100 text-slate-600'
+              )}
+            >
+              {access.reason === 'plan' ? (
+                <Crown className="h-4 w-4" />
+              ) : (
+                <Lock className="h-4 w-4" />
+              )}
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-slate-900">
-                {title || defaultTitle}
-              </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                {description || defaultDescription}
-              </p>
+              <h3 className="font-medium text-slate-900">{title || defaultTitle}</h3>
+              <p className="mt-1 text-sm text-slate-600">{description || defaultDescription}</p>
               {access.reason === 'plan' && (
                 <Button
                   onClick={handleUpgrade}
                   size="sm"
                   className={cn(
                     'mt-2',
-                    access.requiredPlan === 'pro' 
-                      ? 'bg-amber-600 hover:bg-amber-700' 
+                    access.requiredPlan === 'pro'
+                      ? 'bg-amber-600 hover:bg-amber-700'
                       : 'bg-blue-600 hover:bg-blue-700'
                   )}
                 >
@@ -170,11 +177,13 @@ export const FormSectionWithUpgrade = ({
  */
 export const ProBadge = ({ className }: { className?: string }) => {
   return (
-    <span className={cn(
-      'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
-      'bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border border-purple-200',
-      className
-    )}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
+        'bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border border-purple-200',
+        className
+      )}
+    >
       <Crown className="h-3 w-3" />
       PRO
     </span>
@@ -186,11 +195,13 @@ export const ProBadge = ({ className }: { className?: string }) => {
  */
 export const StarterBadge = ({ className }: { className?: string }) => {
   return (
-    <span className={cn(
-      'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
-      'bg-yellow-50 text-yellow-700 border border-yellow-200',
-      className
-    )}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
+        'bg-yellow-50 text-yellow-700 border border-yellow-200',
+        className
+      )}
+    >
       STARTER
     </span>
   );
@@ -201,11 +212,13 @@ export const StarterBadge = ({ className }: { className?: string }) => {
  */
 export const EnterpriseBadge = ({ className }: { className?: string }) => {
   return (
-    <span className={cn(
-      'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
-      'bg-blue-50 text-blue-700 border border-blue-200',
-      className
-    )}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
+        'bg-blue-50 text-blue-700 border border-blue-200',
+        className
+      )}
+    >
       ENTERPRISE
     </span>
   );

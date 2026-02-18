@@ -200,12 +200,12 @@ export default function EmbedReservationPage() {
       }
 
       setSuccess(true);
-      
+
       // Send message to parent window to close modal (for floating widget)
       if (window.parent !== window) {
         window.parent.postMessage({ type: 'tablemaster:close' }, '*');
       }
-      
+
       // Reset form
       setCustomerName('');
       setCustomerEmail('');
@@ -438,7 +438,12 @@ export default function EmbedReservationPage() {
             </div>
             {date && (
               <p className="tm-date-hint">
-                {new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                {new Date(date).toLocaleDateString('fr-FR', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
               </p>
             )}
           </div>
@@ -451,11 +456,13 @@ export default function EmbedReservationPage() {
               onChange={(e) => setNumberOfGuests(parseInt(e.target.value))}
               required
             >
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
-                <option key={num} value={num}>
-                  {num} {num > 1 ? 'personnes' : 'personne'}
-                </option>
-              ))}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(
+                (num) => (
+                  <option key={num} value={num}>
+                    {num} {num > 1 ? 'personnes' : 'personne'}
+                  </option>
+                )
+              )}
             </select>
           </div>
         </div>
@@ -498,9 +505,7 @@ export default function EmbedReservationPage() {
             maxLength={500}
           />
           {notes.length > 0 && (
-            <span className="tm-char-count">
-              {notes.length} / 500 caractères
-            </span>
+            <span className="tm-char-count">{notes.length} / 500 caractères</span>
           )}
         </div>
 
@@ -515,13 +520,20 @@ export default function EmbedReservationPage() {
               required
             />
             <label htmlFor="consent-data-processing">
-              J&apos;accepte que mes données personnelles (nom, email, téléphone) soient traitées par TableMaster et transmises au restaurant {restaurant?.name} pour gérer ma réservation. 
-              <a href="https://tablemaster.fr/privacy" target="_blank" rel="noopener noreferrer" className="tm-privacy-link">
+              J&apos;accepte que mes données personnelles (nom, email, téléphone) soient traitées
+              par TableMaster et transmises au restaurant {restaurant?.name} pour gérer ma
+              réservation.
+              <a
+                href="https://tablemaster.fr/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tm-privacy-link"
+              >
                 Politique de confidentialité
               </a>
             </label>
           </div>
-          
+
           <div className="tm-consent-item">
             <input
               type="checkbox"
@@ -530,12 +542,14 @@ export default function EmbedReservationPage() {
               onChange={(e) => setConsentMarketing(e.target.checked)}
             />
             <label htmlFor="consent-marketing">
-              J&apos;accepte de recevoir des offres spéciales et des actualités du restaurant {restaurant?.name} par email (optionnel)
+              J&apos;accepte de recevoir des offres spéciales et des actualités du restaurant{' '}
+              {restaurant?.name} par email (optionnel)
             </label>
           </div>
-          
+
           <p className="tm-consent-note">
-            Vos données sont protégées conformément au RGPD. Vous pouvez exercer vos droits d&apos;accès, de rectification et d&apos;opposition en contactant le restaurant.
+            Vos données sont protégées conformément au RGPD. Vous pouvez exercer vos droits
+            d&apos;accès, de rectification et d&apos;opposition en contactant le restaurant.
           </p>
         </div>
 
@@ -752,7 +766,7 @@ export default function EmbedReservationPage() {
           margin-bottom: 16px;
         }
 
-        .tm-consent-item input[type="checkbox"] {
+        .tm-consent-item input[type='checkbox'] {
           margin-top: 4px;
           flex-shrink: 0;
           width: 18px;

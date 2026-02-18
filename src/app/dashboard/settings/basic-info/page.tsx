@@ -16,7 +16,7 @@ import { ArrowLeft } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
-  address: z.string().min(1, 'L\'adresse est requise'),
+  address: z.string().min(1, "L'adresse est requise"),
   phone: z.string().min(1, 'Le téléphone est requis'),
   email: z.string().email('Email invalide'),
   googleReviewLink: z.string().url('URL invalide').optional().or(z.literal('')),
@@ -46,7 +46,6 @@ export default function BasicInfoPage() {
   const fetchRestaurant = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -98,19 +97,13 @@ export default function BasicInfoPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard/settings')}
-        >
+        <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Informations de base</h1>
-          <p className="mt-2 text-gray-600">
-            Modifiez les coordonnées de votre restaurant
-          </p>
+          <p className="mt-2 text-gray-600">Modifiez les coordonnées de votre restaurant</p>
         </div>
       </div>
 
@@ -131,9 +124,7 @@ export default function BasicInfoPage() {
                 placeholder="Restaurant Le Bon Goût"
                 disabled={isSaving}
               />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -158,9 +149,7 @@ export default function BasicInfoPage() {
                   placeholder="01 23 45 67 89"
                   disabled={isSaving}
                 />
-                {errors.phone && (
-                  <p className="text-sm text-destructive">{errors.phone.message}</p>
-                )}
+                {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -172,9 +161,7 @@ export default function BasicInfoPage() {
                   placeholder="contact@restaurant.fr"
                   disabled={isSaving}
                 />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
             </div>
 
@@ -191,7 +178,8 @@ export default function BasicInfoPage() {
                 <p className="text-sm text-destructive">{errors.googleReviewLink.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Ce lien sera envoyé aux clients après leur visite pour qu&apos;ils laissent un avis Google
+                Ce lien sera envoyé aux clients après leur visite pour qu&apos;ils laissent un avis
+                Google
               </p>
               {!hasGoogleReviewFeature && (
                 <p className="text-sm text-amber-600 mt-2">

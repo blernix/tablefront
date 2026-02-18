@@ -8,13 +8,13 @@ import { Check, XCircle, CheckCircle } from 'lucide-react';
 interface SwipeableCardProps {
   children: React.ReactNode;
   onSwipeRight?: () => void; // Confirmer
-  onSwipeLeft?: () => void;  // Annuler
+  onSwipeLeft?: () => void; // Annuler
   rightLabel?: string;
   leftLabel?: string;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   rightColor?: string; // Classe Tailwind pour la couleur
-  leftColor?: string;  // Classe Tailwind pour la couleur
+  leftColor?: string; // Classe Tailwind pour la couleur
   sameActionOnBothSides?: boolean; // Si vrai, les deux directions déclenchent onSwipeRight
   disabled?: boolean;
   className?: string;
@@ -32,7 +32,7 @@ export const SwipeableCard = ({
   leftColor = 'text-red-600',
   sameActionOnBothSides = false,
   disabled = false,
-  className
+  className,
 }: SwipeableCardProps) => {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
@@ -114,7 +114,7 @@ export const SwipeableCard = ({
         {...handlers}
         style={{
           transform: `translateX(${swipeOffset}px)`,
-          transition: isSwiping ? 'none' : 'transform 0.3s ease-out'
+          transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
         }}
         className="relative bg-white touch-pan-y"
       >

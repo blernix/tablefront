@@ -115,11 +115,15 @@ export const DayView = ({
   });
 
   // Calculate advanced capacity data if restaurant available
-  const advancedCapacity = restaurant ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant) : null;
+  const advancedCapacity = restaurant
+    ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant)
+    : null;
 
   // Calculate stats
   const totalGuests = dayReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-  const occupationRate = advancedCapacity?.dailyOccupationPercentage ?? (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
+  const occupationRate =
+    advancedCapacity?.dailyOccupationPercentage ??
+    (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
 
   // Get reservations for a specific time slot
   const getReservationsForTime = (hour: number, minute: number) => {
@@ -160,7 +164,7 @@ export const DayView = ({
       {/* Header */}
       <Card>
         <CardContent className="pt-6">
-           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 space-y-2 md:space-y-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 space-y-2 md:space-y-0">
             <div className="flex items-center gap-3">
               <Calendar className="h-6 w-6 text-slate-700" />
               <div>
@@ -178,17 +182,17 @@ export const DayView = ({
               </div>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handlePreviousDay}
                 className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleNextDay}
                 className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
               >
@@ -281,7 +285,9 @@ export const DayView = ({
                 {/* Capacity Bar with numeric indicator */}
                 <div className="space-y-1 mb-4">
                   <div className="flex justify-between text-xs text-slate-600">
-                    <span>{serviceGuests} / {serviceCapacity} couverts</span>
+                    <span>
+                      {serviceGuests} / {serviceCapacity} couverts
+                    </span>
                     <span>{serviceOccupation.toFixed(0)}%</span>
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2">

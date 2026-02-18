@@ -19,7 +19,7 @@ export default function QrCodeDisplay({
   restaurantName = 'Menu',
   restaurantId,
   qrCodeGenerated = false,
-  onGenerate
+  onGenerate,
 }: QrCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
 
@@ -69,9 +69,7 @@ export default function QrCodeDisplay({
           text: 'Scannez ce QR code pour accéder au menu',
           url: qrCodeUrl,
         });
-      } catch (err) {
-
-      }
+      } catch (err) {}
     } else {
       handleCopyUrl();
     }
@@ -87,15 +85,14 @@ export default function QrCodeDisplay({
           <div>
             <h3 className="text-xl font-heading font-semibold text-navy">QR Code du Menu</h3>
             <p className="text-sm text-muted-foreground">
-              {qrCodeGenerated ? 'Scannez ce code pour accéder au menu sur mobile' : 'Générez votre QR code permanent'}
+              {qrCodeGenerated
+                ? 'Scannez ce code pour accéder au menu sur mobile'
+                : 'Générez votre QR code permanent'}
             </p>
           </div>
         </div>
         {!qrCodeGenerated && onGenerate && (
-          <Button
-            onClick={onGenerate}
-            className="bg-gold hover:bg-gold/90 text-navy font-semibold"
-          >
+          <Button onClick={onGenerate} className="bg-gold hover:bg-gold/90 text-navy font-semibold">
             Générer le QR Code
           </Button>
         )}
@@ -135,7 +132,8 @@ export default function QrCodeDisplay({
 
           <div className="text-center max-w-xs">
             <p className="text-sm text-muted-foreground">
-              Imprimez ce QR code pour le placer sur vos tables. Vos clients pourront scanner et consulter le menu directement sur leur téléphone.
+              Imprimez ce QR code pour le placer sur vos tables. Vos clients pourront scanner et
+              consulter le menu directement sur leur téléphone.
             </p>
           </div>
         </div>
@@ -153,7 +151,7 @@ export default function QrCodeDisplay({
                 <Download className="w-4 h-4" />
                 Télécharger le QR Code
               </Button>
-              
+
               <Button
                 onClick={handleShare}
                 variant="outline"
@@ -165,11 +163,11 @@ export default function QrCodeDisplay({
 
               <Button
                 onClick={handleCopyUrl}
-                variant={copied ? "default" : "outline"}
+                variant={copied ? 'default' : 'outline'}
                 className={`h-12 justify-start gap-3 rounded-xl ${copied ? 'bg-green-600 hover:bg-green-700' : 'hover:bg-gold-light/20'}`}
               >
                 <Copy className="w-4 h-4" />
-                {copied ? 'Copié !' : 'Copier l\'URL'}
+                {copied ? 'Copié !' : "Copier l'URL"}
               </Button>
 
               <Button
@@ -177,8 +175,19 @@ export default function QrCodeDisplay({
                 variant="outline"
                 className="h-12 justify-start gap-3 rounded-xl hover:bg-gold-light/20"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  ></path>
                 </svg>
                 Voir le PDF
               </Button>
@@ -186,7 +195,9 @@ export default function QrCodeDisplay({
           </div>
 
           <div className="space-y-3 pt-4 border-t border-gold-light/30">
-            <h4 className="font-heading font-semibold text-lg text-navy">Conseils d&apos;utilisation</h4>
+            <h4 className="font-heading font-semibold text-lg text-navy">
+              Conseils d&apos;utilisation
+            </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <div className="w-2 h-2 rounded-full bg-gold mt-1.5 flex-shrink-0"></div>
@@ -198,12 +209,16 @@ export default function QrCodeDisplay({
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-2 h-2 rounded-full bg-gold mt-1.5 flex-shrink-0"></div>
-                <span>Testez le QR code avec plusieurs applications de scan pour vérifier la compatibilité</span>
+                <span>
+                  Testez le QR code avec plusieurs applications de scan pour vérifier la
+                  compatibilité
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-2 h-2 rounded-full bg-gold mt-1.5 flex-shrink-0"></div>
                 <span>
-                  <strong>Important :</strong> Le QR code reste valide même si vous remplacez le PDF - vous n&apos;avez pas besoin de le régénérer !
+                  <strong>Important :</strong> Le QR code reste valide même si vous remplacez le PDF
+                  - vous n&apos;avez pas besoin de le régénérer !
                 </span>
               </li>
             </ul>

@@ -22,13 +22,7 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
         {/* Image du plat */}
         <div className="relative h-20 w-20 sm:h-20 sm:w-20 overflow-hidden border border-[#E5E5E5] flex-shrink-0">
           {dish.photoUrl ? (
-            <Image
-              src={dish.photoUrl}
-              alt={dish.name}
-              fill
-              className="object-cover"
-              unoptimized
-            />
+            <Image src={dish.photoUrl} alt={dish.name} fill className="object-cover" unoptimized />
           ) : (
             <div className="flex items-center justify-center h-full bg-[#FAFAFA]">
               <UtensilsCrossed className="h-7 w-7 text-[#666666]" />

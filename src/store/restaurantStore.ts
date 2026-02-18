@@ -10,14 +10,14 @@ interface RestaurantStore {
   error: string | null;
   lastFetched: number | null;
   lastServerUpdatedAt: string | null;
-  
+
   // Actions
   fetchRestaurant: (force?: boolean) => Promise<void>;
   clearRestaurant: () => void;
   updateRestaurant: (updates: Partial<Restaurant>) => void;
   setRestaurant: (restaurant: Restaurant | null) => void;
   invalidateCache: () => void;
-  
+
   // Derived state
   isStale: (staleMinutes?: number) => boolean;
 }
@@ -34,31 +34,30 @@ export const useRestaurantStore = create<RestaurantStore>()(
       error: null,
       lastFetched: null,
       lastServerUpdatedAt: null,
-      
+
       // Fetch restaurant data with caching
       fetchRestaurant: async (force = false) => {
         const { lastFetched, isLoading, restaurant, lastServerUpdatedAt } = get();
-        
+
         // Skip if already loading
         if (isLoading) return;
-        
+
         // Check if we need to fetch (force, no cache, cache expired, or server data changed)
-        const shouldFetch = force || 
-          !lastFetched || 
+        const shouldFetch =
+          force ||
+          !lastFetched ||
           Date.now() - lastFetched >= CACHE_DURATION ||
           (restaurant?.updatedAt && restaurant.updatedAt !== lastServerUpdatedAt);
-        
+
         if (!shouldFetch) {
           return;
         }
-        
-        set({ isLoading: true, error: null });
-        
-        try {
 
+        set({ isLoading: true, error: null });
+
+        try {
           const response = await apiClient.getMyRestaurant();
 
-          
           set({
             restaurant: response.restaurant,
             lastFetched: Date.now(),
@@ -73,7 +72,7 @@ export const useRestaurantStore = create<RestaurantStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       // Clear restaurant data
       clearRestaurant: () => {
         set({
@@ -83,12 +82,12 @@ export const useRestaurantStore = create<RestaurantStore>()(
           error: null,
         });
       },
-      
+
       // Invalidate cache (keep data but mark as stale)
       invalidateCache: () => {
         set({ lastFetched: null });
       },
-      
+
       // Update restaurant with partial data
       updateRestaurant: (updates: Partial<Restaurant>) => {
         const { restaurant } = get();
@@ -100,7 +99,7 @@ export const useRestaurantStore = create<RestaurantStore>()(
           });
         }
       },
-      
+
       // Direct set (for admin purposes)
       setRestaurant: (restaurant: Restaurant | null) => {
         set({
@@ -110,7 +109,7 @@ export const useRestaurantStore = create<RestaurantStore>()(
           error: null,
         });
       },
-      
+
       // Check if data is stale
       isStale: (staleMinutes = 5) => {
         const { lastFetched } = get();
@@ -118,14 +117,14 @@ export const useRestaurantStore = create<RestaurantStore>()(
         return Date.now() - lastFetched > staleMinutes * 60 * 1000;
       },
     }),
-     {
-       name: 'restaurant-storage',
-       partialize: (state) => ({
-         restaurant: state.restaurant,
-         lastFetched: state.lastFetched,
-         lastServerUpdatedAt: state.lastServerUpdatedAt,
-       }),
-     }
+    {
+      name: 'restaurant-storage',
+      partialize: (state) => ({
+        restaurant: state.restaurant,
+        lastFetched: state.lastFetched,
+        lastServerUpdatedAt: state.lastServerUpdatedAt,
+      }),
+    }
   )
 );
 
@@ -173,17 +172,14 @@ export const getAvailableTimeSlots = (
   const allSlots: string[] = [];
 
   // Generate 30-minute slots for each opening period
-  daySchedule.slots.forEach(slot => {
+  daySchedule.slots.forEach((slot) => {
     const [startHour, startMin] = slot.start.split(':').map(Number);
     const [endHour, endMin] = slot.end.split(':').map(Number);
 
     let currentHour = startHour;
     let currentMin = startMin;
 
-    while (
-      currentHour < endHour ||
-      (currentHour === endHour && currentMin < endMin)
-    ) {
+    while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
       const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
       allSlots.push(timeStr);
 
@@ -217,7 +213,7 @@ export const isTimeWithinOpeningHours = (
   const [inputHour, inputMin] = time.split(':').map(Number);
   const inputMinutes = inputHour * 60 + inputMin;
 
-  return daySchedule.slots.some(slot => {
+  return daySchedule.slots.some((slot) => {
     const [startHour, startMin] = slot.start.split(':').map(Number);
     const [endHour, endMin] = slot.end.split(':').map(Number);
 

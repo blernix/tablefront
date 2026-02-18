@@ -318,7 +318,9 @@ export default function PublicationTab() {
                 </div>
                 Guide d&apos;utilisation
               </CardTitle>
-              <CardDescription className="text-[#666666] font-light">Comment utiliser efficacement vos QR codes</CardDescription>
+              <CardDescription className="text-[#666666] font-light">
+                Comment utiliser efficacement vos QR codes
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -326,7 +328,9 @@ export default function PublicationTab() {
                   <div className="flex h-12 w-12 items-center justify-center border border-[#E5E5E5]">
                     <Table className="h-6 w-6 text-[#666666]" />
                   </div>
-                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Pour les tables</h3>
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">
+                    Pour les tables
+                  </h3>
                   <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
                       <div className="w-2 h-2 bg-emerald-600 mt-1.5 flex-shrink-0"></div>
@@ -347,7 +351,9 @@ export default function PublicationTab() {
                   <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF]">
                     <Printer className="h-6 w-6 text-[#0066FF]" />
                   </div>
-                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Impression</h3>
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">
+                    Impression
+                  </h3>
                   <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
                       <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>
@@ -368,7 +374,9 @@ export default function PublicationTab() {
                   <div className="flex h-12 w-12 items-center justify-center border border-[#E5E5E5]">
                     <Share2 className="h-6 w-6 text-[#666666]" />
                   </div>
-                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">Marketing</h3>
+                  <h3 className="font-medium text-[#2A2A2A] uppercase tracking-[0.1em] text-xs">
+                    Marketing
+                  </h3>
                   <ul className="space-y-2 text-sm text-[#666666] font-light">
                     <li className="flex items-start gap-2">
                       <div className="w-2 h-2 bg-[#666666] mt-1.5 flex-shrink-0"></div>
@@ -418,7 +426,9 @@ export default function PublicationTab() {
             </div>
 
             <div className="bg-white border border-[#E5E5E5] p-6">
-              <h4 className="text-xs font-medium text-[#666666] mb-2 uppercase tracking-[0.2em]">Pourquoi utiliser les QR codes ?</h4>
+              <h4 className="text-xs font-medium text-[#666666] mb-2 uppercase tracking-[0.2em]">
+                Pourquoi utiliser les QR codes ?
+              </h4>
               <ul className="space-y-2 text-sm text-[#666666] font-light">
                 <li className="flex items-start gap-2">
                   <div className="w-2 h-2 bg-[#0066FF] mt-1.5 flex-shrink-0"></div>

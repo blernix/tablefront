@@ -16,7 +16,7 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
   const [quickFilter, setQuickFilter] = useState<QuickFilterType>(null);
 
   const filteredReservations = useMemo(() => {
-    const filtered = reservations.filter(r => {
+    const filtered = reservations.filter((r) => {
       // Status filter
       if (statusFilter && r.status !== statusFilter) return false;
 
@@ -72,7 +72,7 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
     dateRangeEnd,
     minGuests,
     maxGuests,
-    quickFilter
+    quickFilter,
   ]);
 
   const clearAllFilters = () => {
@@ -87,7 +87,7 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
 
   // Generate suggestions from unique customer names
   const suggestions = useMemo(() => {
-    return Array.from(new Set(reservations.map(r => r.customerName))).sort();
+    return Array.from(new Set(reservations.map((r) => r.customerName))).sort();
   }, [reservations]);
 
   // Count active filters
@@ -121,6 +121,6 @@ export const useReservationsFilters = (reservations: Reservation[]) => {
     setQuickFilter,
     clearAllFilters,
     suggestions,
-    activeFilterCount
+    activeFilterCount,
   };
 };

@@ -18,14 +18,14 @@ export const SearchWithSuggestions = ({
   onChange,
   suggestions,
   placeholder = 'Rechercher...',
-  maxSuggestions = 5
+  maxSuggestions = 5,
 }: SearchWithSuggestionsProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const filteredSuggestions = suggestions
-    .filter(s => value && s.toLowerCase().includes(value.toLowerCase()))
+    .filter((s) => value && s.toLowerCase().includes(value.toLowerCase()))
     .slice(0, maxSuggestions);
 
   // Close suggestions when clicking outside
@@ -48,12 +48,10 @@ export const SearchWithSuggestions = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveSuggestion(prev =>
-        prev < filteredSuggestions.length - 1 ? prev + 1 : prev
-      );
+      setActiveSuggestion((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : prev));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveSuggestion(prev => prev > 0 ? prev - 1 : -1);
+      setActiveSuggestion((prev) => (prev > 0 ? prev - 1 : -1));
     } else if (e.key === 'Enter' && activeSuggestion >= 0) {
       e.preventDefault();
       handleSelect(filteredSuggestions[activeSuggestion]);

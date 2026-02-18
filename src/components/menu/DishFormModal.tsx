@@ -12,14 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Plus,
-  Trash2,
-  ImageIcon,
-  Loader2,
-  Upload,
-  X
-} from 'lucide-react';
+import { Plus, Trash2, ImageIcon, Loader2, Upload, X } from 'lucide-react';
 import ImageUpload from '@/components/ui/image-upload';
 import Image from 'next/image';
 import Modal from '@/components/ui/modal';
@@ -50,7 +43,7 @@ const DishFormModal = ({
   dish,
   categories,
   onSuccess,
-  initialCategoryId = ''
+  initialCategoryId = '',
 }: DishFormModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasVariations, setHasVariations] = useState(dish?.hasVariations || false);
@@ -70,7 +63,7 @@ const DishFormModal = ({
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryId: dish ? (getDishCategoryId(dish) || '') : initialCategoryId,
+      categoryId: dish ? getDishCategoryId(dish) || '' : initialCategoryId,
       name: dish?.name || '',
       description: dish?.description || '',
       price: dish ? dish.price.toString() : '',
@@ -84,7 +77,7 @@ const DishFormModal = ({
   const resetForm = useCallback(() => {
     // Réinitialiser le formulaire avec les valeurs actuelles
     reset({
-      categoryId: dish ? (getDishCategoryId(dish) || '') : initialCategoryId,
+      categoryId: dish ? getDishCategoryId(dish) || '' : initialCategoryId,
       name: dish?.name || '',
       description: dish?.description || '',
       price: dish ? dish.price.toString() : '',
@@ -130,7 +123,7 @@ const DishFormModal = ({
     // Validate file size (5MB)
     const sizeMB = file.size / (1024 * 1024);
     if (sizeMB > 5) {
-      toast.error('L\'image ne doit pas dépasser 5MB');
+      toast.error("L'image ne doit pas dépasser 5MB");
       return;
     }
 
@@ -183,7 +176,7 @@ const DishFormModal = ({
       toast.success('Photo ajoutée avec succès');
       // NE PAS appeler onSuccess() ici pour éviter le re-render
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
+      throw new Error(err instanceof Error ? err.message : "Erreur lors de l'upload");
     }
   };
 
@@ -214,7 +207,10 @@ const DishFormModal = ({
       }
 
       const allergens = data.allergens
-        ? data.allergens.split(',').map(a => a.trim()).filter(a => a.length > 0)
+        ? data.allergens
+            .split(',')
+            .map((a) => a.trim())
+            .filter((a) => a.length > 0)
         : [];
 
       // Validation: Si hasVariations est true, il faut au moins une variation
@@ -248,7 +244,9 @@ const DishFormModal = ({
             await apiClient.uploadDishPhoto(response.dish._id, selectedPhotoFile);
             toast.success(`Plat "${data.name}" créé avec photo`);
           } catch (err) {
-            toast.warning(`Plat créé mais erreur lors de l'upload de la photo: ${err instanceof Error ? err.message : 'Erreur inconnue'}`);
+            toast.warning(
+              `Plat créé mais erreur lors de l'upload de la photo: ${err instanceof Error ? err.message : 'Erreur inconnue'}`
+            );
           }
         } else {
           toast.success(`Plat "${data.name}" créé avec succès`);
@@ -279,7 +277,9 @@ const DishFormModal = ({
       isOpen={isOpen}
       onClose={handleClose}
       title={dish ? 'Modifier le plat' : 'Nouveau plat'}
-      description={dish ? 'Modifiez les informations du plat' : 'Ajoutez un nouveau plat à votre menu'}
+      description={
+        dish ? 'Modifiez les informations du plat' : 'Ajoutez un nouveau plat à votre menu'
+      }
       size="lg"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -292,9 +292,7 @@ const DishFormModal = ({
               placeholder="Ex: Salade César"
               disabled={isSubmitting}
             />
-            {errors.name && (
-              <p className="text-sm text-red-600">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -307,9 +305,7 @@ const DishFormModal = ({
               placeholder="12.50"
               disabled={isSubmitting}
             />
-            {errors.price && (
-              <p className="text-sm text-red-600">{errors.price.message}</p>
-            )}
+            {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
           </div>
         </div>
 
@@ -322,15 +318,13 @@ const DishFormModal = ({
             className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <option value="">Sélectionnez une catégorie</option>
-            {categories.map(category => (
+            {categories.map((category) => (
               <option key={category._id} value={category._id}>
                 {category.name}
               </option>
             ))}
           </select>
-          {errors.categoryId && (
-            <p className="text-sm text-red-600">{errors.categoryId.message}</p>
-          )}
+          {errors.categoryId && <p className="text-sm text-red-600">{errors.categoryId.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -352,9 +346,7 @@ const DishFormModal = ({
             placeholder="Ex: Gluten, Lactose, Fruits à coque"
             disabled={isSubmitting}
           />
-          <p className="text-xs text-slate-500">
-            Séparez les allergènes par des virgules
-          </p>
+          <p className="text-xs text-slate-500">Séparez les allergènes par des virgules</p>
         </div>
 
         {/* Photo Section */}
@@ -419,16 +411,14 @@ const DishFormModal = ({
                 className="w-full"
               >
                 <Upload className="mr-2 h-4 w-4" />
-                {photoPreview ? 'Remplacer l\'image' : 'Ajouter une image'}
+                {photoPreview ? "Remplacer l'image" : 'Ajouter une image'}
               </Button>
               <p className="text-xs text-gray-500">
                 Formats acceptés : JPG, PNG, WebP, GIF • Max 5MB
               </p>
             </div>
           )}
-          <p className="text-xs text-slate-500">
-            La photo sera visible dans le menu détaillé
-          </p>
+          <p className="text-xs text-slate-500">La photo sera visible dans le menu détaillé</p>
         </div>
 
         {/* Variations Section */}
@@ -537,16 +527,11 @@ const DishFormModal = ({
         </div>
 
         <div className="flex gap-2 justify-end border-t pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={isSubmitting}
-          >
+          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
             Annuler
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isSubmitting}
             className="bg-slate-900 hover:bg-slate-800 text-white"
           >

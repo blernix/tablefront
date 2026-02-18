@@ -10,9 +10,7 @@ interface UseRealtimeReservationsOptions {
   onDisconnected?: () => void;
 }
 
-export const useRealtimeReservations = (
-  options: UseRealtimeReservationsOptions = {}
-) => {
+export const useRealtimeReservations = (options: UseRealtimeReservationsOptions = {}) => {
   const {
     enabled = true, // ✅ SSE enabled for real-time dashboard updates
     onEvent,
@@ -72,14 +70,12 @@ export const useRealtimeReservations = (
 
     // Handle connection open
     eventSource.onopen = () => {
-
       retryCountRef.current = 0;
       onConnectedRef.current?.();
     };
 
     // Handle connected event from server
     eventSource.addEventListener('connected', (event) => {
-
       onConnectedRef.current?.();
     });
 
@@ -87,7 +83,6 @@ export const useRealtimeReservations = (
     const handleReservationEvent = (eventType: string) => (event: MessageEvent) => {
       try {
         const eventData: ReservationEvent = JSON.parse(event.data);
-
 
         // Call the provided callback
         onEventRef.current?.(eventData);
@@ -97,11 +92,26 @@ export const useRealtimeReservations = (
     };
 
     // Listen for specific reservation events
-    eventSource.addEventListener('reservation_created', handleReservationEvent('reservation_created'));
-    eventSource.addEventListener('reservation_updated', handleReservationEvent('reservation_updated'));
-    eventSource.addEventListener('reservation_cancelled', handleReservationEvent('reservation_cancelled'));
-    eventSource.addEventListener('reservation_confirmed', handleReservationEvent('reservation_confirmed'));
-    eventSource.addEventListener('reservation_completed', handleReservationEvent('reservation_completed'));
+    eventSource.addEventListener(
+      'reservation_created',
+      handleReservationEvent('reservation_created')
+    );
+    eventSource.addEventListener(
+      'reservation_updated',
+      handleReservationEvent('reservation_updated')
+    );
+    eventSource.addEventListener(
+      'reservation_cancelled',
+      handleReservationEvent('reservation_cancelled')
+    );
+    eventSource.addEventListener(
+      'reservation_confirmed',
+      handleReservationEvent('reservation_confirmed')
+    );
+    eventSource.addEventListener(
+      'reservation_completed',
+      handleReservationEvent('reservation_completed')
+    );
 
     // Handle errors
     eventSource.onerror = (error) => {
@@ -114,21 +124,20 @@ export const useRealtimeReservations = (
       eventSource.close();
       eventSourceRef.current = null;
       onDisconnectedRef.current?.();
-      
+
       // Try to reconnect with exponential backoff
       if (enabled) {
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
         }
-        
+
         // Calculate exponential backoff delay (1s, 2s, 4s, 8s, ... max 30s)
         const baseDelay = 1000; // 1 second
         const maxDelay = 30000; // 30 seconds
         const delay = Math.min(baseDelay * Math.pow(2, retryCountRef.current), maxDelay);
         retryCountRef.current += 1;
-        
-        reconnectTimeoutRef.current = setTimeout(() => {
 
+        reconnectTimeoutRef.current = setTimeout(() => {
           connect();
         }, delay);
       }
@@ -138,7 +147,6 @@ export const useRealtimeReservations = (
   // Function to manually disconnect
   const disconnect = useCallback(() => {
     if (eventSourceRef.current) {
-
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
@@ -207,7 +215,9 @@ export const useRealtimeReservationsManager = (params?: {
   const [isConnected, setIsConnected] = useState(false);
 
   // Helper function to convert event reservation to Reservation interface
-  const convertEventReservationToReservation = (eventReservation: ReservationEvent['reservation']): Reservation => {
+  const convertEventReservationToReservation = (
+    eventReservation: ReservationEvent['reservation']
+  ): Reservation => {
     return {
       _id: eventReservation.id,
       restaurantId: eventReservation.restaurantId,
@@ -226,7 +236,7 @@ export const useRealtimeReservationsManager = (params?: {
 
   // Function to update reservations based on SSE events
   const handleReservationEvent = useCallback((event: ReservationEvent) => {
-    setReservations(prevReservations => {
+    setReservations((prevReservations) => {
       const { type, reservation: eventReservation } = event;
 
       switch (type) {
@@ -239,7 +249,7 @@ export const useRealtimeReservationsManager = (params?: {
         case 'reservation_confirmed':
         case 'reservation_completed':
           // Update existing reservation
-          return prevReservations.map(r =>
+          return prevReservations.map((r) =>
             r._id === eventReservation.id
               ? {
                   ...r,
@@ -254,7 +264,7 @@ export const useRealtimeReservationsManager = (params?: {
 
         case 'reservation_cancelled':
           // Remove cancelled reservation from the list
-          return prevReservations.filter(r => r._id !== eventReservation.id);
+          return prevReservations.filter((r) => r._id !== eventReservation.id);
 
         default:
           return prevReservations;
@@ -264,12 +274,10 @@ export const useRealtimeReservationsManager = (params?: {
 
   // Memoize SSE callbacks to prevent reconnections
   const handleConnected = useCallback(() => {
-
     setIsConnected(true);
   }, []);
 
   const handleDisconnected = useCallback(() => {
-
     setIsConnected(false);
   }, []);
 
@@ -293,7 +301,6 @@ export const useRealtimeReservationsManager = (params?: {
   const refreshReservations = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isLoadingRef.current) {
-
       return;
     }
 

@@ -4,7 +4,7 @@ import { FeatureConfig, PlanConfig } from './types';
 // To modify feature access, just update this configuration
 export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
   // Menu Management Features
-  'menus': {
+  menus: {
     feature: 'menus',
     allowedPlans: ['managed', 'starter', 'pro', 'enterprise'],
     allowedAccountTypes: ['managed'],
@@ -32,7 +32,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Mode PDF + détaillé',
     isVisible: true,
   },
-  
+
   // Widget & Integration Features
   'widget-customization': {
     feature: 'widget-customization',
@@ -59,7 +59,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     feature: 'embed-direct-link',
     allowedPlans: ['managed', 'starter', 'pro', 'enterprise'],
     allowedAccountTypes: ['managed', 'self-service'],
-    description: 'Lien d\'intégration direct vers le widget',
+    description: "Lien d'intégration direct vers le widget",
     isVisible: true,
   },
   'embed-iframe': {
@@ -76,7 +76,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Accès API pour intégration personnalisée',
     isVisible: true,
   },
-  
+
   // Analytics & Reporting Features
   'advanced-analytics': {
     feature: 'advanced-analytics',
@@ -89,14 +89,14 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     feature: 'revenue-tracking',
     allowedPlans: ['managed', 'starter', 'pro', 'enterprise'],
     allowedAccountTypes: ['managed', 'self-service'],
-    description: 'Suivi du chiffre d\'affaires et analyse financière',
+    description: "Suivi du chiffre d'affaires et analyse financière",
     isVisible: true,
   },
   'occupancy-reports': {
     feature: 'occupancy-reports',
     allowedPlans: ['managed', 'starter', 'pro', 'enterprise'],
     allowedAccountTypes: ['managed', 'self-service'],
-    description: 'Rapports d\'occupation et analyse de capacité',
+    description: "Rapports d'occupation et analyse de capacité",
     isVisible: true,
   },
 
@@ -107,7 +107,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Insights clients et analyse comportementale',
     isVisible: true,
   },
-  
+
   // Multi-location & Management Features
   'multiple-locations': {
     feature: 'multiple-locations',
@@ -121,7 +121,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     feature: 'team-management',
     allowedPlans: ['managed', 'pro', 'enterprise'],
     allowedAccountTypes: ['managed', 'self-service'],
-    description: 'Gestion d\'équipe avec plusieurs utilisateurs',
+    description: "Gestion d'équipe avec plusieurs utilisateurs",
     isVisible: true,
   },
   'role-based-access': {
@@ -131,7 +131,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Accès par rôles (admin, manager, serveur)',
     isVisible: true,
   },
-  
+
   // Advanced Features
   'api-full-access': {
     feature: 'api-full-access',
@@ -168,7 +168,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
     description: 'Lien Google pour demander des avis automatiques',
     isVisible: true,
   },
-  
+
   // Support & Priority Features
   'priority-support': {
     feature: 'priority-support',
@@ -195,7 +195,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
 
 // Plan configuration for UI display
 export const PLAN_CONFIG: Record<string, PlanConfig> = {
-  'starter': {
+  starter: {
     id: 'starter',
     name: 'Starter',
     description: 'Parfait pour démarrer avec les réservations en ligne',
@@ -214,7 +214,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       maxReservationsPerMonth: 400,
     },
   },
-  'pro': {
+  pro: {
     id: 'pro',
     name: 'Pro',
     description: 'Solution complète pour restaurants professionnels',
@@ -246,7 +246,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       maxReservationsPerMonth: 5000,
     },
   },
-  'enterprise': {
+  enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
     description: 'Solution sur mesure pour groupes et chaînes de restaurants',
@@ -283,7 +283,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
       maxReservationsPerMonth: 50000,
     },
   },
-  'managed': {
+  managed: {
     id: 'managed',
     name: 'Managed',
     description: 'Service complet avec site web sur mesure',

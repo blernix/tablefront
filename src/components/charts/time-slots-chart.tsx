@@ -1,6 +1,15 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface TimeSlotsChartProps {
@@ -12,20 +21,34 @@ interface TimeSlotsChartProps {
   description?: string;
 }
 
-export function TimeSlotsChart({ data, title = 'Créneaux horaires les plus populaires', description = 'Heures avec le plus de réservations' }: TimeSlotsChartProps) {
-  const chartData = data.map(slot => ({
+export function TimeSlotsChart({
+  data,
+  title = 'Créneaux horaires les plus populaires',
+  description = 'Heures avec le plus de réservations',
+}: TimeSlotsChartProps) {
+  const chartData = data.map((slot) => ({
     ...slot,
     hourFormatted: `${slot.hour}:00`,
-    percentage: data.reduce((total, s) => total + s.count, 0) > 0 
-      ? (slot.count / data.reduce((total, s) => total + s.count, 0)) * 100 
-      : 0,
+    percentage:
+      data.reduce((total, s) => total + s.count, 0) > 0
+        ? (slot.count / data.reduce((total, s) => total + s.count, 0)) * 100
+        : 0,
   }));
 
   const getColor = (index: number) => {
     const colors = [
-      '#3b82f6', '#1d4ed8', '#60a5fa', '#93c5fd',
-      '#10b981', '#059669', '#34d399', '#6ee7b7',
-      '#8b5cf6', '#7c3aed', '#a78bfa', '#c4b5fd',
+      '#3b82f6',
+      '#1d4ed8',
+      '#60a5fa',
+      '#93c5fd',
+      '#10b981',
+      '#059669',
+      '#34d399',
+      '#6ee7b7',
+      '#8b5cf6',
+      '#7c3aed',
+      '#a78bfa',
+      '#c4b5fd',
     ];
     return colors[index % colors.length];
   };
@@ -45,25 +68,26 @@ export function TimeSlotsChart({ data, title = 'Créneaux horaires les plus popu
               margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-              <XAxis 
-                type="number" 
+              <XAxis
+                type="number"
                 tick={{ fontSize: 12 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e5e5e5' }}
                 allowDecimals={false}
               />
-              <YAxis 
-                type="category" 
+              <YAxis
+                type="category"
                 dataKey="hourFormatted"
                 tick={{ fontSize: 12 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e5e5e5' }}
                 width={50}
               />
-              <Tooltip 
-                 formatter={(value: any, name: any) => {
-                   if (name === 'count') return [value, 'Réservations'];
-                  if (name === 'percentage') return [`${value.toFixed(1)}%`, 'Part des réservations'];
+              <Tooltip
+                formatter={(value: any, name: any) => {
+                  if (name === 'count') return [value, 'Réservations'];
+                  if (name === 'percentage')
+                    return [`${value.toFixed(1)}%`, 'Part des réservations'];
                   return [value, name];
                 }}
                 labelFormatter={(label) => `Heure: ${label}`}
@@ -74,11 +98,7 @@ export function TimeSlotsChart({ data, title = 'Créneaux horaires les plus popu
                   fontSize: '12px',
                 }}
               />
-              <Bar 
-                dataKey="count" 
-                radius={[0, 4, 4, 0]}
-                name="count"
-              >
+              <Bar dataKey="count" radius={[0, 4, 4, 0]} name="count">
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={getColor(index)} />
                 ))}
@@ -90,7 +110,10 @@ export function TimeSlotsChart({ data, title = 'Créneaux horaires les plus popu
           {chartData.slice(0, 8).map((slot, index) => (
             <div key={slot.hour} className="flex flex-col p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getColor(index) }} />
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: getColor(index) }}
+                />
                 <span className="font-medium text-sm">{slot.hourFormatted}</span>
               </div>
               <div className="flex items-baseline gap-2">

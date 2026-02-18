@@ -11,7 +11,7 @@ import { useTwoFactorStatus, useDisableTwoFactor } from '@/hooks/api/useTwoFacto
 const TwoFactorManagement = () => {
   const [showSetupModal, setShowSetupModal] = useState(false);
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
-  
+
   const { data: status, isLoading, refetch } = useTwoFactorStatus();
   const { mutate: disableTwoFactor, isPending: isDisabling } = useDisableTwoFactor();
 
@@ -58,12 +58,7 @@ const TwoFactorManagement = () => {
               <ShieldCheck className="w-4 h-4" />
               <span className="text-sm font-medium">2FA activée</span>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDisableClick}
-              disabled={isDisabling}
-            >
+            <Button variant="outline" size="sm" onClick={handleDisableClick} disabled={isDisabling}>
               <ShieldOff className="w-4 h-4 mr-2" />
               Désactiver
             </Button>
@@ -74,11 +69,7 @@ const TwoFactorManagement = () => {
               <ShieldOff className="w-4 h-4" />
               <span className="text-sm font-medium">2FA désactivée</span>
             </div>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleEnableClick}
-            >
+            <Button variant="default" size="sm" onClick={handleEnableClick}>
               <Key className="w-4 h-4 mr-2" />
               Activer 2FA
             </Button>
@@ -94,8 +85,8 @@ const TwoFactorManagement = () => {
 
       <ConfirmationModal
         isOpen={showDisableConfirm}
-        title="Désactiver l&apos;authentification à deux facteurs"
-        message="Êtes-vous sûr de vouloir désactiver l&apos;authentification à deux facteurs ? Votre compte sera moins sécurisé."
+        title="Désactiver l'authentification à deux facteurs"
+        message="Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ? Votre compte sera moins sécurisé."
         confirmLabel="Désactiver"
         cancelLabel="Annuler"
         isDangerous={true}

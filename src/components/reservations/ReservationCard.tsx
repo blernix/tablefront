@@ -2,7 +2,18 @@
 
 import { Reservation } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Users, Phone, Mail, Edit2, Trash2, StickyNote, Check, X, CheckCircle } from 'lucide-react';
+import {
+  Clock,
+  Users,
+  Phone,
+  Mail,
+  Edit2,
+  Trash2,
+  StickyNote,
+  Check,
+  X,
+  CheckCircle,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +28,10 @@ interface ReservationCardProps {
   onConfirm?: (reservation: Reservation) => void;
   onCancel?: (reservation: Reservation) => void;
   onComplete?: (reservation: Reservation) => void;
-  onStatusChange?: (reservation: Reservation, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => void;
+  onStatusChange?: (
+    reservation: Reservation,
+    status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  ) => void;
 }
 
 const statusConfig = {
@@ -26,28 +40,28 @@ const statusConfig = {
     variant: 'warning' as const,
     bgColor: 'bg-amber-50',
     borderColor: 'border-amber-200',
-    textColor: 'text-amber-900'
+    textColor: 'text-amber-900',
   },
   confirmed: {
     label: 'Confirmée',
     variant: 'success' as const,
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200',
-    textColor: 'text-green-900'
+    textColor: 'text-green-900',
   },
   cancelled: {
     label: 'Annulée',
     variant: 'danger' as const,
     bgColor: 'bg-red-50',
     borderColor: 'border-red-200',
-    textColor: 'text-red-900'
+    textColor: 'text-red-900',
   },
   completed: {
     label: 'Terminée',
     variant: 'default' as const,
     bgColor: 'bg-slate-50',
     borderColor: 'border-slate-200',
-    textColor: 'text-slate-900'
+    textColor: 'text-slate-900',
   },
 };
 
@@ -61,7 +75,7 @@ export const ReservationCard = ({
   onConfirm,
   onCancel,
   onComplete,
-  onStatusChange
+  onStatusChange,
 }: ReservationCardProps) => {
   const config = statusConfig[reservation.status];
 
@@ -79,9 +93,7 @@ export const ReservationCard = ({
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-slate-900 truncate">
-              {reservation.customerName}
-            </h3>
+            <h3 className="font-semibold text-slate-900 truncate">{reservation.customerName}</h3>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant={config.variant} className="text-xs">
                 {config.label}
@@ -98,7 +110,10 @@ export const ReservationCard = ({
           </div>
           <div className="flex items-center gap-2 text-slate-600">
             <Users className="h-4 w-4 flex-shrink-0" />
-            <span>{reservation.numberOfGuests} {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}</span>
+            <span>
+              {reservation.numberOfGuests}{' '}
+              {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
+            </span>
           </div>
         </div>
 
@@ -106,9 +121,7 @@ export const ReservationCard = ({
         {reservation.notes && (
           <div className="mt-3 flex items-start gap-2">
             <StickyNote className="h-3 w-3 text-slate-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-slate-500 italic truncate">
-              {reservation.notes}
-            </p>
+            <p className="text-xs text-slate-500 italic truncate">{reservation.notes}</p>
           </div>
         )}
 
@@ -179,9 +192,7 @@ export const ReservationCard = ({
       {/* Header with actions */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">
-            {reservation.customerName}
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-900">{reservation.customerName}</h2>
           <Badge variant={config.variant} className="mt-2">
             {config.label}
           </Badge>

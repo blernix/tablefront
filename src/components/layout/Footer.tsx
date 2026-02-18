@@ -8,8 +8,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <Image 
-                src="/logo_512.png" 
+              <Image
+                src="/logo_512.png"
                 alt="TableMaster Logo"
                 width={32}
                 height={32}
@@ -57,7 +57,10 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:contact@tablemaster.fr" className="text-white/70 hover:text-white font-light text-sm">
+                <a
+                  href="mailto:contact@tablemaster.fr"
+                  className="text-white/70 hover:text-white font-light text-sm"
+                >
                   Contact
                 </a>
               </li>

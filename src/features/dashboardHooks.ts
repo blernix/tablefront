@@ -10,13 +10,16 @@ import { useHasFeature } from './hooks';
 export const useShouldShowSubscription = () => {
   const { isSelfService, plan } = useRestaurantPlan();
   const { stats } = useDashboardStats();
-  
-  return useMemo(() => ({
-    shouldShow: isSelfService && plan !== undefined,
-    isSelfService,
-    plan,
-    hasSubscription: plan !== undefined,
-  }), [isSelfService, plan]);
+
+  return useMemo(
+    () => ({
+      shouldShow: isSelfService && plan !== undefined,
+      isSelfService,
+      plan,
+      hasSubscription: plan !== undefined,
+    }),
+    [isSelfService, plan]
+  );
 };
 
 /**
@@ -26,14 +29,17 @@ export const useShouldShowSubscription = () => {
 export const useShouldShowQuota = () => {
   const { isSelfService, isStarter } = useRestaurantPlan();
   const { quota, isNearLimit, isOverLimit, hasUnlimited } = useQuotaStatus();
-  
-  return useMemo(() => ({
-    shouldShow: isSelfService && isStarter && quota && !hasUnlimited,
-    isNearLimit,
-    isOverLimit,
-    quota,
-    hasUnlimited,
-  }), [isSelfService, isStarter, quota, hasUnlimited, isNearLimit, isOverLimit]);
+
+  return useMemo(
+    () => ({
+      shouldShow: isSelfService && isStarter && quota && !hasUnlimited,
+      isNearLimit,
+      isOverLimit,
+      quota,
+      hasUnlimited,
+    }),
+    [isSelfService, isStarter, quota, hasUnlimited, isNearLimit, isOverLimit]
+  );
 };
 
 /**
@@ -43,12 +49,15 @@ export const useShouldShowQuota = () => {
 export const useShouldShowWidgetSection = () => {
   const { isSelfService } = useRestaurantPlan();
   const canCustomizeWidget = useHasFeature('widget-customization');
-  
-  return useMemo(() => ({
-    shouldShow: isSelfService,
-    canCustomizeWidget,
-    isSelfService,
-  }), [isSelfService, canCustomizeWidget]);
+
+  return useMemo(
+    () => ({
+      shouldShow: isSelfService,
+      canCustomizeWidget,
+      isSelfService,
+    }),
+    [isSelfService, canCustomizeWidget]
+  );
 };
 
 /**
@@ -58,12 +67,17 @@ export const useShouldShowWidgetSection = () => {
 export const useHasRevenueTracking = () => {
   const { restaurant } = useRestaurant();
   const hasFeature = useHasFeature('revenue-tracking');
-  
-  return useMemo(() => ({
-    hasAccess: hasFeature,
-    isConfigured: restaurant?.reservationConfig?.averagePrice !== undefined && restaurant.reservationConfig.averagePrice > 0,
-    averagePrice: restaurant?.reservationConfig?.averagePrice,
-  }), [hasFeature, restaurant?.reservationConfig?.averagePrice]);
+
+  return useMemo(
+    () => ({
+      hasAccess: hasFeature,
+      isConfigured:
+        restaurant?.reservationConfig?.averagePrice !== undefined &&
+        restaurant.reservationConfig.averagePrice > 0,
+      averagePrice: restaurant?.reservationConfig?.averagePrice,
+    }),
+    [hasFeature, restaurant?.reservationConfig?.averagePrice]
+  );
 };
 
 /**
@@ -73,19 +87,22 @@ export const useDashboardData = () => {
   const { restaurant, isLoading: isLoadingRestaurant } = useRestaurant();
   const { stats, isLoading: isLoadingStats } = useDashboardStats();
   const { isSelfService, isPro, isStarter, plan } = useRestaurantPlan();
-  
+
   const isLoading = isLoadingRestaurant || isLoadingStats;
-  
-  return useMemo(() => ({
-    restaurant,
-    stats,
-    isLoading,
-    isSelfService,
-    isPro,
-    isStarter,
-    plan,
-    hasData: !!restaurant && !!stats,
-  }), [restaurant, stats, isLoading, isSelfService, isPro, isStarter, plan]);
+
+  return useMemo(
+    () => ({
+      restaurant,
+      stats,
+      isLoading,
+      isSelfService,
+      isPro,
+      isStarter,
+      plan,
+      hasData: !!restaurant && !!stats,
+    }),
+    [restaurant, stats, isLoading, isSelfService, isPro, isStarter, plan]
+  );
 };
 
 // Note: useDashboardStats and useRestaurant are available from their respective stores

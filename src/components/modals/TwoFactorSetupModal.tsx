@@ -17,11 +17,7 @@ interface TwoFactorSetupModalProps {
 
 type SetupStep = 'qr' | 'verify' | 'recovery';
 
-const TwoFactorSetupModal = ({
-  isOpen,
-  onClose,
-  onSuccess,
-}: TwoFactorSetupModalProps) => {
+const TwoFactorSetupModal = ({ isOpen, onClose, onSuccess }: TwoFactorSetupModalProps) => {
   const [step, setStep] = useState<SetupStep>('qr');
   const [verificationCode, setVerificationCode] = useState('');
   const [secret, setSecret] = useState('');
@@ -47,7 +43,8 @@ const TwoFactorSetupModal = ({
   }, [isOpen, step, generateSetup]);
 
   const handleCopySecret = () => {
-    navigator.clipboard.writeText(secret)
+    navigator.clipboard
+      .writeText(secret)
       .then(() => {
         setCopiedSecret(true);
         toast.success('Secret copié dans le presse-papier');
@@ -60,7 +57,8 @@ const TwoFactorSetupModal = ({
 
   const handleCopyRecoveryCodes = () => {
     const codesText = recoveryCodes.join('\n');
-    navigator.clipboard.writeText(codesText)
+    navigator.clipboard
+      .writeText(codesText)
       .then(() => {
         setCopiedRecoveryCodes(true);
         toast.success('Codes de récupération copiés');
@@ -99,16 +97,19 @@ const TwoFactorSetupModal = ({
   const handleVerify = () => {
     if (!validateVerificationCode()) return;
 
-    enableTwoFactor({ secret, token: verificationCode }, {
-      onSuccess: (data) => {
-        toast.success(data.message);
-        // ✅ Update recovery codes with the ones returned by the API (these are the REAL codes stored in DB)
-        if (data.recoveryCodes && Array.isArray(data.recoveryCodes)) {
-          setRecoveryCodes(data.recoveryCodes);
-        }
-        setStep('recovery');
-      },
-    });
+    enableTwoFactor(
+      { secret, token: verificationCode },
+      {
+        onSuccess: (data) => {
+          toast.success(data.message);
+          // ✅ Update recovery codes with the ones returned by the API (these are the REAL codes stored in DB)
+          if (data.recoveryCodes && Array.isArray(data.recoveryCodes)) {
+            setRecoveryCodes(data.recoveryCodes);
+          }
+          setStep('recovery');
+        },
+      }
+    );
   };
 
   const handleComplete = () => {
@@ -128,15 +129,23 @@ const TwoFactorSetupModal = ({
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center mb-6">
       <div className="flex items-center">
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'qr' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'qr' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}
+        >
           <QrCode className="w-4 h-4" />
         </div>
-        <div className={`w-16 h-1 ${step === 'verify' || step === 'recovery' ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'verify' ? 'bg-blue-600 text-white' : step === 'recovery' ? 'bg-slate-200 text-slate-600' : 'bg-slate-200 text-slate-600'}`}>
+        <div
+          className={`w-16 h-1 ${step === 'verify' || step === 'recovery' ? 'bg-blue-600' : 'bg-slate-200'}`}
+        ></div>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'verify' ? 'bg-blue-600 text-white' : step === 'recovery' ? 'bg-slate-200 text-slate-600' : 'bg-slate-200 text-slate-600'}`}
+        >
           <Key className="w-4 h-4" />
         </div>
         <div className={`w-16 h-1 ${step === 'recovery' ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'recovery' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+        <div
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${step === 'recovery' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}
+        >
           <Download className="w-4 h-4" />
         </div>
       </div>
@@ -153,10 +162,11 @@ const TwoFactorSetupModal = ({
 
       <div className="text-center">
         <h3 className="text-lg font-semibold text-slate-900 mb-2">
-           Configurer l&apos;authentification à deux facteurs
+          Configurer l&apos;authentification à deux facteurs
         </h3>
         <p className="text-sm text-slate-600">
-           Scannez le QR code avec votre application d&apos;authentification (Google Authenticator, Authy, etc.)
+          Scannez le QR code avec votre application d&apos;authentification (Google Authenticator,
+          Authy, etc.)
         </p>
       </div>
 
@@ -167,14 +177,14 @@ const TwoFactorSetupModal = ({
       ) : (
         <>
           <div className="flex flex-col items-center space-y-4">
-             <div className="p-4 bg-white border border-slate-200 rounded-lg">
-               {/* eslint-disable-next-line @next/next/no-img-element */}
-               <img
-                 src={qrCodeUrl}
-                 alt="QR Code for 2FA setup"
-                 className="w-48 h-48 object-contain mx-auto"
-               />
-             </div>
+            <div className="p-4 bg-white border border-slate-200 rounded-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={qrCodeUrl}
+                alt="QR Code for 2FA setup"
+                className="w-48 h-48 object-contain mx-auto"
+              />
+            </div>
 
             <div className="w-full max-w-md">
               <div className="flex items-center gap-2 mb-2">
@@ -182,11 +192,7 @@ const TwoFactorSetupModal = ({
                 <Label className="text-sm font-medium">Clé secrète manuelle</Label>
               </div>
               <div className="flex gap-2">
-                <Input
-                  value={secret}
-                  readOnly
-                  className="font-mono text-sm"
-                />
+                <Input value={secret} readOnly className="font-mono text-sm" />
                 <Button
                   type="button"
                   variant="outline"
@@ -207,13 +213,16 @@ const TwoFactorSetupModal = ({
             <div className="flex gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="space-y-2">
-                <p className="text-sm font-medium text-blue-900">
-                  Instructions importantes
-                </p>
+                <p className="text-sm font-medium text-blue-900">Instructions importantes</p>
                 <ul className="text-xs text-blue-800 space-y-1">
-                   <li>• Gardez votre application d&apos;authentification ouverte après l&apos;ajout du compte</li>
-                   <li>• Vous aurez besoin d&apos;un code à 6 chiffres pour l&apos;étape suivante</li>
-                   <li>• Assurez-vous que l&apos;heure de votre appareil est synchronisée</li>
+                  <li>
+                    • Gardez votre application d&apos;authentification ouverte après l&apos;ajout du
+                    compte
+                  </li>
+                  <li>
+                    • Vous aurez besoin d&apos;un code à 6 chiffres pour l&apos;étape suivante
+                  </li>
+                  <li>• Assurez-vous que l&apos;heure de votre appareil est synchronisée</li>
                 </ul>
               </div>
             </div>
@@ -235,7 +244,7 @@ const TwoFactorSetupModal = ({
               disabled={isGenerating}
               className="flex-1"
             >
-               J&apos;ai ajouté le compte
+              J&apos;ai ajouté le compte
             </Button>
           </div>
         </>
@@ -253,10 +262,10 @@ const TwoFactorSetupModal = ({
 
       <div className="text-center">
         <h3 className="text-lg font-semibold text-slate-900 mb-2">
-           Vérifier le code d&apos;authentification
+          Vérifier le code d&apos;authentification
         </h3>
         <p className="text-sm text-slate-600">
-           Entrez le code à 6 chiffres généré par votre application d&apos;authentification
+          Entrez le code à 6 chiffres généré par votre application d&apos;authentification
         </p>
       </div>
 
@@ -285,7 +294,8 @@ const TwoFactorSetupModal = ({
 
         <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
           <p className="text-sm text-slate-600">
-             <strong>Problème ?</strong> Vérifiez que l&apos;heure de votre appareil est correcte et que vous avez bien ajouté le compte dans votre application.
+            <strong>Problème ?</strong> Vérifiez que l&apos;heure de votre appareil est correcte et
+            que vous avez bien ajouté le compte dans votre application.
           </p>
         </div>
 
@@ -299,12 +309,7 @@ const TwoFactorSetupModal = ({
           >
             Retour
           </Button>
-          <Button
-            type="button"
-            onClick={handleVerify}
-            disabled={isEnabling}
-            className="flex-1"
-          >
+          <Button type="button" onClick={handleVerify} disabled={isEnabling} className="flex-1">
             {isEnabling ? 'Vérification...' : 'Vérifier et activer'}
           </Button>
         </div>
@@ -338,7 +343,9 @@ const TwoFactorSetupModal = ({
                 Important : Conservez ces codes en sécurité
               </p>
               <p className="text-xs text-amber-800">
-                 Ces codes vous permettent de récupérer l&apos;accès à votre compte si vous perdez votre appareil d&apos;authentification. Chaque code ne peut être utilisé qu&apos;une seule fois.
+                Ces codes vous permettent de récupérer l&apos;accès à votre compte si vous perdez
+                votre appareil d&apos;authentification. Chaque code ne peut être utilisé qu&apos;une
+                seule fois.
               </p>
             </div>
           </div>
@@ -362,7 +369,11 @@ const TwoFactorSetupModal = ({
             disabled={copiedRecoveryCodes}
             className="flex-1"
           >
-            {copiedRecoveryCodes ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+            {copiedRecoveryCodes ? (
+              <Check className="w-4 h-4 mr-2" />
+            ) : (
+              <Copy className="w-4 h-4 mr-2" />
+            )}
             {copiedRecoveryCodes ? 'Copié !' : 'Copier les codes'}
           </Button>
           <Button
@@ -377,12 +388,7 @@ const TwoFactorSetupModal = ({
         </div>
 
         <div className="flex gap-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleComplete}
-            className="flex-1"
-          >
+          <Button type="button" variant="outline" onClick={handleComplete} className="flex-1">
             Terminer
           </Button>
         </div>
@@ -391,18 +397,13 @@ const TwoFactorSetupModal = ({
   );
 
   const stepTitles = {
-    qr: 'Configurer l\'authentification à deux facteurs',
+    qr: "Configurer l'authentification à deux facteurs",
     verify: 'Vérifier le code',
-    recovery: 'Codes de récupération'
+    recovery: 'Codes de récupération',
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={stepTitles[step]}
-      size="md"
-    >
+    <Modal isOpen={isOpen} onClose={handleClose} title={stepTitles[step]} size="md">
       <div className="space-y-4">
         {renderStepIndicator()}
         {step === 'qr' && renderQrStep()}

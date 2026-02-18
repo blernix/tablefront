@@ -49,7 +49,6 @@ export default function TablesConfigPage() {
   const fetchRestaurant = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -139,10 +138,14 @@ export default function TablesConfigPage() {
         averageCapacity,
       });
 
-      setRestaurant(prev => prev ? {
-        ...prev,
-        tablesConfig: response.tablesConfig,
-      } : null);
+      setRestaurant((prev) =>
+        prev
+          ? {
+              ...prev,
+              tablesConfig: response.tablesConfig,
+            }
+          : null
+      );
 
       toast.success('Configuration des tables mise à jour avec succès');
     } catch (err) {
@@ -166,10 +169,14 @@ export default function TablesConfigPage() {
         tables,
       });
 
-      setRestaurant(prev => prev ? {
-        ...prev,
-        tablesConfig: response.tablesConfig,
-      } : null);
+      setRestaurant((prev) =>
+        prev
+          ? {
+              ...prev,
+              tablesConfig: response.tablesConfig,
+            }
+          : null
+      );
 
       toast.success('Configuration des tables mise à jour avec succès');
     } catch (err) {
@@ -190,10 +197,14 @@ export default function TablesConfigPage() {
           averageCapacity: 4,
         });
 
-        setRestaurant(prev => prev ? {
-          ...prev,
-          tablesConfig: response.tablesConfig,
-        } : null);
+        setRestaurant((prev) =>
+          prev
+            ? {
+                ...prev,
+                tablesConfig: response.tablesConfig,
+              }
+            : null
+        );
 
         reset({
           totalTables: '10',
@@ -205,10 +216,14 @@ export default function TablesConfigPage() {
           tables: [],
         });
 
-        setRestaurant(prev => prev ? {
-          ...prev,
-          tablesConfig: response.tablesConfig,
-        } : null);
+        setRestaurant((prev) =>
+          prev
+            ? {
+                ...prev,
+                tablesConfig: response.tablesConfig,
+              }
+            : null
+        );
 
         setTables([]);
       }
@@ -228,9 +243,11 @@ export default function TablesConfigPage() {
 
   const getTotalCapacity = () => {
     if (mode === 'simple' && restaurant) {
-      return (restaurant.tablesConfig.totalTables || 0) * (restaurant.tablesConfig.averageCapacity || 0);
+      return (
+        (restaurant.tablesConfig.totalTables || 0) * (restaurant.tablesConfig.averageCapacity || 0)
+      );
     } else {
-      return tables.reduce((sum, table) => sum + (table.quantity * table.capacity), 0);
+      return tables.reduce((sum, table) => sum + table.quantity * table.capacity, 0);
     }
   };
 
@@ -245,11 +262,7 @@ export default function TablesConfigPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard/settings')}
-        >
+        <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
@@ -265,9 +278,7 @@ export default function TablesConfigPage() {
       <Card>
         <CardHeader>
           <CardTitle>Mode de gestion</CardTitle>
-          <CardDescription>
-            Choisissez comment vous souhaitez gérer vos tables
-          </CardDescription>
+          <CardDescription>Choisissez comment vous souhaitez gérer vos tables</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -281,9 +292,11 @@ export default function TablesConfigPage() {
               } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className={`w-4 h-4 rounded-full border-2 ${
-                  mode === 'simple' ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
-                }`}>
+                <div
+                  className={`w-4 h-4 rounded-full border-2 ${
+                    mode === 'simple' ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
+                  }`}
+                >
                   {mode === 'simple' && <div className="w-2 h-2 bg-white rounded-full m-0.5" />}
                 </div>
                 <span className="font-semibold">Mode Simple</span>
@@ -303,9 +316,11 @@ export default function TablesConfigPage() {
               } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center gap-2 mb-2">
-                <div className={`w-4 h-4 rounded-full border-2 ${
-                  mode === 'detailed' ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
-                }`}>
+                <div
+                  className={`w-4 h-4 rounded-full border-2 ${
+                    mode === 'detailed' ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
+                  }`}
+                >
                   {mode === 'detailed' && <div className="w-2 h-2 bg-white rounded-full m-0.5" />}
                 </div>
                 <span className="font-semibold">Mode Détaillé</span>
@@ -323,7 +338,9 @@ export default function TablesConfigPage() {
         <Card>
           <CardHeader>
             <CardTitle>Configuration simple</CardTitle>
-            <CardDescription>Définissez le nombre total de tables et leur capacité moyenne</CardDescription>
+            <CardDescription>
+              Définissez le nombre total de tables et leur capacité moyenne
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmitSimple)} className="space-y-6">
@@ -377,7 +394,9 @@ export default function TablesConfigPage() {
         <Card>
           <CardHeader>
             <CardTitle>Configuration détaillée</CardTitle>
-            <CardDescription>Gérez différents types de tables avec leurs capacités spécifiques</CardDescription>
+            <CardDescription>
+              Gérez différents types de tables avec leurs capacités spécifiques
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Add table type form */}
@@ -438,7 +457,8 @@ export default function TablesConfigPage() {
                       <div>
                         <p className="font-medium">{table.type}</p>
                         <p className="text-sm text-muted-foreground">
-                          {table.quantity} table{table.quantity > 1 ? 's' : ''} × {table.capacity} personne{table.capacity > 1 ? 's' : ''}
+                          {table.quantity} table{table.quantity > 1 ? 's' : ''} × {table.capacity}{' '}
+                          personne{table.capacity > 1 ? 's' : ''}
                         </p>
                       </div>
                     </div>
@@ -483,7 +503,9 @@ export default function TablesConfigPage() {
         <CardContent className="space-y-3">
           <div className="flex justify-between border-b pb-2">
             <span className="text-muted-foreground">Mode de gestion</span>
-            <span className="font-semibold capitalize">{mode === 'simple' ? 'Simple' : 'Détaillé'}</span>
+            <span className="font-semibold capitalize">
+              {mode === 'simple' ? 'Simple' : 'Détaillé'}
+            </span>
           </div>
           <div className="flex justify-between border-b pb-2">
             <span className="text-muted-foreground">Nombre total de tables</span>

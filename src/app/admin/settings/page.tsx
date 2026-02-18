@@ -28,9 +28,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
-        <p className="text-gray-600 mt-1">
-          Gérez vos préférences et paramètres de compte
-        </p>
+        <p className="text-gray-600 mt-1">Gérez vos préférences et paramètres de compte</p>
       </div>
 
       {/* Tabs */}
@@ -85,7 +83,7 @@ function ProfileTab() {
     }
 
     if (newEmail === user?.email) {
-      toast.error('Le nouvel email doit être différent de l\'email actuel');
+      toast.error("Le nouvel email doit être différent de l'email actuel");
       return;
     }
 
@@ -107,9 +105,7 @@ function ProfileTab() {
             <Mail className="w-5 h-5" />
             Adresse email
           </CardTitle>
-          <CardDescription>
-            Votre adresse email utilisée pour vous connecter
-          </CardDescription>
+          <CardDescription>Votre adresse email utilisée pour vous connecter</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {!isEditing ? (
@@ -118,9 +114,7 @@ function ProfileTab() {
                 <p className="text-sm text-gray-600">Email actuel</p>
                 <p className="text-lg font-medium">{user?.email}</p>
               </div>
-              <Button onClick={() => setIsEditing(true)}>
-                 Modifier l&apos;email
-              </Button>
+              <Button onClick={() => setIsEditing(true)}>Modifier l&apos;email</Button>
             </div>
           ) : (
             <form onSubmit={handleChangeEmail} className="space-y-4">
@@ -152,10 +146,7 @@ function ProfileTab() {
               </div>
 
               <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  disabled={changeEmailMutation.isPending}
-                >
+                <Button type="submit" disabled={changeEmailMutation.isPending}>
                   {changeEmailMutation.isPending ? 'Modification...' : 'Confirmer'}
                 </Button>
                 <Button
@@ -222,9 +213,7 @@ function SecurityTab() {
             <Lock className="w-5 h-5" />
             Mot de passe
           </CardTitle>
-          <CardDescription>
-            Modifiez votre mot de passe de connexion
-          </CardDescription>
+          <CardDescription>Modifiez votre mot de passe de connexion</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleChangePassword} className="space-y-4">
@@ -264,10 +253,7 @@ function SecurityTab() {
               />
             </div>
 
-            <Button
-              type="submit"
-              disabled={changePasswordMutation.isPending}
-            >
+            <Button type="submit" disabled={changePasswordMutation.isPending}>
               {changePasswordMutation.isPending ? 'Modification...' : 'Modifier le mot de passe'}
             </Button>
           </form>
@@ -292,9 +278,7 @@ function SecurityTab() {
                 <Check className="w-3 h-3 text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-blue-900">
-                  Protection renforcée
-                </p>
+                <p className="text-sm font-medium text-blue-900">Protection renforcée</p>
                 <p className="text-xs text-blue-700 mt-1">
                   La 2FA nécessite un code unique de votre téléphone en plus de votre mot de passe
                 </p>
@@ -326,9 +310,7 @@ function NotificationsTab() {
             <Bell className="w-5 h-5" />
             Préférences de notification
           </CardTitle>
-          <CardDescription>
-            Gérez comment vous souhaitez être notifié
-          </CardDescription>
+          <CardDescription>Gérez comment vous souhaitez être notifié</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
@@ -384,9 +366,7 @@ function NotificationsTab() {
           </div>
 
           <div className="border-t pt-4">
-            <Button onClick={handleSave}>
-              Sauvegarder les préférences
-            </Button>
+            <Button onClick={handleSave}>Sauvegarder les préférences</Button>
           </div>
         </CardContent>
       </Card>

@@ -41,12 +41,12 @@ interface DashboardStore {
   isLoading: boolean;
   error: string | null;
   lastFetched: number | null;
-  
+
   // Actions
   fetchStats: (force?: boolean) => Promise<void>;
   clearStats: () => void;
   updateStats: (updates: Partial<DashboardStats>) => void;
-  
+
   // Derived state
   isStale: (staleMinutes?: number) => boolean;
 }
@@ -62,25 +62,24 @@ export const useDashboardStore = create<DashboardStore>()(
       isLoading: false,
       error: null,
       lastFetched: null,
-      
+
       // Fetch dashboard stats with caching
       fetchStats: async (force = false) => {
         const { lastFetched, isLoading } = get();
-        
+
         // Skip if already loading
         if (isLoading) return;
-        
+
         // Skip if cached and not forced
         if (!force && lastFetched && Date.now() - lastFetched < CACHE_DURATION) {
           return;
         }
-        
-        set({ isLoading: true, error: null });
-        
-        try {
 
+        set({ isLoading: true, error: null });
+
+        try {
           const stats = await apiClient.getDashboardStats();
-          
+
           set({
             stats,
             lastFetched: Date.now(),
@@ -94,7 +93,7 @@ export const useDashboardStore = create<DashboardStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       // Clear stats data
       clearStats: () => {
         set({
@@ -103,7 +102,7 @@ export const useDashboardStore = create<DashboardStore>()(
           error: null,
         });
       },
-      
+
       // Update stats with partial data
       updateStats: (updates: Partial<DashboardStats>) => {
         const { stats } = get();
@@ -114,7 +113,7 @@ export const useDashboardStore = create<DashboardStore>()(
           });
         }
       },
-      
+
       // Check if data is stale
       isStale: (staleMinutes = 5) => {
         const { lastFetched } = get();
@@ -142,7 +141,7 @@ export const useDashboardStats = () => {
 export const useQuotaStatus = () => {
   const { stats } = useDashboardStore();
   const quota = stats?.quota;
-  
+
   return {
     quota,
     isNearLimit: quota ? quota.percentage >= 80 : false,

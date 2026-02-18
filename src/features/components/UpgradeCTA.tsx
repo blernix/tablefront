@@ -32,23 +32,23 @@ interface UpgradeCTAProps {
 /**
  * Contextual upgrade call-to-action component.
  * Shows relevant upgrade prompts based on feature and user's current plan.
- * 
+ *
  * @example
  * // Basic feature-based CTA
  * <UpgradeCTA feature="revenue-tracking" />
- * 
+ *
  * @example
  * // Banner style CTA
- * <UpgradeCTA 
- *   feature="widget-customization" 
+ * <UpgradeCTA
+ *   feature="widget-customization"
  *   type="banner"
  *   title="Personnalisez votre widget"
  *   description="Passez au plan Pro pour modifier les couleurs et la police"
  * />
- * 
- * @example  
+ *
+ * @example
  * // Card style for dashboard
- * <UpgradeCTA 
+ * <UpgradeCTA
  *   feature="advanced-analytics"
  *   type="card"
  *   className="mt-6"
@@ -75,9 +75,11 @@ export const UpgradeCTA = ({
   const isEnterprise = currentPlan?.id === 'enterprise';
 
   // Determine if we should show the CTA
-  const shouldShow = showForAllStarters 
-    ? isStarter 
-    : (showOnlyIfUpgradeRequired ? upgradeInfo.requiresUpgrade : true);
+  const shouldShow = showForAllStarters
+    ? isStarter
+    : showOnlyIfUpgradeRequired
+      ? upgradeInfo.requiresUpgrade
+      : true;
 
   // Don't show if user already has access and we're only showing for upgrades
   if (!shouldShow) {
@@ -92,33 +94,36 @@ export const UpgradeCTA = ({
   const featureConfigs: Partial<Record<Feature, any>> = {
     'revenue-tracking': {
       icon: <Euro className="h-5 w-5" />,
-      defaultTitle: 'Suivez votre chiffre d\'affaires',
+      defaultTitle: "Suivez votre chiffre d'affaires",
       defaultDescription: 'Passez au plan Pro pour analyser vos revenus et optimiser vos prix.',
       cardTitle: 'Analytics Financiers',
-      cardDescription: 'Suivez votre CA, analysez vos performances et prenez des décisions éclairées.',
+      cardDescription:
+        'Suivez votre CA, analysez vos performances et prenez des décisions éclairées.',
     },
     'widget-customization': {
       icon: <Palette className="h-5 w-5" />,
       defaultTitle: 'Personnalisez votre widget',
-      defaultDescription: 'Modifiez les couleurs, la police et le style pour correspondre à votre marque.',
+      defaultDescription:
+        'Modifiez les couleurs, la police et le style pour correspondre à votre marque.',
       cardTitle: 'Personnalisation Avancée',
-      cardDescription: 'Un widget qui correspond parfaitement à l\'identité de votre restaurant.',
+      cardDescription: "Un widget qui correspond parfaitement à l'identité de votre restaurant.",
     },
     'advanced-analytics': {
       icon: <BarChart className="h-5 w-5" />,
       defaultTitle: 'Analytics Avancés',
       defaultDescription: 'Obtenez des insights détaillés sur vos réservations et vos clients.',
       cardTitle: 'Tableau de Bord Pro',
-      cardDescription: 'Données en temps réel, tendances et prédictions pour optimiser votre restaurant.',
+      cardDescription:
+        'Données en temps réel, tendances et prédictions pour optimiser votre restaurant.',
     },
     'team-management': {
       icon: <Users className="h-5 w-5" />,
-      defaultTitle: 'Gestion d\'Équipe',
+      defaultTitle: "Gestion d'Équipe",
       defaultDescription: 'Ajoutez des serveurs et gérez les permissions facilement.',
       cardTitle: 'Collaboration Équipe',
       cardDescription: 'Plusieurs utilisateurs, rôles personnalisés, accès sécurisé.',
     },
-    'menus': {
+    menus: {
       icon: <Zap className="h-5 w-5" />,
       defaultTitle: 'Gestion Complète des Menus',
       defaultDescription: 'Créez, modifiez et publiez votre carte en quelques clics.',
@@ -130,7 +135,8 @@ export const UpgradeCTA = ({
       defaultTitle: 'Emails Automatisés',
       defaultDescription: 'Confirmation, rappels et suivis automatiques pour vos clients.',
       cardTitle: 'Communication Pro',
-      cardDescription: 'Gagnez du temps et améliorez l\'expérience client avec des emails automatisés.',
+      cardDescription:
+        "Gagnez du temps et améliorez l'expérience client avec des emails automatisés.",
     },
   };
 
@@ -146,30 +152,30 @@ export const UpgradeCTA = ({
   const displayIcon = icon || featureConfig.icon;
 
   // Choose texts based on type
-  const displayTitle = title || (type === 'card' ? featureConfig.cardTitle : featureConfig.defaultTitle);
-  const displayDescription = description || (type === 'card' ? featureConfig.cardDescription : featureConfig.defaultDescription);
+  const displayTitle =
+    title || (type === 'card' ? featureConfig.cardTitle : featureConfig.defaultTitle);
+  const displayDescription =
+    description ||
+    (type === 'card' ? featureConfig.cardDescription : featureConfig.defaultDescription);
   const displayButtonText = buttonText || `Passer au ${upgradeInfo.requiredPlan || 'Pro'}`;
 
   // Render based on type
   if (type === 'card') {
     return (
-      <div className={cn(
-        'rounded-lg border-2 border-dashed border-[#0066FF]/30 bg-gradient-to-br from-blue-50/50 to-white p-6',
-        className
-      )}>
+      <div
+        className={cn(
+          'rounded-lg border-2 border-dashed border-[#0066FF]/30 bg-gradient-to-br from-blue-50/50 to-white p-6',
+          className
+        )}
+      >
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0066FF]/10">
-            <div className="text-[#0066FF]">
-              {displayIcon}
-            </div>
+            <div className="text-[#0066FF]">{displayIcon}</div>
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-medium text-[#2A2A2A]">{displayTitle}</h3>
             <p className="mt-1 text-sm text-[#666666]">{displayDescription}</p>
-            <Button
-              onClick={handleUpgrade}
-              className="mt-4 bg-[#0066FF] hover:bg-[#0052EB]"
-            >
+            <Button onClick={handleUpgrade} className="mt-4 bg-[#0066FF] hover:bg-[#0052EB]">
               <Crown className="mr-2 h-4 w-4" />
               {displayButtonText}
             </Button>
@@ -181,16 +187,16 @@ export const UpgradeCTA = ({
 
   if (type === 'banner') {
     return (
-      <div className={cn(
-        'rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-[#0066FF] p-4',
-        className
-      )}>
+      <div
+        className={cn(
+          'rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-[#0066FF] p-4',
+          className
+        )}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0066FF]">
-              <div className="text-white">
-                {displayIcon}
-              </div>
+              <div className="text-white">{displayIcon}</div>
             </div>
             <div>
               <p className="font-medium text-[#2A2A2A]">{displayTitle}</p>

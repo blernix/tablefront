@@ -7,8 +7,13 @@ export function useChangePassword() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) =>
-      apiClient.changePassword(currentPassword, newPassword),
+    mutationFn: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => apiClient.changePassword(currentPassword, newPassword),
     onSuccess: () => {
       toast.success('Mot de passe modifié avec succès');
     },

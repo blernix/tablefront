@@ -1,5 +1,11 @@
 import { renderHook } from '@testing-library/react';
-import { useFeatureAccess, useHasFeature, useUserFeatures, useCurrentPlan, useUpgradeRequired } from '../hooks';
+import {
+  useFeatureAccess,
+  useHasFeature,
+  useUserFeatures,
+  useCurrentPlan,
+  useUpgradeRequired,
+} from '../hooks';
 import { useRestaurantStore } from '@/store/restaurantStore';
 
 // Mock the restaurant store

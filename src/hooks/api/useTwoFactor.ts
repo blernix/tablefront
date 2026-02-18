@@ -50,7 +50,6 @@ export function useDisableTwoFactor() {
 export function useVerifyTwoFactorLogin() {
   return useMutation({
     mutationFn: ({ tempToken, token }: { tempToken: string; token: string }) => {
-
       return apiClient.verifyTwoFactorLogin(tempToken, token);
     },
     onError: (error: Error) => {

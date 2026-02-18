@@ -41,30 +41,25 @@ function SignupSuccessContent() {
             </div>
 
             {/* Title */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Paiement réussi !
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Paiement réussi !</h2>
 
             {/* Message */}
             <p className="text-gray-600 mb-6">
-              Votre compte TableMaster a été créé avec succès et votre abonnement est maintenant actif.
+              Votre compte TableMaster a été créé avec succès et votre abonnement est maintenant
+              actif.
             </p>
 
             {/* Session ID (for debugging) */}
             {sessionId && (
               <div className="mb-6 p-3 bg-gray-100 rounded-md">
                 <p className="text-xs text-gray-500">Session ID</p>
-                <p className="text-xs font-mono text-gray-700 break-all">
-                  {sessionId}
-                </p>
+                <p className="text-xs font-mono text-gray-700 break-all">{sessionId}</p>
               </div>
             )}
 
             {/* What's next */}
             <div className="mb-6 text-left bg-blue-50 p-4 rounded-md">
-              <h3 className="text-sm font-semibold text-blue-900 mb-2">
-                Prochaines étapes :
-              </h3>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">Prochaines étapes :</h3>
               <ul className="text-sm text-blue-800 space-y-1">
                 <li>✓ Votre compte a été créé</li>
                 <li>✓ Votre abonnement est actif</li>
@@ -77,9 +72,7 @@ function SignupSuccessContent() {
             {/* Actions */}
             <div className="space-y-3">
               <Link href="/login" className="block">
-                <Button className="w-full">
-                  Se connecter maintenant
-                </Button>
+                <Button className="w-full">Se connecter maintenant</Button>
               </Link>
 
               <p className="text-sm text-gray-500">
@@ -90,8 +83,8 @@ function SignupSuccessContent() {
             {/* Email confirmation info */}
             <div className="mt-6 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500">
-                Un email de confirmation a été envoyé à votre adresse.
-                Si vous ne le recevez pas, vérifiez vos spams.
+                Un email de confirmation a été envoyé à votre adresse. Si vous ne le recevez pas,
+                vérifiez vos spams.
               </p>
             </div>
           </div>
@@ -100,8 +93,11 @@ function SignupSuccessContent() {
         {/* Help section */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-             Besoin d&apos;aide ?{' '}
-            <a href="mailto:support@tablemaster.fr" className="font-medium text-blue-600 hover:text-blue-500">
+            Besoin d&apos;aide ?{' '}
+            <a
+              href="mailto:support@tablemaster.fr"
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               Contactez le support
             </a>
           </p>
@@ -113,7 +109,13 @@ function SignupSuccessContent() {
 
 export default function SignupSuccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Chargement...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          Chargement...
+        </div>
+      }
+    >
       <SignupSuccessContent />
     </Suspense>
   );

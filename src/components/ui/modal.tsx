@@ -12,14 +12,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }
 
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  description, 
-  children,
-  size = 'md' 
-}: ModalProps) => {
+const Modal = ({ isOpen, onClose, title, description, children, size = 'md' }: ModalProps) => {
   if (!isOpen) return null;
 
   const sizeClasses = {
@@ -27,7 +20,7 @@ const Modal = ({
     md: 'max-w-2xl',
     lg: 'max-w-4xl',
     xl: 'max-w-6xl',
-    full: 'max-w-full mx-4'
+    full: 'max-w-full mx-4',
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -39,24 +32,24 @@ const Modal = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={handleBackdropClick}
       />
 
       {/* Modal container */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className={cn(
-          'relative w-full rounded-lg bg-white shadow-xl transition-all',
-          sizeClasses[size]
-        )}>
+        <div
+          className={cn(
+            'relative w-full rounded-lg bg-white shadow-xl transition-all',
+            sizeClasses[size]
+          )}
+        >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-              {description && (
-                <p className="mt-1 text-sm text-slate-600">{description}</p>
-              )}
+              {description && <p className="mt-1 text-sm text-slate-600">{description}</p>}
             </div>
             <button
               onClick={onClose}
@@ -68,9 +61,7 @@ const Modal = ({
           </div>
 
           {/* Content */}
-          <div className="max-h-[calc(100vh-200px)] overflow-y-auto p-6">
-            {children}
-          </div>
+          <div className="max-h-[calc(100vh-200px)] overflow-y-auto p-6">{children}</div>
         </div>
       </div>
     </div>

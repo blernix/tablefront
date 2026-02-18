@@ -1,8 +1,5 @@
 import { ApiClient } from './base';
-import {
-  Closure,
-  CreateClosureInput,
-} from '@/types';
+import { Closure, CreateClosureInput } from '@/types';
 
 export class ClosuresApi extends ApiClient {
   async getClosures(): Promise<{ closures: Closure[] }> {

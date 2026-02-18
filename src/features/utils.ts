@@ -49,16 +49,16 @@ export const restaurantHasFeature = (
   feature: Feature
 ): boolean => {
   if (!restaurant) return false;
-  
+
   const plan = restaurant.subscription?.plan as Plan | undefined;
   const accountType = restaurant.accountType as AccountType;
   const config = FEATURE_CONFIG[feature];
-  
+
   if (!config || !plan) return false;
-  
+
   const hasPlanAccess = config.allowedPlans.includes(plan);
   const hasAccountTypeAccess = config.allowedAccountTypes.includes(accountType);
-  
+
   return hasPlanAccess && hasAccountTypeAccess;
 };
 
@@ -66,35 +66,36 @@ export const restaurantHasFeature = (
 export const getRestaurantPlanDisplay = (restaurant: Restaurant | null | undefined) => {
   const plan = restaurant?.subscription?.plan as Plan | undefined;
   const isSelfService = restaurant?.accountType === 'self-service';
-  
+
   const planDisplay = getPlanDisplay(plan);
-  
+
   return {
     ...planDisplay,
     isSelfService,
     accountType: restaurant?.accountType,
     accountTypeDisplay: restaurant?.accountType === 'self-service' ? 'Auto-inscrit' : 'Manuel',
-    accountTypeBadgeClass: restaurant?.accountType === 'self-service' 
-      ? 'bg-blue-100 text-blue-700' 
-      : 'bg-gray-100 text-gray-700',
+    accountTypeBadgeClass:
+      restaurant?.accountType === 'self-service'
+        ? 'bg-blue-100 text-blue-700'
+        : 'bg-gray-100 text-gray-700',
   };
 };
 
 // Get all features accessible to a restaurant
 export const getRestaurantFeatures = (restaurant: Restaurant | null | undefined): Feature[] => {
   if (!restaurant) return [];
-  
+
   const plan = restaurant.subscription?.plan as Plan | undefined;
   const accountType = restaurant.accountType as AccountType;
-  
+
   if (!plan) return [];
-  
+
   return Object.values(FEATURE_CONFIG)
-    .filter(config => 
-      config.allowedPlans.includes(plan) && 
-      config.allowedAccountTypes.includes(accountType)
+    .filter(
+      (config) =>
+        config.allowedPlans.includes(plan) && config.allowedAccountTypes.includes(accountType)
     )
-    .map(config => config.feature);
+    .map((config) => config.feature);
 };
 
 // Check if restaurant is on a specific plan

@@ -6,20 +6,17 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const allCookies = request.cookies.getAll();
 
-
   // Public routes that don't require authentication
   const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password'];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   // If trying to access protected route without token
   if (!isPublicRoute && !token) {
-
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // If authenticated and trying to access login page, let the component handle redirection
   // (component will redirect based on user role)
-
 
   return NextResponse.next();
 }

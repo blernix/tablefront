@@ -22,42 +22,42 @@ export const ReservationsStats = ({
   maxCapacity = 50,
   averagePrice = 25,
   restaurant = null,
-  currentMonth
+  currentMonth,
 }: ReservationsStatsProps) => {
   const stats = useMemo(() => {
     // Filter out cancelled reservations
-    const validReservations = reservations.filter(r => r.status !== 'cancelled');
-    
+    const validReservations = reservations.filter((r) => r.status !== 'cancelled');
+
     // Apply month filter if currentMonth is provided
     let filteredReservations = validReservations;
     let daysArray: string[] = [];
     let daysCount = 0;
-    
+
     if (currentMonth) {
       const monthStart = startOfMonth(currentMonth);
       const monthEnd = endOfMonth(currentMonth);
-      filteredReservations = validReservations.filter(r => {
+      filteredReservations = validReservations.filter((r) => {
         const resDate = new Date(r.date);
         return resDate >= monthStart && resDate <= monthEnd;
       });
       const daysInMonthArray = eachDayOfInterval({ start: monthStart, end: monthEnd });
-      daysArray = daysInMonthArray.map(day => getLocalDateString(day));
+      daysArray = daysInMonthArray.map((day) => getLocalDateString(day));
       daysCount = daysArray.length;
     } else {
       // Use all days between first and last reservation for accurate capacity calculation
       if (filteredReservations.length > 0) {
-        const dates = filteredReservations.map(r => new Date(r.date).getTime());
+        const dates = filteredReservations.map((r) => new Date(r.date).getTime());
         const minDate = new Date(Math.min(...dates));
         const maxDate = new Date(Math.max(...dates));
         const allDaysArray = eachDayOfInterval({ start: minDate, end: maxDate });
-        daysArray = allDaysArray.map(day => getLocalDateString(day));
+        daysArray = allDaysArray.map((day) => getLocalDateString(day));
         daysCount = daysArray.length;
       } else {
         daysArray = [];
         daysCount = 0;
       }
     }
-    
+
     if (filteredReservations.length === 0) {
       return {
         totalReservations: 0,
@@ -75,7 +75,7 @@ export const ReservationsStats = ({
           pending: 0,
           confirmed: 0,
           completed: 0,
-        }
+        },
       };
     }
 
@@ -89,30 +89,31 @@ export const ReservationsStats = ({
     const estimatedRevenue = totalGuests * averagePrice;
 
     // Average guests per reservation
-    const avgGuestsPerReservation = totalReservations > 0
-      ? (totalGuests / totalReservations).toFixed(1)
-      : '0';
+    const avgGuestsPerReservation =
+      totalReservations > 0 ? (totalGuests / totalReservations).toFixed(1) : '0';
 
     // Calculate date range
-    const dates = filteredReservations.map(r => new Date(r.date).getTime());
+    const dates = filteredReservations.map((r) => new Date(r.date).getTime());
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
-    const dateRange = minDate.getTime() === maxDate.getTime() 
-      ? format(minDate, 'd MMMM yyyy', { locale: fr })
-      : `${format(minDate, 'd MMM', { locale: fr })} - ${format(maxDate, 'd MMMM yyyy', { locale: fr })}`;
+    const dateRange =
+      minDate.getTime() === maxDate.getTime()
+        ? format(minDate, 'd MMMM yyyy', { locale: fr })
+        : `${format(minDate, 'd MMM', { locale: fr })} - ${format(maxDate, 'd MMMM yyyy', { locale: fr })}`;
 
     // Calculate theoretical capacity for the period
     let totalTheoreticalCapacity = 0;
     let displayCapacity = maxCapacity;
-    
+
     if (restaurant) {
       totalTheoreticalCapacity = daysArray.reduce((total, dateStr) => {
         const dailyCapacity = calculateDailyTheoreticalCapacity(restaurant, dateStr);
         return total + dailyCapacity.totalTheoreticalCapacity;
       }, 0);
-      
+
       // Calculate average daily capacity (capacity per day based on opening hours)
-      displayCapacity = daysCount > 0 ? Math.round(totalTheoreticalCapacity / daysCount) : maxCapacity;
+      displayCapacity =
+        daysCount > 0 ? Math.round(totalTheoreticalCapacity / daysCount) : maxCapacity;
     } else {
       // Fallback to simultaneous capacity per day
       totalTheoreticalCapacity = maxCapacity * daysCount;
@@ -120,13 +121,14 @@ export const ReservationsStats = ({
     }
 
     // Occupation rate (based on total theoretical capacity for the period)
-    const occupationRate = totalTheoreticalCapacity > 0
-      ? ((totalGuests / totalTheoreticalCapacity) * 100).toFixed(1)
-      : '0';
+    const occupationRate =
+      totalTheoreticalCapacity > 0
+        ? ((totalGuests / totalTheoreticalCapacity) * 100).toFixed(1)
+        : '0';
 
     // Find busiest day
     const reservationsByDay: Record<string, Reservation[]> = {};
-    filteredReservations.forEach(r => {
+    filteredReservations.forEach((r) => {
       const dateKey = getLocalDateString(r.date);
       if (!reservationsByDay[dateKey]) {
         reservationsByDay[dateKey] = [];
@@ -141,7 +143,7 @@ export const ReservationsStats = ({
         busiestDay = {
           date: dateKey,
           count: dayReservations.length,
-          guests: guestsCount
+          guests: guestsCount,
         };
       }
     });
@@ -152,9 +154,9 @@ export const ReservationsStats = ({
 
     // Status breakdown
     const statusBreakdown = {
-      pending: filteredReservations.filter(r => r.status === 'pending').length,
-      confirmed: filteredReservations.filter(r => r.status === 'confirmed').length,
-      completed: filteredReservations.filter(r => r.status === 'completed').length,
+      pending: filteredReservations.filter((r) => r.status === 'pending').length,
+      confirmed: filteredReservations.filter((r) => r.status === 'confirmed').length,
+      completed: filteredReservations.filter((r) => r.status === 'completed').length,
     };
 
     return {
@@ -169,7 +171,7 @@ export const ReservationsStats = ({
       busiestDayGuests: busiestDay.guests,
       busiestDayDate: busiestDay.date,
       dateRange,
-      statusBreakdown
+      statusBreakdown,
     };
   }, [reservations, maxCapacity, averagePrice, restaurant, currentMonth]);
 
@@ -181,9 +183,7 @@ export const ReservationsStats = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-500">Réservations</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">
-                {stats.totalReservations}
-              </p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalReservations}</p>
               <p className="text-xs text-slate-500 mt-1">
                 {stats.statusBreakdown.pending} en attente
               </p>
@@ -201,9 +201,7 @@ export const ReservationsStats = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-500">Couverts</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">
-                {stats.totalGuests}
-              </p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalGuests}</p>
               <p className="text-xs text-slate-500 mt-1">
                 Moy. {stats.avgGuestsPerReservation} / rés.
               </p>
@@ -221,19 +219,21 @@ export const ReservationsStats = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-500">Taux d&apos;occupation</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">
-                {stats.occupationRate}%
+              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.occupationRate}%</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Capacité max: {stats.simultaneousCapacity}/créneau
               </p>
-               <p className="text-xs text-slate-500 mt-1">
-                 Capacité max: {stats.simultaneousCapacity}/créneau
-               </p>
             </div>
-            <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
-              parseFloat(stats.occupationRate) >= 70 ? 'bg-amber-50' : 'bg-slate-50'
-            }`}>
-              <TrendingUp className={`h-6 w-6 ${
-                parseFloat(stats.occupationRate) >= 70 ? 'text-amber-600' : 'text-slate-600'
-              }`} />
+            <div
+              className={`h-12 w-12 rounded-full flex items-center justify-center ${
+                parseFloat(stats.occupationRate) >= 70 ? 'bg-amber-50' : 'bg-slate-50'
+              }`}
+            >
+              <TrendingUp
+                className={`h-6 w-6 ${
+                  parseFloat(stats.occupationRate) >= 70 ? 'text-amber-600' : 'text-slate-600'
+                }`}
+              />
             </div>
           </div>
         </CardContent>
@@ -245,12 +245,8 @@ export const ReservationsStats = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-500">Jour le plus chargé</p>
-              <p className="text-lg font-bold text-slate-900 mt-1 capitalize">
-                {stats.busiestDay}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                {stats.busiestDayGuests} couverts
-              </p>
+              <p className="text-lg font-bold text-slate-900 mt-1 capitalize">{stats.busiestDay}</p>
+              <p className="text-xs text-slate-500 mt-1">{stats.busiestDayGuests} couverts</p>
             </div>
             <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center">
               <AlertCircle className="h-6 w-6 text-red-600" />

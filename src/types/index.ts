@@ -90,7 +90,7 @@ export interface Restaurant {
     displayMode: 'pdf' | 'detailed' | 'both';
     pdfUrl?: string;
     qrCodeGenerated?: boolean;
-   };
+  };
   publicSlug?: string; // Vanity URL slug
   openingHours: OpeningHours;
   tablesConfig: {
@@ -352,7 +352,12 @@ export interface PushNotificationPayload {
   data?: {
     url?: string;
     reservationId?: string;
-    type: 'reservation_created' | 'reservation_confirmed' | 'reservation_cancelled' | 'reservation_updated' | 'general';
+    type:
+      | 'reservation_created'
+      | 'reservation_confirmed'
+      | 'reservation_cancelled'
+      | 'reservation_updated'
+      | 'general';
     [key: string]: any;
   };
   actions?: Array<{
@@ -363,7 +368,12 @@ export interface PushNotificationPayload {
 }
 
 // SSE Event Types
-export type ReservationEventType = 'reservation_created' | 'reservation_updated' | 'reservation_cancelled' | 'reservation_confirmed' | 'reservation_completed';
+export type ReservationEventType =
+  | 'reservation_created'
+  | 'reservation_updated'
+  | 'reservation_cancelled'
+  | 'reservation_confirmed'
+  | 'reservation_completed';
 
 export interface ReservationEvent {
   type: ReservationEventType;
@@ -389,7 +399,13 @@ export interface SSEConnectedEvent {
 
 // Notification Analytics Types
 export type NotificationType = 'push' | 'email' | 'sse';
-export type NotificationEventType = 'reservation_created' | 'reservation_confirmed' | 'reservation_cancelled' | 'reservation_updated' | 'general' | 'system';
+export type NotificationEventType =
+  | 'reservation_created'
+  | 'reservation_confirmed'
+  | 'reservation_cancelled'
+  | 'reservation_updated'
+  | 'general'
+  | 'system';
 export type NotificationStatus = 'sent' | 'delivered' | 'opened' | 'clicked' | 'failed';
 
 export interface NotificationAnalytics {

@@ -46,7 +46,6 @@ export default function OpeningHoursPage() {
   const fetchOpeningHours = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -142,11 +141,7 @@ export default function OpeningHoursPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard/settings')}
-        >
+        <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
@@ -194,20 +189,12 @@ export default function OpeningHoursPage() {
                         className="w-32"
                       />
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveSlot(day, index)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleRemoveSlot(day, index)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAddSlot(day)}
-                >
+                <Button variant="outline" size="sm" onClick={() => handleAddSlot(day)}>
                   <Plus className="mr-2 h-4 w-4" />
                   Ajouter un créneau
                 </Button>
@@ -218,9 +205,7 @@ export default function OpeningHoursPage() {
       </div>
 
       {successMessage && (
-        <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
-          {successMessage}
-        </div>
+        <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">{successMessage}</div>
       )}
 
       <div className="flex gap-2">

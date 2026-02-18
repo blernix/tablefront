@@ -13,7 +13,7 @@ import { useCreateRestaurant } from '@/hooks/api/useAdminRestaurants';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
-  address: z.string().min(1, 'L\'adresse est requise'),
+  address: z.string().min(1, "L'adresse est requise"),
   phone: z.string().min(1, 'Le téléphone est requis'),
   email: z.string().email('Email invalide'),
   totalTables: z.number().min(1, 'Au moins 1 table').optional(),
@@ -67,11 +67,10 @@ export default function NewRestaurantPage() {
             <CardDescription>Clé API générée - Copiez-la maintenant</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-gray-100 rounded-md font-mono text-sm break-all">
-              {apiKey}
-            </div>
+            <div className="p-4 bg-gray-100 rounded-md font-mono text-sm break-all">{apiKey}</div>
             <p className="text-sm text-muted-foreground">
-              Cette clé API sera utilisée pour les intégrations. Vous ne pourrez pas la revoir après avoir quitté cette page.
+              Cette clé API sera utilisée pour les intégrations. Vous ne pourrez pas la revoir après
+              avoir quitté cette page.
             </p>
             <div className="flex gap-3 pt-4">
               <Button
@@ -84,10 +83,7 @@ export default function NewRestaurantPage() {
               >
                 Copier la clé API
               </Button>
-              <Button
-                onClick={() => router.push('/admin/restaurants')}
-                className="flex-1"
-              >
+              <Button onClick={() => router.push('/admin/restaurants')} className="flex-1">
                 Voir les restaurants
               </Button>
             </div>
@@ -115,9 +111,7 @@ export default function NewRestaurantPage() {
                   placeholder="Le Bistro Parisien"
                   className={errors.name ? 'border-red-500' : ''}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
-                )}
+                {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
               </div>
 
               <div>
@@ -200,11 +194,7 @@ export default function NewRestaurantPage() {
               >
                 Annuler
               </Button>
-              <Button
-                type="submit"
-                disabled={createMutation.isPending}
-                className="flex-1"
-              >
+              <Button type="submit" disabled={createMutation.isPending} className="flex-1">
                 {createMutation.isPending ? 'Création...' : 'Créer le restaurant'}
               </Button>
             </div>

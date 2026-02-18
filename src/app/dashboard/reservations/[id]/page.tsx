@@ -10,11 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 
-export default function ReservationDetailPage({
-  params
-}: {
-  params: { id: string }
-}) {
+export default function ReservationDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [reservation, setReservation] = useState<Reservation | null>(null);
@@ -54,7 +50,7 @@ export default function ReservationDetailPage({
         setIsUpdating(true);
         const status = action === 'confirm' ? 'confirmed' : 'cancelled';
         await apiClient.updateReservation(reservation._id, {
-          status
+          status,
         });
 
         const statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
@@ -79,13 +75,15 @@ export default function ReservationDetailPage({
     processAction();
   }, [isLoading, actionProcessed, reservation, searchParams, params.id]);
 
-  const handleStatusChange = async (status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
+  const handleStatusChange = async (
+    status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  ) => {
     if (!reservation) return;
 
     try {
       setIsUpdating(true);
       await apiClient.updateReservation(reservation._id, {
-        status
+        status,
       });
 
       const statusLabels = {
@@ -148,10 +146,7 @@ export default function ReservationDetailPage({
   return (
     <div className="space-y-6 p-4 md:p-6 max-w-4xl mx-auto">
       <div>
-        <Button
-          variant="outline"
-          onClick={() => router.push('/dashboard/reservations')}
-        >
+        <Button variant="outline" onClick={() => router.push('/dashboard/reservations')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour aux réservations
         </Button>

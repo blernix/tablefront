@@ -65,10 +65,7 @@ export function DishesGrid({
   // Add orphaned dishes group if needed
   const orphanedDishesInView = dishes.filter((dish) => getDishCategoryId(dish) === null);
   const dishesByCategoryWithOrphans = [...dishesByCategory];
-  if (
-    orphanedDishesInView.length > 0 &&
-    (categoryFilter === 'all' || categoryFilter === 'none')
-  ) {
+  if (orphanedDishesInView.length > 0 && (categoryFilter === 'all' || categoryFilter === 'none')) {
     dishesByCategoryWithOrphans.push({
       category: {
         _id: 'none',
@@ -151,12 +148,8 @@ export function DishesGrid({
       {dishesByCategoryWithOrphans.map(({ category, dishes: categoryDishes }) => (
         <Collapsible
           key={category._id}
-          open={
-            category._id === 'none' ? true : expandedCategories.includes(category._id)
-          }
-          onOpenChange={
-            category._id === 'none' ? undefined : () => toggleCategory(category._id)
-          }
+          open={category._id === 'none' ? true : expandedCategories.includes(category._id)}
+          onOpenChange={category._id === 'none' ? undefined : () => toggleCategory(category._id)}
         >
           <Card>
             <CollapsibleTrigger asChild>

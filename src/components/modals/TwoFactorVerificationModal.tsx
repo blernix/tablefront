@@ -53,7 +53,8 @@ const TwoFactorVerificationModal = ({
     if (!recoveryCode.trim()) {
       newErrors.recoveryCode = 'Le code de récupération est requis';
     } else if (!/^[A-F0-9]{12}$/.test(recoveryCode)) {
-      newErrors.recoveryCode = 'Format de code invalide (12 caractères hexadécimaux majuscules, ex: 1A2B3C4D5E6F)';
+      newErrors.recoveryCode =
+        'Format de code invalide (12 caractères hexadécimaux majuscules, ex: 1A2B3C4D5E6F)';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -61,32 +62,35 @@ const TwoFactorVerificationModal = ({
 
   const handleVerifyCode = () => {
     if (!validateVerificationCode()) return;
-    
 
-    
-    verifyLogin({ tempToken, token: verificationCode }, {
-      onSuccess: (data) => {
-
-        toast.success('Connexion réussie !');
-        if (onSuccess) onSuccess(data);
-        handleClose();
-      },
-      onError: (error) => {
-        console.error('[2FA Modal] Verification error:', error);
-      },
-    });
+    verifyLogin(
+      { tempToken, token: verificationCode },
+      {
+        onSuccess: (data) => {
+          toast.success('Connexion réussie !');
+          if (onSuccess) onSuccess(data);
+          handleClose();
+        },
+        onError: (error) => {
+          console.error('[2FA Modal] Verification error:', error);
+        },
+      }
+    );
   };
 
   const handleUseRecoveryCode = () => {
     if (!validateRecoveryCode()) return;
-    
-    recover({ tempToken, recoveryCode }, {
-      onSuccess: (data) => {
-        toast.success('Connexion réussie avec code de récupération !');
-        if (onSuccess) onSuccess(data);
-        handleClose();
-      },
-    });
+
+    recover(
+      { tempToken, recoveryCode },
+      {
+        onSuccess: (data) => {
+          toast.success('Connexion réussie avec code de récupération !');
+          if (onSuccess) onSuccess(data);
+          handleClose();
+        },
+      }
+    );
   };
 
   const handleClose = () => {
@@ -110,11 +114,9 @@ const TwoFactorVerificationModal = ({
           Authentification à deux facteurs requise
         </h3>
         <p className="text-sm text-slate-600 mb-1">
-           Entrez le code à 6 chiffres de votre application d&apos;authentification
+          Entrez le code à 6 chiffres de votre application d&apos;authentification
         </p>
-        <p className="text-xs text-slate-500">
-          Pour {email}
-        </p>
+        <p className="text-xs text-slate-500">Pour {email}</p>
       </div>
 
       <div className="space-y-4">
@@ -145,11 +147,10 @@ const TwoFactorVerificationModal = ({
           <div className="flex gap-3">
             <AlertCircle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-slate-900 mb-1">
-                Problème avec le code ?
-              </p>
+              <p className="text-sm font-medium text-slate-900 mb-1">Problème avec le code ?</p>
               <p className="text-xs text-slate-700">
-                 Assurez-vous que l&apos;heure de votre appareil est correcte et que le compte est bien ajouté dans votre application.
+                Assurez-vous que l&apos;heure de votre appareil est correcte et que le compte est
+                bien ajouté dans votre application.
               </p>
             </div>
           </div>
@@ -201,22 +202,23 @@ const TwoFactorVerificationModal = ({
       </div>
 
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">
-          Code de récupération
-        </h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-2">Code de récupération</h3>
         <p className="text-sm text-slate-600">
-           Utilisez l&apos;un de vos codes de récupération à usage unique
+          Utilisez l&apos;un de vos codes de récupération à usage unique
         </p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="recoveryCode">Code de récupération</Label>
-           <Input
+          <Input
             id="recoveryCode"
             value={recoveryCode}
             onChange={(e) => {
-              const value = e.target.value.toUpperCase().replace(/[^A-F0-9]/g, '').slice(0, 12);
+              const value = e.target.value
+                .toUpperCase()
+                .replace(/[^A-F0-9]/g, '')
+                .slice(0, 12);
               setRecoveryCode(value);
               if (errors.recoveryCode) {
                 setErrors({ ...errors, recoveryCode: '' });
@@ -227,9 +229,7 @@ const TwoFactorVerificationModal = ({
             disabled={isUsingRecovery}
             autoFocus
           />
-          {errors.recoveryCode && (
-            <p className="text-sm text-destructive">{errors.recoveryCode}</p>
-          )}
+          {errors.recoveryCode && <p className="text-sm text-destructive">{errors.recoveryCode}</p>}
           <p className="text-xs text-slate-500">
             Format: 12 caractères hexadécimaux majuscules (ex: 1A2B3C4D5E6F)
           </p>
@@ -239,11 +239,10 @@ const TwoFactorVerificationModal = ({
           <div className="flex gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-amber-900 mb-1">
-                Codes à usage unique
-              </p>
+              <p className="text-sm font-medium text-amber-900 mb-1">Codes à usage unique</p>
               <p className="text-xs text-amber-800">
-                 Chaque code ne peut être utilisé qu&apos;une seule fois. Après utilisation, il sera supprimé de votre liste de codes de récupération.
+                Chaque code ne peut être utilisé qu&apos;une seule fois. Après utilisation, il sera
+                supprimé de votre liste de codes de récupération.
               </p>
             </div>
           </div>
@@ -273,20 +272,11 @@ const TwoFactorVerificationModal = ({
     </div>
   );
 
-  const modalTitle = mode === 'code' 
-    ? 'Vérification 2FA' 
-    : 'Code de récupération';
+  const modalTitle = mode === 'code' ? 'Vérification 2FA' : 'Code de récupération';
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={modalTitle}
-      size="md"
-    >
-      <div className="space-y-4">
-        {mode === 'code' ? renderCodeMode() : renderRecoveryMode()}
-      </div>
+    <Modal isOpen={isOpen} onClose={handleClose} title={modalTitle} size="md">
+      <div className="space-y-4">{mode === 'code' ? renderCodeMode() : renderRecoveryMode()}</div>
     </Modal>
   );
 };

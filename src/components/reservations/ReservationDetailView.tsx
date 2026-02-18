@@ -15,7 +15,7 @@ import {
   Trash2,
   Check,
   XCircle,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -32,25 +32,25 @@ const statusConfig = {
     label: 'En attente',
     variant: 'warning' as const,
     bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200'
+    borderColor: 'border-amber-200',
   },
   confirmed: {
     label: 'Confirmée',
     variant: 'success' as const,
     bgColor: 'bg-green-50',
-    borderColor: 'border-green-200'
+    borderColor: 'border-green-200',
   },
   cancelled: {
     label: 'Annulée',
     variant: 'danger' as const,
     bgColor: 'bg-red-50',
-    borderColor: 'border-red-200'
+    borderColor: 'border-red-200',
   },
   completed: {
     label: 'Terminée',
     variant: 'default' as const,
     bgColor: 'bg-slate-50',
-    borderColor: 'border-slate-200'
+    borderColor: 'border-slate-200',
   },
 };
 
@@ -58,7 +58,7 @@ export const ReservationDetailView = ({
   reservation,
   onEdit,
   onDelete,
-  onStatusChange
+  onStatusChange,
 }: ReservationDetailViewProps) => {
   const config = statusConfig[reservation.status];
 
@@ -75,14 +75,14 @@ export const ReservationDetailView = ({
             label: 'Confirmer',
             icon: <Check className="h-4 w-4 mr-2" />,
             variant: 'success' as const,
-            handler: () => onStatusChange('confirmed')
+            handler: () => onStatusChange('confirmed'),
           },
           {
             label: 'Annuler',
             icon: <XCircle className="h-4 w-4 mr-2" />,
             variant: 'destructive' as const,
-            handler: () => onStatusChange('cancelled')
-          }
+            handler: () => onStatusChange('cancelled'),
+          },
         ];
       case 'confirmed':
         return [
@@ -90,14 +90,14 @@ export const ReservationDetailView = ({
             label: 'Terminer',
             icon: <CheckCircle className="h-4 w-4 mr-2" />,
             variant: 'outline' as const,
-            handler: () => onStatusChange('completed')
+            handler: () => onStatusChange('completed'),
           },
           {
             label: 'Annuler',
             icon: <XCircle className="h-4 w-4 mr-2" />,
             variant: 'destructive' as const,
-            handler: () => onStatusChange('cancelled')
-          }
+            handler: () => onStatusChange('cancelled'),
+          },
         ];
       case 'cancelled':
         // Optionnel: permettre de re-confirmer une réservation annulée
@@ -106,8 +106,8 @@ export const ReservationDetailView = ({
             label: 'Re-confirmer',
             icon: <Check className="h-4 w-4 mr-2" />,
             variant: 'success' as const,
-            handler: () => onStatusChange('confirmed')
-          }
+            handler: () => onStatusChange('confirmed'),
+          },
         ];
       case 'completed':
         // Aucune action rapide pour les réservations terminées
@@ -173,7 +173,8 @@ export const ReservationDetailView = ({
             <div>
               <p className="text-sm text-slate-500">Nombre de personnes</p>
               <p className="font-medium">
-                {reservation.numberOfGuests} {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
+                {reservation.numberOfGuests}{' '}
+                {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
               </p>
             </div>
           </div>
@@ -213,7 +214,7 @@ export const ReservationDetailView = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.location.href = `tel:${reservation.customerPhone}`}
+              onClick={() => (window.location.href = `tel:${reservation.customerPhone}`)}
             >
               Appeler
             </Button>
@@ -245,12 +246,7 @@ export const ReservationDetailView = ({
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {quickActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant={action.variant}
-                  size="sm"
-                  onClick={action.handler}
-                >
+                <Button key={index} variant={action.variant} size="sm" onClick={action.handler}>
                   {action.icon}
                   {action.label}
                 </Button>

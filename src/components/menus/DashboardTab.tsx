@@ -65,7 +65,9 @@ export default function DashboardTab() {
       <div className="relative">
         <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
         <h1 className="text-2xl font-light text-[#2A2A2A] pt-4">Dashboard Menu</h1>
-        <p className="text-[#666666] mt-1 font-light">Vue d&apos;ensemble et statistiques de votre carte</p>
+        <p className="text-[#666666] mt-1 font-light">
+          Vue d&apos;ensemble et statistiques de votre carte
+        </p>
       </div>
 
       {/* Statistiques */}
@@ -85,7 +87,9 @@ export default function DashboardTab() {
               </div>
               <div>
                 <p className="text-3xl font-light text-[#2A2A2A]">{stats.unavailableDishes}</p>
-                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">Indisponibles</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">
+                  Indisponibles
+                </p>
               </div>
             </div>
           </CardContent>
@@ -115,7 +119,9 @@ export default function DashboardTab() {
               </div>
               <div>
                 <p className="text-3xl font-light text-[#2A2A2A]">{stats.totalDishes}</p>
-                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">Plats total</p>
+                <p className="text-xs text-[#666666] mt-1 uppercase tracking-[0.2em]">
+                  Plats total
+                </p>
               </div>
             </div>
           </CardContent>
@@ -127,7 +133,9 @@ export default function DashboardTab() {
             <div className="flex flex-col items-center text-center gap-2">
               <div
                 className={`flex h-10 w-10 items-center justify-center border ${
-                  stats.hasPdf ? 'border-emerald-600 text-emerald-600' : 'border-red-600 text-red-600'
+                  stats.hasPdf
+                    ? 'border-emerald-600 text-emerald-600'
+                    : 'border-red-600 text-red-600'
                 }`}
               >
                 {stats.hasPdf ? (
@@ -169,10 +177,7 @@ export default function DashboardTab() {
               <p className="text-sm text-[#666666] mb-4 flex-1 font-light">
                 Créez, modifiez et organisez vos plats par catégories
               </p>
-              <Button
-                onClick={handleNavigateToPlats}
-                className="w-full"
-              >
+              <Button onClick={handleNavigateToPlats} className="w-full">
                 Accéder à la gestion
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -191,11 +196,7 @@ export default function DashboardTab() {
               <p className="text-sm text-[#666666] mb-4 flex-1 font-light">
                 Générez le PDF et le QR code pour vos clients
               </p>
-              <Button
-                onClick={handleNavigateToPublication}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={handleNavigateToPublication} variant="outline" className="w-full">
                 Gérer la publication
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

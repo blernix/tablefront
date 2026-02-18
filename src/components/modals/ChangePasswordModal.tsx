@@ -66,12 +66,7 @@ const ChangePasswordModal = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Changer le mot de passe"
-      size="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Changer le mot de passe" size="sm">
       <div className="space-y-6">
         {/* Icon */}
         <div className="flex justify-center">
@@ -109,9 +104,7 @@ const ChangePasswordModal = ({
               className={errors.newPassword ? 'border-destructive' : ''}
               disabled={isLoading}
             />
-            {errors.newPassword && (
-              <p className="text-sm text-destructive">{errors.newPassword}</p>
-            )}
+            {errors.newPassword && <p className="text-sm text-destructive">{errors.newPassword}</p>}
           </div>
 
           <div className="space-y-2">
@@ -141,11 +134,7 @@ const ChangePasswordModal = ({
             >
               Annuler
             </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isLoading} className="flex-1">
               {isLoading ? 'Modification...' : 'Modifier le mot de passe'}
             </Button>
           </div>

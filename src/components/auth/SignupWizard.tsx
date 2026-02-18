@@ -178,7 +178,7 @@ interface StepIndicatorProps {
 }
 
 function StepIndicator({ steps, currentStep, onStepClick }: StepIndicatorProps) {
-  const currentIndex = steps.findIndex(step => step.id === currentStep);
+  const currentIndex = steps.findIndex((step) => step.id === currentStep);
 
   return (
     <div className="mb-10">
@@ -194,8 +194,8 @@ function StepIndicator({ steps, currentStep, onStepClick }: StepIndicatorProps) 
                 index < currentIndex
                   ? 'bg-blue-100 border-blue-600 text-blue-600'
                   : index === currentIndex
-                  ? 'bg-blue-600 border-blue-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-400',
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'bg-white border-gray-300 text-gray-400',
                 onStepClick && 'cursor-pointer hover:border-blue-400'
               )}
             >
@@ -226,9 +226,7 @@ function StepIndicator({ steps, currentStep, onStepClick }: StepIndicatorProps) 
             key={step.id}
             className={cn(
               'text-center w-24',
-              step.id === currentStep
-                ? 'text-blue-600 font-medium'
-                : 'text-gray-500'
+              step.id === currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
             )}
           >
             <div className="text-sm">{step.label}</div>
@@ -275,9 +273,7 @@ function RestaurantInfoStep({ data, errors, onChange, onBack, onNext }: Restaura
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Nom du restaurant *
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Nom du restaurant *</label>
             <input
               type="text"
               value={data.restaurantName}
@@ -299,9 +295,7 @@ function RestaurantInfoStep({ data, errors, onChange, onBack, onNext }: Restaura
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Téléphone *
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Téléphone *</label>
             <input
               type="tel"
               value={data.restaurantPhone}
@@ -324,9 +318,7 @@ function RestaurantInfoStep({ data, errors, onChange, onBack, onNext }: Restaura
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Adresse complète *
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Adresse complète *</label>
           <input
             type="text"
             value={data.restaurantAddress}
@@ -348,9 +340,7 @@ function RestaurantInfoStep({ data, errors, onChange, onBack, onNext }: Restaura
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Email du restaurant *
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Email du restaurant *</label>
           <input
             type="email"
             value={data.restaurantEmail}
@@ -396,22 +386,25 @@ interface OwnerAccountStepProps {
   isLoading: boolean;
 }
 
-function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading }: OwnerAccountStepProps) {
+function OwnerAccountStep({
+  data,
+  errors,
+  onChange,
+  onBack,
+  onSubmit,
+  isLoading,
+}: OwnerAccountStepProps) {
   const handleChange = (field: keyof AccountFormData, value: string) => {
     onChange({ [field]: value });
   };
 
   const passwordValidation = validatePassword(data.ownerPassword);
-  const passwordsMatch = data.ownerPassword === data.confirmPassword && data.ownerPassword.length > 0;
+  const passwordsMatch =
+    data.ownerPassword === data.confirmPassword && data.ownerPassword.length > 0;
   const emailValid = validateEmail(data.ownerEmail);
 
   const validateStep = () => {
-    return (
-      emailValid &&
-      passwordValidation.valid &&
-      passwordsMatch &&
-      data.acceptedTerms
-    );
+    return emailValid && passwordValidation.valid && passwordsMatch && data.acceptedTerms;
   };
 
   return (
@@ -437,14 +430,12 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
               errors.ownerEmail
                 ? 'border-red-300 focus:ring-red-500'
                 : emailValid
-                ? 'border-green-300 focus:ring-green-500'
-                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                  ? 'border-green-300 focus:ring-green-500'
+                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
             )}
             placeholder="votre.email@example.com"
           />
-          {errors.ownerEmail && (
-            <p className="text-sm text-red-600">{errors.ownerEmail}</p>
-          )}
+          {errors.ownerEmail && <p className="text-sm text-red-600">{errors.ownerEmail}</p>}
           {data.ownerEmail && emailValid && (
             <p className="text-sm text-green-600">✓ Email valide</p>
           )}
@@ -452,9 +443,7 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Mot de passe *
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Mot de passe *</label>
             <input
               type="password"
               value={data.ownerPassword}
@@ -464,14 +453,12 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
                 errors.ownerPassword
                   ? 'border-red-300 focus:ring-red-500'
                   : passwordValidation.valid
-                  ? 'border-green-300 focus:ring-green-500'
-                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    ? 'border-green-300 focus:ring-green-500'
+                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
               )}
               placeholder="Minimum 6 caractères"
             />
-            {errors.ownerPassword && (
-              <p className="text-sm text-red-600">{errors.ownerPassword}</p>
-            )}
+            {errors.ownerPassword && <p className="text-sm text-red-600">{errors.ownerPassword}</p>}
             {data.ownerPassword && !passwordValidation.valid && (
               <p className="text-sm text-red-600">{passwordValidation.message}</p>
             )}
@@ -493,8 +480,8 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
                 errors.confirmPassword
                   ? 'border-red-300 focus:ring-red-500'
                   : passwordsMatch
-                  ? 'border-green-300 focus:ring-green-500'
-                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    ? 'border-green-300 focus:ring-green-500'
+                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
               )}
               placeholder="Confirmez votre mot de passe"
             />
@@ -513,7 +500,8 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h4 className="font-medium text-blue-800 mb-2">💡 Conseil de sécurité</h4>
           <p className="text-sm text-blue-700">
-            Utilisez un mot de passe unique pour TableMaster. Nous vous recommandons d&apos;utiliser un gestionnaire de mots de passe pour générer et stocker des mots de passe sécurisés.
+            Utilisez un mot de passe unique pour TableMaster. Nous vous recommandons d&apos;utiliser
+            un gestionnaire de mots de passe pour générer et stocker des mots de passe sécurisés.
           </p>
         </div>
 
@@ -528,15 +516,30 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
             />
             <label htmlFor="acceptedTerms" className="text-sm text-gray-700">
               J&apos;accepte les{' '}
-              <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a
+                href="/cgv"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
                 Conditions Générales de Vente
               </a>
               , les{' '}
-              <a href="/legal#cgu" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a
+                href="/legal#cgu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
                 Conditions Générales d&apos;Utilisation
-              </a>
-              {' '}et la{' '}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              </a>{' '}
+              et la{' '}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
                 Politique de Confidentialité
               </a>
               . *
@@ -565,7 +568,7 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
             </>
           ) : (
             <>
-               Finaliser l&apos;inscription
+              Finaliser l&apos;inscription
               <Check className="w-4 h-4 ml-2" />
             </>
           )}
@@ -604,7 +607,11 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
   // Steps configuration
   const steps = [
     { id: 'plan' as SignupStep, label: 'Plan', description: 'Choisissez votre offre' },
-    { id: 'restaurant' as SignupStep, label: 'Restaurant', description: 'Informations établissement' },
+    {
+      id: 'restaurant' as SignupStep,
+      label: 'Restaurant',
+      description: 'Informations établissement',
+    },
     { id: 'account' as SignupStep, label: 'Compte', description: 'Identifiants propriétaire' },
   ];
 
@@ -674,20 +681,20 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
 
   // Data handlers
   const handleRestaurantDataChange = (updates: Partial<RestaurantFormData>) => {
-    setRestaurantData(prev => ({ ...prev, ...updates }));
+    setRestaurantData((prev) => ({ ...prev, ...updates }));
     // Clear error for updated field
     const field = Object.keys(updates)[0] as keyof FormErrors;
     if (field && errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const handleAccountDataChange = (updates: Partial<AccountFormData>) => {
-    setAccountData(prev => ({ ...prev, ...updates }));
+    setAccountData((prev) => ({ ...prev, ...updates }));
     // Clear error for updated field
     const field = Object.keys(updates)[0] as keyof FormErrors;
     if (field && errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -797,11 +804,7 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
   return (
     <div className="w-full">
       {/* Progress indicator */}
-      <StepIndicator
-        steps={steps}
-        currentStep={currentStep}
-        onStepClick={goToStep}
-      />
+      <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
 
       {/* Error display */}
       {submitError && (
@@ -811,26 +814,40 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
       )}
 
       {/* Current step content */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-        {renderStep()}
-      </div>
+      <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">{renderStep()}</div>
 
       {/* Additional info */}
       <div className="mt-8 text-center text-sm text-gray-600">
-         <p>
-           En continuant, vous acceptez nos{' '}
-           <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
-             conditions générales de vente
-           </a>
-           , nos{' '}
-           <a href="/legal#cgu" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
-             conditions d&apos;utilisation
-           </a>
-           {' '}et notre{' '}
-           <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-500 underline">
-             politique de confidentialité
-           </a>.
-         </p>
+        <p>
+          En continuant, vous acceptez nos{' '}
+          <a
+            href="/cgv"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-500 underline"
+          >
+            conditions générales de vente
+          </a>
+          , nos{' '}
+          <a
+            href="/legal#cgu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-500 underline"
+          >
+            conditions d&apos;utilisation
+          </a>{' '}
+          et notre{' '}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-500 underline"
+          >
+            politique de confidentialité
+          </a>
+          .
+        </p>
         <p className="mt-2">
           Vous serez redirigé vers Stripe pour finaliser le paiement de manière sécurisée.
         </p>

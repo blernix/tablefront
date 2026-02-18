@@ -112,11 +112,7 @@ export default function PlatsTab() {
               : 'Créez et gérez tous vos plats'}
           </p>
         </div>
-        <Button
-          size="sm"
-          onClick={() => handleStartCreateDish()}
-          className="mt-4 sm:mt-0"
-        >
+        <Button size="sm" onClick={() => handleStartCreateDish()} className="mt-4 sm:mt-0">
           <Plus className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">Ajouter un plat</span>
         </Button>

@@ -10,12 +10,14 @@ interface UsePushNotificationsReturn {
   isLoading: boolean;
   error: string | null;
   preferences: NotificationPreferences | null;
-  
+
   // Actions
   requestPermission: () => Promise<NotificationPermission>;
   subscribe: () => Promise<boolean>;
   unsubscribe: () => Promise<boolean>;
-  updatePreferences: (prefs: Partial<Omit<NotificationPreferences, 'userId' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  updatePreferences: (
+    prefs: Partial<Omit<NotificationPreferences, 'userId' | 'createdAt' | 'updatedAt'>>
+  ) => Promise<void>;
   loadPreferences: () => Promise<void>;
 }
 
@@ -26,7 +28,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
-  
+
   const subscriptionRef = useRef<PushSubscription | null>(null);
 
   // Check browser support and current state
@@ -38,7 +40,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
       setIsSubscribed(!!subscription);
-      
+
       if (subscription) {
         subscriptionRef.current = {
           endpoint: subscription.endpoint,
@@ -56,9 +58,10 @@ export function usePushNotifications(): UsePushNotificationsReturn {
   // Check browser support and current state
   useEffect(() => {
     const checkSupport = () => {
-      const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+      const supported =
+        'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
       setIsSupported(supported);
-      
+
       if (supported) {
         setPermission(Notification.permission);
         checkSubscription();
@@ -117,7 +120,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     try {
       // Get VAPID public key from server
       const { publicKey } = await apiClient.notifications.getVapidPublicKey();
-      
+
       if (!publicKey) {
         throw new Error('VAPID public key not available');
       }
@@ -131,7 +134,10 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         registration = await navigator.serviceWorker.register('/push-sw.js');
         await navigator.serviceWorker.ready;
       } catch (swError) {
-        console.warn('Failed to register push service worker, trying main service worker:', swError);
+        console.warn(
+          'Failed to register push service worker, trying main service worker:',
+          swError
+        );
         registration = await navigator.serviceWorker.ready;
       }
 
@@ -152,13 +158,13 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
       // Send subscription to server
       await apiClient.notifications.subscribe(subscriptionData, navigator.userAgent);
-      
+
       subscriptionRef.current = subscriptionData;
       setIsSubscribed(true);
-      
+
       // Load preferences after subscription
       await loadPreferences();
-      
+
       return true;
     } catch (err) {
       console.error('Error subscribing to push notifications:', err);
@@ -181,44 +187,47 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     try {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
-      
+
       if (subscription) {
         await subscription.unsubscribe();
-        
+
         // Notify server about unsubscribe
         if (subscriptionRef.current) {
           await apiClient.notifications.unsubscribe(subscriptionRef.current.endpoint);
         }
-        
+
         subscriptionRef.current = null;
         setIsSubscribed(false);
         return true;
       }
-      
+
       return false;
     } catch (err) {
       console.error('Error unsubscribing from push notifications:', err);
-      setError(err instanceof Error ? err.message : 'Failed to unsubscribe from push notifications');
+      setError(
+        err instanceof Error ? err.message : 'Failed to unsubscribe from push notifications'
+      );
       return false;
     } finally {
       setIsLoading(false);
     }
   }, [isSupported, isSubscribed]);
 
-
   // Update notification preferences
-  const updatePreferences = useCallback(async (
-    prefs: Partial<Omit<NotificationPreferences, 'userId' | 'createdAt' | 'updatedAt'>>
-  ) => {
-    try {
-      const { preferences: updatedPreferences } = await apiClient.notifications.updateNotificationPreferences(prefs);
-      setPreferences(updatedPreferences);
-    } catch (err) {
-      console.error('Error updating notification preferences:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update notification preferences');
-      throw err;
-    }
-  }, []);
+  const updatePreferences = useCallback(
+    async (prefs: Partial<Omit<NotificationPreferences, 'userId' | 'createdAt' | 'updatedAt'>>) => {
+      try {
+        const { preferences: updatedPreferences } =
+          await apiClient.notifications.updateNotificationPreferences(prefs);
+        setPreferences(updatedPreferences);
+      } catch (err) {
+        console.error('Error updating notification preferences:', err);
+        setError(err instanceof Error ? err.message : 'Failed to update notification preferences');
+        throw err;
+      }
+    },
+    []
+  );
 
   // Load preferences on mount if subscribed
   useEffect(() => {
@@ -235,7 +244,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
     isLoading,
     error,
     preferences,
-    
+
     // Actions
     requestPermission,
     subscribe,
@@ -248,9 +257,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 // Utility function to convert base64 URL safe string to Uint8Array
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);

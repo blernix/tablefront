@@ -12,13 +12,7 @@ interface BottomSheetProps {
   className?: string;
 }
 
-export const BottomSheet = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  className
-}: BottomSheetProps) => {
+export const BottomSheet = ({ isOpen, onClose, title, children, className }: BottomSheetProps) => {
   // Prevent body scroll when sheet is open
   useEffect(() => {
     if (isOpen) {
@@ -75,9 +69,7 @@ export const BottomSheet = ({
         )}
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-80px)] px-6 py-4">
-          {children}
-        </div>
+        <div className="overflow-y-auto max-h-[calc(90vh-80px)] px-6 py-4">{children}</div>
       </div>
     </>
   );

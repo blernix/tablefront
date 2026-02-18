@@ -28,7 +28,6 @@ export const useMenuData = (): UseMenuDataReturn => {
   const fetchAll = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 

@@ -21,7 +21,7 @@ function DashboardSkeleton() {
           </div>
         </div>
       </div>
-      
+
       {/* Main content skeleton */}
       <div className="flex flex-1 flex-col overflow-hidden w-full md:w-auto">
         {/* Header skeleton */}
@@ -34,7 +34,7 @@ function DashboardSkeleton() {
             </div>
           </div>
         </div>
-        
+
         {/* Content skeleton */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="space-y-6">
@@ -79,7 +79,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Fetch restaurant data when authenticated
   useEffect(() => {
-    if (isInitialized && isAuthenticated && (user?.role === 'restaurant' || user?.role === 'server')) {
+    if (
+      isInitialized &&
+      isAuthenticated &&
+      (user?.role === 'restaurant' || user?.role === 'server')
+    ) {
       fetchRestaurant();
     }
   }, [isInitialized, isAuthenticated, user?.role, fetchRestaurant]);

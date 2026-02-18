@@ -13,7 +13,7 @@ export function useAdminRestaurants(page = 1, limit = 20) {
 
 export function useCreateRestaurant() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: any) => apiClient.createRestaurant(data),
     onSuccess: () => {
@@ -28,7 +28,7 @@ export function useCreateRestaurant() {
 
 export function useDeleteRestaurant() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => apiClient.deleteRestaurant(id),
     onSuccess: () => {
@@ -43,10 +43,9 @@ export function useDeleteRestaurant() {
 
 export function useUpdateRestaurant() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => 
-      apiClient.updateRestaurant(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => apiClient.updateRestaurant(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'restaurants'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'restaurant', variables.id] });

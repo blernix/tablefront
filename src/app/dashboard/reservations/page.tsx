@@ -4,20 +4,20 @@ import { useEffect, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfWeek, 
-  endOfWeek, 
-  startOfYear, 
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  startOfYear,
   endOfYear,
   addMonths,
   addWeeks,
   addYears,
   subMonths,
   subWeeks,
-  subYears 
+  subYears,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
@@ -26,13 +26,29 @@ import { Reservation, Restaurant } from '@/types';
 import { useRealtimeReservationsManager } from '@/hooks/useRealtimeReservations';
 import { useReservationsFilters } from '@/hooks/useReservationsFilters';
 import { useRestaurantCapacity, getMaxCapacityFromRestaurant } from '@/hooks/useRestaurantCapacity';
-import { useRestaurantStore, isTimeWithinOpeningHours, getAvailableTimeSlots } from '@/store/restaurantStore';
+import {
+  useRestaurantStore,
+  isTimeWithinOpeningHours,
+  getAvailableTimeSlots,
+} from '@/store/restaurantStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Ban, List, Calendar as CalendarIcon, X, Filter, Search, Users, Check, ArrowLeft, MoreVertical } from 'lucide-react';
+import {
+  Plus,
+  Ban,
+  List,
+  Calendar as CalendarIcon,
+  X,
+  Filter,
+  Search,
+  Users,
+  Check,
+  ArrowLeft,
+  MoreVertical,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import CalendarViewImproved from '@/components/reservations/CalendarViewImproved';
@@ -45,31 +61,37 @@ import { CapacityIndicator } from '@/components/reservations/CapacityIndicator';
 import { SearchWithSuggestions } from '@/components/reservations/SearchWithSuggestions';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-const createFormSchema = (restaurant: Restaurant | null) => z.object({
-  customerName: z.string().min(1, 'Le nom est requis'),
-  customerEmail: z.string().email('Email invalide'),
-  customerPhone: z.string().min(1, 'Le téléphone est requis'),
-  date: z.string().min(1, 'La date est requise'),
-  time: z.string().min(1, "L'heure est requise"),
-  numberOfGuests: z.string().min(1, 'Le nombre de personnes est requis'),
-  status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']),
-  notes: z.string().optional(),
-}).refine((data) => {
-  // Skip validation if no restaurant data or if config doesn't enforce opening hours
-  if (!restaurant?.openingHours || !restaurant?.reservationConfig?.useOpeningHours) {
-    return true;
-  }
+const createFormSchema = (restaurant: Restaurant | null) =>
+  z
+    .object({
+      customerName: z.string().min(1, 'Le nom est requis'),
+      customerEmail: z.string().email('Email invalide'),
+      customerPhone: z.string().min(1, 'Le téléphone est requis'),
+      date: z.string().min(1, 'La date est requise'),
+      time: z.string().min(1, "L'heure est requise"),
+      numberOfGuests: z.string().min(1, 'Le nombre de personnes est requis'),
+      status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']),
+      notes: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        // Skip validation if no restaurant data or if config doesn't enforce opening hours
+        if (!restaurant?.openingHours || !restaurant?.reservationConfig?.useOpeningHours) {
+          return true;
+        }
 
-  // Get day of week from selected date
-  const selectedDate = new Date(data.date);
-  const dayOfWeek = selectedDate.getDay();
+        // Get day of week from selected date
+        const selectedDate = new Date(data.date);
+        const dayOfWeek = selectedDate.getDay();
 
-  // Validate time against opening hours
-  return isTimeWithinOpeningHours(restaurant, dayOfWeek, data.time);
-}, {
-  message: "L'heure sélectionnée n'est pas dans les horaires d'ouverture du restaurant",
-  path: ['time'],
-});
+        // Validate time against opening hours
+        return isTimeWithinOpeningHours(restaurant, dayOfWeek, data.time);
+      },
+      {
+        message: "L'heure sélectionnée n'est pas dans les horaires d'ouverture du restaurant",
+        path: ['time'],
+      }
+    );
 
 type FormData = {
   customerName: string;
@@ -137,7 +159,8 @@ export default function ReservationsPage() {
     }
   }, [activeTab, pastPeriodType, pastPeriodDate]);
 
-  const { reservations, isConnected, refreshReservations } = useRealtimeReservationsManager(dateParams);
+  const { reservations, isConnected, refreshReservations } =
+    useRealtimeReservationsManager(dateParams);
 
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -154,8 +177,6 @@ export default function ReservationsPage() {
   const [blockedDays, setBlockedDays] = useState<any[]>([]);
   const [upcomingCount, setUpcomingCount] = useState<number>(0);
   const [pastCount, setPastCount] = useState<number>(0);
-
-
 
   // Email confirmation modal
   const [emailConfirmationModal, setEmailConfirmationModal] = useState<{
@@ -256,10 +277,10 @@ export default function ReservationsPage() {
   useEffect(() => {
     const updateCounts = async () => {
       const today = new Date();
-    const todayStr = getLocalDateString(today);
+      const todayStr = getLocalDateString(today);
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = getLocalDateString(yesterday);
+      const yesterdayStr = getLocalDateString(yesterday);
 
       try {
         const [upcomingRes, pastRes] = await Promise.all([
@@ -357,9 +378,7 @@ export default function ReservationsPage() {
               completed: 'terminée',
               pending: 'mise à jour',
             };
-            toast.success(
-              `Réservation de ${reservation.customerName} ${statusLabelsText[status]}`
-            );
+            toast.success(`Réservation de ${reservation.customerName} ${statusLabelsText[status]}`);
           }
           break;
         case 'update':
@@ -439,15 +458,14 @@ export default function ReservationsPage() {
 
     // Définir les valeurs par défaut selon l'action
     const defaultOptions = {
-      modalTitle: action === 'delete' 
-        ? 'Supprimer la réservation' 
-        : 'Confirmer l\'action',
-      modalMessage: action === 'delete'
-        ? `Êtes-vous sûr de vouloir supprimer définitivement la réservation de ${reservation?.customerName} ? Cette action est irréversible.`
-        : 'Un email sera envoyé au client pour confirmer cette action.',
-      showEmailOption: action !== 'delete'
+      modalTitle: action === 'delete' ? 'Supprimer la réservation' : "Confirmer l'action",
+      modalMessage:
+        action === 'delete'
+          ? `Êtes-vous sûr de vouloir supprimer définitivement la réservation de ${reservation?.customerName} ? Cette action est irréversible.`
+          : 'Un email sera envoyé au client pour confirmer cette action.',
+      showEmailOption: action !== 'delete',
     };
-    
+
     setEmailConfirmationModal({
       show: true,
       action,
@@ -457,7 +475,10 @@ export default function ReservationsPage() {
       callback,
       modalTitle: options?.modalTitle || defaultOptions.modalTitle,
       modalMessage: options?.modalMessage || defaultOptions.modalMessage,
-      showEmailOption: options?.showEmailOption !== undefined ? options.showEmailOption : defaultOptions.showEmailOption,
+      showEmailOption:
+        options?.showEmailOption !== undefined
+          ? options.showEmailOption
+          : defaultOptions.showEmailOption,
     });
   };
 
@@ -610,7 +631,6 @@ export default function ReservationsPage() {
     router.push(`/dashboard/reservations/${reservation._id}`);
   };
 
-
   if (isLoading && !showForm) {
     return (
       <div className="space-y-6 animate-pulse p-4 md:p-6">
@@ -631,7 +651,9 @@ export default function ReservationsPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-light text-[#2A2A2A]">Réservations</h1>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
-                <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                <div
+                  className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                />
                 <span className="text-xs text-[#666666] font-medium">
                   {isConnected ? 'Temps réel' : 'Hors ligne'}
                 </span>
@@ -639,17 +661,19 @@ export default function ReservationsPage() {
             </div>
             <div className="flex items-center gap-4 text-sm text-[#666666]">
               <span>
-                {filters.filteredReservations.length} réservation{filters.filteredReservations.length !== 1 ? 's' : ''}
+                {filters.filteredReservations.length} réservation
+                {filters.filteredReservations.length !== 1 ? 's' : ''}
               </span>
               <span className="hidden sm:inline">•</span>
               <span className="hidden sm:inline">
-                {activeTab === 'upcoming' ? 'À venir' : 'Passées'} ({activeTab === 'upcoming' ? upcomingCount : pastCount})
+                {activeTab === 'upcoming' ? 'À venir' : 'Passées'} (
+                {activeTab === 'upcoming' ? upcomingCount : pastCount})
               </span>
             </div>
           </div>
 
           {/* Actions */}
-      {!showForm && (
+          {!showForm && (
             <div className="flex gap-2">
               {/* Menu mobile actions */}
               <div className="sm:hidden relative">
@@ -661,42 +685,42 @@ export default function ReservationsPage() {
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
-                
+
                 {/* Dropdown mobile actions */}
                 {showMobileActions && (
                   <>
-                    <div 
+                    <div
                       className="fixed inset-0 z-30"
                       onClick={() => setShowMobileActions(false)}
                     />
-                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-40 animate-slide-up">
-                       <button
-                         className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 text-sm"
-                         onClick={() => {
-                           router.push('/dashboard/reservations/blocked-days');
-                           setShowMobileActions(false);
-                         }}
-                       >
-                         <Ban className="h-4 w-4" />
-                         Jours bloqués
-                       </button>
-                     </div>
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-40 animate-slide-up">
+                      <button
+                        className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 text-sm"
+                        onClick={() => {
+                          router.push('/dashboard/reservations/blocked-days');
+                          setShowMobileActions(false);
+                        }}
+                      >
+                        <Ban className="h-4 w-4" />
+                        Jours bloqués
+                      </button>
+                    </div>
                   </>
                 )}
               </div>
-              
-               {/* Desktop actions */}
-               <div className="hidden sm:flex gap-2">
-                 <Button
-                   variant="outline"
-                   size="sm"
-                   onClick={() => router.push('/dashboard/reservations/blocked-days')}
-                   title="Gérer les jours bloqués"
-                 >
-                   <Ban className="h-4 w-4" />
-                 </Button>
-               </div>
-              
+
+              {/* Desktop actions */}
+              <div className="hidden sm:flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/dashboard/reservations/blocked-days')}
+                  title="Gérer les jours bloqués"
+                >
+                  <Ban className="h-4 w-4" />
+                </Button>
+              </div>
+
               {/* New reservation button */}
               <Button onClick={handleStartCreate} className="min-w-[140px] sm:min-w-[180px]">
                 <Plus className="h-4 w-4" />
@@ -712,80 +736,83 @@ export default function ReservationsPage() {
       {!showForm && (
         <div className="space-y-4">
           <div className="flex gap-2 p-1 bg-slate-100 rounded-lg w-full sm:w-fit">
-          <Button
-            variant={activeTab === 'upcoming' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab('upcoming')}
-            className={`flex-1 sm:flex-initial h-10 sm:h-9 px-4 sm:px-4 ${activeTab === 'upcoming' ? 'shadow-sm' : ''}`}
-          >
-            <span className="text-sm font-medium">À venir</span>
-            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-              activeTab === 'upcoming'
-                ? 'bg-white text-[#0066FF]'
-                : 'bg-slate-200 text-slate-600'
-            }`}>
-              {upcomingCount}
-            </span>
-          </Button>
-          <Button
-            variant={activeTab === 'past' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab('past')}
-            className={`flex-1 sm:flex-initial h-10 sm:h-9 px-4 sm:px-4 ${activeTab === 'past' ? 'shadow-sm' : ''}`}
-          >
-            <span className="text-sm font-medium">Passées</span>
-            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-              activeTab === 'past'
-                ? 'bg-white text-[#0066FF]'
-                : 'bg-slate-200 text-slate-600'
-            }`}>
-              {pastCount}
-            </span>
-          </Button>
-         </div>
+            <Button
+              variant={activeTab === 'upcoming' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('upcoming')}
+              className={`flex-1 sm:flex-initial h-10 sm:h-9 px-4 sm:px-4 ${activeTab === 'upcoming' ? 'shadow-sm' : ''}`}
+            >
+              <span className="text-sm font-medium">À venir</span>
+              <span
+                className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                  activeTab === 'upcoming'
+                    ? 'bg-white text-[#0066FF]'
+                    : 'bg-slate-200 text-slate-600'
+                }`}
+              >
+                {upcomingCount}
+              </span>
+            </Button>
+            <Button
+              variant={activeTab === 'past' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('past')}
+              className={`flex-1 sm:flex-initial h-10 sm:h-9 px-4 sm:px-4 ${activeTab === 'past' ? 'shadow-sm' : ''}`}
+            >
+              <span className="text-sm font-medium">Passées</span>
+              <span
+                className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                  activeTab === 'past' ? 'bg-white text-[#0066FF]' : 'bg-slate-200 text-slate-600'
+                }`}
+              >
+                {pastCount}
+              </span>
+            </Button>
+          </div>
 
-         {/* Pagination controls for past reservations */}
-         {activeTab === 'past' && (
+          {/* Pagination controls for past reservations */}
+          {activeTab === 'past' && (
             <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
-             <div className="flex items-center gap-2">
-               <span className="text-sm font-medium text-slate-700">Période :</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-slate-700">Période :</span>
                 <div className="flex bg-slate-100 rounded-lg p-0.5 sm:p-1 w-full sm:w-auto justify-center">
                   <button
                     type="button"
                     onClick={() => setPastPeriodType('year')}
-                    className={`px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm font-medium rounded-md transition-colors ${pastPeriodType === 'year'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                    className={`px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm font-medium rounded-md transition-colors ${
+                      pastPeriodType === 'year'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Année
                   </button>
-                 <button
-                   type="button"
-                   onClick={() => setPastPeriodType('week')}
-                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                     pastPeriodType === 'week'
-                       ? 'bg-white text-slate-900 shadow-sm'
-                       : 'text-slate-600 hover:text-slate-900'
-                   }`}
-                 >
-                   Semaine
-                 </button>
-                 <button
-                   type="button"
-                   onClick={() => setPastPeriodType('year')}
-                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                     pastPeriodType === 'year'
-                       ? 'bg-white text-slate-900 shadow-sm'
-                       : 'text-slate-600 hover:text-slate-900'
-                   }`}
-                 >
-                   Année
-                 </button>
-               </div>
-             </div>
+                  <button
+                    type="button"
+                    onClick={() => setPastPeriodType('week')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      pastPeriodType === 'week'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Semaine
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPastPeriodType('year')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      pastPeriodType === 'year'
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Année
+                  </button>
+                </div>
+              </div>
 
-             <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -795,18 +822,18 @@ export default function ReservationsPage() {
                 >
                   ←
                 </Button>
-               
+
                 <div className="text-center w-full sm:w-auto">
-                 <div className="font-medium text-slate-900">{formatCurrentPeriod()}</div>
-                 <button
-                   type="button"
-                   onClick={resetToCurrentPeriod}
-                   className="text-xs text-slate-500 hover:text-slate-700 hover:underline mt-0.5"
-                 >
+                  <div className="font-medium text-slate-900">{formatCurrentPeriod()}</div>
+                  <button
+                    type="button"
+                    onClick={resetToCurrentPeriod}
+                    className="text-xs text-slate-500 hover:text-slate-700 hover:underline mt-0.5"
+                  >
                     Revenir à aujourd&apos;hui
-                 </button>
-               </div>
-               
+                  </button>
+                </div>
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -816,14 +843,13 @@ export default function ReservationsPage() {
                 >
                   →
                 </Button>
-             </div>
+              </div>
             </div>
-           )}
-         </div>
-       )}
+          )}
+        </div>
+      )}
 
-
-       {/* Form */}
+      {/* Form */}
       {showForm && (
         <Card>
           <CardHeader>
@@ -864,14 +890,14 @@ export default function ReservationsPage() {
                 </div>
               </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="date">Date *</Label>
                   <div className="relative">
-                    <Input 
-                      id="date" 
-                      type="date" 
-                      {...register('date')} 
+                    <Input
+                      id="date"
+                      type="date"
+                      {...register('date')}
                       disabled={isSaving}
                       className="w-full pl-3 pr-10 py-2"
                     />
@@ -881,7 +907,12 @@ export default function ReservationsPage() {
                   </div>
                   {selectedFormDate && (
                     <p className="text-sm text-slate-600">
-                      {new Date(selectedFormDate).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      {new Date(selectedFormDate).toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
                     </p>
                   )}
                   {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
@@ -889,22 +920,32 @@ export default function ReservationsPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="time">Heure *</Label>
-                  {selectedFormDate && restaurant && restaurant.reservationConfig?.useOpeningHours ? (
+                  {selectedFormDate &&
+                  restaurant &&
+                  restaurant.reservationConfig?.useOpeningHours ? (
                     (() => {
                       const date = new Date(selectedFormDate);
                       const dayOfWeek = date.getDay();
                       const availableSlots = getAvailableTimeSlots(restaurant, dayOfWeek);
-                      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                      const dayNames = [
+                        'sunday',
+                        'monday',
+                        'tuesday',
+                        'wednesday',
+                        'thursday',
+                        'friday',
+                        'saturday',
+                      ];
                       const dayName = dayNames[dayOfWeek] as keyof typeof restaurant.openingHours;
                       const isClosed = restaurant.openingHours[dayName]?.closed;
 
                       if (isClosed) {
                         return (
                           <div className="space-y-2">
-                            <Input 
-                              id="time" 
-                              type="time" 
-                              {...register('time')} 
+                            <Input
+                              id="time"
+                              type="time"
+                              {...register('time')}
                               disabled={true}
                               className="opacity-50"
                               placeholder="Restaurant fermé"
@@ -935,7 +976,9 @@ export default function ReservationsPage() {
                       }
 
                       // No slots defined but not closed - allow free time input
-                      return <Input id="time" type="time" {...register('time')} disabled={isSaving} />;
+                      return (
+                        <Input id="time" type="time" {...register('time')} disabled={isSaving} />
+                      );
                     })()
                   ) : (
                     // Opening hours not enforced - allow free time input
@@ -1008,72 +1051,72 @@ export default function ReservationsPage() {
       {/* Barre d'outils et filtres */}
       {!showForm && (
         <div className="space-y-4">
-           {/* Filtres et recherche */}
-           <div className="flex flex-col sm:grid sm:grid-cols-2 sm:grid-rows-2 gap-3 w-full">
-              {/* Bouton filtres avancés */}
-               <Button 
-                 variant="outline" 
-                 size="sm" 
-                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                 className="flex-shrink-0 order-1 sm:order-none sm:row-start-1 sm:col-start-1"
-               >
-                 <Filter className="h-4 w-4 mr-2" />
-                 Filtres
-                 {filters.activeFilterCount > 0 && (
-                   <span className="ml-2 h-5 w-5 rounded-full bg-[#0066FF] text-white text-xs flex items-center justify-center">
-                     {filters.activeFilterCount}
-                   </span>
-                 )}
-               </Button>
-             
-              {/* Quick Filters intégrés avec scroll mobile */}
-              <div className="w-full sm:flex-initial order-3 sm:order-none sm:row-start-1 sm:col-start-2">
-                <div className="flex gap-2 overflow-x-auto pb-2 mx-0 px-0 sm:mx-0 sm:px-0 sm:pb-0">
-                  {quickFilters.map((filter) => (
-                    <Button
-                      key={filter.id}
-                      variant={filter.isActive ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={filter.action}
-                      className="flex-shrink-0 snap-start"
-                    >
-                      {filter.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+          {/* Filtres et recherche */}
+          <div className="flex flex-col sm:grid sm:grid-cols-2 sm:grid-rows-2 gap-3 w-full">
+            {/* Bouton filtres avancés */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="flex-shrink-0 order-1 sm:order-none sm:row-start-1 sm:col-start-1"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filtres
+              {filters.activeFilterCount > 0 && (
+                <span className="ml-2 h-5 w-5 rounded-full bg-[#0066FF] text-white text-xs flex items-center justify-center">
+                  {filters.activeFilterCount}
+                </span>
+              )}
+            </Button>
 
-              {/* Recherche avec suggestions */}
-              <div className="relative flex-1 max-w-full sm:max-w-full order-2 sm:order-none sm:row-start-2 sm:col-span-2">
-                 <SearchWithSuggestions
-                   value={filters.searchTerm}
-                   onChange={filters.setSearchTerm}
-                   suggestions={filters.suggestions}
-                   placeholder="Rechercher..."
-                 />
+            {/* Quick Filters intégrés avec scroll mobile */}
+            <div className="w-full sm:flex-initial order-3 sm:order-none sm:row-start-1 sm:col-start-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 mx-0 px-0 sm:mx-0 sm:px-0 sm:pb-0">
+                {quickFilters.map((filter) => (
+                  <Button
+                    key={filter.id}
+                    variant={filter.isActive ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={filter.action}
+                    className="flex-shrink-0 snap-start"
+                  >
+                    {filter.label}
+                  </Button>
+                ))}
               </div>
-           </div>
-           
-           {/* Boutons de vue Liste/Calendrier */}
-           <div className="flex justify-center sm:justify-start gap-2">
-             <Button
-               variant={viewMode === 'list' ? 'default' : 'outline'}
-               size="sm"
-               onClick={() => setViewMode('list')}
-             >
-               <List className="h-4 w-4 sm:mr-2" />
-               <span className="hidden sm:inline">Liste</span>
-             </Button>
-             <Button
-               variant={viewMode === 'calendar' ? 'default' : 'outline'}
-               size="sm"
-               onClick={() => setViewMode('calendar')}
-             >
-               <CalendarIcon className="h-4 w-4 sm:mr-2" />
-               <span className="hidden sm:inline">Calendrier</span>
-             </Button>
-           </div>
-          
+            </div>
+
+            {/* Recherche avec suggestions */}
+            <div className="relative flex-1 max-w-full sm:max-w-full order-2 sm:order-none sm:row-start-2 sm:col-span-2">
+              <SearchWithSuggestions
+                value={filters.searchTerm}
+                onChange={filters.setSearchTerm}
+                suggestions={filters.suggestions}
+                placeholder="Rechercher..."
+              />
+            </div>
+          </div>
+
+          {/* Boutons de vue Liste/Calendrier */}
+          <div className="flex justify-center sm:justify-start gap-2">
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Liste</span>
+            </Button>
+            <Button
+              variant={viewMode === 'calendar' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('calendar')}
+            >
+              <CalendarIcon className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Calendrier</span>
+            </Button>
+          </div>
+
           {/* Indicateur de capacité compact - Optimisé mobile */}
           <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
             <div className="flex items-center gap-3">
@@ -1087,28 +1130,42 @@ export default function ReservationsPage() {
                 </span>
                 <div className="flex items-center gap-2 mt-1 sm:hidden">
                   <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className={`h-full ${
-                        (capacity.currentGuests / capacity.maxCapacity) >= 0.9 ? 'bg-red-500' :
-                        (capacity.currentGuests / capacity.maxCapacity) >= 0.7 ? 'bg-amber-500' : 'bg-green-500'
+                        capacity.currentGuests / capacity.maxCapacity >= 0.9
+                          ? 'bg-red-500'
+                          : capacity.currentGuests / capacity.maxCapacity >= 0.7
+                            ? 'bg-amber-500'
+                            : 'bg-green-500'
                       }`}
-                      style={{ width: `${Math.min((capacity.currentGuests / capacity.maxCapacity) * 100, 100)}%` }}
+                      style={{
+                        width: `${Math.min((capacity.currentGuests / capacity.maxCapacity) * 100, 100)}%`,
+                      }}
                     />
                   </div>
                   <span className="text-xs text-slate-600">
-                    {Math.min(Math.round((capacity.currentGuests / capacity.maxCapacity) * 100), 100)}%
+                    {Math.min(
+                      Math.round((capacity.currentGuests / capacity.maxCapacity) * 100),
+                      100
+                    )}
+                    %
                   </span>
                 </div>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className={`h-full ${
-                    (capacity.currentGuests / capacity.maxCapacity) >= 0.9 ? 'bg-red-500' :
-                    (capacity.currentGuests / capacity.maxCapacity) >= 0.7 ? 'bg-amber-500' : 'bg-green-500'
+                    capacity.currentGuests / capacity.maxCapacity >= 0.9
+                      ? 'bg-red-500'
+                      : capacity.currentGuests / capacity.maxCapacity >= 0.7
+                        ? 'bg-amber-500'
+                        : 'bg-green-500'
                   }`}
-                  style={{ width: `${Math.min((capacity.currentGuests / capacity.maxCapacity) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((capacity.currentGuests / capacity.maxCapacity) * 100, 100)}%`,
+                  }}
                 />
               </div>
               <span className="text-xs text-slate-600">
@@ -1116,16 +1173,16 @@ export default function ReservationsPage() {
               </span>
             </div>
           </div>
-          
+
           {/* Filtres avancés (sidebar) - Optimisée mobile */}
           {showAdvancedFilters && (
             <>
               {/* Overlay tactile */}
-              <div 
+              <div
                 className="fixed inset-0 bg-[#0A0A0A] bg-opacity-50 z-40 active:bg-opacity-60 transition-opacity"
                 onClick={() => setShowAdvancedFilters(false)}
               />
-              
+
               {/* Sidebar avec swipe gesture */}
               <div className="fixed right-0 top-0 h-full w-full max-w-full sm:max-w-md bg-white shadow-2xl z-50 animate-slide-in-right">
                 <div className="h-full flex flex-col">
@@ -1133,7 +1190,7 @@ export default function ReservationsPage() {
                   <div className="pt-2 px-6 pb-1">
                     <div className="h-1 w-12 mx-auto bg-slate-300 rounded-full" />
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-6 border-b">
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                       <button
@@ -1146,8 +1203,10 @@ export default function ReservationsPage() {
                       <div>
                         <h3 className="text-lg font-light text-[#2A2A2A]">Filtres avancés</h3>
                         <p className="text-sm text-[#666666]">
-                          {filters.filteredReservations.length} résultat{filters.filteredReservations.length !== 1 ? 's' : ''}
-                          {filters.activeFilterCount > 0 && ` • ${filters.activeFilterCount} filtre${filters.activeFilterCount !== 1 ? 's' : ''} actif`}
+                          {filters.filteredReservations.length} résultat
+                          {filters.filteredReservations.length !== 1 ? 's' : ''}
+                          {filters.activeFilterCount > 0 &&
+                            ` • ${filters.activeFilterCount} filtre${filters.activeFilterCount !== 1 ? 's' : ''} actif`}
                         </p>
                       </div>
                     </div>
@@ -1161,7 +1220,7 @@ export default function ReservationsPage() {
                       Tout effacer
                     </Button>
                   </div>
-                  
+
                   {/* Content */}
                   <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Status Filters */}
@@ -1195,7 +1254,9 @@ export default function ReservationsPage() {
                       <Label className="text-sm font-medium mb-3 block">Période</Label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="dateRangeStart" className="text-xs">Date de début</Label>
+                          <Label htmlFor="dateRangeStart" className="text-xs">
+                            Date de début
+                          </Label>
                           <Input
                             id="dateRangeStart"
                             type="date"
@@ -1205,7 +1266,9 @@ export default function ReservationsPage() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="dateRangeEnd" className="text-xs">Date de fin</Label>
+                          <Label htmlFor="dateRangeEnd" className="text-xs">
+                            Date de fin
+                          </Label>
                           <Input
                             id="dateRangeEnd"
                             type="date"
@@ -1222,7 +1285,9 @@ export default function ReservationsPage() {
                       <Label className="text-sm font-medium mb-3 block">Nombre de personnes</Label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="minGuests" className="text-xs">Minimum</Label>
+                          <Label htmlFor="minGuests" className="text-xs">
+                            Minimum
+                          </Label>
                           <Input
                             id="minGuests"
                             type="number"
@@ -1233,7 +1298,9 @@ export default function ReservationsPage() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="maxGuests" className="text-xs">Maximum</Label>
+                          <Label htmlFor="maxGuests" className="text-xs">
+                            Maximum
+                          </Label>
                           <Input
                             id="maxGuests"
                             type="number"
@@ -1264,7 +1331,7 @@ export default function ReservationsPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Footer mobile */}
                   <div className="p-6 border-t bg-white sticky bottom-0">
                     <div className="flex gap-3">
@@ -1276,8 +1343,8 @@ export default function ReservationsPage() {
                       >
                         Tout effacer
                       </Button>
-                      <Button 
-                        className="flex-1 h-12 text-base" 
+                      <Button
+                        className="flex-1 h-12 text-base"
                         onClick={() => setShowAdvancedFilters(false)}
                       >
                         Appliquer
@@ -1400,27 +1467,30 @@ export default function ReservationsPage() {
       {emailConfirmationModal.show && (
         <div className="fixed inset-0 bg-[#0A0A0A] bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border border-[#E5E5E5] max-w-md w-full p-8 space-y-4">
-             <div>
-               <h3 className="text-lg font-light text-[#2A2A2A]">{emailConfirmationModal.modalTitle || 'Confirmer l\'action'}</h3>
-               <p className="mt-2 text-sm text-[#666666]">
-                 {emailConfirmationModal.modalMessage || 'Voulez-vous envoyer un email de confirmation au client ?'}
-               </p>
-             </div>
+            <div>
+              <h3 className="text-lg font-light text-[#2A2A2A]">
+                {emailConfirmationModal.modalTitle || "Confirmer l'action"}
+              </h3>
+              <p className="mt-2 text-sm text-[#666666]">
+                {emailConfirmationModal.modalMessage ||
+                  'Voulez-vous envoyer un email de confirmation au client ?'}
+              </p>
+            </div>
 
-              {emailConfirmationModal.showEmailOption !== false && (
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="dontAskAgainCheckbox"
-                    checked={dontAskAgain}
-                    onChange={(e) => setDontAskAgain(e.target.checked)}
-                    className="h-4 w-4 border-[#E5E5E5]"
-                  />
-                  <label htmlFor="dontAskAgainCheckbox" className="text-sm text-[#2A2A2A]">
-                    Ne plus me demander
-                  </label>
-                </div>
-              )}
+            {emailConfirmationModal.showEmailOption !== false && (
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="dontAskAgainCheckbox"
+                  checked={dontAskAgain}
+                  onChange={(e) => setDontAskAgain(e.target.checked)}
+                  className="h-4 w-4 border-[#E5E5E5]"
+                />
+                <label htmlFor="dontAskAgainCheckbox" className="text-sm text-[#2A2A2A]">
+                  Ne plus me demander
+                </label>
+              </div>
+            )}
 
             <div className="flex gap-3 pt-4">
               <Button

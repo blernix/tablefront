@@ -28,12 +28,7 @@ const DeleteConfirmModal = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      size="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
       <div className="space-y-4">
         {/* Warning Icon */}
         <div className="flex justify-center">
@@ -51,17 +46,14 @@ const DeleteConfirmModal = ({
               Êtes-vous sûr de vouloir supprimer{' '}
               {itemName ? (
                 <>
-                  <span className="font-semibold text-slate-900">{itemName}</span>
-                  {' '}?
+                  <span className="font-semibold text-slate-900">{itemName}</span> ?
                 </>
               ) : (
                 'cet élément ?'
               )}
             </p>
           )}
-          <p className="mt-2 text-sm text-slate-500">
-            Cette action est irréversible.
-          </p>
+          <p className="mt-2 text-sm text-slate-500">Cette action est irréversible.</p>
         </div>
 
         {/* Action Buttons */}

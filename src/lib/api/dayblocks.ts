@@ -1,9 +1,5 @@
 import { ApiClient } from './base';
-import {
-  DayBlock,
-  CreateDayBlockInput,
-  BulkCreateDayBlocksInput,
-} from '@/types';
+import { DayBlock, CreateDayBlockInput, BulkCreateDayBlocksInput } from '@/types';
 
 export class DayBlocksApi extends ApiClient {
   async getDayBlocks(): Promise<{ dayBlocks: DayBlock[] }> {

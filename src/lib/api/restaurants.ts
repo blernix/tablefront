@@ -9,7 +9,10 @@ import {
 
 export class RestaurantsApi extends ApiClient {
   // Admin - Restaurant Management
-  async getRestaurants(page = 1, limit = 20): Promise<{
+  async getRestaurants(
+    page = 1,
+    limit = 20
+  ): Promise<{
     restaurants: Restaurant[];
     pagination: { total: number; page: number; pages: number; limit: number };
   }> {
@@ -30,7 +33,10 @@ export class RestaurantsApi extends ApiClient {
     return this.request(`/api/admin/restaurants/${id}`);
   }
 
-  async updateRestaurant(id: string, data: UpdateRestaurantInput): Promise<{
+  async updateRestaurant(
+    id: string,
+    data: UpdateRestaurantInput
+  ): Promise<{
     restaurant: Restaurant;
   }> {
     return this.request(`/api/admin/restaurants/${id}`, {
@@ -66,7 +72,10 @@ export class RestaurantsApi extends ApiClient {
     return this.request(`/api/admin/restaurants/${restaurantId}/users`);
   }
 
-  async updateUser(userId: string, data: { email?: string; password?: string }): Promise<{ user: User }> {
+  async updateUser(
+    userId: string,
+    data: { email?: string; password?: string }
+  ): Promise<{ user: User }> {
     return this.request(`/api/admin/users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -216,51 +225,51 @@ export class RestaurantsApi extends ApiClient {
       buttonHoverColor?: string;
       // Floating button general configs
       buttonText?: string;
-    buttonPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+      buttonPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
       buttonStyle?: 'round' | 'square' | 'minimal';
       buttonIcon?: boolean;
       modalWidth?: string;
       modalHeight?: string;
-     };
-     restaurant: Restaurant;
-   }> {
-     return this.request('/api/restaurant/widget-config', {
-       method: 'PUT',
-       body: JSON.stringify(data),
-     });
-   }
-
-   // Vérifier la disponibilité d'un slug
-   async checkSlugAvailability(slug: string): Promise<{
-     available: boolean;
-     message: string;
-   }> {
-     return this.request(`/api/public/check-slug-availability/${slug}`, {
-       method: 'GET',
-     });
-   }
-
-    // Mettre à jour le slug personnalisé (Pro uniquement)
-    async updateSlug(data: { slug: string }): Promise<{
-      message: string;
-      slug: string;
-      available: boolean;
-    }> {
-      return this.request('/api/restaurant/slug', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
-    }
-
-    // Envoyer un message de contact à l'équipe TableMaster
-    async sendContactMessage(data: {
-      subject: string;
-      category: 'question' | 'problem' | 'other';
-      message: string;
-    }): Promise<{ message: string }> {
-      return this.request('/api/restaurant/contact', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
-    }
+    };
+    restaurant: Restaurant;
+  }> {
+    return this.request('/api/restaurant/widget-config', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   }
+
+  // Vérifier la disponibilité d'un slug
+  async checkSlugAvailability(slug: string): Promise<{
+    available: boolean;
+    message: string;
+  }> {
+    return this.request(`/api/public/check-slug-availability/${slug}`, {
+      method: 'GET',
+    });
+  }
+
+  // Mettre à jour le slug personnalisé (Pro uniquement)
+  async updateSlug(data: { slug: string }): Promise<{
+    message: string;
+    slug: string;
+    available: boolean;
+  }> {
+    return this.request('/api/restaurant/slug', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Envoyer un message de contact à l'équipe TableMaster
+  async sendContactMessage(data: {
+    subject: string;
+    category: 'question' | 'problem' | 'other';
+    message: string;
+  }): Promise<{ message: string }> {
+    return this.request('/api/restaurant/contact', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+}

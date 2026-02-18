@@ -4,12 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
-import { 
-  AnimatedWorkflowStep, 
-  AnimatedCircle, 
-  AnimatedTitle, 
-  AnimatedText 
+import {
+  AnimatedWorkflowStep,
+  AnimatedCircle,
+  AnimatedTitle,
+  AnimatedText,
 } from '@/components/AnimatedWorkflow';
+import ParallaxDemoSection from '@/components/demo/ParallaxDemoSection';
 import {
   Check,
   ArrowRight,
@@ -29,6 +30,9 @@ import {
   Globe,
   Share2,
   FileDown,
+  FileText,
+  Link as LinkIcon,
+  List,
   UserCheck,
   MessageSquare,
   Star,
@@ -38,31 +42,30 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <AuthNavbar activePage="home" />
-
       {/* Hero Section */}
       <section className="pt-24 pb-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-               <div className="inline-block px-4 py-1 border border-[#0066FF] text-[#0066FF] text-sm font-light">
+              <div className="inline-block px-4 py-1 border border-[#0066FF] text-[#0066FF] text-sm font-light">
                 Tarif fixe 39€/mois • Sans engagement • Résiliable à tout moment
               </div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-light text-[#2A2A2A] leading-tight">
-                Transformez vos visiteurs en clients fidèles et 
-                <span className="block text-[#0066FF] font-normal mt-2">boostez vos avis Google.</span>
+                Transformez vos visiteurs en clients fidèles et
+                <span className="block text-[#0066FF] font-normal mt-2">
+                  boostez vos avis Google.
+                </span>
               </h1>
 
               <p className="text-xl text-[#666666] leading-relaxed font-light">
-                Installez notre bouton de réservation en 5 minutes. Validez les demandes depuis votre mobile. 
-                Récoltez des avis Google automatiquement après chaque service.
+                Installez notre bouton de réservation en 5 minutes. Validez les demandes depuis
+                votre mobile. Récoltez des avis Google automatiquement après chaque service.
               </p>
 
-       
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
                   href="/signup"
@@ -112,91 +115,94 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-       </section>
-
-        {/* Comment ça marche - Workflow */}
-        <section id="how-it-works" className="py-20 bg-white">
-          <div className="container mx-auto max-w-6xl px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
-                Un système complet, de la réservation à l&apos;avis client
-              </h2>
-              <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-                Installation en 1 minute. Gestion depuis votre mobile. Avis Google automatisés.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <AnimatedWorkflowStep delay={0} className="text-center space-y-6">
-                <AnimatedCircle delay={0.1}>1</AnimatedCircle>
-                <AnimatedTitle delay={0.2}>Captez vos clients</AnimatedTitle>
-                <AnimatedText delay={0.3}>
-                  Intégrez notre bouton flottant discret sur votre site ou partagez votre lien unique sur les réseaux. 
-                  Vos clients réservent en deux clics.
-                </AnimatedText>
-              </AnimatedWorkflowStep>
-
-              <AnimatedWorkflowStep delay={0.2} className="text-center space-y-6">
-                <AnimatedCircle delay={0.3}>2</AnimatedCircle>
-                <AnimatedTitle delay={0.4}>Pilotez en temps réel</AnimatedTitle>
-                <AnimatedText delay={0.5}>
-                  Recevez une notification instantanée sur votre mobile. Acceptez ou refusez la demande d&apos;un simple geste. 
-                  Votre client reçoit immédiatement une confirmation personnalisée.
-                </AnimatedText>
-              </AnimatedWorkflowStep>
-
-              <AnimatedWorkflowStep delay={0.4} className="text-center space-y-6">
-                <AnimatedCircle delay={0.5}>3</AnimatedCircle>
-                <AnimatedTitle delay={0.6}>Boostez votre réputation</AnimatedTitle>
-                <AnimatedText delay={0.7}>
-                   Le service est terminé ? Marquez la table comme &quot;Terminée&quot;. TableMaster envoie automatiquement 
-                   un email de remerciement avec un lien direct pour laisser un avis Google.
-                </AnimatedText>
-              </AnimatedWorkflowStep>
-            </div>
-          </div>
-        </section>
-
-       {/* Avantages Tarifaires */}
-      <section className="py-16 bg-gradient-to-br from-[#0066FF] to-[#0052CC]">
+      </section>
+      {/* Comment ça marche - Workflow */}
+      <section id="how-it-works" className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
-             <h2 className="text-4xl md:text-5xl font-light text-white mb-4">
-               Pourquoi les restaurateurs choisissent TableMaster
-             </h2>
-             <p className="text-xl text-white/90 font-light">
-               La solution professionnelle sans les prix professionnels
-             </p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Un système complet, de la réservation à l&apos;avis client
+            </h2>
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Installation en 1 minute. Gestion depuis votre mobile. Avis Google automatisés.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
-               <Zap className="w-12 h-12 mb-4" />
-               <h3 className="text-2xl font-light mb-3">Zero commission</h3>
-               <p className="font-light text-white/90 leading-relaxed">
-                 Fini les 15% prélevés sur chaque couvert. Un tarif fixe de 39€/mois, c&apos;est tout.
-               </p>
-             </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <AnimatedWorkflowStep delay={0} className="text-center space-y-6">
+              <AnimatedCircle delay={0.1}>1</AnimatedCircle>
+              <AnimatedTitle delay={0.2}>Captez vos clients</AnimatedTitle>
+              <AnimatedText delay={0.3}>
+                Intégrez notre bouton flottant discret sur votre site ou partagez votre lien unique
+                sur les réseaux. Vos clients réservent en deux clics.
+              </AnimatedText>
+            </AnimatedWorkflowStep>
 
-             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
-               <Shield className="w-12 h-12 mb-4" />
-               <h3 className="text-2xl font-light mb-3">Sans engagement</h3>
-               <p className="font-light text-white/90 leading-relaxed">
-                 Résiliez quand vous voulez, sans frais cachés. Sans engagement, résiliable à tout moment.
-               </p>
-             </div>
+            <AnimatedWorkflowStep delay={0.2} className="text-center space-y-6">
+              <AnimatedCircle delay={0.3}>2</AnimatedCircle>
+              <AnimatedTitle delay={0.4}>Pilotez en temps réel</AnimatedTitle>
+              <AnimatedText delay={0.5}>
+                Recevez une notification instantanée sur votre mobile. Acceptez ou refusez la
+                demande d&apos;un simple geste. Votre client reçoit immédiatement une confirmation
+                personnalisée.
+              </AnimatedText>
+            </AnimatedWorkflowStep>
 
-             <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
-               <Star className="w-12 h-12 mb-4" />
-               <h3 className="text-2xl font-light mb-3">Installation immédiate</h3>
-               <p className="font-light text-white/90 leading-relaxed">
-                 Widget, notifications push, emails automatiques, avis Google... Installation en 1 minute.
-               </p>
-             </div>
+            <AnimatedWorkflowStep delay={0.4} className="text-center space-y-6">
+              <AnimatedCircle delay={0.5}>3</AnimatedCircle>
+              <AnimatedTitle delay={0.6}>Boostez votre réputation</AnimatedTitle>
+              <AnimatedText delay={0.7}>
+                Le service est terminé ? Marquez la table comme &quot;Terminée&quot;. TableMaster
+                envoie automatiquement un email de remerciement avec un lien direct pour laisser un
+                avis Google.
+              </AnimatedText>
+            </AnimatedWorkflowStep>
           </div>
         </div>
       </section>
+      <ParallaxDemoSection />
+      {/* Avantages Tarifaires */}
+      <section className="py-16 bg-gradient-to-br from-[#0066FF] to-[#0052CC]">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-4">
+              Pourquoi les restaurateurs choisissent TableMaster
+            </h2>
+            <p className="text-xl text-white/90 font-light">
+              La solution professionnelle sans les prix professionnels
+            </p>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
+              <Zap className="w-12 h-12 mb-4" />
+              <h3 className="text-2xl font-light mb-3">Zero commission</h3>
+              <p className="font-light text-white/90 leading-relaxed">
+                Fini les 15% prélevés sur chaque couvert. Un tarif fixe de 39€/mois, c&apos;est
+                tout.
+              </p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
+              <Shield className="w-12 h-12 mb-4" />
+              <h3 className="text-2xl font-light mb-3">Sans engagement</h3>
+              <p className="font-light text-white/90 leading-relaxed">
+                Résiliez quand vous voulez, sans frais cachés. Sans engagement, résiliable à tout
+                moment.
+              </p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-white">
+              <Star className="w-12 h-12 mb-4" />
+              <h3 className="text-2xl font-light mb-3">Installation immédiate</h3>
+              <p className="font-light text-white/90 leading-relaxed">
+                Widget, notifications push, emails automatiques, avis Google... Installation en 1
+                minute.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* Fonctionnalités Principales */}
       <section id="features" className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
@@ -215,12 +221,15 @@ export default function HomePage() {
               <Calendar className="w-10 h-10 text-[#0066FF] mb-6" />
               <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Gestion des réservations</h3>
               <p className="text-[#666666] font-light mb-6 leading-relaxed">
-                Interface intuitive avec vue calendrier. Séparez clairement les réservations à venir et passées.
+                Interface intuitive avec vue calendrier. Séparez clairement les réservations à venir
+                et passées.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Réservations à venir et historique séparés</span>
+                  <span className="text-[#666666] font-light">
+                    Réservations à venir et historique séparés
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -228,7 +237,9 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Gestion de la durée moyenne des réservations</span>
+                  <span className="text-[#666666] font-light">
+                    Gestion de la durée moyenne des réservations
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -240,26 +251,36 @@ export default function HomePage() {
             {/* Widget & URL */}
             <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
               <Globe className="w-10 h-10 text-[#0066FF] mb-6" />
-              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Widget & Page de réservation</h3>
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                Widget & Page de réservation
+              </h3>
               <p className="text-[#666666] font-light mb-6 leading-relaxed">
                 Intégrez facilement les réservations sur votre site web ou partagez une URL unique.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Widget intégrable en 2 lignes de code</span>
+                  <span className="text-[#666666] font-light">
+                    Widget intégrable en 2 lignes de code
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">URL unique pour réseaux sociaux et partage</span>
+                  <span className="text-[#666666] font-light">
+                    URL unique pour réseaux sociaux et partage
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Personnalisation aux couleurs de votre marque</span>
+                  <span className="text-[#666666] font-light">
+                    Personnalisation aux couleurs de votre marque
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Compatible avec tous les navigateurs</span>
+                  <span className="text-[#666666] font-light">
+                    Compatible avec tous les navigateurs
+                  </span>
                 </li>
               </ul>
             </div>
@@ -267,26 +288,36 @@ export default function HomePage() {
             {/* Emails & Avis */}
             <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
               <MessageSquare className="w-10 h-10 text-[#0066FF] mb-6" />
-              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Emails automatiques & Avis</h3>
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                Emails automatiques & Avis
+              </h3>
               <p className="text-[#666666] font-light mb-6 leading-relaxed">
                 Communication automatique avec vos clients pour maximiser vos avis Google.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Email de confirmation automatique</span>
+                  <span className="text-[#666666] font-light">
+                    Email de confirmation automatique
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Email de rappel avant la réservation</span>
+                  <span className="text-[#666666] font-light">
+                    Email de rappel avant la réservation
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Demande d&apos;avis Google après le service</span>
+                  <span className="text-[#666666] font-light">
+                    Demande d&apos;avis Google après le service
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Emails professionnels avec le nom de votre restaurant</span>
+                  <span className="text-[#666666] font-light">
+                    Emails professionnels avec le nom de votre restaurant
+                  </span>
                 </li>
               </ul>
             </div>
@@ -294,18 +325,24 @@ export default function HomePage() {
             {/* Notifications */}
             <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
               <Bell className="w-10 h-10 text-[#0066FF] mb-6" />
-              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Notifications push en temps réel</h3>
+              <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">
+                Notifications push en temps réel
+              </h3>
               <p className="text-[#666666] font-light mb-6 leading-relaxed">
                 Soyez alerté instantanément de chaque nouvelle réservation ou modification.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Push notifications sur mobile et desktop</span>
+                  <span className="text-[#666666] font-light">
+                    Push notifications sur mobile et desktop
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Alertes pour nouvelles réservations</span>
+                  <span className="text-[#666666] font-light">
+                    Alertes pour nouvelles réservations
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -323,16 +360,21 @@ export default function HomePage() {
               <UserCheck className="w-10 h-10 text-[#0066FF] mb-6" />
               <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">Délégation à votre équipe</h3>
               <p className="text-[#666666] font-light mb-6 leading-relaxed">
-                Créez des comptes serveurs pour déléguer la gestion des réservations en toute sécurité.
+                Créez des comptes serveurs pour déléguer la gestion des réservations en toute
+                sécurité.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Comptes serveurs avec accès limité</span>
+                  <span className="text-[#666666] font-light">
+                    Comptes serveurs avec accès limité
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Pas d&apos;accès aux paramètres sensibles</span>
+                  <span className="text-[#666666] font-light">
+                    Pas d&apos;accès aux paramètres sensibles
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -355,11 +397,15 @@ export default function HomePage() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Tableau de bord avec statistiques clés</span>
+                  <span className="text-[#666666] font-light">
+                    Tableau de bord avec statistiques clés
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Suivi des réservations par période</span>
+                  <span className="text-[#666666] font-light">
+                    Suivi des réservations par période
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -382,11 +428,15 @@ export default function HomePage() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Horaires d&apos;ouverture par jour</span>
+                  <span className="text-[#666666] font-light">
+                    Horaires d&apos;ouverture par jour
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Durée moyenne de réservation configurable</span>
+                  <span className="text-[#666666] font-light">
+                    Durée moyenne de réservation configurable
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -401,7 +451,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Section Développement sur mesure */}
       <section id="custom-dev" className="py-20 bg-[#FAFAFA]">
         <div className="container mx-auto max-w-6xl px-6">
@@ -425,8 +474,9 @@ export default function HomePage() {
                 Un site qui vous ressemble
               </h3>
               <p className="text-[#666666] font-light leading-relaxed mb-8">
-                Obtenez un site web professionnel, unique et en parfaite adéquation avec l&apos;identité
-                de votre restaurant. Design sur mesure, développement custom, intégration complète.
+                Obtenez un site web professionnel, unique et en parfaite adéquation avec
+                l&apos;identité de votre restaurant. Design sur mesure, développement custom,
+                intégration complète.
               </p>
 
               <div className="space-y-4">
@@ -447,7 +497,9 @@ export default function HomePage() {
                     <Globe className="w-4 h-4 text-[#0066FF]" />
                   </div>
                   <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">Formulaire de réservation intégré</h4>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">
+                      Formulaire de réservation intégré
+                    </h4>
                     <p className="text-sm text-[#666666] font-light">
                       Système de réservation directement intégré dans le code de votre site
                     </p>
@@ -461,7 +513,8 @@ export default function HomePage() {
                   <div>
                     <h4 className="font-normal text-[#2A2A2A] mb-1">Gestion du menu dynamique</h4>
                     <p className="text-sm text-[#666666] font-light">
-                      Mettez à jour votre menu depuis le dashboard, changements visibles instantanément
+                      Mettez à jour votre menu depuis le dashboard, changements visibles
+                      instantanément
                     </p>
                   </div>
                 </div>
@@ -471,7 +524,9 @@ export default function HomePage() {
                     <QrCode className="w-4 h-4 text-[#0066FF]" />
                   </div>
                   <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">Génération QR code automatique</h4>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">
+                      Génération QR code automatique
+                    </h4>
                     <p className="text-sm text-[#666666] font-light">
                       QR codes pour menu généré automatiquement
                     </p>
@@ -486,7 +541,9 @@ export default function HomePage() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">Site responsive (mobile, tablette, desktop)</span>
+                    <span className="text-[#666666] font-light">
+                      Site responsive (mobile, tablette, desktop)
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -502,11 +559,15 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">Formulaire de contact personnalisé</span>
+                    <span className="text-[#666666] font-light">
+                      Formulaire de contact personnalisé
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">Hébergement & nom de domaine inclus</span>
+                    <span className="text-[#666666] font-light">
+                      Hébergement & nom de domaine inclus
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -528,7 +589,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Pricing */}
       <section id="pricing" className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
@@ -537,7 +597,8 @@ export default function HomePage() {
               Tarifs transparents et compétitifs
             </h2>
             <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-              Choisissez le plan qui correspond à vos besoins. Sans engagement, résiliable à tout moment.
+              Choisissez le plan qui correspond à vos besoins. Sans engagement, résiliable à tout
+              moment.
             </p>
           </div>
 
@@ -549,7 +610,7 @@ export default function HomePage() {
                   Starter
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
-                   <span className="text-5xl font-light text-[#2A2A2A]">39€</span>
+                  <span className="text-5xl font-light text-[#2A2A2A]">39€</span>
                   <span className="text-xl text-[#666666]">/mois</span>
                 </div>
                 <p className="text-[#666666] font-light">Parfait pour débuter</p>
@@ -562,7 +623,9 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Notifications push en temps réel</span>
+                  <span className="text-[#666666] font-light">
+                    Notifications push en temps réel
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -605,7 +668,7 @@ export default function HomePage() {
                   Pro
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
-                   <span className="text-5xl font-light text-[#0066FF]">69€</span>
+                  <span className="text-5xl font-light text-[#0066FF]">69€</span>
                   <span className="text-xl text-[#666666]">/mois</span>
                 </div>
                 <p className="text-[#666666] font-light">Pour les établissements actifs</p>
@@ -618,7 +681,9 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Toutes les fonctionnalités Starter</span>
+                  <span className="text-[#666666] font-light">
+                    Toutes les fonctionnalités Starter
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -634,11 +699,15 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Personnalisation widget & formulaire</span>
+                  <span className="text-[#666666] font-light">
+                    Personnalisation widget & formulaire
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Demandes d&apos;avis automatiques</span>
+                  <span className="text-[#666666] font-light">
+                    Demandes d&apos;avis automatiques
+                  </span>
                 </li>
               </ul>
 
@@ -656,12 +725,12 @@ export default function HomePage() {
               Sans engagement • Résiliable à tout moment
             </p>
             <p className="text-sm text-[#666666] font-light">
-              Tous les plans incluent : Mises à jour gratuites • Hébergement sécurisé • Sauvegardes automatiques
+              Tous les plans incluent : Mises à jour gratuites • Hébergement sécurisé • Sauvegardes
+              automatiques
             </p>
           </div>
         </div>
       </section>
-
       {/* À qui ça s'adresse */}
       <section className="py-20 bg-[#FAFAFA]">
         <div className="container mx-auto max-w-6xl px-6">
@@ -709,7 +778,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Statistiques */}
       <section className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
@@ -727,23 +795,23 @@ export default function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">90%</div>
               <p className="text-sm font-light text-[#666666]">Clients satisfaits</p>
             </div>
-            
+
             <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
               <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">55+</div>
               <p className="text-sm font-light text-[#666666]">Restaurants actifs</p>
             </div>
-            
+
             <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
               <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">99%</div>
               <p className="text-sm font-light text-[#666666]">Disponibilité système</p>
             </div>
-            
+
             <div className="bg-blue-50 border border-blue-100 p-6 text-center rounded-xl">
               <div className="text-4xl md:text-5xl font-bold text-[#0066FF] mb-2">30%</div>
               <p className="text-sm font-light text-[#666666]">Avis Google en plus</p>
             </div>
           </div>
-          
+
           <div className="mt-12 text-center">
             <p className="text-[#666666] font-light text-sm">
               Basé sur les retours de nos clients et nos analyses internes
@@ -751,7 +819,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* CTA Final */}
       <section className="py-20 bg-gradient-to-br from-[#0066FF] to-[#0052CC]">
         <div className="container mx-auto max-w-4xl px-6 text-center">
@@ -759,7 +826,8 @@ export default function HomePage() {
             Prêt à transformer votre gestion de réservations ?
           </h2>
           <p className="text-xl text-white/90 font-light mb-10 max-w-2xl mx-auto">
-            Rejoignez les restaurateurs qui économisent des centaines d&apos;euros par mois avec TableMaster.
+            Rejoignez les restaurateurs qui économisent des centaines d&apos;euros par mois avec
+            TableMaster.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -777,11 +845,11 @@ export default function HomePage() {
             </a>
           </div>
           <p className="text-sm text-white/80 font-light mt-6">
-             • Installation en 5 minutes • Support inclus
+            • Installation en 5 minutes • Support inclus
           </p>
         </div>
       </section>
-
-      <Footer />    </div>
+      <Footer />{' '}
+    </div>
   );
 }

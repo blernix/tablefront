@@ -127,10 +127,7 @@ export const WeekView = ({
     else if (percentage >= 30) color = 'bg-yellow-400';
     return (
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 overflow-hidden rounded-b">
-        <div 
-          className={`h-full ${color} transition-all`}
-          style={{ width: `${percentage}%` }}
-        />
+        <div className={`h-full ${color} transition-all`} style={{ width: `${percentage}%` }} />
       </div>
     );
   };
@@ -143,7 +140,8 @@ export const WeekView = ({
           <Calendar className="h-6 w-6 text-slate-700" />
           <h2 className="text-xl md:text-2xl font-bold text-slate-900">
             <span className="md:hidden">
-              Sem. {format(weekStart, 'd', { locale: fr })}-{format(weekEnd, 'd MMM', { locale: fr })}
+              Sem. {format(weekStart, 'd', { locale: fr })}-
+              {format(weekEnd, 'd MMM', { locale: fr })}
             </span>
             <span className="hidden md:inline">
               Semaine du {format(weekStart, 'd', { locale: fr })} au{' '}
@@ -152,17 +150,17 @@ export const WeekView = ({
           </h2>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handlePreviousWeek}
             className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleNextWeek}
             className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
           >

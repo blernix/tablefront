@@ -23,11 +23,12 @@ export class ApiClient {
   }
 
   setToken(token: string | null) {
-
-
     // Validate token format if provided
     if (token && token.split('.').length !== 3) {
-      console.error('[API] Invalid token format (not a JWT), rejecting token:', token.substring(0, 50) + '...');
+      console.error(
+        '[API] Invalid token format (not a JWT), rejecting token:',
+        token.substring(0, 50) + '...'
+      );
       token = null;
     }
 
@@ -38,7 +39,6 @@ export class ApiClient {
         const exp = payload.exp ? new Date(payload.exp * 1000) : null;
         const now = new Date();
         const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
-
       } catch (e) {
         console.warn('[API] Failed to decode token payload:', e);
       }
@@ -55,25 +55,19 @@ export class ApiClient {
           cookieString += '; Secure';
         }
         document.cookie = cookieString;
-
       } else {
         localStorage.removeItem('token');
         // Clear cookie
         document.cookie = 'token=; path=/; max-age=0';
-
       }
     }
   }
 
-  protected async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  protected async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     // Sync token from localStorage on client side
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
       if (storedToken !== this.token) {
-
         this.token = storedToken;
         // Log token expiration after sync
         if (storedToken) {
@@ -82,7 +76,6 @@ export class ApiClient {
             const exp = payload.exp ? new Date(payload.exp * 1000) : null;
             const now = new Date();
             const timeLeft = exp ? Math.max(0, (exp.getTime() - now.getTime()) / 1000) : null;
-
           } catch (e) {
             console.warn('[API] Failed to decode synced token:', e);
           }
@@ -97,7 +90,8 @@ export class ApiClient {
         const exp = payload.exp ? new Date(payload.exp * 1000) : null;
         const now = new Date();
         const timeLeft = exp ? (exp.getTime() - now.getTime()) / 1000 : null;
-        if (timeLeft !== null && timeLeft > 0 && timeLeft < 300) { // less than 5 minutes
+        if (timeLeft !== null && timeLeft > 0 && timeLeft < 300) {
+          // less than 5 minutes
           console.warn(`[API] Token expires soon: ${Math.floor(timeLeft)} seconds left`);
         }
       } catch (e) {
@@ -112,7 +106,6 @@ export class ApiClient {
 
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
-
     } else {
       console.warn(`[API] Request to ${endpoint} without token`);
     }
@@ -126,7 +119,10 @@ export class ApiClient {
       try {
         // Track concurrent requests
         ApiClient.pendingRequests++;
-        ApiClient.maxConcurrentRequests = Math.max(ApiClient.maxConcurrentRequests, ApiClient.pendingRequests);
+        ApiClient.maxConcurrentRequests = Math.max(
+          ApiClient.maxConcurrentRequests,
+          ApiClient.pendingRequests
+        );
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout (increased from 30s)
@@ -143,7 +139,6 @@ export class ApiClient {
         const duration = Date.now() - startTime;
         ApiClient.pendingRequests--; // Request completed
 
-
         clearTimeout(timeoutId);
         break; // Success, exit retry loop
       } catch (error) {
@@ -154,27 +149,32 @@ export class ApiClient {
         if (error instanceof DOMException && error.name === 'AbortError') {
           console.error(`[API] ❌ Request timeout for ${endpoint} after ${duration}ms`, {
             concurrent: ApiClient.pendingRequests,
-            peak: ApiClient.maxConcurrentRequests
+            peak: ApiClient.maxConcurrentRequests,
           });
           throw new Error(`Request timeout after ${duration}ms - please check your connection`);
         }
 
         // Retry on network errors (like during Hot Reload)
         if (retries <= maxRetries) {
-          console.warn(`[API] ⚠️ Network error for ${endpoint}, retrying (${retries}/${maxRetries})...`, {
-            error,
-            concurrent: ApiClient.pendingRequests
-          });
-          await new Promise(resolve => setTimeout(resolve, 500 * retries)); // Exponential backoff
+          console.warn(
+            `[API] ⚠️ Network error for ${endpoint}, retrying (${retries}/${maxRetries})...`,
+            {
+              error,
+              concurrent: ApiClient.pendingRequests,
+            }
+          );
+          await new Promise((resolve) => setTimeout(resolve, 500 * retries)); // Exponential backoff
           continue;
         }
 
         console.error(`[API] ❌ Network error for ${endpoint} after ${retries} retries:`, {
           error,
           concurrent: ApiClient.pendingRequests,
-          peak: ApiClient.maxConcurrentRequests
+          peak: ApiClient.maxConcurrentRequests,
         });
-        throw new Error(`Failed to fetch: ${error instanceof Error ? error.message : 'Network error'}`);
+        throw new Error(
+          `Failed to fetch: ${error instanceof Error ? error.message : 'Network error'}`
+        );
       }
     }
 
@@ -182,7 +182,7 @@ export class ApiClient {
       throw new Error('No response received');
     }
 
-     // Handle 204 No Content
+    // Handle 204 No Content
     if (response.status === 204) {
       if (!response.ok) {
         throw new Error('An error occurred');
@@ -197,8 +197,6 @@ export class ApiClient {
       // Skip for auth endpoints (login, logout, password reset)
       const isAuthEndpoint = endpoint.includes('/api/auth/');
       if (response.status === 401 && this.onUnauthorizedCallback && !isAuthEndpoint) {
-
-
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
@@ -221,7 +219,6 @@ export class ApiClient {
             // Update token
             this.setToken(refreshResult.token);
 
-
             // Clear refresh state
             this.isRefreshing = false;
             this.refreshPromise = null;
@@ -239,7 +236,10 @@ export class ApiClient {
           this.onUnauthorizedCallback();
         }
       }
-      console.error(`[API] Request failed for ${endpoint}: ${response.status}`, data.error?.message);
+      console.error(
+        `[API] Request failed for ${endpoint}: ${response.status}`,
+        data.error?.message
+      );
       throw new Error(data.error?.message || 'An error occurred');
     }
 
@@ -274,8 +274,6 @@ export class ApiClient {
       // Skip for auth endpoints (login, logout, password reset)
       const isAuthEndpoint = endpoint.includes('/api/auth/');
       if (response.status === 401 && this.onUnauthorizedCallback && !isAuthEndpoint) {
-
-
         // Try to refresh token (only once)
         try {
           if (this.isRefreshing) {
@@ -297,7 +295,6 @@ export class ApiClient {
 
             // Update token
             this.setToken(refreshResult.token);
-
 
             // Clear refresh state
             this.isRefreshing = false;
@@ -323,15 +320,16 @@ export class ApiClient {
   }
 
   async refreshToken(): Promise<{ token: string }> {
-
     const response = await this.request<{ token: string }>('/api/auth/refresh', {
       method: 'POST',
     });
 
-
     // Validate the returned token
     if (!response.token || response.token.split('.').length !== 3) {
-      console.error('[API] Invalid token received from refresh endpoint:', response.token?.substring(0, 50) + '...');
+      console.error(
+        '[API] Invalid token received from refresh endpoint:',
+        response.token?.substring(0, 50) + '...'
+      );
       throw new Error('Invalid token received from server');
     }
 

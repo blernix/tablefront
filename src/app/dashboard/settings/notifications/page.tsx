@@ -9,7 +9,6 @@ import type { NotificationPreferences } from '@/types';
 import { Bell, BellOff, Check, Loader2, AlertCircle } from 'lucide-react';
 import { UpgradeCTA, useIsStarter } from '@/features';
 
-
 export default function NotificationsSettingsPage() {
   const {
     isSupported,
@@ -46,7 +45,7 @@ export default function NotificationsSettingsPage() {
   // Handle preference change
   const handlePreferenceChange = (key: keyof NotificationPreferences, value: boolean) => {
     if (!localPreferences) return;
-    
+
     setLocalPreferences({
       ...localPreferences,
       [key]: value,
@@ -77,9 +76,7 @@ export default function NotificationsSettingsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-          <p className="mt-2 text-gray-600">
-            Gérez vos préférences de notifications
-          </p>
+          <p className="mt-2 text-gray-600">Gérez vos préférences de notifications</p>
         </div>
 
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
@@ -88,8 +85,8 @@ export default function NotificationsSettingsPage() {
             <div className="text-sm text-red-800">
               <p className="font-medium">Navigateur non supporté</p>
               <p className="mt-1">
-                Les notifications push ne sont pas supportées par votre navigateur.
-                Veuillez utiliser un navigateur moderne comme Chrome, Firefox ou Edge.
+                Les notifications push ne sont pas supportées par votre navigateur. Veuillez
+                utiliser un navigateur moderne comme Chrome, Firefox ou Edge.
               </p>
             </div>
           </div>
@@ -102,9 +99,7 @@ export default function NotificationsSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-        <p className="mt-2 text-gray-600">
-          Gérez vos préférences de notifications push et email
-        </p>
+        <p className="mt-2 text-gray-600">Gérez vos préférences de notifications push et email</p>
       </div>
 
       {error && (
@@ -137,14 +132,14 @@ export default function NotificationsSettingsPage() {
                 {isSubscribed
                   ? 'Vous recevez déjà des notifications push'
                   : permission === 'denied'
-                  ? 'Vous avez bloqué les notifications. Veuillez modifier les paramètres de votre navigateur.'
-                  : permission === 'default'
-                  ? 'Vous n\'avez pas encore autorisé les notifications'
-                  : 'Activez pour recevoir des notifications en temps réel'}
+                    ? 'Vous avez bloqué les notifications. Veuillez modifier les paramètres de votre navigateur.'
+                    : permission === 'default'
+                      ? "Vous n'avez pas encore autorisé les notifications"
+                      : 'Activez pour recevoir des notifications en temps réel'}
               </p>
             </div>
             <Button
-              variant={isSubscribed ? "destructive" : "default"}
+              variant={isSubscribed ? 'destructive' : 'default'}
               onClick={handleToggleSubscription}
               disabled={isLoading || permission === 'denied'}
             >
@@ -239,7 +234,7 @@ export default function NotificationsSettingsPage() {
             {/* Event-specific preferences */}
             <div className="space-y-4">
               <h3 className="font-medium">Notifications par événement</h3>
-              
+
               <div className="space-y-4 pl-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -265,15 +260,15 @@ export default function NotificationsSettingsPage() {
                     <Label htmlFor="reservation-confirmed" className="font-medium">
                       Réservation confirmée
                     </Label>
-                    <p className="text-sm text-gray-500">
-                      Quand vous confirmez une réservation
-                    </p>
+                    <p className="text-sm text-gray-500">Quand vous confirmez une réservation</p>
                   </div>
                   <input
                     type="checkbox"
                     id="reservation-confirmed"
                     checked={localPreferences.reservationConfirmed}
-                    onChange={(e) => handlePreferenceChange('reservationConfirmed', e.target.checked)}
+                    onChange={(e) =>
+                      handlePreferenceChange('reservationConfirmed', e.target.checked)
+                    }
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
                   />
@@ -284,15 +279,15 @@ export default function NotificationsSettingsPage() {
                     <Label htmlFor="reservation-cancelled" className="font-medium">
                       Réservation annulée
                     </Label>
-                    <p className="text-sm text-gray-500">
-                      Quand une réservation est annulée
-                    </p>
+                    <p className="text-sm text-gray-500">Quand une réservation est annulée</p>
                   </div>
                   <input
                     type="checkbox"
                     id="reservation-cancelled"
                     checked={localPreferences.reservationCancelled}
-                    onChange={(e) => handlePreferenceChange('reservationCancelled', e.target.checked)}
+                    onChange={(e) =>
+                      handlePreferenceChange('reservationCancelled', e.target.checked)
+                    }
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
                   />
@@ -320,10 +315,7 @@ export default function NotificationsSettingsPage() {
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button
-                onClick={handleSavePreferences}
-                disabled={isSaving || !isSubscribed}
-              >
+              <Button onClick={handleSavePreferences} disabled={isSaving || !isSubscribed}>
                 {isSaving ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -352,8 +344,8 @@ export default function NotificationsSettingsPage() {
           </p>
           <p>
             <strong>Compatibilité :</strong> Les notifications push sont supportées sur Chrome,
-            Firefox, Edge et Safari (macOS). Elles ne sont pas disponibles sur iOS en raison
-            des restrictions d&apos;Apple.
+            Firefox, Edge et Safari (macOS). Elles ne sont pas disponibles sur iOS en raison des
+            restrictions d&apos;Apple.
           </p>
         </CardContent>
       </Card>

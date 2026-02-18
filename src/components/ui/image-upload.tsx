@@ -81,7 +81,7 @@ export default function ImageUpload({
     try {
       await onUpload(file);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
+      setError(err instanceof Error ? err.message : "Erreur lors de l'upload");
       setPreview(null);
     } finally {
       setIsUploading(false);
@@ -111,16 +111,12 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-3">
-      <div className={`relative w-full ${getAspectRatioClass()} rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50`}>
+      <div
+        className={`relative w-full ${getAspectRatioClass()} rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50`}
+      >
         {displayImage ? (
           <>
-            <Image
-              src={displayImage}
-              alt="Preview"
-              fill
-              className="object-cover"
-              unoptimized
-            />
+            <Image src={displayImage} alt="Preview" fill className="object-cover" unoptimized />
             {(isUploading || isDeleting) && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 text-white animate-spin" />
@@ -173,12 +169,10 @@ export default function ImageUpload({
         className="w-full"
       >
         <Upload className="mr-2 h-4 w-4" />
-        {displayImage ? 'Remplacer l\'image' : 'Ajouter une image'}
+        {displayImage ? "Remplacer l'image" : 'Ajouter une image'}
       </Button>
 
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-600">{error}</p>}
 
       <p className="text-xs text-gray-500">
         Formats acceptés : JPG, PNG, WebP, GIF • Max {maxSizeMB}MB

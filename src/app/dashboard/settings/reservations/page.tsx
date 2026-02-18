@@ -44,7 +44,6 @@ export default function ReservationConfigPage() {
   const fetchRestaurant = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -95,10 +94,14 @@ export default function ReservationConfigPage() {
         averagePrice,
       });
 
-      setRestaurant(prev => prev ? {
-        ...prev,
-        reservationConfig: response.reservationConfig,
-      } : null);
+      setRestaurant((prev) =>
+        prev
+          ? {
+              ...prev,
+              reservationConfig: response.reservationConfig,
+            }
+          : null
+      );
 
       setSuccessMessage('Configuration des réservations mise à jour avec succès !');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -116,11 +119,7 @@ export default function ReservationConfigPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard/settings')}
-        >
+        <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
@@ -135,9 +134,7 @@ export default function ReservationConfigPage() {
       <Card>
         <CardHeader>
           <CardTitle>Paramètres généraux</CardTitle>
-          <CardDescription>
-            Configurez la durée et les créneaux de réservation
-          </CardDescription>
+          <CardDescription>Configurez la durée et les créneaux de réservation</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -203,8 +200,8 @@ export default function ReservationConfigPage() {
                   </Label>
                   <p className="text-sm text-muted-foreground mt-1">
                     {useOpeningHours
-                      ? 'Les réservations sont disponibles uniquement pendant les horaires d\'ouverture définis'
-                      : 'Les réservations peuvent être prises en dehors des horaires d\'ouverture (mode personnalisé)'}
+                      ? "Les réservations sont disponibles uniquement pendant les horaires d'ouverture définis"
+                      : "Les réservations peuvent être prises en dehors des horaires d'ouverture (mode personnalisé)"}
                   </p>
                 </div>
               </div>
@@ -231,20 +228,24 @@ export default function ReservationConfigPage() {
         <CardContent className="space-y-3">
           <div className="flex justify-between border-b pb-2">
             <span className="text-muted-foreground">Durée par défaut</span>
-            <span className="font-semibold">{restaurant?.reservationConfig.defaultDuration} minutes</span>
+            <span className="font-semibold">
+              {restaurant?.reservationConfig.defaultDuration} minutes
+            </span>
           </div>
           <div className="flex justify-between border-b pb-2">
             <span className="text-muted-foreground">Créneaux basés sur</span>
             <span className="font-semibold">
               {restaurant?.reservationConfig.useOpeningHours
-                ? 'Horaires d\'ouverture'
+                ? "Horaires d'ouverture"
                 : 'Mode personnalisé'}
             </span>
           </div>
           <div className="flex justify-between border-b pb-2">
             <span className="text-muted-foreground">Prix moyen par client</span>
             <span className="font-semibold text-green-600">
-              {restaurant?.reservationConfig.averagePrice ? `${restaurant.reservationConfig.averagePrice}€` : 'Non configuré'}
+              {restaurant?.reservationConfig.averagePrice
+                ? `${restaurant.reservationConfig.averagePrice}€`
+                : 'Non configuré'}
             </span>
           </div>
           <div className="flex justify-between pt-2">
@@ -265,14 +266,14 @@ export default function ReservationConfigPage() {
             • <strong>Durée par défaut</strong> : Temps alloué pour chaque réservation
           </p>
           <p>
-            • <strong>Horaires d&apos;ouverture activés</strong> : Les clients peuvent réserver uniquement pendant vos heures d&apos;ouverture
+            • <strong>Horaires d&apos;ouverture activés</strong> : Les clients peuvent réserver
+            uniquement pendant vos heures d&apos;ouverture
           </p>
           <p>
-            • <strong>Mode personnalisé</strong> : Vous définissez manuellement les créneaux disponibles (utile pour les services spéciaux)
+            • <strong>Mode personnalisé</strong> : Vous définissez manuellement les créneaux
+            disponibles (utile pour les services spéciaux)
           </p>
-          <p>
-            • Les clients verront les créneaux disponibles selon votre configuration
-          </p>
+          <p>• Les clients verront les créneaux disponibles selon votre configuration</p>
         </CardContent>
       </Card>
     </div>

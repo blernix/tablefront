@@ -1,9 +1,5 @@
 import { ApiClient } from './base';
-import {
-  Reservation,
-  CreateReservationInput,
-  UpdateReservationInput,
-} from '@/types';
+import { Reservation, CreateReservationInput, UpdateReservationInput } from '@/types';
 
 export class ReservationsApi extends ApiClient {
   async getReservations(params?: {
@@ -31,7 +27,10 @@ export class ReservationsApi extends ApiClient {
     });
   }
 
-  async updateReservation(id: string, data: UpdateReservationInput): Promise<{ reservation: Reservation }> {
+  async updateReservation(
+    id: string,
+    data: UpdateReservationInput
+  ): Promise<{ reservation: Reservation }> {
     return this.request(`/api/reservations/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),

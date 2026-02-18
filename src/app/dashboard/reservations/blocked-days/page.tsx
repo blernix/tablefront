@@ -28,7 +28,14 @@ export default function BlockedDaysPage() {
   const [reason, setReason] = useState('');
 
   // Delete confirmation hook
-  const { isOpen: isDeleteModalOpen, itemToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+  const {
+    isOpen: isDeleteModalOpen,
+    itemToDelete,
+    isDeleting,
+    openDeleteModal,
+    closeDeleteModal,
+    confirmDelete,
+  } = useDeleteConfirm({
     onDelete: async (id) => {
       await apiClient.deleteDayBlock(id);
       fetchDayBlocks();
@@ -43,7 +50,6 @@ export default function BlockedDaysPage() {
   const fetchDayBlocks = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -86,13 +92,12 @@ export default function BlockedDaysPage() {
     openDeleteModal({ id: dayBlock._id, name: formatDate(dayBlock.date) });
   };
 
-
   // Group by past and future
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const futureDayBlocks = dayBlocks.filter(block => new Date(block.date) >= today);
-  const pastDayBlocks = dayBlocks.filter(block => new Date(block.date) < today);
+  const futureDayBlocks = dayBlocks.filter((block) => new Date(block.date) >= today);
+  const pastDayBlocks = dayBlocks.filter((block) => new Date(block.date) < today);
 
   if (isLoading && !showForm) {
     return <div className="text-muted-foreground">Chargement...</div>;
@@ -107,9 +112,7 @@ export default function BlockedDaysPage() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Jours bloqués</h1>
-            <p className="mt-2 text-gray-600">
-              Bloquez des dates pour empêcher les réservations
-            </p>
+            <p className="mt-2 text-gray-600">Bloquez des dates pour empêcher les réservations</p>
           </div>
         </div>
         {!showForm && (
@@ -184,11 +187,12 @@ export default function BlockedDaysPage() {
               Jours bloqués à venir
             </CardTitle>
             <CardDescription>
-              {futureDayBlocks.length} jour{futureDayBlocks.length > 1 ? 's' : ''} bloqué{futureDayBlocks.length > 1 ? 's' : ''}
+              {futureDayBlocks.length} jour{futureDayBlocks.length > 1 ? 's' : ''} bloqué
+              {futureDayBlocks.length > 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {futureDayBlocks.map(block => (
+            {futureDayBlocks.map((block) => (
               <div
                 key={block._id}
                 className="flex items-center justify-between border rounded-lg p-4"
@@ -202,11 +206,7 @@ export default function BlockedDaysPage() {
                     )}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(block)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleDelete(block)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
@@ -224,11 +224,12 @@ export default function BlockedDaysPage() {
               Jours bloqués passés
             </CardTitle>
             <CardDescription>
-              {pastDayBlocks.length} jour{pastDayBlocks.length > 1 ? 's' : ''} bloqué{pastDayBlocks.length > 1 ? 's' : ''}
+              {pastDayBlocks.length} jour{pastDayBlocks.length > 1 ? 's' : ''} bloqué
+              {pastDayBlocks.length > 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {pastDayBlocks.map(block => (
+            {pastDayBlocks.map((block) => (
               <div
                 key={block._id}
                 className="flex items-center justify-between border rounded-lg p-4 opacity-60"
@@ -242,11 +243,7 @@ export default function BlockedDaysPage() {
                     )}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(block)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleDelete(block)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
@@ -259,9 +256,7 @@ export default function BlockedDaysPage() {
       {!showForm && dayBlocks.length === 0 && (
         <Card>
           <CardContent className="py-8">
-            <p className="text-center text-muted-foreground">
-              Aucun jour bloqué
-            </p>
+            <p className="text-center text-muted-foreground">Aucun jour bloqué</p>
           </CardContent>
         </Card>
       )}

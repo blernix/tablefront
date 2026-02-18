@@ -37,7 +37,10 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
   const [activeTab, setActiveTab] = useState<'info' | 'users' | 'analytics'>('info');
   const [analytics, setAnalytics] = useState<RestaurantAnalytics | null>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{show: boolean, userId: string | null}>({show: false, userId: null});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{
+    show: boolean;
+    userId: string | null;
+  }>({ show: false, userId: null });
   const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
   const [isRegeneratingKey, setIsRegeneratingKey] = useState(false);
@@ -57,7 +60,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
 
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     if (!isAuthenticated) {
       router.push('/login');
       return;
@@ -75,7 +78,9 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
       const response = await apiClient.getRestaurantUsers(params.id);
       setUsers(response.users);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erreur lors du chargement des utilisateurs');
+      toast.error(
+        err instanceof Error ? err.message : 'Erreur lors du chargement des utilisateurs'
+      );
     } finally {
       setIsLoadingUsers(false);
     }
@@ -88,7 +93,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
         const response = await apiClient.getRestaurant(params.id);
         setRestaurant(response.restaurant);
         await loadUsers();
-       } catch (err) {
+      } catch (err) {
         toast.error('Erreur lors du chargement du restaurant');
         router.push('/admin/restaurants');
       } finally {
@@ -105,8 +110,10 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
           setIsLoadingAnalytics(true);
           const response = await apiClient.getRestaurantAnalytics(params.id, '30d');
           setAnalytics(response.analytics);
-         } catch (err) {
-          toast.error(err instanceof Error ? err.message : 'Erreur lors du chargement des statistiques');
+        } catch (err) {
+          toast.error(
+            err instanceof Error ? err.message : 'Erreur lors du chargement des statistiques'
+          );
         } finally {
           setIsLoadingAnalytics(false);
         }
@@ -119,10 +126,10 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
     try {
       setIsCreatingUser(true);
       await apiClient.createRestaurantUser(params.id, data.email, data.password);
-       toast.success('Utilisateur créé avec succès !');
-       reset();
-     } catch (err) {
-       toast.error(err instanceof Error ? err.message : 'Erreur lors de la création');
+      toast.success('Utilisateur créé avec succès !');
+      reset();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur lors de la création');
     } finally {
       setIsCreatingUser(false);
     }
@@ -134,7 +141,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
 
   const confirmDeleteUser = async () => {
     if (!showDeleteConfirm.userId) return;
-    
+
     try {
       setIsDeletingUser(true);
       await apiClient.deleteUser(showDeleteConfirm.userId);
@@ -152,11 +159,11 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
     try {
       setIsUpdatingUser(true);
       await apiClient.updateUser(userId, data);
-       toast.success('Utilisateur mis à jour avec succès');
-       setEditingUser(null);
-       loadUsers();
-     } catch (err) {
-       toast.error(err instanceof Error ? err.message : 'Erreur lors de la mise à jour');
+      toast.success('Utilisateur mis à jour avec succès');
+      setEditingUser(null);
+      loadUsers();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur lors de la mise à jour');
     } finally {
       setIsUpdatingUser(false);
     }
@@ -260,7 +267,12 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                   </div>
                   <div>
                     <Label htmlFor="address">Adresse</Label>
-                    <Input id="address" value={restaurant.address} readOnly className="bg-gray-50" />
+                    <Input
+                      id="address"
+                      value={restaurant.address}
+                      readOnly
+                      className="bg-gray-50"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="status">Statut</Label>
@@ -359,7 +371,8 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                   <div className="text-center py-4">Chargement des utilisateurs...</div>
                 ) : users.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    Aucun utilisateur. Créez-en un pour permettre l&apos;accès au tableau de bord du restaurant.
+                    Aucun utilisateur. Créez-en un pour permettre l&apos;accès au tableau de bord du
+                    restaurant.
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -371,7 +384,8 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                         <div>
                           <p className="font-medium">{user.email}</p>
                           <p className="text-sm text-muted-foreground">
-                            {user.role} • Créé le {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                            {user.role} • Créé le{' '}
+                            {new Date(user.createdAt).toLocaleDateString('fr-FR')}
                           </p>
                           <span
                             className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium mt-1 ${
@@ -384,11 +398,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                           </span>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingUser(user)}
-                          >
+                          <Button variant="outline" size="sm" onClick={() => setEditingUser(user)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button
@@ -420,8 +430,9 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
               <CardContent>
                 <div className="mb-6">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Consultez les statistiques détaillées de votre restaurant pour analyser les tendances, 
-                    les créneaux horaires les plus populaires et les performances globales.
+                    Consultez les statistiques détaillées de votre restaurant pour analyser les
+                    tendances, les créneaux horaires les plus populaires et les performances
+                    globales.
                   </p>
                   <Button onClick={() => router.push(`/admin/restaurants/${params.id}/analytics`)}>
                     Voir les statistiques détaillées
@@ -435,25 +446,33 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-2xl">{analytics.summary.totalReservations}</CardTitle>
+                          <CardTitle className="text-2xl">
+                            {analytics.summary.totalReservations}
+                          </CardTitle>
                           <CardDescription>Réservations totales</CardDescription>
                         </CardHeader>
                       </Card>
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-2xl">{analytics.summary.totalGuests}</CardTitle>
+                          <CardTitle className="text-2xl">
+                            {analytics.summary.totalGuests}
+                          </CardTitle>
                           <CardDescription>Total couverts</CardDescription>
                         </CardHeader>
                       </Card>
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-2xl">{analytics.summary.occupationRate}%</CardTitle>
+                          <CardTitle className="text-2xl">
+                            {analytics.summary.occupationRate}%
+                          </CardTitle>
                           <CardDescription>Taux d&apos;occupation</CardDescription>
                         </CardHeader>
                       </Card>
                       <Card>
                         <CardHeader className="pb-2">
-                          <CardTitle className="text-2xl">{analytics.summary.estimatedRevenue.toFixed(2)} €</CardTitle>
+                          <CardTitle className="text-2xl">
+                            {analytics.summary.estimatedRevenue.toFixed(2)} €
+                          </CardTitle>
                           <CardDescription>Revenu estimé</CardDescription>
                         </CardHeader>
                       </Card>
@@ -470,17 +489,27 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                             {Object.entries(analytics.statusDistribution).map(([status, count]) => (
                               <div key={status} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-full ${
-                                    status === 'confirmed' ? 'bg-green-500' :
-                                    status === 'pending' ? 'bg-yellow-500' :
-                                    status === 'completed' ? 'bg-blue-500' : 'bg-gray-500'
-                                  }`} />
+                                  <div
+                                    className={`w-3 h-3 rounded-full ${
+                                      status === 'confirmed'
+                                        ? 'bg-green-500'
+                                        : status === 'pending'
+                                          ? 'bg-yellow-500'
+                                          : status === 'completed'
+                                            ? 'bg-blue-500'
+                                            : 'bg-gray-500'
+                                    }`}
+                                  />
                                   <span className="font-medium capitalize">{status}</span>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <span className="font-bold">{count}</span>
                                   <span className="text-sm text-muted-foreground">
-                                    ({((count / analytics.summary.totalReservations) * 100).toFixed(1)}%)
+                                    (
+                                    {((count / analytics.summary.totalReservations) * 100).toFixed(
+                                      1
+                                    )}
+                                    %)
                                   </span>
                                 </div>
                               </div>
@@ -517,8 +546,8 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                   </div>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    Aucune donnée statistique disponible pour le moment.
-                    Les statistiques apparaîtront après les premières réservations.
+                    Aucune donnée statistique disponible pour le moment. Les statistiques
+                    apparaîtront après les premières réservations.
                   </div>
                 )}
               </CardContent>
@@ -532,14 +561,16 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-bold mb-4">Modifier l&apos;utilisateur</h3>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              handleUpdateUser(editingUser.id, {
-                email: formData.get('email') as string,
-                password: formData.get('password') as string || undefined,
-              });
-            }}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                handleUpdateUser(editingUser.id, {
+                  email: formData.get('email') as string,
+                  password: (formData.get('password') as string) || undefined,
+                });
+              }}
+            >
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="edit-email">Email</Label>
@@ -552,7 +583,9 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-password">Mot de passe (laisser vide pour ne pas changer)</Label>
+                  <Label htmlFor="edit-password">
+                    Mot de passe (laisser vide pour ne pas changer)
+                  </Label>
                   <Input
                     id="edit-password"
                     name="password"

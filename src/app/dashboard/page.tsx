@@ -189,7 +189,7 @@ export default function DashboardPage() {
         {subscriptionInfo.shouldShow && (
           <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF] bg-[#0066FF]">
                     <Crown className="h-6 w-6 text-white" />
@@ -214,6 +214,7 @@ export default function DashboardPage() {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="mt-4 md:mt-0"
                   onClick={handleManageSubscription}
                   disabled={isManagingSubscription}
                 >
@@ -242,7 +243,7 @@ export default function DashboardPage() {
           >
             <CardContent className="p-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div
                       className={`flex h-12 w-12 items-center justify-center border ${
@@ -275,7 +276,7 @@ export default function DashboardPage() {
                       variant="outline"
                       size="sm"
                       onClick={handleManageSubscription}
-                      className={`${
+                      className={`mt-4 md:mt-0 ${
                         quotaInfo.isOverLimit
                           ? 'border-red-600 text-red-600 hover:bg-red-50'
                           : 'border-amber-600 text-amber-600 hover:bg-amber-50'
@@ -439,7 +440,7 @@ export default function DashboardPage() {
         {/* Integration Card */}
         <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF] bg-[#0066FF]">
                   <Globe className="h-6 w-6 text-white" />
@@ -453,7 +454,7 @@ export default function DashboardPage() {
               </div>
               <Button
                 onClick={() => router.push('/dashboard/settings/integrations')}
-                className="bg-[#0066FF] hover:bg-[#0052EB]"
+                className="mt-4 md:mt-0 bg-[#0066FF] hover:bg-[#0052EB]"
               >
                 Configurer
               </Button>

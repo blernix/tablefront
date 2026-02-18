@@ -17,7 +17,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsMenuOpen(false);
     };
-    
+
     if (isMenuOpen) {
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
@@ -28,7 +28,11 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (isMenuOpen && !target.closest('#auth-navbar-menu') && !target.closest('#auth-navbar-toggle')) {
+      if (
+        isMenuOpen &&
+        !target.closest('#auth-navbar-menu') &&
+        !target.closest('#auth-navbar-toggle')
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -44,7 +48,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
     { name: 'Tarifs', href: '/#pricing' },
     { name: 'Développement', href: '/#custom-dev' },
     { name: 'Connexion', href: '/login' },
-    { name: 'S\'inscrire', href: '/signup' },
+    { name: "S'inscrire", href: '/signup' },
   ];
 
   return (
@@ -54,14 +58,14 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-               <Link href="/" className="flex items-center gap-4">
-                 <Image 
-                   src="/logo_512.png" 
-                   alt="TableMaster Logo"
-                   width={68}
-                   height={68}
-                   className="w-14 h-14 object-contain"
-                 />
+              <Link href="/" className="flex items-center gap-4">
+                <Image
+                  src="/logo_512.png"
+                  alt="TableMaster Logo"
+                  width={68}
+                  height={68}
+                  className="w-14 h-14 object-contain"
+                />
                 <span className="text-xl font-light text-[#2A2A2A]">TableMaster</span>
               </Link>
             </div>
@@ -74,7 +78,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
                   href={item.href}
                   className={`text-[#666666] hover:text-[#0066FF] font-light transition-colors ${
                     (item.name === 'Connexion' && activePage === 'login') ||
-                    (item.name === 'S\'inscrire' && activePage === 'signup')
+                    (item.name === "S'inscrire" && activePage === 'signup')
                       ? 'text-[#0066FF] font-normal'
                       : ''
                   }`}
@@ -92,32 +96,28 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Menu"
             >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </nav>
         </div>
 
         {/* Mobile menu overlay with side animation */}
         {/* Backdrop */}
-        <div 
+        <div
           className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-out ${
-            isMenuOpen 
-              ? 'opacity-100 pointer-events-auto bg-black/30' 
+            isMenuOpen
+              ? 'opacity-100 pointer-events-auto bg-black/30'
               : 'opacity-0 pointer-events-none'
           }`}
           onClick={() => setIsMenuOpen(false)}
         />
-        
+
         {/* Mobile menu sidebar - slides from right */}
-        <div 
+        <div
           id="auth-navbar-menu"
           className={`fixed top-0 right-0 h-full w-80 max-w-full bg-white border-l border-[#E5E5E5] z-50 md:hidden transition-transform duration-300 ease-out ${
-            isMenuOpen 
-              ? 'translate-x-0 opacity-100 pointer-events-auto' 
+            isMenuOpen
+              ? 'translate-x-0 opacity-100 pointer-events-auto'
               : 'translate-x-full opacity-0 pointer-events-none'
           }`}
         >
@@ -125,13 +125,13 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b">
               <div className="flex items-center gap-4">
-                 <Image 
-                   src="/logo_512.png" 
-                   alt="TableMaster Logo"
-                   width={48}
-                   height={48}
-                   className="w-12 h-12 object-contain"
-                 />
+                <Image
+                  src="/logo_512.png"
+                  alt="TableMaster Logo"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 object-contain"
+                />
                 <span className="text-xl font-light text-[#2A2A2A]">TableMaster</span>
               </div>
               <button
@@ -153,7 +153,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
                     href={item.href}
                     className={`block text-lg font-light py-3 transition-colors ${
                       (item.name === 'Connexion' && activePage === 'login') ||
-                      (item.name === 'S\'inscrire' && activePage === 'signup')
+                      (item.name === "S'inscrire" && activePage === 'signup')
                         ? 'text-[#0066FF] font-normal'
                         : 'text-[#666666] hover:text-[#0066FF]'
                     }`}

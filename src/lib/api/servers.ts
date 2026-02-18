@@ -1,9 +1,5 @@
 import { ApiClient } from './base';
-import {
-  ServerUser,
-  CreateServerUserInput,
-  UpdateServerUserInput,
-} from '@/types';
+import { ServerUser, CreateServerUserInput, UpdateServerUserInput } from '@/types';
 
 export class ServersApi extends ApiClient {
   async getServerUsers(): Promise<{ servers: ServerUser[] }> {

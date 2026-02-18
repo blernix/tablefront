@@ -19,25 +19,25 @@ interface FeatureGuardProps {
 
 /**
  * Component that guards access to features based on user's plan and account type.
- * 
+ *
  * @example
  * // Basic usage
  * <FeatureGuard feature="widget-customization">
  *   <WidgetCustomizer />
  * </FeatureGuard>
- * 
+ *
  * @example
  * // With custom fallback
- * <FeatureGuard 
+ * <FeatureGuard
  *   feature="advanced-analytics"
  *   fallback={<UpgradePrompt requiredPlan="pro" />}
  * >
  *   <AnalyticsDashboard />
  * </FeatureGuard>
- * 
+ *
  * @example
  * // With default upgrade prompt
- * <FeatureGuard 
+ * <FeatureGuard
  *   feature="multiple-locations"
  *   showUpgradePrompt={true}
  * >
@@ -59,12 +59,15 @@ export const FeatureGuard = ({
     if (!restaurant) return;
     if (!access.requiredPlan) return;
     if (access.requiredPlan !== 'starter' && access.requiredPlan !== 'pro') {
-      alert('Le plan requis n\'est pas disponible pour l\'achat en ligne. Veuillez nous contacter.');
+      alert("Le plan requis n'est pas disponible pour l'achat en ligne. Veuillez nous contacter.");
       return;
     }
     setUpgradeLoading(true);
     try {
-      const { url } = await apiClient.billing.createCheckoutSession(access.requiredPlan, restaurant._id);
+      const { url } = await apiClient.billing.createCheckoutSession(
+        access.requiredPlan,
+        restaurant._id
+      );
       window.location.href = url;
     } catch (error) {
       console.error('Failed to create checkout session:', error);
@@ -96,7 +99,7 @@ export const FeatureGuard = ({
               Fonctionnalité {access.requiredPlan?.toUpperCase()}
             </h3>
             <p className="mt-1 text-sm text-amber-800">
-              Cette fonctionnalité est disponible avec le plan {access.requiredPlan}. 
+              Cette fonctionnalité est disponible avec le plan {access.requiredPlan}.
               {access.currentPlan && ` Vous avez actuellement le plan ${access.currentPlan}.`}
             </p>
             <button
@@ -134,7 +137,7 @@ export const withFeatureGuard = <P extends object>(
       <Component {...props} />
     </FeatureGuard>
   );
-  
+
   WrappedComponent.displayName = `withFeatureGuard(${Component.displayName || Component.name})`;
   return WrappedComponent;
 };

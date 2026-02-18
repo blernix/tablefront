@@ -35,7 +35,14 @@ export default function ClosuresPage() {
   const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
 
   // Delete confirmation
-  const { isOpen: isDeleteModalOpen, itemToDelete: closureToDelete, isDeleting, openDeleteModal, closeDeleteModal, confirmDelete } = useDeleteConfirm({
+  const {
+    isOpen: isDeleteModalOpen,
+    itemToDelete: closureToDelete,
+    isDeleting,
+    openDeleteModal,
+    closeDeleteModal,
+    confirmDelete,
+  } = useDeleteConfirm({
     onDelete: async (id) => {
       await apiClient.deleteClosure(id);
       fetchClosures();
@@ -59,7 +66,6 @@ export default function ClosuresPage() {
   const fetchClosures = async () => {
     // Prevent multiple simultaneous calls
     if (isFetchingRef.current) {
-
       return;
     }
 
@@ -97,10 +103,9 @@ export default function ClosuresPage() {
   const handleDelete = (closure: Closure) => {
     openDeleteModal({
       id: closure._id,
-      name: `${formatDateShort(closure.startDate)} au ${formatDateShort(closure.endDate)}`
+      name: `${formatDateShort(closure.startDate)} au ${formatDateShort(closure.endDate)}`,
     });
   };
-
 
   if (isLoading) {
     return <div className="text-muted-foreground">Chargement...</div>;
@@ -109,11 +114,7 @@ export default function ClosuresPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push('/dashboard/settings')}
-        >
+        <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
@@ -157,12 +158,7 @@ export default function ClosuresPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="endDate">Date de fin (optionnelle)</Label>
-                  <Input
-                    id="endDate"
-                    type="date"
-                    {...register('endDate')}
-                    disabled={isCreating}
-                  />
+                  <Input id="endDate" type="date" {...register('endDate')} disabled={isCreating} />
                   <p className="text-xs text-muted-foreground">
                     Laissez vide pour une fermeture d&apos;un seul jour
                   </p>
@@ -210,9 +206,7 @@ export default function ClosuresPage() {
         </CardHeader>
         <CardContent>
           {closures.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
-              Aucune fermeture programmée
-            </p>
+            <p className="text-center py-8 text-muted-foreground">Aucune fermeture programmée</p>
           ) : (
             <div className="space-y-3">
               {closures.map((closure) => (
@@ -231,11 +225,7 @@ export default function ClosuresPage() {
                       <p className="text-sm text-muted-foreground">{closure.reason}</p>
                     )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(closure)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => handleDelete(closure)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>

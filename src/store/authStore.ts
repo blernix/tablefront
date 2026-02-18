@@ -29,10 +29,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-
       const response = await apiClient.login(email, password);
 
-       set({
+      set({
         user: response.user,
         token: response.token,
         isAuthenticated: true,
@@ -47,7 +46,6 @@ export const useAuthStore = create<AuthState>((set) => ({
           cookieString += '; Secure';
         }
         document.cookie = cookieString;
-
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
@@ -103,7 +101,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         cookieString += '; Secure';
       }
       document.cookie = cookieString;
-
     }
   },
 
@@ -117,7 +114,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const userStr = localStorage.getItem('user');
       const updates: Partial<AuthState> = { isInitialized: true };
 
-       if (token && userStr) {
+      if (token && userStr) {
         try {
           // Validate token format and expiration
           const parts = token.split('.');
@@ -128,7 +125,6 @@ export const useAuthStore = create<AuthState>((set) => ({
           const exp = payload.exp ? new Date(payload.exp * 1000) : null;
           const now = new Date();
           if (exp && exp.getTime() <= now.getTime()) {
-
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             document.cookie = 'token=; path=/; max-age=0';
@@ -148,7 +144,6 @@ export const useAuthStore = create<AuthState>((set) => ({
               cookieString += '; Secure';
             }
             document.cookie = cookieString;
-
           }
         } catch (error) {
           console.error('Failed to parse user from localStorage:', error);
@@ -162,14 +157,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Register unauthorized callback
       apiClient.setOnUnauthorized(() => {
-
         // Clear local storage and cookies
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         document.cookie = 'token=; path=/; max-age=0';
         // Clear token from api client
         apiClient.setToken(null);
-        
+
         // Update store state
         set({
           user: null,
@@ -184,7 +178,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       const userStr = localStorage.getItem('user');
-      
+
       if (token && userStr) {
         try {
           // Validate token format (basic check)
@@ -195,7 +189,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             document.cookie = 'token=; path=/; max-age=0';
             return;
           }
-          
+
           // Set cookie with secure flags
           const isSecure = window.location.protocol === 'https:';
           let cookieString = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
@@ -203,7 +197,6 @@ export const useAuthStore = create<AuthState>((set) => ({
             cookieString += '; Secure';
           }
           document.cookie = cookieString;
-
         } catch (error) {
           console.error('Failed to sync cookie:', error);
         }

@@ -23,7 +23,10 @@ interface ReservationsListViewProps {
   onComplete?: (reservation: Reservation) => void;
   onEdit?: (reservation: Reservation) => void;
   onDelete?: (reservation: Reservation) => void;
-  onStatusChange?: (reservation: Reservation, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => void;
+  onStatusChange?: (
+    reservation: Reservation,
+    status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  ) => void;
   restaurant?: Restaurant | null;
 }
 
@@ -35,16 +38,16 @@ export const ReservationsListView = ({
   onEdit,
   onDelete,
   onStatusChange,
-  restaurant
+  restaurant,
 }: ReservationsListViewProps) => {
   const router = useRouter();
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
   // Group reservations by date and service
   const reservationsByDateAndService = useMemo(() => {
-    const grouped: Record<string, { lunch: Reservation[], dinner: Reservation[] }> = {};
+    const grouped: Record<string, { lunch: Reservation[]; dinner: Reservation[] }> = {};
 
-    reservations.forEach(reservation => {
+    reservations.forEach((reservation) => {
       const dateKey = getLocalDateString(reservation.date);
       if (!grouped[dateKey]) {
         grouped[dateKey] = { lunch: [], dinner: [] };
@@ -69,9 +72,9 @@ export const ReservationsListView = ({
     return format(date, 'EEEE d MMMM yyyy', { locale: fr });
   };
 
-
-
-  const handleDetailStatusChange = (status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
+  const handleDetailStatusChange = (
+    status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  ) => {
     if (selectedReservation && onStatusChange) {
       onStatusChange(selectedReservation, status);
       setSelectedReservation(null);
@@ -87,7 +90,7 @@ export const ReservationsListView = ({
             disabled: true,
             rightAction: null,
             leftAction: null,
-            sameActionOnBothSides: false
+            sameActionOnBothSides: false,
           };
         }
         return {
@@ -96,15 +99,15 @@ export const ReservationsListView = ({
             label: 'Confirmer',
             icon: <Check className="h-5 w-5" />,
             color: 'text-green-600',
-            handler: () => onConfirm(reservation)
+            handler: () => onConfirm(reservation),
           },
           leftAction: {
             label: 'Annuler',
             icon: <XCircle className="h-5 w-5" />,
             color: 'text-red-600',
-            handler: () => onCancel(reservation)
+            handler: () => onCancel(reservation),
           },
-          sameActionOnBothSides: false
+          sameActionOnBothSides: false,
         };
       case 'confirmed':
         // Vérifier que le handler existe
@@ -113,7 +116,7 @@ export const ReservationsListView = ({
             disabled: true,
             rightAction: null,
             leftAction: null,
-            sameActionOnBothSides: false
+            sameActionOnBothSides: false,
           };
         }
         return {
@@ -122,15 +125,15 @@ export const ReservationsListView = ({
             label: 'Terminer',
             icon: <CheckCircle className="h-5 w-5" />,
             color: 'text-blue-600',
-            handler: () => onComplete(reservation)
+            handler: () => onComplete(reservation),
           },
           leftAction: {
             label: 'Terminer',
             icon: <CheckCircle className="h-5 w-5" />,
             color: 'text-blue-600',
-            handler: () => onComplete(reservation)
+            handler: () => onComplete(reservation),
           },
-          sameActionOnBothSides: true
+          sameActionOnBothSides: true,
         };
       case 'cancelled':
       case 'completed':
@@ -138,14 +141,14 @@ export const ReservationsListView = ({
           disabled: true,
           rightAction: null,
           leftAction: null,
-          sameActionOnBothSides: false
+          sameActionOnBothSides: false,
         };
       default:
         return {
           disabled: true,
           rightAction: null,
           leftAction: null,
-          sameActionOnBothSides: false
+          sameActionOnBothSides: false,
         };
     }
   };
@@ -154,9 +157,7 @@ export const ReservationsListView = ({
     return (
       <Card>
         <CardContent className="py-12">
-          <p className="text-center text-muted-foreground">
-            Aucune réservation trouvée
-          </p>
+          <p className="text-center text-muted-foreground">Aucune réservation trouvée</p>
         </CardContent>
       </Card>
     );
@@ -166,7 +167,7 @@ export const ReservationsListView = ({
     <>
       {/* Mobile View */}
       <div className="md:hidden space-y-6">
-        {sortedDates.map(dateKey => {
+        {sortedDates.map((dateKey) => {
           const services = reservationsByDateAndService[dateKey];
           const allDayReservations = [...services.lunch, ...services.dinner];
           const capacity = calculateDailyCapacity(allDayReservations, dateKey, restaurant);
@@ -179,9 +180,7 @@ export const ReservationsListView = ({
                 <h3 className="text-lg font-semibold text-slate-900 capitalize">
                   {formatDate(dateKey)}
                 </h3>
-                <span className="text-sm text-slate-500">
-                  ({allDayReservations.length})
-                </span>
+                <span className="text-sm text-slate-500">({allDayReservations.length})</span>
               </div>
 
               {/* Capacity Indicator */}
@@ -200,51 +199,17 @@ export const ReservationsListView = ({
                     <h4 className="text-md font-medium text-slate-700">Service du midi</h4>
                     <span className="text-sm text-slate-500">({services.lunch.length})</span>
                   </div>
-                  {services.lunch.map(reservation => {
+                  {services.lunch.map((reservation) => {
                     const config = getSwipeConfig(reservation);
                     return (
                       <SwipeableCard
                         key={reservation._id}
                         onSwipeRight={config.rightAction?.handler}
-                        onSwipeLeft={config.sameActionOnBothSides ? config.rightAction?.handler : config.leftAction?.handler}
-                        disabled={config.disabled}
-                        rightLabel={config.rightAction?.label}
-                        leftLabel={config.leftAction?.label}
-                        rightIcon={config.rightAction?.icon}
-                        leftIcon={config.leftAction?.icon}
-                        rightColor={config.rightAction?.color}
-                        leftColor={config.leftAction?.color}
-                        sameActionOnBothSides={config.sameActionOnBothSides}
-                      >
-                      <ReservationCard
-                        reservation={reservation}
-                        variant="compact"
-                        onClick={() => setSelectedReservation(reservation)}
-                        onConfirm={() => onConfirm(reservation)}
-                        onCancel={() => onCancel(reservation)}
-                        onComplete={onComplete ? () => onComplete(reservation) : undefined}
-                        onEdit={onEdit ? () => onEdit(reservation) : undefined}
-                         onDelete={onDelete ? () => onDelete(reservation) : undefined}
-                       />
-                     </SwipeableCard>
-                    ); })}
-                </div>
-              )}
-
-              {/* Service du soir */}
-              {services.dinner.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 px-2">
-                    <h4 className="text-md font-medium text-slate-700">Service du soir</h4>
-                    <span className="text-sm text-slate-500">({services.dinner.length})</span>
-                  </div>
-                  {services.dinner.map(reservation => {
-                    const config = getSwipeConfig(reservation);
-                    return (
-                      <SwipeableCard
-                        key={reservation._id}
-                        onSwipeRight={config.rightAction?.handler}
-                        onSwipeLeft={config.sameActionOnBothSides ? config.rightAction?.handler : config.leftAction?.handler}
+                        onSwipeLeft={
+                          config.sameActionOnBothSides
+                            ? config.rightAction?.handler
+                            : config.leftAction?.handler
+                        }
                         disabled={config.disabled}
                         rightLabel={config.rightAction?.label}
                         leftLabel={config.leftAction?.label}
@@ -265,7 +230,51 @@ export const ReservationsListView = ({
                           onDelete={onDelete ? () => onDelete(reservation) : undefined}
                         />
                       </SwipeableCard>
-                    ); })}
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Service du soir */}
+              {services.dinner.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2">
+                    <h4 className="text-md font-medium text-slate-700">Service du soir</h4>
+                    <span className="text-sm text-slate-500">({services.dinner.length})</span>
+                  </div>
+                  {services.dinner.map((reservation) => {
+                    const config = getSwipeConfig(reservation);
+                    return (
+                      <SwipeableCard
+                        key={reservation._id}
+                        onSwipeRight={config.rightAction?.handler}
+                        onSwipeLeft={
+                          config.sameActionOnBothSides
+                            ? config.rightAction?.handler
+                            : config.leftAction?.handler
+                        }
+                        disabled={config.disabled}
+                        rightLabel={config.rightAction?.label}
+                        leftLabel={config.leftAction?.label}
+                        rightIcon={config.rightAction?.icon}
+                        leftIcon={config.leftAction?.icon}
+                        rightColor={config.rightAction?.color}
+                        leftColor={config.leftAction?.color}
+                        sameActionOnBothSides={config.sameActionOnBothSides}
+                      >
+                        <ReservationCard
+                          reservation={reservation}
+                          variant="compact"
+                          onClick={() => setSelectedReservation(reservation)}
+                          onConfirm={() => onConfirm(reservation)}
+                          onCancel={() => onCancel(reservation)}
+                          onComplete={onComplete ? () => onComplete(reservation) : undefined}
+                          onEdit={onEdit ? () => onEdit(reservation) : undefined}
+                          onDelete={onDelete ? () => onDelete(reservation) : undefined}
+                        />
+                      </SwipeableCard>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -275,7 +284,7 @@ export const ReservationsListView = ({
 
       {/* Desktop View */}
       <div className="hidden md:block space-y-4">
-        {sortedDates.map(dateKey => {
+        {sortedDates.map((dateKey) => {
           const services = reservationsByDateAndService[dateKey];
           const allDayReservations = [...services.lunch, ...services.dinner];
           const capacity = calculateDailyCapacity(allDayReservations, dateKey, restaurant);
@@ -290,8 +299,9 @@ export const ReservationsListView = ({
                       {formatDate(dateKey)}
                     </CardTitle>
                     <CardDescription>
-                      {allDayReservations.length} réservation{allDayReservations.length > 1 ? 's' : ''}
-                      {' '}(midi: {services.lunch.length}, soir: {services.dinner.length})
+                      {allDayReservations.length} réservation
+                      {allDayReservations.length > 1 ? 's' : ''} (midi: {services.lunch.length},
+                      soir: {services.dinner.length})
                     </CardDescription>
                   </div>
                   <CapacityIndicator
@@ -313,7 +323,7 @@ export const ReservationsListView = ({
                       <span className="text-sm text-slate-500">({services.lunch.length})</span>
                     </div>
                     <div className="space-y-3">
-                      {services.lunch.map(reservation => (
+                      {services.lunch.map((reservation) => (
                         <div
                           key={reservation._id}
                           className="transition-all hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
@@ -343,7 +353,7 @@ export const ReservationsListView = ({
                       <span className="text-sm text-slate-500">({services.dinner.length})</span>
                     </div>
                     <div className="space-y-3">
-                      {services.dinner.map(reservation => (
+                      {services.dinner.map((reservation) => (
                         <div
                           key={reservation._id}
                           className="transition-all hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
@@ -379,14 +389,22 @@ export const ReservationsListView = ({
         {selectedReservation && (
           <ReservationDetailView
             reservation={selectedReservation}
-            onEdit={onEdit ? () => {
-              setSelectedReservation(null);
-              onEdit(selectedReservation);
-            } : undefined}
-            onDelete={onDelete ? () => {
-              setSelectedReservation(null);
-              onDelete(selectedReservation);
-            } : undefined}
+            onEdit={
+              onEdit
+                ? () => {
+                    setSelectedReservation(null);
+                    onEdit(selectedReservation);
+                  }
+                : undefined
+            }
+            onDelete={
+              onDelete
+                ? () => {
+                    setSelectedReservation(null);
+                    onDelete(selectedReservation);
+                  }
+                : undefined
+            }
             onStatusChange={onStatusChange ? handleDetailStatusChange : undefined}
           />
         )}

@@ -16,7 +16,7 @@ interface QuickFiltersProps {
 }
 
 export const QuickFilters = ({ filters, onClearAll }: QuickFiltersProps) => {
-  const activeCount = filters.filter(f => f.isActive).length;
+  const activeCount = filters.filter((f) => f.isActive).length;
 
   return (
     <div className="flex gap-2 flex-wrap items-center">

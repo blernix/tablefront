@@ -194,7 +194,11 @@ class UnifiedApiClient {
     return this.restaurants.generateMenuQrCode();
   }
 
-  async sendContactMessage(data: { subject: string; category: 'question' | 'problem' | 'other'; message: string }) {
+  async sendContactMessage(data: {
+    subject: string;
+    category: 'question' | 'problem' | 'other';
+    message: string;
+  }) {
     return this.restaurants.sendContactMessage(data);
   }
 
@@ -332,7 +336,12 @@ class UnifiedApiClient {
     return this.admin.getAdminDashboard();
   }
 
-  async getRestaurantAnalytics(restaurantId: string, period?: string, startDate?: string, endDate?: string) {
+  async getRestaurantAnalytics(
+    restaurantId: string,
+    period?: string,
+    startDate?: string,
+    endDate?: string
+  ) {
     return this.admin.getRestaurantAnalytics(restaurantId, period, startDate, endDate);
   }
 

@@ -107,9 +107,10 @@ export default function ExportPage() {
       const url = URL.createObjectURL(blob);
       const date = format(new Date(), 'yyyy-MM-dd_HHmm');
 
-      const periodLabel = exportType === 'month' 
-        ? `${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`
-        : selectedYear.toString();
+      const periodLabel =
+        exportType === 'month'
+          ? `${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`
+          : selectedYear.toString();
 
       link.setAttribute('href', url);
       link.setAttribute('download', `reservations_${periodLabel}_${date}.csv`);
@@ -118,10 +119,12 @@ export default function ExportPage() {
       link.click();
       document.body.removeChild(link);
 
-      toast.success(`${reservations.length} réservation(s) exportée(s) pour ${exportType === 'month' ? 'le mois' : "l'année"} sélectionné(e)`);
+      toast.success(
+        `${reservations.length} réservation(s) exportée(s) pour ${exportType === 'month' ? 'le mois' : "l'année"} sélectionné(e)`
+      );
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Erreur lors de l\'export');
+      toast.error("Erreur lors de l'export");
     } finally {
       setIsLoading(false);
     }
@@ -131,9 +134,7 @@ export default function ExportPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Export des données</h1>
-        <p className="mt-2 text-gray-600">
-          Exportez vos réservations par mois ou par année
-        </p>
+        <p className="mt-2 text-gray-600">Exportez vos réservations par mois ou par année</p>
       </div>
 
       <Card>
@@ -146,71 +147,67 @@ export default function ExportPage() {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-               <Label>Type d&apos;export</Label>
-               <select
-                 value={exportType}
-                 onChange={(e) => setExportType(e.target.value as 'month' | 'year')}
-                 className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-               >
-                 <option value="month">Export par mois</option>
-                 <option value="year">Export par année</option>
-               </select>
+              <Label>Type d&apos;export</Label>
+              <select
+                value={exportType}
+                onChange={(e) => setExportType(e.target.value as 'month' | 'year')}
+                className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="month">Export par mois</option>
+                <option value="year">Export par année</option>
+              </select>
             </div>
 
             {exportType === 'month' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Mois</Label>
-                   <select
-                     value={selectedMonth.toString()}
-                     onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
-                     className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   >
-                     {months.map((month) => (
-                       <option key={month.value} value={month.value.toString()}>
-                         {month.label.charAt(0).toUpperCase() + month.label.slice(1)}
-                       </option>
-                     ))}
-                   </select>
+                  <select
+                    value={selectedMonth.toString()}
+                    onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
+                    className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {months.map((month) => (
+                      <option key={month.value} value={month.value.toString()}>
+                        {month.label.charAt(0).toUpperCase() + month.label.slice(1)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <Label>Année</Label>
-                   <select
-                     value={selectedYear.toString()}
-                     onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                     className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   >
-                     {years.map((year) => (
-                       <option key={year} value={year.toString()}>
-                         {year}
-                       </option>
-                     ))}
-                   </select>
+                  <select
+                    value={selectedYear.toString()}
+                    onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                    className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {years.map((year) => (
+                      <option key={year} value={year.toString()}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             ) : (
               <div className="space-y-2">
                 <Label>Année</Label>
-                 <select
-                   value={selectedYear.toString()}
-                   onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                   className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 >
-                   {years.map((year) => (
-                     <option key={year} value={year.toString()}>
-                       {year}
-                     </option>
-                   ))}
-                 </select>
+                <select
+                  value={selectedYear.toString()}
+                  onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                  className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year.toString()}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
 
             <div className="pt-4">
-              <Button 
-                onClick={handleExport} 
-                disabled={isLoading}
-                className="min-w-[200px]"
-              >
+              <Button onClick={handleExport} disabled={isLoading} className="min-w-[200px]">
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -233,7 +230,7 @@ export default function ExportPage() {
 
       <Card>
         <CardHeader>
-           <CardTitle>Informations sur l&apos;export</CardTitle>
+          <CardTitle>Informations sur l&apos;export</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1">
@@ -258,10 +255,11 @@ export default function ExportPage() {
             </p>
           </div>
           <div className="space-y-1">
-             <h4 className="font-medium text-gray-900">Période d&apos;export</h4>
+            <h4 className="font-medium text-gray-900">Période d&apos;export</h4>
             <p className="text-sm text-gray-600">
               Vous pouvez exporter les réservations pour un mois spécifique ou pour toute une année.
-              Les exports incluent toutes les réservations (passées, à venir, et annulées) dans la période sélectionnée.
+              Les exports incluent toutes les réservations (passées, à venir, et annulées) dans la
+              période sélectionnée.
             </p>
           </div>
         </CardContent>

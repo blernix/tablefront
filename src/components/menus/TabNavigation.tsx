@@ -69,7 +69,9 @@ export default function TabNavigation({ activeTab }: TabNavigationProps) {
                   <div
                     className={cn(
                       'flex h-7 w-7 items-center justify-center border',
-                      isActive ? 'border-[#0066FF] text-[#0066FF]' : 'border-[#E5E5E5] text-[#666666]'
+                      isActive
+                        ? 'border-[#0066FF] text-[#0066FF]'
+                        : 'border-[#E5E5E5] text-[#666666]'
                     )}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -96,9 +98,7 @@ export default function TabNavigation({ activeTab }: TabNavigationProps) {
                 href={createTabUrl(tab.id)}
                 className={cn(
                   'flex flex-col items-center justify-center w-16 py-2 transition-colors',
-                  isActive
-                    ? 'text-[#0066FF] bg-[#FAFAFA]'
-                    : 'text-[#666666] hover:text-[#2A2A2A]'
+                  isActive ? 'text-[#0066FF] bg-[#FAFAFA]' : 'text-[#666666] hover:text-[#2A2A2A]'
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -113,9 +113,7 @@ export default function TabNavigation({ activeTab }: TabNavigationProps) {
                   />
                 </div>
                 <span className="text-xs font-medium uppercase tracking-[0.05em]">{tab.label}</span>
-                {isActive && (
-                  <div className="absolute -top-0 w-10 h-[2px] bg-[#0066FF]" />
-                )}
+                {isActive && <div className="absolute -top-0 w-10 h-[2px] bg-[#0066FF]" />}
               </Link>
             );
           })}

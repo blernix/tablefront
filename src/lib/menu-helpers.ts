@@ -8,30 +8,28 @@ import { Dish } from '@/types';
  */
 export function getDishCategoryId(dish: Dish): string | null {
   if (dish.categoryId === null) return null;
-  return typeof dish.categoryId === 'string' 
-    ? dish.categoryId 
-    : dish.categoryId._id;
+  return typeof dish.categoryId === 'string' ? dish.categoryId : dish.categoryId._id;
 }
 
 /**
  * Counts the number of dishes that belong to a specific category
  */
 export function countDishesInCategory(dishes: Dish[], categoryId: string): number {
-  return dishes.filter(dish => getDishCategoryId(dish) === categoryId).length;
+  return dishes.filter((dish) => getDishCategoryId(dish) === categoryId).length;
 }
 
 /**
  * Filters dishes that belong to a specific category
  */
 export function filterDishesByCategory(dishes: Dish[], categoryId: string): Dish[] {
-  return dishes.filter(dish => getDishCategoryId(dish) === categoryId);
+  return dishes.filter((dish) => getDishCategoryId(dish) === categoryId);
 }
 
 /**
  * Returns all orphaned dishes (dishes without a category)
  */
 export function getOrphanedDishes(dishes: Dish[]): Dish[] {
-  return dishes.filter(dish => getDishCategoryId(dish) === null);
+  return dishes.filter((dish) => getDishCategoryId(dish) === null);
 }
 
 /**
@@ -41,8 +39,8 @@ export function getOrphanedDishes(dishes: Dish[]): Dish[] {
  */
 export function groupDishesByCategory(dishes: Dish[]): Map<string, Dish[]> {
   const map = new Map<string, Dish[]>();
-  
-  dishes.forEach(dish => {
+
+  dishes.forEach((dish) => {
     const categoryId = getDishCategoryId(dish);
     if (categoryId !== null) {
       if (!map.has(categoryId)) {
@@ -51,6 +49,6 @@ export function groupDishesByCategory(dishes: Dish[]): Map<string, Dish[]> {
       map.get(categoryId)!.push(dish);
     }
   });
-  
+
   return map;
 }

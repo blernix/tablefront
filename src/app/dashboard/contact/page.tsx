@@ -12,11 +12,17 @@ import { MessageSquare } from 'lucide-react';
 
 // Validation schema matching backend
 const contactSchema = z.object({
-  subject: z.string().min(1, 'Le sujet est requis').max(200, 'Le sujet ne doit pas dépasser 200 caractères'),
+  subject: z
+    .string()
+    .min(1, 'Le sujet est requis')
+    .max(200, 'Le sujet ne doit pas dépasser 200 caractères'),
   category: z.enum(['question', 'problem', 'other'], {
     errorMap: () => ({ message: 'Veuillez sélectionner une catégorie valide' }),
   }),
-  message: z.string().min(1, 'Le message est requis').max(5000, 'Le message ne doit pas dépasser 5000 caractères'),
+  message: z
+    .string()
+    .min(1, 'Le message est requis')
+    .max(5000, 'Le message ne doit pas dépasser 5000 caractères'),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -65,7 +71,8 @@ export default function ContactPage() {
         <div className="mb-8">
           <h2 className="text-lg font-light text-[#2A2A2A]">Envoyer un message</h2>
           <p className="text-sm text-[#666666]">
-            Votre message sera envoyé à contact@tablemaster.fr. Nous vous répondrons dans les plus brefs délais.
+            Votre message sera envoyé à contact@tablemaster.fr. Nous vous répondrons dans les plus
+            brefs délais.
           </p>
         </div>
 
@@ -80,9 +87,7 @@ export default function ContactPage() {
               className={errors.subject ? 'border-destructive' : ''}
               disabled={isPending}
             />
-            {errors.subject && (
-              <p className="text-sm text-destructive">{errors.subject.message}</p>
-            )}
+            {errors.subject && <p className="text-sm text-destructive">{errors.subject.message}</p>}
           </div>
 
           {/* Category */}
@@ -114,21 +119,16 @@ export default function ContactPage() {
               className={errors.message ? 'border-destructive' : ''}
               disabled={isPending}
             />
-            {errors.message && (
-              <p className="text-sm text-destructive">{errors.message.message}</p>
-            )}
+            {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
             <p className="text-xs text-[#666666]">
-              Maximum 5000 caractères. Incluez toutes les informations utiles pour nous aider à vous répondre.
+              Maximum 5000 caractères. Incluez toutes les informations utiles pour nous aider à vous
+              répondre.
             </p>
           </div>
 
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="min-w-[160px]"
-            >
+            <Button type="submit" disabled={isPending} className="min-w-[160px]">
               {isPending ? 'Envoi en cours...' : 'Envoyer le message'}
             </Button>
           </div>
