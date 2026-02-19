@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import {
   getPageMetadata,
   organizationStructuredData,
-  productStructuredData,
-  proProductStructuredData,
+  softwareStructuredData,
+  pricingStructuredData,
 } from '@/config/metadata';
 
 interface PageMetadataProps {
@@ -38,8 +38,8 @@ export default function PageMetadata({
   // Données structurées par défaut
   const defaultStructuredData = [
     organizationStructuredData,
-    productStructuredData,
-    proProductStructuredData,
+    softwareStructuredData,
+    pricingStructuredData,
   ];
 
   const allStructuredData = [...defaultStructuredData, ...structuredData];

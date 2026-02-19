@@ -87,7 +87,7 @@ export default function FloatingWidgetDemo({ isActive = true }: FloatingWidgetDe
       </motion.div>
 
       {/* Tooltip text */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         animate={isActive ? { opacity: [0, 1, 0] } : { opacity: 0 }}
         transition={
@@ -103,7 +103,7 @@ export default function FloatingWidgetDemo({ isActive = true }: FloatingWidgetDe
         className="absolute bottom-16 right-4 sm:bottom-20 sm:right-8 bg-gray-800 text-white text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-md whitespace-nowrap shadow-lg"
       >
         Réserver une table
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }

@@ -9,8 +9,8 @@ import './globals.css';
 import {
   getPageMetadata,
   organizationStructuredData,
-  productStructuredData,
-  proProductStructuredData,
+  softwareStructuredData,
+  pricingStructuredData,
 } from '@/config/metadata';
 
 const inter = Inter({
@@ -95,12 +95,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Script
           id="product-structured-data"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareStructuredData) }}
         />
         <Script
           id="pro-product-structured-data"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(proProductStructuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingStructuredData) }}
         />
         <Script
           id="breadcrumb-structured-data"

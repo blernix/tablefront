@@ -17,6 +17,7 @@ interface DemoChapterProps {
   invertLayout?: boolean;
   scrollProgress?: number; // Keep for backward compatibility
   className?: string;
+  features?: Array<{ title: string; description: string }>;
 }
 
 export default function DemoChapter({
@@ -33,6 +34,7 @@ export default function DemoChapter({
   invertLayout = false,
   scrollProgress: externalScrollProgress,
   className = '',
+  features = [],
 }: DemoChapterProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -126,6 +128,9 @@ export default function DemoChapter({
   // Si externalIsActive est fourni, on l'utilise, sinon on utilise isInView
   const isActive = externalIsActive !== undefined ? externalIsActive : isInView;
 
+  // Pour les enfants : animer si déjà vu OU si actif
+  const shouldAnimate = hasBeenAnimated || isActive;
+
   // Conditions pour afficher les éléments (persistant une fois vu)
   const shouldShow = hasBeenAnimated || isActive;
   const shouldShowWithSection = hasBeenAnimated || (sectionActive && isActive);
@@ -216,7 +221,7 @@ export default function DemoChapter({
                   className="w-full"
                 >
                   {isValidElement(demoComponent)
-                    ? cloneElement(demoComponent, { isActive })
+                    ? cloneElement(demoComponent, { isActive: shouldAnimate })
                     : demoComponent}
                 </motion.div>
               </div>
@@ -320,59 +325,39 @@ export default function DemoChapter({
               }}
               transition={{ duration: 0.5, delay: shouldShowWithSection ? 0.3 : 0 }}
             >
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-[#0066FF]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3 text-[#0066FF]" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+              {(features.length > 0
+                ? features
+                : [
+                    {
+                      title: 'Intuitif et rapide',
+                      description: 'Interface optimisée pour une prise en main immédiate',
+                    },
+                    {
+                      title: 'Compatible mobile',
+                      description: 'Fonctionne parfaitement sur smartphone et tablette',
+                    },
+                    {
+                      title: 'Inclus dans tous les plans',
+                      description: "Aucun supplément, disponible dès l'inscription",
+                    },
+                  ]
+              ).map((feature, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-[#0066FF]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-[#0066FF]" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-normal text-[#2A2A2A]">{feature.title}</h4>
+                    <p className="text-sm text-[#666666] font-light mt-1">{feature.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-normal text-[#2A2A2A]">Intuitif et rapide</h4>
-                  <p className="text-sm text-[#666666] font-light mt-1">
-                    Interface optimisée pour une prise en main immédiate
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-[#0066FF]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3 text-[#0066FF]" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-normal text-[#2A2A2A]">Compatible mobile</h4>
-                  <p className="text-sm text-[#666666] font-light mt-1">
-                    Fonctionne parfaitement sur smartphone et tablette
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-[#0066FF]/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3 text-[#0066FF]" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-normal text-[#2A2A2A]">Inclus dans tous les plans</h4>
-                  <p className="text-sm text-[#666666] font-light mt-1">
-                    Aucun supplément, disponible dès l&apos;inscription
-                  </p>
-                </div>
-              </div>
+              ))}
             </motion.div>
           </motion.div>
         </div>

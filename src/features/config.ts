@@ -197,7 +197,7 @@ export const FEATURE_CONFIG: Record<string, FeatureConfig> = {
 export const PLAN_CONFIG: Record<string, PlanConfig> = {
   starter: {
     id: 'starter',
-    name: 'Starter',
+    name: 'Pack Gestion',
     description: 'Parfait pour démarrer avec les réservations en ligne',
     price: 29,
     features: [
@@ -216,7 +216,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
   },
   pro: {
     id: 'pro',
-    name: 'Pro',
+    name: 'Pack Croissance',
     description: 'Solution complète pour restaurants professionnels',
     price: 79,
     features: [

@@ -32,6 +32,20 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Intégration invisible',
+          description: "S'adapte aux couleurs de votre charte graphique en un clic.",
+        },
+        {
+          title: 'Conversion maximale',
+          description: 'Toujours accessible, même quand le client scrolle votre carte.',
+        },
+        {
+          title: 'Zéro maintenance',
+          description: 'Une fois installé, il se met à jour tout seul.',
+        },
+      ],
     },
     {
       id: 2,
@@ -50,6 +64,20 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Expérience "sans friction"',
+          description: 'Moins de champs à remplir pour un taux de complétion plus élevé.',
+        },
+        {
+          title: 'Mémoire intelligente',
+          description: 'Reconnaît vos clients réguliers pour pré-remplir leurs coordonnées.',
+        },
+        {
+          title: 'Disponibilités réelles',
+          description: 'Ne propose que les créneaux où vous avez encore de la place.',
+        },
+      ],
     },
     {
       id: 3,
@@ -68,6 +96,20 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Gestion au pouce',
+          description: 'Un swipe à droite pour confirmer, un swipe à gauche pour décliner.',
+        },
+        {
+          title: 'Réponses instantanées',
+          description: 'Le client reçoit son email de confirmation instantanément.',
+        },
+        {
+          title: 'Liberté totale',
+          description: 'Gérez votre salle depuis votre terrasse ou votre domicile.',
+        },
+      ],
     },
     {
       id: 4,
@@ -86,13 +128,27 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Prévisions de CA',
+          description: 'Visualisez vos revenus estimés avant même le début du service.',
+        },
+        {
+          title: "Analyse d'occupation",
+          description: 'Identifiez vos services creux pour lancer des offres spéciales.',
+        },
+        {
+          title: 'Export comptable',
+          description: 'Téléchargez vos données en CSV pour votre comptabilité en un clic.',
+        },
+      ],
     },
     {
       id: 5,
       title: 'Formulaire par lien direct',
-      description: 'URL dédiée et QR code',
+      description: 'URL dédiée',
       detailedDescription:
-        'Partagez un lien unique ou un QR code sur vos réseaux sociaux, carte de table ou affiche. Vos clients accèdent directement à votre formulaire de réservation optimisé.',
+        'Partagez un lien unique sur vos réseaux sociaux. Vos clients accèdent directement à votre formulaire de réservation optimisé.',
       component: <DirectLinkFormDemo />,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,6 +160,21 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Bio Instagram optimisée',
+          description: 'Un lien court et pro qui rassure vos followers.',
+        },
+        {
+          title: 'QR Codes de table',
+          description:
+            'Permettez aux clients de réserver leur prochaine table avant même de partir.',
+        },
+        {
+          title: "Prêt pour être utilisé",
+          description: 'Dès votre inscription, commencez à utiliser votre formulaire.',
+        },
+      ],
     },
     {
       id: 6,
@@ -122,6 +193,21 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Alerte "Heure de pointe"',
+          description: 'Visualisez immédiatement quand votre cuisine sera sous pression.',
+        },
+        {
+          title: 'Vue globale',
+          description: 'Basculez entre vue journalière, hebdomadaire ou mensuelle.',
+        },
+        {
+          title: 'Notes de service',
+          description:
+            "Ajoutez des annotations (anniversaire, allergie) visibles par toute l'équipe.",
+        },
+      ],
     },
     {
       id: 7,
@@ -140,6 +226,20 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Recherche ultra-rapide',
+          description: 'Retrouvez une résa par nom ou téléphone en moins de 3 secondes.',
+        },
+        {
+          title: 'Pointage des arrivées',
+          description: 'Marquez les clients présents pour libérer les tables des "No-shows".',
+        },
+        {
+          title: 'Filtres intelligents',
+          description: 'Affichez uniquement ce qui compte (ex: "En attente" ou "Ce soir").',
+        },
+      ],
     },
     {
       id: 8,
@@ -158,6 +258,21 @@ export default function InteractiveDemoSection() {
           />
         </svg>
       ),
+      features: [
+        {
+          title: 'Timing parfait',
+          description: "L'email part pile au moment où le client quitte l'établissement.",
+        },
+        {
+          title: 'Lien direct',
+          description:
+            "Le client arrive directement sur l'interface d'avis, pas de recherche à faire.",
+        },
+        {
+          title: 'Cercle vertueux',
+          description: "Plus d'avis = plus de visibilité = plus de réservations.",
+        },
+      ],
     },
   ];
 

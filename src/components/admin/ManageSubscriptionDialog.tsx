@@ -152,7 +152,7 @@ export function ManageSubscriptionDialog({
   };
 
   const description = currentPlan
-    ? `Restaurant : ${restaurantName} · Plan actuel : ${currentPlan === 'pro' ? 'Pro' : 'Starter'}${currentStatus ? ` · ${currentStatus}` : ''}`
+    ? `Restaurant : ${restaurantName} · Plan actuel : ${currentPlan === 'pro' ? 'Pack Croissance' : 'Pack Gestion'}${currentStatus ? ` · ${currentStatus}` : ''}`
     : `Restaurant : ${restaurantName}`;
 
   return (
@@ -188,8 +188,8 @@ export function ManageSubscriptionDialog({
               onChange={(e) => setPlan(e.target.value as 'starter' | 'pro')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="starter">Starter (39€/mois · 400 résa/mois)</option>
-              <option value="pro">Pro (69€/mois · Illimité)</option>
+              <option value="starter">Pack Gestion (39€/mois · 400 résa/mois)</option>
+              <option value="pro">Pack Croissance (69€/mois · Illimité)</option>
             </select>
           </div>
         )}

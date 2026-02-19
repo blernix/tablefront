@@ -15,6 +15,7 @@ interface PlanInfo {
   price: number;
   features: string[];
   popular?: boolean;
+  trial?: boolean;
 }
 
 interface RestaurantFormData {
@@ -45,8 +46,9 @@ interface FormErrors {
 const PLANS: Record<PlanType, PlanInfo> = {
   starter: {
     id: 'starter',
-    name: 'Starter',
+    name: 'Pack Gestion',
     price: 39,
+    trial: true,
     features: [
       '400 réservations par mois',
       'Widget standard',
@@ -56,8 +58,9 @@ const PLANS: Record<PlanType, PlanInfo> = {
   },
   pro: {
     id: 'pro',
-    name: 'Pro',
+    name: 'Pack Croissance',
     price: 69,
+    trial: true,
     features: [
       'Réservations illimitées',
       'Widget personnalisable (couleurs, police)',
@@ -131,6 +134,13 @@ function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: PlanSelection
                 <span className="text-3xl font-bold text-gray-900">{plan.price}€</span>
                 <span className="ml-1 text-gray-600">/mois</span>
               </div>
+              {plan.trial && (
+                <div className="mt-2">
+                  <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                    14 jours d&apos;essai gratuit
+                  </span>
+                </div>
+              )}
             </div>
 
             <ul className="mt-6 space-y-3">
@@ -548,6 +558,15 @@ function OwnerAccountStep({
           {errors.acceptedTerms && (
             <p className="mt-2 text-sm text-red-600">{errors.acceptedTerms}</p>
           )}
+        </div>
+
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <h4 className="font-medium text-green-800 mb-2">🎉 14 jours d&apos;essai gratuit</h4>
+          <p className="text-sm text-green-700">
+            Votre abonnement commence par une période d&apos;essai de 14 jours. Aucun paiement ne
+            sera effectué avant la fin de l&apos;essai. Vous pouvez annuler à tout moment avant la
+            fin de la période d&apos;essai.
+          </p>
         </div>
       </div>
 

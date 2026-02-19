@@ -11,6 +11,7 @@ import {
   AnimatedText,
 } from '@/components/AnimatedWorkflow';
 import ParallaxDemoSection from '@/components/demo/ParallaxDemoSection';
+import IntegrationCarousel from '@/components/IntegrationCarousel';
 import {
   Check,
   ArrowRight,
@@ -51,19 +52,19 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
               <div className="inline-block px-4 py-1 border border-[#0066FF] text-[#0066FF] text-sm font-light">
-                Tarif fixe 39€/mois • Sans engagement • Résiliable à tout moment
+                Tarif à partir de 39€/mois • Sans engagement • Résiliable à tout moment
               </div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-light text-[#2A2A2A] leading-tight">
-                Transformez vos visiteurs en clients fidèles et
+                Votre système de réservation
                 <span className="block text-[#0066FF] font-normal mt-2">
-                  boostez vos avis Google.
+                  installé avant le prochain service.
                 </span>
               </h1>
 
               <p className="text-xl text-[#666666] leading-relaxed font-light">
-                Installez notre bouton de réservation en 5 minutes. Validez les demandes depuis
-                votre mobile. Récoltez des avis Google automatiquement après chaque service.
+                Simple, mobile et sans frais de commission. TableMaster s&apos;occupe de tout : du
+                bouton sur votre site à l&apos;email de remerciement pour vos avis Google.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -451,144 +452,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      {/* Section Développement sur mesure */}
-      <section id="custom-dev" className="py-20 bg-[#FAFAFA]">
-        <div className="container mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0066FF]/10 text-[#0066FF] text-sm font-light mb-4">
-              <Sparkles className="w-4 h-4" />
-              Service Premium
-            </div>
-            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
-              Développement de site web sur mesure
-            </h2>
-            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-              Nous créons votre site web 100% personnalisé avec toutes les fonctionnalités intégrées
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-white border-2 border-[#E5E5E5] p-12">
-              <Code className="w-12 h-12 text-[#0066FF] mb-6" />
-              <h3 className="text-3xl font-light text-[#2A2A2A] mb-6">
-                Un site qui vous ressemble
-              </h3>
-              <p className="text-[#666666] font-light leading-relaxed mb-8">
-                Obtenez un site web professionnel, unique et en parfaite adéquation avec
-                l&apos;identité de votre restaurant. Design sur mesure, développement custom,
-                intégration complète.
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
-                    <Palette className="w-4 h-4 text-[#0066FF]" />
-                  </div>
-                  <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">Design 100% personnalisé</h4>
-                    <p className="text-sm text-[#666666] font-light">
-                      Interface unique reflétant l&apos;identité visuelle de votre établissement
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
-                    <Globe className="w-4 h-4 text-[#0066FF]" />
-                  </div>
-                  <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">
-                      Formulaire de réservation intégré
-                    </h4>
-                    <p className="text-sm text-[#666666] font-light">
-                      Système de réservation directement intégré dans le code de votre site
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
-                    <MenuIcon className="w-4 h-4 text-[#0066FF]" />
-                  </div>
-                  <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">Gestion du menu dynamique</h4>
-                    <p className="text-sm text-[#666666] font-light">
-                      Mettez à jour votre menu depuis le dashboard, changements visibles
-                      instantanément
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
-                    <QrCode className="w-4 h-4 text-[#0066FF]" />
-                  </div>
-                  <div>
-                    <h4 className="font-normal text-[#2A2A2A] mb-1">
-                      Génération QR code automatique
-                    </h4>
-                    <p className="text-sm text-[#666666] font-light">
-                      QR codes pour menu généré automatiquement
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-white border border-[#E5E5E5] p-8">
-                <h4 className="text-xl font-light text-[#2A2A2A] mb-4">Fonctionnalités étendues</h4>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">
-                      Site responsive (mobile, tablette, desktop)
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">SEO optimisé pour Google</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">Galerie photos de vos plats</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">Intégration Google Maps</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">
-                      Formulaire de contact personnalisé
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#666666] font-light">
-                      Hébergement & nom de domaine inclus
-                    </span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] p-8 text-white">
-                <h4 className="text-2xl font-light mb-3">Intéressé ?</h4>
-                <p className="font-light mb-6 text-white/90">
-                  Contactez-nous pour discuter de votre projet et obtenir un devis personnalisé.
-                </p>
-                <a
-                  href="mailto:contact@tablemaster.fr"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0066FF] font-light hover:bg-white/90 transition-colors"
-                >
-                  Demander un devis
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Integration */}
+      <IntegrationCarousel />
       {/* Pricing */}
       <section id="pricing" className="py-20 bg-white">
         <div className="container mx-auto max-w-6xl px-6">
@@ -603,17 +468,22 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Plan Starter */}
+            {/* Pack Gestion */}
             <div className="border-2 border-[#E5E5E5] bg-white p-10 hover:border-[#0066FF] transition-colors">
               <div className="mb-8">
-                <div className="inline-block px-3 py-1 bg-[#F0F0F0] text-[#666666] text-xs font-light uppercase tracking-wider mb-4">
-                  Starter
+                <div className="inline-block px-3 py-1 bg-[#F0F0F0] text-[#666666] text-xs font-light uppercase tracking-wider mb-2">
+                  Pack Gestion
+                </div>
+                <div className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-light uppercase tracking-wider mb-4">
+                  14 jours d&apos;essai gratuit
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-5xl font-light text-[#2A2A2A]">39€</span>
                   <span className="text-xl text-[#666666]">/mois</span>
                 </div>
-                <p className="text-[#666666] font-light">Parfait pour débuter</p>
+                <p className="text-[#666666] font-light">
+                  L&apos;essentiel pour organiser votre salle et supprimer les commissions
+                </p>
               </div>
 
               <ul className="space-y-4 mb-10">
@@ -629,15 +499,13 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Widget & URL de réservation</span>
+                  <span className="text-[#666666] font-light">
+                    Widget & URL de réservation non personnalisable
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Emails automatiques aux clients</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Demandes d&apos;avis Google</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -653,25 +521,30 @@ export default function HomePage() {
                 href="/signup"
                 className="block w-full text-center px-8 py-4 border-2 border-[#0066FF] text-[#0066FF] font-light hover:bg-[#0066FF] hover:text-white transition-colors"
               >
-                Commencer avec Starter
+                Commencer avec le pack gestion
               </Link>
             </div>
 
-            {/* Plan Pro */}
+            {/* Pack Croissance */}
             <div className="border-2 border-[#0066FF] bg-white p-10 relative">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#0066FF] text-white text-xs font-light uppercase tracking-wider">
                 Populaire
               </div>
 
               <div className="mb-8">
-                <div className="inline-block px-3 py-1 bg-[#0066FF]/10 text-[#0066FF] text-xs font-light uppercase tracking-wider mb-4">
-                  Pro
+                <div className="inline-block px-3 py-1 bg-[#0066FF]/10 text-[#0066FF] text-xs font-light uppercase tracking-wider mb-2">
+                  Pack Croissance
+                </div>
+                <div className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-light uppercase tracking-wider mb-4">
+                  14 jours d&apos;essai gratuit
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-5xl font-light text-[#0066FF]">69€</span>
                   <span className="text-xl text-[#666666]">/mois</span>
                 </div>
-                <p className="text-[#666666] font-light">Pour les établissements actifs</p>
+                <p className="text-[#666666] font-light">
+                  Le moteur de croissance qui se rentabilise seul
+                </p>
               </div>
 
               <ul className="space-y-4 mb-10">
@@ -682,17 +555,14 @@ export default function HomePage() {
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">
-                    Toutes les fonctionnalités Starter
+                    Toutes les fonctionnalités du Pack Gestion
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Comptes serveurs illimités</span>
                 </li>
-                {/* <li className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Statistiques avancées</span>
-                </li> */}
+
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">Support prioritaire</span>
@@ -702,6 +572,10 @@ export default function HomePage() {
                   <span className="text-[#666666] font-light">
                     Personnalisation widget & formulaire
                   </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">Personnalisation de votre url</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -715,7 +589,7 @@ export default function HomePage() {
                 href="/signup"
                 className="block w-full text-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
               >
-                Commencer avec Pro
+                Commencer avec le pack croissance
               </Link>
             </div>
           </div>
@@ -728,6 +602,180 @@ export default function HomePage() {
               Tous les plans incluent : Mises à jour gratuites • Hébergement sécurisé • Sauvegardes
               automatiques
             </p>
+          </div>
+        </div>
+      </section>
+      {/* Section Développement sur mesure */}
+      <section id="custom-dev" className="py-20 bg-gradient-to-br from-[#FAFAFA] to-white">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0066FF]/10 text-[#0066FF] text-sm font-light mb-4">
+              <Sparkles className="w-4 h-4" />
+              Service Optionnel
+            </div>
+            <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
+              Vous n&apos;avez pas de site web ou souhaitez le refaire ?
+            </h2>
+            <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
+              Nous créons votre site web sur mesure avec TableMaster intégré nativement
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="bg-white border-2 border-[#E5E5E5] p-6 md:p-8 lg:p-12">
+              <Code className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-[#0066FF] mb-4 md:mb-6" />
+              <h3 className="text-2xl md:text-3xl font-light text-[#2A2A2A] mb-4 md:mb-6">
+                Exploitez TableMaster à son plein potentiel
+              </h3>
+              <p className="text-[#666666] font-light leading-relaxed mb-8">
+                Un site web conçu spécifiquement pour votre restaurant, avec toutes les
+                fonctionnalités de TableMaster directement intégrées dans son code source. Plus
+                qu&apos;un simple widget, une expérience client complètement unifiée.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+                    <Palette className="w-4 h-4 text-[#0066FF]" />
+                  </div>
+                  <div>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">Intégration native</h4>
+                    <p className="text-sm text-[#666666] font-light">
+                      TableMaster n&apos;est plus un simple widget mais fait partie intégrante de
+                      votre site
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-4 h-4 text-[#0066FF]" />
+                  </div>
+                  <div>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">
+                      Réservation fluide et cohérente
+                    </h4>
+                    <p className="text-sm text-[#666666] font-light">
+                      L&apos;expérience de réservation s&apos;intègre parfaitement au design de
+                      votre site
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+                    <MenuIcon className="w-4 h-4 text-[#0066FF]" />
+                  </div>
+                  <div>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">Menu dynamique intégré</h4>
+                    <p className="text-sm text-[#666666] font-light">
+                      Gérez votre menu depuis TableMaster, visible instantanément sur votre site
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+                    <QrCode className="w-4 h-4 text-[#0066FF]" />
+                  </div>
+                  <div>
+                    <h4 className="font-normal text-[#2A2A2A] mb-1">Écosystème unifié</h4>
+                    <p className="text-sm text-[#666666] font-light">
+                      QR codes, avis Google, gestion des tables - tout fonctionne ensemble
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-white border border-[#E5E5E5] p-6 md:p-8">
+                <h4 className="text-xl font-light text-[#2A2A2A] mb-4">
+                  Dans quel cas êtes-vous ?
+                </h4>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 bg-[#0066FF]/20 flex items-center justify-center rounded-full">
+                        <span className="text-[#0066FF] text-sm font-light">1</span>
+                      </div>
+                      <h5 className="font-normal text-[#2A2A2A]">Vous avez déjà un site web</h5>
+                    </div>
+                    <p className="text-sm text-[#666666] font-light pl-8">
+                      Nous intégrons TableMaster directement dans votre site existant. Pas besoin de
+                      tout refaire, nous adaptons le formulaire de réservation à votre design
+                      actuel.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 bg-[#0066FF]/20 flex items-center justify-center rounded-full">
+                        <span className="text-[#0066FF] text-sm font-light">2</span>
+                      </div>
+                      <h5 className="font-normal text-[#2A2A2A]">
+                        Vous avez besoin d&apos;un nouveau site
+                      </h5>
+                    </div>
+                    <p className="text-sm text-[#666666] font-light pl-8">
+                      Nous créons votre site web de A à Z, avec TableMaster intégré nativement dès
+                      la conception. Design unique, développement sur mesure, hébergement inclus.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-[#E5E5E5]">
+                  <h5 className="font-normal text-[#2A2A2A] mb-3">Tout est compris :</h5>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-[#666666] font-light">
+                        Design 100% personnalisé
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-[#666666] font-light">
+                        Développement sur mesure
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-[#666666] font-light">
+                        Intégration native de TableMaster
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-[#666666] font-light">
+                        Hébergement & nom de domaine
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-[#666666] font-light">
+                        Support technique inclus
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] p-8 text-white">
+                <h4 className="text-2xl font-light mb-3">Solution clé en main</h4>
+                <p className="font-light mb-6 text-white/90">
+                  Concentrez-vous sur votre restaurant, nous nous occupons de votre présence
+                  digitale. De la conception à la maintenance, tout est géré pour vous.
+                </p>
+                <a
+                  href="mailto:contact@tablemaster.fr"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0066FF] font-light hover:bg-white/90 transition-colors"
+                >
+                  Discuter de mon projet
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

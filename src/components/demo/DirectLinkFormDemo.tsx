@@ -45,7 +45,7 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
               transition={{ duration: 0.5, delay: 2 }}
               className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-xs sm:text-sm text-gray-700 font-mono truncate"
             >
-              tablemaster.com/reserve/restaurant-dupont
+              tablemaster.fr/embed/reservation/restaurant-dupont
             </motion.div>
 
             {/* Copy button animation */}
@@ -75,7 +75,7 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
         </div>
 
         {/* QR Code section */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <div>
             <div className="text-sm text-gray-500 mb-1">Ou scannez le QR Code</div>
             <div className="text-xs text-gray-400">Idéal pour carte de table ou affiche</div>
@@ -89,10 +89,10 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
           >
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center">
               <QrCode className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
-            </div>
+            </div> */}
 
             {/* QR code scanning animation */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, x: -20, y: -20 }}
               animate={
                 isActive
@@ -103,7 +103,7 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
               className="absolute inset-0 border-2 border-[#0066FF] rounded-lg pointer-events-none"
             />
           </motion.div>
-        </div>
+        </div> */}
 
         {/* Success indicator */}
         <motion.div
@@ -123,14 +123,14 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
         </motion.div>
 
         {/* Click simulation */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={isActive ? { opacity: [0, 1, 0] } : { opacity: 0 }}
           transition={{ duration: 1.5, repeat: Infinity, delay: 5, times: [0, 0.3, 1] }}
           className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded-full whitespace-nowrap"
         >
           Cliquez pour tester
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

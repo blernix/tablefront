@@ -160,14 +160,14 @@ export default function CalendarViewDemo({ isActive = true }: CalendarViewDemoPr
         </motion.div>
 
         {/* Hover tooltip simulation */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={isActive ? { opacity: [0, 1, 0] } : { opacity: 0 }}
           transition={{ duration: 2, repeat: Infinity, delay: 2.5, times: [0, 0.3, 1] }}
           className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded whitespace-nowrap"
         >
           Survolez une date pour voir les réservations
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

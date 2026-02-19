@@ -35,6 +35,20 @@ export default function ParallaxDemoSection() {
         "Intégrez notre widget flottant en 2 lignes de code. Il s'adapte automatiquement à votre design et reste discret tout en étant accessible.",
       component: <FloatingWidgetDemo />,
       icon: <Sparkles className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Intégration invisible',
+          description: "S'adapte aux couleurs de votre charte graphique en un clic.",
+        },
+        {
+          title: 'Conversion maximale',
+          description: 'Toujours accessible, même quand le client scrolle votre carte.',
+        },
+        {
+          title: 'Zéro maintenance',
+          description: 'Une fois installé, il se met à jour tout seul.',
+        },
+      ],
     },
     {
       id: 2,
@@ -44,6 +58,20 @@ export default function ParallaxDemoSection() {
         "Vos clients remplissent un formulaire optimisé qui pré-remplit les informations lorsque c'est possible. Validation instantanée.",
       component: <ReservationFormDemo />,
       icon: <FileText className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Expérience "sans friction"',
+          description: 'Moins de champs à remplir pour un taux de complétion plus élevé.',
+        },
+        {
+          title: 'Mémoire intelligente',
+          description: 'Reconnaît vos clients réguliers pour pré-remplir leurs coordonnées.',
+        },
+        {
+          title: 'Disponibilités réelles',
+          description: 'Ne propose que les créneaux que vous avez ouvert.',
+        },
+      ],
     },
     {
       id: 3,
@@ -53,6 +81,20 @@ export default function ParallaxDemoSection() {
         "Acceptez ou refusez les réservations d'un simple geste sur votre mobile. Idéal pour gérer votre établissement en déplacement.",
       component: <SwipeValidationDemo />,
       icon: <Smartphone className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Gestion au pouce',
+          description: 'Un swipe à droite pour confirmer, un swipe à gauche pour décliner.',
+        },
+        {
+          title: 'Réponses instantanées',
+          description: 'Le client reçoit son SMS ou email de confirmation en 2 secondes.',
+        },
+        {
+          title: 'Liberté totale',
+          description: 'Gérez votre salle depuis votre terrasse ou votre domicile.',
+        },
+      ],
     },
     {
       id: 4,
@@ -62,15 +104,44 @@ export default function ParallaxDemoSection() {
         "Suivez vos réservations, votre taux d'occupation et vos revenus estimés en temps réel. Exportez vos données pour analyses.",
       component: <DashboardStatsDemo />,
       icon: <BarChart3 className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Prévisions de CA',
+          description: 'Visualisez vos revenus estimés avant même le début du service.',
+        },
+        {
+          title: "Analyse d'occupation",
+          description: 'Identifiez vos services creux pour lancer des offres spéciales.',
+        },
+        {
+          title: 'Export comptable',
+          description: 'Téléchargez vos données en CSV pour votre comptabilité en un clic.',
+        },
+      ],
     },
     {
       id: 5,
       title: 'Accessibilité',
-      description: 'URL dédiée et QR code',
+      description: 'URL dédiée',
       detailedDescription:
-        'Partagez un lien unique ou un QR code sur vos réseaux sociaux, carte de table ou affiche. Vos clients accèdent directement à votre formulaire de réservation optimisé.',
+        'Partagez un lien unique sur vos réseaux sociaux. Vos clients accèdent directement à votre formulaire de réservation optimisé.',
       component: <DirectLinkFormDemo />,
       icon: <LinkIcon className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Bio Instagram optimisée',
+          description: 'Un lien court et pro qui rassure vos followers.',
+        },
+        {
+          title: 'QR Codes de table',
+          description:
+            'Permettez aux clients de réserver leur prochaine table avant même de partir.',
+        },
+        {
+          title: "Prêt pour utilisation",
+          description: 'Dès votre inscription, commencez à utiliser le formulaire.',
+        },
+      ],
     },
     {
       id: 6,
@@ -80,6 +151,21 @@ export default function ParallaxDemoSection() {
         'Visualisez toutes vos réservations sur un calendrier interactif. Survolez une date pour voir les détails et gérez facilement les créneaux surchargés.',
       component: <CalendarViewDemo />,
       icon: <Calendar className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Alerte "Heure de pointe"',
+          description: 'Visualisez immédiatement quand votre cuisine sera sous pression.',
+        },
+        {
+          title: 'Vue globale',
+          description: 'Basculez entre vue journalière, hebdomadaire ou mensuelle.',
+        },
+        {
+          title: 'Notes de service',
+          description:
+            "Ajoutez des annotations (anniversaire, allergie) visibles par toute l'équipe.",
+        },
+      ],
     },
     {
       id: 7,
@@ -89,6 +175,20 @@ export default function ParallaxDemoSection() {
         'Consultez toutes vos réservations dans une liste triable et filtrable. Confirmez, refusez ou terminez les réservations en un clic. Parfait pour le service en salle.',
       component: <ListViewDemo />,
       icon: <List className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Recherche ultra-rapide',
+          description: 'Retrouvez une résa par nom en moins de 3 secondes.',
+        },
+        {
+          title: 'Pointage des arrivées',
+          description: 'Marquez les clients présents pour libérer les tables des "No-shows".',
+        },
+        {
+          title: 'Filtres intelligents',
+          description: 'Affichez uniquement ce qui compte (ex: "En attente" ou "réservation du jour").',
+        },
+      ],
     },
     {
       id: 8,
@@ -98,6 +198,21 @@ export default function ParallaxDemoSection() {
         "Terminez une réservation d'un simple swipe et déclenchez automatiquement l'envoi d'un email pour demander un avis Google. Suivez vos statistiques d'avis en temps réel.",
       component: <EmailReviewDemo />,
       icon: <Star className="w-4 h-4" />,
+      features: [
+        {
+          title: 'Timing parfait',
+          description: "L'email part pile au moment où le client quitte l'établissement.",
+        },
+        {
+          title: 'Lien direct',
+          description:
+            "Le client arrive directement sur l'interface d'avis, pas de recherche à faire.",
+        },
+        {
+          title: 'Cercle vertueux',
+          description: "Plus d'avis = plus de visibilité = plus de réservations.",
+        },
+      ],
     },
   ];
 
@@ -159,6 +274,7 @@ export default function ParallaxDemoSection() {
               detailedDescription={chapter.detailedDescription}
               demoComponent={chapter.component}
               icon={chapter.icon}
+              features={chapter.features}
               isActive={index === activeChapter}
               isPast={index < activeChapter}
               isFuture={index > activeChapter}

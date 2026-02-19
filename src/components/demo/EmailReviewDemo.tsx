@@ -292,14 +292,14 @@ export default function EmailReviewDemo({ isActive = true }: EmailReviewDemoProp
         </div>
 
         {/* Instruction */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={isActive ? { opacity: [0, 1, 0] } : { opacity: 0 }}
           transition={{ duration: 2, repeat: Infinity, delay: 1 }}
           className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-0.5 sm:px-3 sm:py-1 rounded whitespace-nowrap"
         >
           Terminez → Email automatique
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

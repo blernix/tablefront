@@ -196,18 +196,40 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-[#2A2A2A]">
-                      Plan {plan === 'starter' ? 'Starter' : 'Pro'}
+                      Plan {plan === 'starter' ? 'Pack Gestion' : 'Pack Croissance'}
                     </h3>
                     <p className="text-sm text-[#666666]">
-                      Statut : <Badge variant="success">Actif</Badge>
+                      Statut :{' '}
+                      {restaurant.subscription?.status === 'trial' ? (
+                        <Badge
+                          variant="outline"
+                          className="border-amber-500 text-amber-700 bg-amber-50"
+                        >
+                          Essai gratuit
+                        </Badge>
+                      ) : restaurant.subscription?.status === 'active' ? (
+                        <Badge variant="success">Actif</Badge>
+                      ) : (
+                        <Badge variant="danger">
+                          {restaurant.subscription?.status || 'Inactif'}
+                        </Badge>
+                      )}
                     </p>
-                    {restaurant.subscription?.currentPeriodEnd && (
+                    {restaurant.subscription?.status === 'trial' &&
+                    restaurant.subscription?.trialEndsAt ? (
                       <p className="text-xs text-[#666666] mt-1">
-                        Renouvellement le{' '}
-                        {new Date(restaurant.subscription.currentPeriodEnd).toLocaleDateString(
-                          'fr-FR'
-                        )}
+                        Essai se termine le{' '}
+                        {new Date(restaurant.subscription.trialEndsAt).toLocaleDateString('fr-FR')}
                       </p>
+                    ) : (
+                      restaurant.subscription?.currentPeriodEnd && (
+                        <p className="text-xs text-[#666666] mt-1">
+                          Renouvellement le{' '}
+                          {new Date(restaurant.subscription.currentPeriodEnd).toLocaleDateString(
+                            'fr-FR'
+                          )}
+                        </p>
+                      )
                     )}
                   </div>
                 </div>

@@ -7,14 +7,14 @@ export const getPlanDisplay = (plan: Plan | undefined) => {
   switch (plan) {
     case 'starter':
       return {
-        name: 'Starter',
+        name: 'Pack Gestion',
         colorClass: 'text-yellow-700',
         bgColorClass: 'bg-yellow-100',
         badgeClass: 'bg-yellow-100 text-yellow-700',
       };
     case 'pro':
       return {
-        name: 'Pro',
+        name: 'Pack Croissance',
         colorClass: 'text-purple-700',
         bgColorClass: 'bg-purple-100',
         badgeClass: 'bg-purple-100 text-purple-700',
