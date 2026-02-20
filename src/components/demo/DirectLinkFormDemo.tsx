@@ -45,7 +45,7 @@ export default function DirectLinkFormDemo({ isActive = true }: DirectLinkFormDe
               transition={{ duration: 0.5, delay: 2 }}
               className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-xs sm:text-sm text-gray-700 font-mono truncate"
             >
-              tablemaster.fr/embed/reservation/restaurant-dupont
+              tablemaster.fr/votre-restaurant
             </motion.div>
 
             {/* Copy button animation */}

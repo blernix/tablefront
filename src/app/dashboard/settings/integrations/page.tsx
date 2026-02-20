@@ -95,7 +95,7 @@ export default function IntegrationsPage() {
   const widgetCodeMinimal = `<script src="${API_URL}/widget.js" data-api-key="${restaurant?.apiKey}"></script>`;
   const widgetCodeSlug = `<script src="${API_URL}/widget.js" data-slug="${shortCode}" data-use-slug="true"></script>`;
 
-  const embedUrl = `${FRONTEND_URL}/embed/reservations/${shortCode}`;
+  const embedUrl = `${FRONTEND_URL}/${shortCode}`;
 
   // Check if user can customize widget (Pro plan) - using feature flag hook
 
@@ -267,8 +267,7 @@ export default function IntegrationsPage() {
               </pre>
               <p className="text-xs text-blue-700 mt-2">
                 💡 Votre lien unique :{' '}
-                {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}
-                /embed/reservations/{shortCode}
+                {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/{shortCode}
               </p>
             </div>
 

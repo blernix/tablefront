@@ -705,15 +705,15 @@ export default function WidgetSettingsPage() {
                         </p>
                         <div className="flex items-center justify-between bg-white p-3 rounded border overflow-hidden">
                           <code className="text-sm text-blue-700 break-all">
-                            {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}
-                            /embed/reservations/{currentSlug}
+                            {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/
+                            {currentSlug}
                           </code>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
                               copyToClipboard(
-                                `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:4000'}/embed/reservations/${currentSlug}`,
+                                `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/${currentSlug}`,
                                 'current-link'
                               )
                             }
@@ -738,8 +738,7 @@ export default function WidgetSettingsPage() {
                             <Label htmlFor="customSlug">Personnaliser mon lien</Label>
                             <div className="flex flex-wrap gap-2 mt-2">
                               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-sm text-gray-500 flex-shrink min-w-0 truncate">
-                                {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}
-                                /embed/reservations/
+                                {process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/
                               </span>
                               <Input
                                 id="customSlug"

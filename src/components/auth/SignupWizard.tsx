@@ -16,6 +16,8 @@ interface PlanInfo {
   features: string[];
   popular?: boolean;
   trial?: boolean;
+  subtitle?: string;
+  buttonText?: string;
 }
 
 interface RestaurantFormData {
@@ -47,26 +49,35 @@ const PLANS: Record<PlanType, PlanInfo> = {
   starter: {
     id: 'starter',
     name: 'Pack Gestion',
+    subtitle: "L'essentiel pour organiser votre salle et supprimer les commissions",
     price: 39,
     trial: true,
+    buttonText: 'Commencer avec le pack gestion',
     features: [
-      '400 réservations par mois',
-      'Widget standard',
-      'Gestion horaires et jours fermés',
+      '400 réservations / mois',
+      'Notifications push en temps réel',
+      'Widget & URL de réservation non personnalisable',
+      'Emails de confirmation automatiques aux clients',
+      'Export CSV',
       'Support par email',
     ],
   },
   pro: {
     id: 'pro',
     name: 'Pack Croissance',
+    subtitle: 'Le moteur de croissance qui se rentabilise seul',
     price: 69,
     trial: true,
+    buttonText: 'Commencer avec le pack croissance',
     features: [
       'Réservations illimitées',
-      'Widget personnalisable (couleurs, police)',
-      'Gestion horaires et jours fermés',
+      'Toutes les fonctionnalités du Pack Gestion',
+      'Comptes serveurs illimités',
       'Support prioritaire',
-      'Analytics avancées',
+      'Personnalisation couleur et texte du widget',
+      'Personnalisation couleur et texte du formulaire',
+      'Personnalisation de votre url',
+      "Demandes d'avis automatiques",
     ],
     popular: true,
   },
@@ -130,6 +141,7 @@ function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: PlanSelection
 
             <div className="text-center">
               <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
+              {plan.subtitle && <p className="mt-2 text-sm text-gray-600">{plan.subtitle}</p>}
               <div className="mt-4 flex items-baseline justify-center">
                 <span className="text-3xl font-bold text-gray-900">{plan.price}€</span>
                 <span className="ml-1 text-gray-600">/mois</span>
@@ -163,7 +175,7 @@ function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: PlanSelection
                 )}
                 onClick={() => onPlanSelect(plan.id)}
               >
-                {selectedPlan === plan.id ? 'Sélectionné' : 'Choisir'}
+                {selectedPlan === plan.id ? 'Sélectionné' : plan.buttonText || 'Choisir'}
               </button>
             </div>
           </div>

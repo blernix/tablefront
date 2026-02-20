@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import { usePathname } from 'next/navigation';
+import { shouldShowCookieConsent } from '@/utils/pageDetection';
 
 declare global {
   interface Window {
@@ -10,10 +12,22 @@ declare global {
 }
 
 export default function TarteaucitronProvider() {
+  const pathname = usePathname();
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [tarteaucitronReady, setTarteaucitronReady] = useState(false);
 
+  // Determine if cookie consent should be shown on this page
+  const showConsent = shouldShowCookieConsent(pathname || '');
+
+  // Debug logging in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Tarteaucitron] Pathname:', pathname, 'Show consent:', showConsent);
+  }
+
   useEffect(() => {
+    // Don't initialize on reservation pages
+    if (!showConsent) return;
+
     // Initialize tarteaucitron after script loads
     if (scriptLoaded && typeof window !== 'undefined' && window.tarteaucitron) {
       // Check if already initialized
@@ -179,10 +193,13 @@ export default function TarteaucitronProvider() {
     } else if (scriptLoaded && typeof window !== 'undefined' && !window.tarteaucitron) {
       console.error('Tarteaucitron script loaded but window.tarteaucitron is undefined');
     }
-  }, [scriptLoaded]);
+  }, [scriptLoaded, showConsent]);
 
   // Expose tarteaucitron ready state globally for other components
   useEffect(() => {
+    // Don't expose on reservation pages
+    if (!showConsent) return;
+
     if (typeof window !== 'undefined') {
       (window as any).tarteaucitronReady = tarteaucitronReady;
       (window as any).tarteaucitronDebug = {
@@ -193,7 +210,12 @@ export default function TarteaucitronProvider() {
         config: window.tarteaucitron?.parameters,
       };
     }
-  }, [tarteaucitronReady, scriptLoaded]);
+  }, [tarteaucitronReady, scriptLoaded, showConsent]);
+
+  // Don't load tarteaucitron script on reservation pages
+  if (!showConsent) {
+    return null;
+  }
 
   return (
     <>

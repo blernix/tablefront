@@ -72,7 +72,7 @@ export default function HomePage() {
                   href="/signup"
                   className="inline-flex items-center justify-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
                 >
-                  Cr&eacute;er mon compte
+                  Cr&eacute;er mon compte gratuitement
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
                 <a
@@ -262,7 +262,7 @@ export default function HomePage() {
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">
-                    Widget intégrable en 2 lignes de code
+                    Widget intégrable en 1 ligne de code
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -299,13 +299,13 @@ export default function HomePage() {
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">
-                    Email de confirmation automatique
+                    Email de réservation en attente
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">
-                    Email de rappel avant la réservation
+                    Email de confirmation de la réservation
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -505,7 +505,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
-                  <span className="text-[#666666] font-light">Emails automatiques aux clients</span>
+                  <span className="text-[#666666] font-light">Emails de confirmation automatiques aux clients</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
@@ -570,7 +570,13 @@ export default function HomePage() {
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                   <span className="text-[#666666] font-light">
-                    Personnalisation widget & formulaire
+                    Personnalisation couleur et texte du widget
+                  </span>
+                </li>
+                  <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#666666] font-light">
+                    Personnalisation couleur et texte du formulaire
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -882,7 +888,7 @@ export default function HomePage() {
               href="/signup"
               className="inline-flex items-center justify-center px-10 py-5 bg-white text-[#0066FF] text-lg font-light hover:bg-white/90 transition-colors"
             >
-              S&apos;inscrire maintenant
+              S&apos;inscrire gratuitement maintenant
               <ArrowRight className="ml-3 w-5 h-5" />
             </Link>
             <a

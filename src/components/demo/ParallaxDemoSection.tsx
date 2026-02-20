@@ -32,7 +32,7 @@ export default function ParallaxDemoSection() {
       title: 'Découverte',
       description: 'Widget flottant discret sur votre site',
       detailedDescription:
-        "Intégrez notre widget flottant en 2 lignes de code. Il s'adapte automatiquement à votre design et reste discret tout en étant accessible.",
+        "Intégrez notre widget flottant en 1 ligne de code. Son design et épuré reste discret tout en étant accessible.",
       component: <FloatingWidgetDemo />,
       icon: <Sparkles className="w-4 h-4" />,
       features: [
@@ -88,7 +88,7 @@ export default function ParallaxDemoSection() {
         },
         {
           title: 'Réponses instantanées',
-          description: 'Le client reçoit son SMS ou email de confirmation en 2 secondes.',
+          description: 'Le client reçoit un email de confirmation instantannément.',
         },
         {
           title: 'Liberté totale',
@@ -178,7 +178,7 @@ export default function ParallaxDemoSection() {
       features: [
         {
           title: 'Recherche ultra-rapide',
-          description: 'Retrouvez une résa par nom en moins de 3 secondes.',
+          description: 'Retrouvez rapidement une reservation grâce à la recherche intelligente.',
         },
         {
           title: 'Pointage des arrivées',
@@ -299,7 +299,7 @@ export default function ParallaxDemoSection() {
               Prêt à offrir cette expérience à vos clients ?
             </h3>
             <p className="text-xl text-[#666666] font-light mb-8 leading-relaxed">
-              Toutes ces fonctionnalités sont incluses dans votre abonnement TableMaster. Installez
+              Toutes ces fonctionnalités sont incluses dans votre abonnement TableMaster avec le pack croissance. Installez
               le système en 5 minutes et commencez dès aujourd&apos;hui.
             </p>
 

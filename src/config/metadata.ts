@@ -101,7 +101,39 @@ export const defaultMetadata: Metadata = {
 // Fonction utilitaire
 export function getPageMetadata(pathname: string): Metadata {
   const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
-  return pageMetadata[normalizedPath] || defaultMetadata;
+
+  // Vérifier si c'est une route connue
+  if (pageMetadata[normalizedPath]) {
+    return pageMetadata[normalizedPath];
+  }
+
+  // Détection des slugs dynamiques (pages de réservation)
+  // Un slug est un segment unique sans slash, ne commençant pas par des chemins système
+  const isSystemPath =
+    normalizedPath.startsWith('/_next') ||
+    normalizedPath.startsWith('/api') ||
+    normalizedPath.startsWith('/public') ||
+    normalizedPath.startsWith('/static') ||
+    normalizedPath.includes('.') || // Fichiers avec extension
+    normalizedPath.includes('//');
+
+  const isSlug =
+    !isSystemPath &&
+    normalizedPath !== '/' &&
+    !normalizedPath.includes('/') && // Un seul segment
+    !pageMetadata[normalizedPath]; // Pas une route connue
+
+  if (isSlug) {
+    // Pages de réservation : noindex, nofollow
+    return {
+      ...defaultMetadata,
+      title: 'Réservation - TableMaster',
+      description: 'Réservez une table dans ce restaurant',
+      robots: 'noindex, nofollow',
+    };
+  }
+
+  return defaultMetadata;
 }
 
 // DONNÉES STRUCTURÉES (JSON-LD)
