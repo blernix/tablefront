@@ -7,13 +7,13 @@ interface PageMetadata {
 }
 
 export const pageMetadata: PageMetadata = {
-  // Page d'accueil - Corrigée : On mise sur l'essai gratuit et le sans engagement
+  // Page d'accueil
   '/': {
     title: 'TableMaster | Réservation Restaurant sans Commission & Avis Google',
     description:
       'Gérez vos réservations sans commission (0€/couvert). Pack Gestion à 39€/mois. Boostez vos avis Google automatiquement. 14 jours d’essai gratuit.',
     keywords:
-      'cahier de réservation digital, logiciel réservation restaurant, alternative TheFork sans commission, alternative ZenChef moins cher, gestion restaurant mobile, avis Google restaurant automatique, carnet de réservation en ligne, QR code restaurant',
+      'cahier de réservation digital, logiciel réservation restaurant, alternative TheFork sans commission, gestion restaurant mobile, avis Google restaurant automatique, carnet de réservation en ligne, QR code restaurant',
     alternates: {
       canonical: siteUrl,
     },
@@ -42,7 +42,6 @@ export const pageMetadata: PageMetadata = {
     },
   },
 
-  // Pages "Application"
   '/signup': {
     title: 'Essai Gratuit 14 Jours - TableMaster',
     description: 'Créez votre compte en 2 minutes et testez TableMaster gratuitement pendant 14 jours. Sans engagement.',
@@ -54,7 +53,6 @@ export const pageMetadata: PageMetadata = {
     robots: 'noindex, nofollow',
   },
 
-  // Mentions légales
   '/legal': {
     title: 'Mentions Légales - TableMaster',
     description: 'Informations légales concernant l’éditeur du site TableMaster.',
@@ -83,7 +81,7 @@ export const defaultMetadata: Metadata = {
   },
 };
 
-// Fonction utilitaire pour récupérer les métadonnées
+// Fonction utilitaire
 export function getPageMetadata(pathname: string): Metadata {
   const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
 
@@ -109,6 +107,7 @@ export function getPageMetadata(pathname: string): Metadata {
 }
 
 // --- DONNÉES STRUCTURÉES (JSON-LD) ---
+
 export const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -142,4 +141,32 @@ export const softwareStructuredData = {
     ratingValue: '4.9',
     reviewCount: '55',
   },
+};
+
+// L'élément qui manquait pour ton build :
+export const pricingStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: [
+    {
+      '@type': 'Product',
+      name: 'TableMaster Pack Gestion',
+      description: "Solution complète de réservation, jusqu'à 400 réservations/mois, 0% commission.",
+      offers: {
+        '@type': 'Offer',
+        price: '39.00',
+        priceCurrency: 'EUR',
+      },
+    },
+    {
+      '@type': 'Product',
+      name: 'TableMaster Pack Croissance',
+      description: 'Réservations illimitées et envoi automatique de demandes d’avis Google.',
+      offers: {
+        '@type': 'Offer',
+        price: '69.00',
+        priceCurrency: 'EUR',
+      },
+    },
+  ],
 };
