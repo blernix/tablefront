@@ -32,7 +32,7 @@ export default function ParallaxDemoSection() {
       title: 'Découverte',
       description: 'Widget flottant discret sur votre site',
       detailedDescription:
-        "Intégrez notre widget flottant en 1 ligne de code. Son design et épuré reste discret tout en étant accessible.",
+        "Intégrez notre widget flottant en 1 ligne de code. Son design épuré reste discret tout en étant accessible.",
       component: <FloatingWidgetDemo />,
       icon: <Sparkles className="w-4 h-4" />,
       features: [
@@ -69,7 +69,7 @@ export default function ParallaxDemoSection() {
         },
         {
           title: 'Disponibilités réelles',
-          description: 'Ne propose que les créneaux que vous avez ouvert.',
+          description: 'Ne propose que les créneaux que vous avez ouverts.',
         },
       ],
     },
@@ -88,7 +88,7 @@ export default function ParallaxDemoSection() {
         },
         {
           title: 'Réponses instantanées',
-          description: 'Le client reçoit un email de confirmation instantannément.',
+          description: 'Le client reçoit un email de confirmation instantanément.',
         },
         {
           title: 'Liberté totale',
@@ -299,8 +299,7 @@ export default function ParallaxDemoSection() {
               Prêt à offrir cette expérience à vos clients ?
             </h3>
             <p className="text-xl text-[#666666] font-light mb-8 leading-relaxed">
-              Toutes ces fonctionnalités sont incluses dans votre abonnement TableMaster avec le pack croissance. Installez
-              le système en 5 minutes et commencez dès aujourd&apos;hui.
+             Toutes les fonctions de gestion sont incluses dès le Pack Gestion. Passez au Pack Croissance pour automatiser vos avis Google et personnaliser votre image."
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
