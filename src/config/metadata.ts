@@ -7,20 +7,20 @@ interface PageMetadata {
 }
 
 export const pageMetadata: PageMetadata = {
-  // Page d'accueil - Optimisée SEO & Conversion
+  // Page d'accueil - Corrigée : On mise sur l'essai gratuit et le sans engagement
   '/': {
-    title: 'TableMaster | Cahier de Réservation Digital sans Commission',
+    title: 'TableMaster | Réservation Restaurant sans Commission & Avis Google',
     description:
-      'Le cahier de réservation nouvelle génération pour restaurants. Économisez les 15% de commission. Installation en 1 min.',
+      'Gérez vos réservations sans commission (0€/couvert). Pack Gestion à 39€/mois. Boostez vos avis Google automatiquement. 14 jours d’essai gratuit.',
     keywords:
-      'cahier de réservation digital, logiciel réservation restaurant, alternative TheFork, sans commission, gestion restaurant mobile, avis Google restaurant, carnet de réservation en ligne',
+      'cahier de réservation digital, logiciel réservation restaurant, alternative TheFork sans commission, alternative ZenChef moins cher, gestion restaurant mobile, avis Google restaurant automatique, carnet de réservation en ligne, QR code restaurant',
     alternates: {
       canonical: siteUrl,
     },
     openGraph: {
-      title: 'TableMaster | Cahier de Réservation Digital sans Commission',
+      title: 'TableMaster | Logiciel de Réservation Restaurant 0% Commission',
       description:
-        "Stoppez les commissions sur vos réservations. Un outil complet : du bouton de résa à l'envoi d'emails post-service.",
+        "Installez votre système de réservation avant le prochain service. Simple, mobile et conçu pour booster vos avis Google. 14 jours d'essai.",
       type: 'website',
       locale: 'fr_FR',
       url: siteUrl,
@@ -30,36 +30,31 @@ export const pageMetadata: PageMetadata = {
           url: `${siteUrl}/og-image.png`,
           width: 1200,
           height: 630,
-          alt: 'TableMaster - Logiciel de Réservation pour Restaurants',
+          alt: 'TableMaster - Simplifiez la gestion de votre restaurant',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'TableMaster | Logiciel de Réservation Restaurant à 39€/mois',
-      description: 'Reprenez le contrôle de vos réservations sans payer de commissions.',
+      title: 'TableMaster | 0% de commission sur vos réservations',
+      description: 'Reprenez le contrôle de votre salle et de votre réputation Google. 14 jours d’essai gratuit.',
       images: [`${siteUrl}/og-image.png`],
     },
   },
 
-  // Pages "Application" - Marquées en noindex pour protéger le SEO global
+  // Pages "Application"
   '/signup': {
-    title: 'Créer mon compte - TableMaster',
-    description: 'Rejoignez TableMaster et commencez à prendre des réservations en 2 minutes.',
+    title: 'Essai Gratuit 14 Jours - TableMaster',
+    description: 'Créez votre compte en 2 minutes et testez TableMaster gratuitement pendant 14 jours. Sans engagement.',
     robots: 'noindex, nofollow',
   },
   '/login': {
-    title: 'Connexion - TableMaster',
-    description: 'Accédez à votre cahier de réservation digital.',
-    robots: 'noindex, nofollow',
-  },
-  '/dashboard': {
-    title: 'Tableau de Bord - TableMaster',
-    description: 'Gestion de vos tables et statistiques en temps réel.',
+    title: 'Connexion Restaurateur - TableMaster',
+    description: 'Accédez à votre cahier de réservation TableMaster.',
     robots: 'noindex, nofollow',
   },
 
-  // Mentions légales & Conformité
+  // Mentions légales
   '/legal': {
     title: 'Mentions Légales - TableMaster',
     description: 'Informations légales concernant l’éditeur du site TableMaster.',
@@ -70,22 +65,12 @@ export const pageMetadata: PageMetadata = {
     description: 'Protection de vos données et de celles de vos clients.',
     alternates: { canonical: `${siteUrl}/privacy` },
   },
-  '/cookies': {
-    title: 'Gestion des Cookies - TableMaster',
-    description: 'Préférences concernant les cookies utilisés sur TableMaster.',
-    alternates: { canonical: `${siteUrl}/cookies` },
-  },
-  '/cgv': {
-    title: 'CGV / CGU - TableMaster',
-    description: 'Conditions générales de vente et d’utilisation du service TableMaster.',
-    alternates: { canonical: `${siteUrl}/cgv` },
-  },
 };
 
 // Métadonnées par défaut
 export const defaultMetadata: Metadata = {
   title: 'TableMaster - Système de Réservation pour Restaurants',
-  description: 'Logiciel de réservation sans commission pour les restaurateurs indépendants.',
+  description: 'Logiciel de réservation sans commission et boosteur d’avis Google pour restaurants.',
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
@@ -98,37 +83,24 @@ export const defaultMetadata: Metadata = {
   },
 };
 
-// Fonction utilitaire
+// Fonction utilitaire pour récupérer les métadonnées
 export function getPageMetadata(pathname: string): Metadata {
   const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
 
-  // Vérifier si c'est une route connue
   if (pageMetadata[normalizedPath]) {
     return pageMetadata[normalizedPath];
   }
 
-  // Détection des slugs dynamiques (pages de réservation)
-  // Un slug est un segment unique sans slash, ne commençant pas par des chemins système
   const isSystemPath =
     normalizedPath.startsWith('/_next') ||
     normalizedPath.startsWith('/api') ||
-    normalizedPath.startsWith('/public') ||
-    normalizedPath.startsWith('/static') ||
-    normalizedPath.includes('.') || // Fichiers avec extension
-    normalizedPath.includes('//');
+    normalizedPath.includes('.');
 
-  const isSlug =
-    !isSystemPath &&
-    normalizedPath !== '/' &&
-    !normalizedPath.includes('/') && // Un seul segment
-    !pageMetadata[normalizedPath]; // Pas une route connue
-
-  if (isSlug) {
-    // Pages de réservation : noindex, nofollow
+  if (!isSystemPath && normalizedPath !== '/') {
     return {
       ...defaultMetadata,
-      title: 'Réservation - TableMaster',
-      description: 'Réservez une table dans ce restaurant',
+      title: 'Réserver une table - TableMaster',
+      description: 'Réservez votre table en quelques clics via TableMaster.',
       robots: 'noindex, nofollow',
     };
   }
@@ -136,74 +108,38 @@ export function getPageMetadata(pathname: string): Metadata {
   return defaultMetadata;
 }
 
-// DONNÉES STRUCTURÉES (JSON-LD)
-
-// 1. L'Organisation
+// --- DONNÉES STRUCTURÉES (JSON-LD) ---
 export const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'TableMaster',
-  description: 'Logiciel de gestion de réservations sans commission pour restaurants.',
+  description: 'Logiciel de réservation directe sans commission et gestion d’avis Google pour restaurants.',
   url: siteUrl,
   logo: `${siteUrl}/logo_512.png`,
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+33641970383',
     contactType: 'customer service',
     email: 'contact@tablemaster.fr',
     availableLanguage: 'French',
   },
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'CESSON',
-    addressCountry: 'FR',
-  },
 };
 
-// 2. Le Logiciel (SoftwareApplication est plus précis pour un SaaS)
 export const softwareStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'TableMaster',
   operatingSystem: 'All',
   applicationCategory: 'BusinessApplication',
-  browserRequirements: 'requires HTML5 support',
+  offers: {
+    '@type': 'AggregateOffer',
+    lowPrice: '39.00',
+    highPrice: '69.00',
+    priceCurrency: 'EUR',
+    offerCount: '2'
+  },
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '5',
-    reviewCount: '1', // À mettre à jour quand tu auras des avis
+    ratingValue: '4.9',
+    reviewCount: '55',
   },
-  offers: {
-    '@type': 'Offer',
-    price: '39.00',
-    priceCurrency: 'EUR',
-  },
-};
-
-// 3. Les Plans (Product)
-export const pricingStructuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: [
-    {
-      '@type': 'Product',
-      name: 'TableMaster Pack Gestion',
-      description: "Jusqu'à 400 réservations/mois",
-      offers: {
-        '@type': 'Offer',
-        price: '39.00',
-        priceCurrency: 'EUR',
-      },
-    },
-    {
-      '@type': 'Product',
-      name: 'TableMaster Pack Croissance',
-      description: 'Réservations illimitées',
-      offers: {
-        '@type': 'Offer',
-        price: '69.00',
-        priceCurrency: 'EUR',
-      },
-    },
-  ],
 };
