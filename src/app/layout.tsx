@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
 import TarteaucitronProvider from '@/components/TarteaucitronProvider';
 import { headers } from 'next/headers';
-import Script from 'next/script';
+import Script from 'next/script'; // Import important pour le GTM
 import './globals.css';
 import {
   getPageMetadata,
@@ -64,7 +64,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     ],
   };
 
-  // Ajouter la page courante si ce n'est pas l'accueil
   if (pathname !== '/' && pageNames[pathname]) {
     breadcrumbStructuredData.itemListElement.push({
       '@type': 'ListItem',
@@ -77,6 +76,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="fr" data-theme="light">
       <head>
+        {/* --- GOOGLE TAG MANAGER (Script) --- */}
+        <Script id="gtm-script" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-5CBBW2XZ');
+          `}
+        </Script>
+
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon/favicon-32x32.png" type="image/png" sizes="32x32" />
@@ -87,6 +97,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#0066FF" />
         <meta name="msapplication-TileColor" content="#0066FF" />
+        
+        {/* Données structurées existantes */}
         <Script
           id="organization-structured-data"
           type="application/ld+json"
@@ -109,6 +121,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body className={`${inter.className} font-light antialiased bg-[#FAFAFA] text-[#2A2A2A]`}>
+        {/* --- GOOGLE TAG MANAGER (Noscript) --- */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-5CBBW2XZ"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+
         <TarteaucitronProvider />
         <QueryProvider>
           {children}
