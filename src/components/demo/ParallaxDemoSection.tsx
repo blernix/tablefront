@@ -195,7 +195,7 @@ export default function ParallaxDemoSection() {
       title: 'Fidélisation',
       description: 'Terminer + avis Google automatique',
       detailedDescription:
-        "Terminez une réservation d'un simple swipe et déclenchez automatiquement l'envoi d'un email pour demander un avis Google. Suivez vos statistiques d'avis en temps réel.",
+        "Terminez une réservation d'un simple swipe et déclenchez automatiquement l'envoi d'un email pour demander un avis Google.",
       component: <EmailReviewDemo />,
       icon: <Star className="w-4 h-4" />,
       features: [
