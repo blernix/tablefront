@@ -11,9 +11,6 @@ export default function AdminDashboardPage() {
   const { data, isLoading, error, refetch } = useAdminDashboard();
   const exportMutation = useExportData();
 
-  console.log('Dashboard data:', data);
-  console.log('Abandoned signups:', data?.stats?.abandonedSignups);
-
   const stats = data?.stats;
   const abandoned = stats?.abandonedSignups;
 
@@ -131,11 +128,9 @@ export default function AdminDashboardPage() {
                         {stats.restaurants.byAccountType.managed}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {(
-                          (stats.restaurants.byAccountType.managed / stats.restaurants.total) *
-                          100
-                        ).toFixed(0)}
-                        %
+                        {stats.restaurants.total > 0
+                          ? ((stats.restaurants.byAccountType.managed / stats.restaurants.total) * 100).toFixed(0)
+                          : '0'}%
                       </p>
                     </div>
                   </div>
@@ -154,11 +149,9 @@ export default function AdminDashboardPage() {
                         {stats.restaurants.byAccountType.selfService}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {(
-                          (stats.restaurants.byAccountType.selfService / stats.restaurants.total) *
-                          100
-                        ).toFixed(0)}
-                        %
+                        {stats.restaurants.total > 0
+                          ? ((stats.restaurants.byAccountType.selfService / stats.restaurants.total) * 100).toFixed(0)
+                          : '0'}%
                       </p>
                     </div>
                   </div>

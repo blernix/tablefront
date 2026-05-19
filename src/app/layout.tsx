@@ -11,6 +11,8 @@ import {
   organizationStructuredData,
   softwareStructuredData,
   pricingStructuredData,
+  faqStructuredData,
+  productComparisonStructuredData,
 } from '@/config/metadata';
 
 const inter = Inter({
@@ -76,6 +78,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="fr" data-theme="light">
       <head>
+        {/* --- GOOGLE CONSENT MODE V2 (doit être chargé AVANT GTM) --- */}
+        <Script id="google-consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              'analytics_storage': 'denied',
+              'ad_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied',
+              'functionality_storage': 'granted',
+              'personalization_storage': 'denied',
+              'security_storage': 'granted',
+              'wait_for_update': 2000,
+            });
+          `}
+        </Script>
+
         {/* --- GOOGLE TAG MANAGER (Script) --- */}
         <Script id="gtm-script" strategy="afterInteractive">
           {`
@@ -97,7 +117,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#0066FF" />
         <meta name="msapplication-TileColor" content="#0066FF" />
-        
+
         {/* Données structurées existantes */}
         <Script
           id="organization-structured-data"
@@ -119,6 +139,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
         />
+        <Script
+          id="faq-structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        />
+        <Script
+          id="product-comparison-structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productComparisonStructuredData) }}
+        />
       </head>
       <body className={`${inter.className} font-light antialiased bg-[#FAFAFA] text-[#2A2A2A]`}>
         {/* --- GOOGLE TAG MANAGER (Noscript) --- */}
@@ -127,7 +157,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             src="https://www.googletagmanager.com/ns.html?id=GTM-5CBBW2XZ"
             height="0"
             width="0"
-            style={{ display: "none", visibility: "hidden" }}
+            style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
 

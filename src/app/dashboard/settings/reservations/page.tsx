@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, Clock } from 'lucide-react';
+import { ArrowLeft, Save, Clock, Sun, Moon } from 'lucide-react';
+import { getServicesPerDay } from '@/store/restaurantStore';
 
 const formSchema = z.object({
   defaultDuration: z.string().min(1, 'La durée est requise'),
@@ -20,6 +21,12 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+const formatMinutes = (min: number) => {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m === 0 ? `${h}h` : `${h}h${m.toString().padStart(2, '0')}`;
+};
 
 export default function ReservationConfigPage() {
   const router = useRouter();
@@ -124,22 +131,22 @@ export default function ReservationConfigPage() {
           Retour
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Configuration des réservations</h1>
-          <p className="mt-2 text-gray-600">
-            Définissez les paramètres de gestion des réservations
+          <h1 className="text-3xl font-light text-[#2A2A2A]">Configuration des réservations</h1>
+          <p className="mt-2 text-[#666666] font-light">
+            Définissez vos services et la durée de chaque réservation
           </p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Paramètres généraux</CardTitle>
-          <CardDescription>Configurez la durée et les créneaux de réservation</CardDescription>
+          <CardTitle>Paramètres des services</CardTitle>
+          <CardDescription>Configurez la durée de chaque service de réservation</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="defaultDuration">Durée par défaut (en minutes) *</Label>
+              <Label htmlFor="defaultDuration">Durée d&apos;un service (en minutes) *</Label>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <Input
@@ -150,14 +157,17 @@ export default function ReservationConfigPage() {
                   step="15"
                   {...register('defaultDuration')}
                   disabled={isSaving}
-                  className="max-w-xs"
+                  className="max-w-[120px]"
                 />
+                <span className="text-sm text-[#666666]">
+                  {formatMinutes(parseInt(watch('defaultDuration') || '90'))}
+                </span>
               </div>
               {errors.defaultDuration && (
                 <p className="text-sm text-destructive">{errors.defaultDuration.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Durée standard d&apos;une réservation (entre 30 et 300 minutes)
+                Durée allouée à chaque réservation. Définit l&apos;espacement entre deux services.
               </p>
             </div>
 
@@ -227,9 +237,12 @@ export default function ReservationConfigPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex justify-between border-b pb-2">
-            <span className="text-muted-foreground">Durée par défaut</span>
+              <span className="text-muted-foreground">Durée d&apos;un service</span>
             <span className="font-semibold">
-              {restaurant?.reservationConfig.defaultDuration} minutes
+              {restaurant?.reservationConfig.defaultDuration} min
+              <span className="text-[#666666] font-light ml-1">
+                ({formatMinutes(restaurant ? restaurant.reservationConfig.defaultDuration : 0)})
+              </span>
             </span>
           </div>
           <div className="flex justify-between border-b pb-2">
@@ -259,21 +272,45 @@ export default function ReservationConfigPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>À propos des créneaux</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-[#0066FF]" />
+            Services disponibles par jour
+          </CardTitle>
+          <CardDescription>
+            Avec une durée de service de {restaurant?.reservationConfig.defaultDuration || 90} minutes
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-gray-600">
-          <p>
-            • <strong>Durée par défaut</strong> : Temps alloué pour chaque réservation
+        <CardContent>
+          {restaurant && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {(Object.entries(getServicesPerDay(restaurant)) as [string, { lunch: number; dinner: number; total: number }][]).map(([day, { lunch, dinner, total }]) => (
+                <div key={day} className="rounded-lg border border-[#E5E5E5] p-3 text-center">
+                  <p className="text-xs font-medium uppercase tracking-[0.15em] text-[#999999] mb-2">
+                    {day.substring(0, 3)}
+                  </p>
+                  {total === 0 ? (
+                    <p className="text-sm text-[#CCCCCC] font-light">Fermé</p>
+                  ) : (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-[#666666]">
+                        <Sun className="h-3 w-3 text-amber-500" />
+                        <span>{lunch} service{lunch !== 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-[#666666]">
+                        <Moon className="h-3 w-3 text-indigo-400" />
+                        <span>{dinner} service{dinner !== 1 ? 's' : ''}</span>
+                      </div>
+                      <p className="text-lg font-light text-[#2A2A2A] mt-1">{total}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="mt-4 text-xs text-[#999999]">
+            Les créneaux de réservation sont automatiquement espacés selon la durée d&apos;un service.
+            Modifiez cette durée pour ajuster le nombre de services disponibles par jour.
           </p>
-          <p>
-            • <strong>Horaires d&apos;ouverture activés</strong> : Les clients peuvent réserver
-            uniquement pendant vos heures d&apos;ouverture
-          </p>
-          <p>
-            • <strong>Mode personnalisé</strong> : Vous définissez manuellement les créneaux
-            disponibles (utile pour les services spéciaux)
-          </p>
-          <p>• Les clients verront les créneaux disponibles selon votre configuration</p>
         </CardContent>
       </Card>
     </div>

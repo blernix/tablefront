@@ -58,15 +58,15 @@ export const CapacityIndicator = ({
   const percentage = maxDailyCapacity !== undefined ? dailyPercentage : simultaneousPercentage;
 
   const getColor = () => {
-    if (percentage >= 90) return 'text-red-600 bg-red-50 border-red-200';
-    if (percentage >= 70) return 'text-amber-600 bg-amber-50 border-amber-200';
-    return 'text-green-600 bg-green-50 border-green-200';
+    if (percentage >= 90) return 'border-l-red-400';
+    if (percentage >= 70) return 'border-l-amber-400';
+    return 'border-l-emerald-400';
   };
 
-  const getBarColor = () => {
-    if (percentage >= 90) return 'bg-red-500';
-    if (percentage >= 70) return 'bg-amber-500';
-    return 'bg-green-500';
+  const getAccentColors = () => {
+    if (percentage >= 90) return { text: 'text-red-600', bg: 'bg-red-50', bar: 'bg-red-500' };
+    if (percentage >= 70) return { text: 'text-amber-600', bg: 'bg-amber-50', bar: 'bg-amber-500' };
+    return { text: 'text-emerald-600', bg: 'bg-emerald-50', bar: 'bg-emerald-500' };
   };
 
   const getMessage = () => {
@@ -76,12 +76,12 @@ export const CapacityIndicator = ({
   };
 
   return (
-    <div className={cn('border rounded-lg p-4', getColor(), className)}>
+    <div className={cn('rounded-xl bg-white border border-[#E5E5E5] border-l-[3px] p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]', getColor(), className)}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4" />
+          <Users className="h-4 w-4 text-[#999999]" />
           <div>
-            <span className="font-semibold">
+            <span className="font-light text-sm text-[#2A2A2A]">
               {currentGuests} / {displayCapacity} couverts
             </span>
             {hasAdvancedData &&
@@ -98,17 +98,17 @@ export const CapacityIndicator = ({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{percentage.toFixed(0)}%</span>
-          <span className="text-xs px-2 py-1 rounded-full bg-white/50 font-medium">
+          <span className="text-sm font-medium text-[#2A2A2A]">{percentage.toFixed(0)}%</span>
+          <span className={cn('text-[11px] px-2 py-0.5 rounded-md font-medium', getAccentColors().bg, getAccentColors().text)}>
             {getMessage()}
           </span>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="w-full bg-white/50 rounded-full h-2 overflow-hidden mb-1">
+      <div className="w-full bg-[#F5F5F5] rounded-full h-1.5 overflow-hidden mb-1">
         <div
-          className={cn('h-full transition-all duration-500', getBarColor())}
+          className={cn('h-full rounded-full transition-all duration-500', getAccentColors().bar)}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -137,8 +137,7 @@ export const CapacityIndicator = ({
         simultaneousCapacity > 0 &&
         maxDailyCapacity > 0 &&
         maxDailyCapacity === simultaneousCapacity && (
-          <div
-            className="mt-1 text-[10px] text-slate-400"
+          <div className="mt-1 text-[10px] text-[#999999]"
             title="La capacité théorique est égale à la capacité simultanée. Cela signifie qu'il n'y a qu'un seul créneau de réservation possible. Vérifiez les horaires d'ouverture et la durée des réservations."
           >
             ℹ️ Un seul créneau de réservation

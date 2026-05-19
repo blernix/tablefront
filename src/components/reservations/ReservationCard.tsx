@@ -13,6 +13,7 @@ import {
   Check,
   X,
   CheckCircle,
+  Circle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,6 @@ interface ReservationCardProps {
   onDelete?: (reservation: Reservation) => void;
   onClick?: () => void;
   showActions?: boolean;
-  // Status change actions
   onConfirm?: (reservation: Reservation) => void;
   onCancel?: (reservation: Reservation) => void;
   onComplete?: (reservation: Reservation) => void;
@@ -38,30 +38,38 @@ const statusConfig = {
   pending: {
     label: 'En attente',
     variant: 'warning' as const,
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-900',
+    bgColor: 'bg-amber-50/60',
+    borderColor: 'border-l-amber-400',
+    iconColor: 'text-amber-500',
+    bgLight: 'bg-amber-50',
+    barColor: '#D97706',
   },
   confirmed: {
     label: 'Confirmée',
     variant: 'success' as const,
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200',
-    textColor: 'text-green-900',
+    bgColor: 'bg-emerald-50/60',
+    borderColor: 'border-l-emerald-400',
+    iconColor: 'text-emerald-500',
+    bgLight: 'bg-emerald-50',
+    barColor: '#059669',
   },
   cancelled: {
     label: 'Annulée',
     variant: 'danger' as const,
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    textColor: 'text-red-900',
+    bgColor: 'bg-red-50/60',
+    borderColor: 'border-l-red-400',
+    iconColor: 'text-red-500',
+    bgLight: 'bg-red-50',
+    barColor: '#DC2626',
   },
   completed: {
     label: 'Terminée',
     variant: 'default' as const,
-    bgColor: 'bg-slate-50',
-    borderColor: 'border-slate-200',
-    textColor: 'text-slate-900',
+    bgColor: 'bg-blue-50/60',
+    borderColor: 'border-l-blue-400',
+    iconColor: 'text-[#0066FF]',
+    bgLight: 'bg-blue-50',
+    barColor: '#0066FF',
   },
 };
 
@@ -84,100 +92,74 @@ export const ReservationCard = ({
       <div
         onClick={onClick}
         className={cn(
-          'border rounded-lg p-4 transition-all',
+          'rounded-lg border-l-[3px] p-3 transition-all',
           config.bgColor,
           config.borderColor,
-          onClick && 'cursor-pointer hover:shadow-md active:scale-[0.98]'
+          onClick && 'cursor-pointer active:scale-[0.985]',
+          'border border-[#E5E5E5] border-l-[3px]'
         )}
+        style={{ borderLeftColor: config.barColor }}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-slate-900 truncate">{reservation.customerName}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant={config.variant} className="text-xs">
-                {config.label}
-              </Badge>
+            <h3 className="font-medium text-[#2A2A2A] truncate text-sm">{reservation.customerName}</h3>
+            <div className="flex items-center gap-2 mt-0.5">
+              <Circle className={cn('h-2 w-2 fill-current', config.iconColor)} />
+              <span className={cn('text-[11px] font-medium', config.iconColor)}>{config.label}</span>
             </div>
           </div>
         </div>
 
-        {/* Info */}
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2 text-slate-600">
-            <Clock className="h-4 w-4 flex-shrink-0" />
-            <span className="font-medium">{reservation.time}</span>
-          </div>
-          <div className="flex items-center gap-2 text-slate-600">
-            <Users className="h-4 w-4 flex-shrink-0" />
-            <span>
-              {reservation.numberOfGuests}{' '}
-              {reservation.numberOfGuests > 1 ? 'personnes' : 'personne'}
-            </span>
-          </div>
+        <div className="flex items-center gap-3 text-xs text-[#666666]">
+          <span className="flex items-center gap-1 font-mono font-medium text-[#2A2A2A]">
+            <Clock className="h-3.5 w-3.5 flex-shrink-0 text-[#999999]" />
+            {reservation.time}
+          </span>
+          <span className="flex items-center gap-1">
+            <Users className="h-3.5 w-3.5 flex-shrink-0 text-[#999999]" />
+            {reservation.numberOfGuests} pers.
+          </span>
         </div>
 
-        {/* Notes preview */}
         {reservation.notes && (
-          <div className="mt-3 flex items-start gap-2">
-            <StickyNote className="h-3 w-3 text-slate-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-slate-500 italic truncate">{reservation.notes}</p>
+          <div className="mt-2 flex items-start gap-1.5">
+            <StickyNote className="h-3 w-3 text-[#CCCCCC] mt-0.5 flex-shrink-0" />
+            <p className="text-[11px] text-[#999999] italic truncate">{reservation.notes}</p>
           </div>
         )}
 
-        {/* Quick actions for compact view */}
         {(onConfirm || onCancel || onComplete) && (
-          <div className="mt-3 pt-3 border-t border-slate-100 flex gap-2">
+          <div className="mt-2 pt-2 border-t border-black/5 flex gap-1.5">
             {reservation.status === 'pending' && onConfirm && (
               <button
-                className="flex-1 py-1.5 px-2 bg-emerald-500 text-white text-xs font-medium rounded hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onConfirm(reservation);
-                }}
-                title="Confirmer la réservation"
+                className="flex-1 py-1.5 px-2 bg-emerald-500 text-white text-[11px] font-medium rounded-md hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => { e.stopPropagation(); onConfirm(reservation); }}
               >
-                <Check className="h-3 w-3" />
-                Confirmer
+                <Check className="h-3 w-3" /> Confirmer
               </button>
             )}
             {reservation.status === 'pending' && onCancel && (
               <button
-                className="flex-1 py-1.5 px-2 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCancel(reservation);
-                }}
-                title="Refuser la réservation"
+                className="flex-1 py-1.5 px-2 bg-red-500 text-white text-[11px] font-medium rounded-md hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}
               >
-                <X className="h-3 w-3" />
-                Refuser
+                <X className="h-3 w-3" /> Refuser
               </button>
             )}
             {reservation.status === 'confirmed' && onComplete && (
               <button
-                className="flex-1 py-1.5 px-2 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onComplete(reservation);
-                }}
-                title="Marquer comme terminée"
+                className="flex-1 py-1.5 px-2 bg-[#0066FF] text-white text-[11px] font-medium rounded-md hover:bg-[#0052CC] transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => { e.stopPropagation(); onComplete(reservation); }}
               >
-                <CheckCircle className="h-3 w-3" />
-                Terminer
+                <CheckCircle className="h-3 w-3" /> Terminer
               </button>
             )}
             {reservation.status === 'confirmed' && onCancel && (
               <button
-                className="flex-1 py-1.5 px-2 bg-amber-500 text-white text-xs font-medium rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCancel(reservation);
-                }}
-                title="Annuler la réservation"
+                className="flex-1 py-1.5 px-2 bg-amber-500 text-white text-[11px] font-medium rounded-md hover:bg-amber-600 transition-colors flex items-center justify-center gap-1"
+                onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}
               >
-                <X className="h-3 w-3" />
-                Annuler
+                <X className="h-3 w-3" /> Annuler
               </button>
             )}
           </div>
@@ -186,166 +168,97 @@ export const ReservationCard = ({
     );
   }
 
-  // Full variant
+  // Full variant — desktop
   return (
-    <div className={cn('border rounded-lg p-6 bg-white', config.borderColor)}>
-      {/* Header with actions */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">{reservation.customerName}</h2>
-          <Badge variant={config.variant} className="mt-2">
-            {config.label}
-          </Badge>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          {/* Quick actions */}
-          {(onConfirm || onCancel || onComplete) && (
-            <div className="flex gap-2">
-              {reservation.status === 'pending' && onConfirm && (
-                <Button
-                  size="sm"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onConfirm(reservation);
-                  }}
-                  title="Confirmer la réservation"
-                >
-                  <Check className="h-3 w-3 mr-1" />
-                  Confirmer
-                </Button>
-              )}
-              {reservation.status === 'pending' && onCancel && (
-                <Button
-                  size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCancel(reservation);
-                  }}
-                  title="Refuser la réservation"
-                >
-                  <X className="h-3 w-3 mr-1" />
-                  Refuser
-                </Button>
-              )}
-              {reservation.status === 'confirmed' && onComplete && (
-                <Button
-                  size="sm"
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onComplete(reservation);
-                  }}
-                  title="Marquer comme terminée"
-                >
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Terminer
-                </Button>
-              )}
-              {reservation.status === 'confirmed' && onCancel && (
-                <Button
-                  size="sm"
-                  className="bg-amber-500 hover:bg-amber-600 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCancel(reservation);
-                  }}
-                  title="Annuler la réservation"
-                >
-                  <X className="h-3 w-3 mr-1" />
-                  Annuler
-                </Button>
-              )}
-            </div>
-          )}
-          {/* Edit/Delete actions */}
-          {showActions && (onEdit || onDelete) && (
-            <div className="flex gap-2">
-              {onEdit && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(reservation);
-                  }}
-                  title="Modifier"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(reservation);
-                  }}
-                  title="Supprimer"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Details */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <Clock className="h-5 w-5 text-slate-400" />
-          <div>
-            <p className="text-sm text-slate-500">Heure</p>
-            <p className="font-medium">{reservation.time}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Users className="h-5 w-5 text-slate-400" />
-          <div>
-            <p className="text-sm text-slate-500">Nombre de personnes</p>
-            <p className="font-medium">{reservation.numberOfGuests}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Mail className="h-5 w-5 text-slate-400" />
+    <div
+      className={cn(
+        'rounded-xl bg-white transition-all duration-200',
+        'shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]',
+        'border border-[#E5E5E5] hover:border-[var(--card-border)]',
+        'overflow-hidden'
+      )}
+      style={{ borderLeft: `3px solid ${config.barColor}`, '--card-border': config.barColor } as React.CSSProperties}
+    >
+      <div className="p-4 sm:p-5">
+        {/* Top row: name + time + guests + status + actions */}
+        <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-slate-500">Email</p>
-            <a
-              href={`mailto:${reservation.customerEmail}`}
-              className="font-medium text-blue-600 hover:underline truncate block"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {reservation.customerEmail}
-            </a>
+            <h2 className="text-base font-medium text-[#2A2A2A] truncate">{reservation.customerName}</h2>
+            <div className="flex items-center gap-4 mt-1">
+              <span className="flex items-center gap-1.5 text-sm font-mono font-medium text-[#2A2A2A]">
+                <Clock className="h-4 w-4 text-[#999999]" />
+                {reservation.time}
+              </span>
+              <span className="flex items-center gap-1.5 text-sm text-[#666666]">
+                <Users className="h-4 w-4 text-[#999999]" />
+                {reservation.numberOfGuests} pers.
+              </span>
+              <span className={cn('inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-0.5', config.bgLight, config.iconColor)}>
+                <Circle className="h-2 w-2 fill-current" />
+                {config.label}
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {(onConfirm || onCancel || onComplete) && (
+              <div className="flex gap-1 mr-2">
+                {reservation.status === 'pending' && onConfirm && (
+                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 h-8 text-xs" onClick={(e) => { e.stopPropagation(); onConfirm(reservation); }}>
+                    <Check className="h-3.5 w-3.5 mr-1" /> Confirmer
+                  </Button>
+                )}
+                {reservation.status === 'pending' && onCancel && (
+                  <Button size="sm" className="bg-red-500 hover:bg-red-600 h-8 text-xs" onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}>
+                    <X className="h-3.5 w-3.5 mr-1" /> Refuser
+                  </Button>
+                )}
+                {reservation.status === 'confirmed' && onComplete && (
+                  <Button size="sm" variant="default" className="h-8 text-xs" onClick={(e) => { e.stopPropagation(); onComplete(reservation); }}>
+                    <CheckCircle className="h-3.5 w-3.5 mr-1" /> Terminer
+                  </Button>
+                )}
+                {reservation.status === 'confirmed' && onCancel && (
+                  <Button size="sm" variant="outline" className="h-8 text-xs border-red-300 text-red-600 hover:bg-red-50" onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}>
+                    <X className="h-3.5 w-3.5 mr-1" /> Annuler
+                  </Button>
+                )}
+              </div>
+            )}
+            {showActions && (
+              <div className="flex gap-1">
+                {onEdit && (
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); onEdit(reservation); }} title="Modifier">
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={(e) => { e.stopPropagation(); onDelete(reservation); }} title="Supprimer">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Phone className="h-5 w-5 text-slate-400" />
-          <div>
-            <p className="text-sm text-slate-500">Téléphone</p>
-            <a
-              href={`tel:${reservation.customerPhone}`}
-              className="font-medium text-blue-600 hover:underline"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {reservation.customerPhone}
-            </a>
-          </div>
+        {/* Contact info */}
+        <div className="mt-2 flex items-center gap-4 text-xs text-[#999999]">
+          <a href={`mailto:${reservation.customerEmail}`} className="flex items-center gap-1 hover:text-[#0066FF] transition-colors" onClick={(e) => e.stopPropagation()}>
+            <Mail className="h-3.5 w-3.5" />
+            <span className="truncate max-w-[180px]">{reservation.customerEmail}</span>
+          </a>
+          <a href={`tel:${reservation.customerPhone}`} className="flex items-center gap-1 hover:text-[#0066FF] transition-colors" onClick={(e) => e.stopPropagation()}>
+            <Phone className="h-3.5 w-3.5" />
+            {reservation.customerPhone}
+          </a>
         </div>
 
         {reservation.notes && (
-          <div className="pt-3 border-t">
-            <div className="flex items-center gap-2 mb-1">
-              <StickyNote className="h-4 w-4 text-slate-400" />
-              <p className="text-sm text-slate-500 font-medium">Notes</p>
-            </div>
-            <p className="text-slate-700 text-sm">{reservation.notes}</p>
+          <div className="mt-2 pt-2 border-t border-[#E5E5E5] flex items-start gap-1.5">
+            <StickyNote className="h-3.5 w-3.5 text-[#CCCCCC] mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-[#666666]">{reservation.notes}</p>
           </div>
         )}
       </div>

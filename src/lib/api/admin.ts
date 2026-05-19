@@ -148,6 +148,13 @@ export class AdminApi extends ApiClient {
     this.downloadBlob(response.blob, 'notification_analytics.csv');
   }
 
+  async createCommercialUser(email: string, password: string): Promise<any> {
+    return this.request('/api/admin/commercials', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+  }
+
   private async fetchWithBlob(endpoint: string): Promise<{ blob: Blob }> {
     const headers: Record<string, string> = {};
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;

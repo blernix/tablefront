@@ -9,6 +9,8 @@ import { ClosuresApi } from './closures';
 import { AdminApi } from './admin';
 import { NotificationsApi } from './notifications';
 import { BillingApi } from './billing';
+import { CustomersApi } from './customers';
+import { CommercialApiClient } from './commercial';
 
 class UnifiedApiClient {
   private baseClient: ApiClient;
@@ -22,6 +24,8 @@ class UnifiedApiClient {
   public admin: AdminApi;
   public notifications: NotificationsApi;
   public billing: BillingApi;
+  public customers: CustomersApi;
+  public commercial: CommercialApiClient;
 
   constructor(baseUrl: string) {
     this.baseClient = new ApiClient(baseUrl);
@@ -35,6 +39,8 @@ class UnifiedApiClient {
     this.admin = new AdminApi(baseUrl);
     this.notifications = new NotificationsApi(baseUrl);
     this.billing = new BillingApi(baseUrl);
+    this.customers = new CustomersApi(baseUrl);
+    this.commercial = new CommercialApiClient();
   }
 
   // Delegate token and callback management to all modules
@@ -50,6 +56,8 @@ class UnifiedApiClient {
     this.admin.setToken(token);
     this.notifications.setToken(token);
     this.billing.setToken(token);
+    this.customers.setToken(token);
+    this.commercial.setToken(token);
   }
 
   setOnUnauthorized(callback: () => void) {
@@ -64,6 +72,8 @@ class UnifiedApiClient {
     this.admin.setOnUnauthorized(callback);
     this.notifications.setOnUnauthorized(callback);
     this.billing.setOnUnauthorized(callback);
+    this.customers.setOnUnauthorized(callback);
+    this.commercial.setOnUnauthorized(callback);
   }
 
   // Delegate healthCheck to base client

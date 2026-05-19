@@ -154,7 +154,7 @@ export const useInvalidateRestaurantCache = () => {
   return invalidateCache;
 };
 
-// Helper to get available time slots for a specific day
+// Helper to get available time slots for a specific day (15-min intervals, validated by service duration)
 export const getAvailableTimeSlots = (
   restaurant: Restaurant | null,
   dayOfWeek: number // 0 = Sunday, 1 = Monday, etc.
@@ -169,40 +169,71 @@ export const getAvailableTimeSlots = (
     return [];
   }
 
+  const serviceDuration = restaurant.reservationConfig?.defaultDuration || 90;
   const allSlots: string[] = [];
 
-  // Generate 30-minute slots for each opening period
   daySchedule.slots.forEach((slot) => {
     const [startHour, startMin] = slot.start.split(':').map(Number);
     const [endHour, endMin] = slot.end.split(':').map(Number);
 
-    let currentHour = startHour;
-    let currentMin = startMin;
+    const startTotal = startHour * 60 + startMin;
+    const endTotal = endHour * 60 + endMin;
 
-    while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
-      const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-      allSlots.push(timeStr);
-
-      // Add 30 minutes
-      currentMin += 30;
-      if (currentMin >= 60) {
-        currentMin = 0;
-        currentHour += 1;
-      }
+    // 15-minute intervals — slot is valid only if a full service fits before closing
+    for (let current = startTotal; current + serviceDuration <= endTotal; current += 15) {
+      const h = Math.floor(current / 60);
+      const m = current % 60;
+      allSlots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
     }
   });
 
   return allSlots;
 };
 
-// Helper to check if a time is within opening hours
+// Count how many services (reservation slots) fit in each opening period
+export const getServicesPerDay = (
+  restaurant: Restaurant | null,
+): Record<string, { lunch: number; dinner: number; total: number }> => {
+  const defaultCount = { lunch: 0, dinner: 0, total: 0 };
+  if (!restaurant || !restaurant.openingHours) return {};
+
+  const serviceDuration = restaurant.reservationConfig?.defaultDuration || 90;
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const result: Record<string, { lunch: number; dinner: number; total: number }> = {};
+
+  dayNames.forEach((dayName) => {
+    const day = restaurant.openingHours[dayName as keyof typeof restaurant.openingHours];
+    if (!day || day.closed || !day.slots) {
+      result[dayName] = { ...defaultCount };
+      return;
+    }
+
+    let lunch = 0, dinner = 0;
+    day.slots.forEach((slot) => {
+      const [startH] = slot.start.split(':').map(Number);
+      const [startHour, startMin] = slot.start.split(':').map(Number);
+      const [endHour, endMin] = slot.end.split(':').map(Number);
+      const totalMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+      const count = Math.floor(totalMinutes / serviceDuration);
+
+      if (startH < 17) lunch += count;
+      else dinner += count;
+    });
+
+    result[dayName] = { lunch, dinner, total: lunch + dinner };
+  });
+
+  return result;
+};
+
+// Helper to check if a time is within opening hours AND a full service fits before closing
 export const isTimeWithinOpeningHours = (
   restaurant: Restaurant | null,
   dayOfWeek: number,
   time: string
 ): boolean => {
-  if (!restaurant || !restaurant.openingHours) return true; // Allow if no restrictions
-  if (!restaurant.reservationConfig?.useOpeningHours) return true; // Allow if not enforced
+  if (!restaurant || !restaurant.openingHours) return true;
+  if (!restaurant.reservationConfig?.useOpeningHours) return true;
 
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const dayName = dayNames[dayOfWeek] as keyof typeof restaurant.openingHours;
@@ -212,14 +243,16 @@ export const isTimeWithinOpeningHours = (
 
   const [inputHour, inputMin] = time.split(':').map(Number);
   const inputMinutes = inputHour * 60 + inputMin;
+  const serviceDuration = restaurant.reservationConfig?.defaultDuration || 90;
+  const endMinutes = inputMinutes + serviceDuration;
 
   return daySchedule.slots.some((slot) => {
     const [startHour, startMin] = slot.start.split(':').map(Number);
     const [endHour, endMin] = slot.end.split(':').map(Number);
-
     const startMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
+    const slotEndMinutes = endHour * 60 + endMin;
 
-    return inputMinutes >= startMinutes && inputMinutes < endMinutes;
+    // Time must be within the slot AND the full service must fit before the slot ends
+    return inputMinutes >= startMinutes && endMinutes <= slotEndMinutes;
   });
 };

@@ -64,15 +64,13 @@ export default function WidgetSettingsPage() {
   );
 
   // Form state (affecte le formulaire de réservation)
-  const [primaryColor, setPrimaryColor] = useState('#000000');
+  const [primaryColor, setPrimaryColor] = useState('#0066FF');
   const [secondaryColor, setSecondaryColor] = useState('#2A2A2A');
   const [fontFamily, setFontFamily] = useState('system-ui, sans-serif');
-  const [borderRadius, setBorderRadius] = useState('4px');
-
-  // Button specific colors (bouton flottant uniquement)
-  const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#000000');
+  const [borderRadius, setBorderRadius] = useState('8px');
+  const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#0066FF');
   const [buttonTextColor, setButtonTextColor] = useState('#FFFFFF');
-  const [buttonHoverColor, setButtonHoverColor] = useState('#333333');
+  const [buttonHoverColor, setButtonHoverColor] = useState('#0052CC');
 
   // Floating button general state
   const [buttonText, setButtonText] = useState('Réserver une table');
@@ -158,20 +156,15 @@ export default function WidgetSettingsPage() {
   useEffect(() => {}, [restaurant]);
 
   const handleReset = () => {
-    // Form colors
-    setPrimaryColor('#000000');
+    setPrimaryColor('#0066FF');
     setSecondaryColor('#2A2A2A');
     setFontFamily('system-ui, sans-serif');
-    setBorderRadius('4px');
-
-    // Button specific colors
-    setButtonBackgroundColor('#000000');
+    setBorderRadius('8px');
+    setButtonBackgroundColor('#0066FF');
     setButtonTextColor('#FFFFFF');
-    setButtonHoverColor('#333333');
+    setButtonHoverColor('#0052CC');
 
-    // Floating button configs
     setButtonText('Réserver une table');
-    // buttonPosition reste 'bottom-right'
     setButtonStyle('round');
     setButtonIcon(false);
     setModalWidth('500px');

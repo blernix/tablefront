@@ -36,7 +36,7 @@
     --input: 0 0% 100%; /* #FFFFFF */
     --ring: 217 100% 50%; /* #0066FF */
 
-    --radius: 0rem; /* Angles droits */
+    --radius: 0.5rem; /* 8px — Swiss Modern */
   }
 
   .dark {
@@ -302,6 +302,30 @@
       transition-duration: 0.01ms !important;
     }
   }
+ 
+  /* Dashboard card — elevated with subtle shadow and hover uplift */
+  .dashboard-card {
+    @apply bg-white border border-[#E5E5E5] rounded-xl transition-all duration-300;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+  .dashboard-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.02);
+    border-color: #0066FF;
+  }
+
+  /* Dashboard stat card — colored top accent border */
+  .dashboard-stat {
+    @apply bg-white border border-[#E5E5E5] rounded-xl p-5 transition-all duration-300;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    border-top: 2px solid #0066FF;
+  }
+  .dashboard-stat:hover {
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.08);
+    border-color: #0066FF;
+  }
+  .dashboard-stat.amber { border-top-color: #D97706; }
+  .dashboard-stat.green { border-top-color: #059669; }
+  .dashboard-stat.purple { border-top-color: #7C3AED; }
 }
 
 /* Minimal, purposeful animations */

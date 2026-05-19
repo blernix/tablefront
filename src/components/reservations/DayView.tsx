@@ -1,9 +1,10 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { Reservation, Restaurant } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Calendar, Plus, Users, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Plus, Users, Clock, Sun, Moon, Eye } from 'lucide-react';
 import { format, addDays, subDays, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -21,38 +22,11 @@ interface DayViewProps {
   restaurant?: Restaurant | null;
 }
 
-// Helper to generate services from time slots
-const generateServicesFromSlots = (slots: string[]) => {
-  if (slots.length === 0) return [];
-
-  const services: { name: string; start: number; end: number; slots: number }[] = [];
-
-  // Group slots into services (lunch: before 17h, dinner: 17h and after)
-  const lunchSlots = slots.filter((slot) => {
-    const hour = parseInt(slot.split(':')[0]);
-    return hour < 17;
-  });
-
-  const dinnerSlots = slots.filter((slot) => {
-    const hour = parseInt(slot.split(':')[0]);
-    return hour >= 17;
-  });
-
-  if (lunchSlots.length > 0) {
-    const startHour = parseInt(lunchSlots[0].split(':')[0]);
-    const lastSlot = lunchSlots[lunchSlots.length - 1];
-    const endHour = parseInt(lastSlot.split(':')[0]) + 1; // Add 1 hour to include the last slot
-    services.push({ name: 'Déjeuner', start: startHour, end: endHour, slots: 30 });
-  }
-
-  if (dinnerSlots.length > 0) {
-    const startHour = parseInt(dinnerSlots[0].split(':')[0]);
-    const lastSlot = dinnerSlots[dinnerSlots.length - 1];
-    const endHour = parseInt(lastSlot.split(':')[0]) + 1;
-    services.push({ name: 'Dîner', start: startHour, end: endHour, slots: 30 });
-  }
-
-  return services;
+const statusConfig = {
+  confirmed: 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100',
+  pending: 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100',
+  completed: 'bg-blue-50 border-blue-100 text-blue-700 hover:bg-blue-100',
+  cancelled: 'bg-red-50 border-red-100 text-red-700',
 };
 
 export const DayView = ({
@@ -64,99 +38,196 @@ export const DayView = ({
   maxCapacity = 50,
   restaurant,
 }: DayViewProps) => {
-  // Get day of week (0 = Sunday, 1 = Monday, etc.)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setSelectedId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleReservationTap = (reservation: Reservation) => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    if (!isMobile) {
+      onReservationClick?.(reservation);
+      return;
+    }
+    if (selectedId === reservation._id) {
+      onReservationClick?.(reservation);
+    } else {
+      setSelectedId(reservation._id);
+    }
+  };
+
   const dayOfWeek = currentDay.getDay();
 
-  // Get available time slots from restaurant opening hours
   const availableSlots = restaurant ? getAvailableTimeSlots(restaurant, dayOfWeek) : [];
 
-  // Check if day is closed
-  const dayNames = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ] as const;
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
   const dayName = dayNames[dayOfWeek];
   const isClosed = restaurant?.openingHours?.[dayName]?.closed || false;
 
-  // If no restaurant data, use default services
-  // If restaurant data exists but day is closed or no slots, show appropriate message
-  const services =
-    !restaurant || availableSlots.length > 0
-      ? availableSlots.length > 0
-        ? generateServicesFromSlots(availableSlots)
-        : [
-            { name: 'Déjeuner', start: 11, end: 15, slots: 30 },
-            { name: 'Dîner', start: 18, end: 23, slots: 30 },
-          ]
-      : [];
+  const handlePreviousDay = () => onDayChange(subDays(currentDay, 1));
+  const handleNextDay = () => onDayChange(addDays(currentDay, 1));
+  const handleToday = () => onDayChange(new Date());
 
-  const handlePreviousDay = () => {
-    onDayChange(subDays(currentDay, 1));
-  };
-
-  const handleNextDay = () => {
-    onDayChange(addDays(currentDay, 1));
-  };
-
-  const handleToday = () => {
-    onDayChange(new Date());
-  };
-
-  // Get reservations for current day
   const currentDayStr = getLocalDateString(currentDay);
   const dayReservations = reservations.filter((r) => {
     const resDate = getLocalDateString(r.date);
     return resDate === currentDayStr && r.status !== 'cancelled';
   });
 
-  // Calculate advanced capacity data if restaurant available
   const advancedCapacity = restaurant
     ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant)
     : null;
 
-  // Calculate stats
   const totalGuests = dayReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
   const occupationRate =
     advancedCapacity?.dailyOccupationPercentage ??
     (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
 
-  // Get reservations for a specific time slot
-  const getReservationsForTime = (hour: number, minute: number) => {
-    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  // Group available slots by service (lunch < 17h, dinner >= 17h)
+  const lunchSlots = availableSlots.filter((s) => parseInt(s.split(':')[0]) < 17);
+  const dinnerSlots = availableSlots.filter((s) => parseInt(s.split(':')[0]) >= 17);
 
+  // Match reservations to the closest available slot (15-min tolerance)
+  const getReservationsForSlot = (slotTime: string) => {
+    const [sh, sm] = slotTime.split(':').map(Number);
+    const slotMin = sh * 60 + sm;
     return dayReservations.filter((r) => {
-      const [resHour, resMin] = r.time.split(':').map(Number);
-      return resHour === hour && Math.abs(resMin - minute) < 30;
+      const [rh, rm] = r.time.split(':').map(Number);
+      const resMin = rh * 60 + rm;
+      return Math.abs(resMin - slotMin) <= 15;
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-green-100 border-green-300 text-green-900 hover:bg-green-200';
-      case 'pending':
-        return 'bg-amber-100 border-amber-300 text-amber-900 hover:bg-amber-200';
-      case 'completed':
-        return 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200';
-      default:
-        return 'bg-slate-100 border-slate-300 text-slate-700';
-    }
-  };
+  const renderTimeline = (slots: string[], serviceName: string, icon: React.ReactNode) => {
+    if (slots.length === 0) return null;
 
-  // Generate time slots for a service
-  const generateTimeSlots = (startHour: number, endHour: number, interval: number) => {
-    const slots = [];
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += interval) {
-        slots.push({ hour, minute });
-      }
+    const serviceReservations = dayReservations.filter((r) => {
+      const hour = parseInt(r.time.split(':')[0]);
+      return serviceName === 'Midi' ? hour < 17 : hour >= 17;
+    });
+    const serviceGuests = serviceReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
+    let serviceCapacity = maxCapacity / 2;
+    if (advancedCapacity) {
+      serviceCapacity = serviceName === 'Midi'
+        ? advancedCapacity.serviceCapacities.lunch.maxCapacity
+        : advancedCapacity.serviceCapacities.dinner.maxCapacity;
     }
-    return slots;
+    const serviceOccupation = serviceCapacity > 0 ? (serviceGuests / serviceCapacity) * 100 : 0;
+
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              {icon}
+              <div>
+                <h3 className="text-lg font-light text-[#2A2A2A]">{serviceName}</h3>
+                <p className="text-sm text-[#999999]">
+                  {slots[0]} - {slots[slots.length - 1]} ({slots.length} créneau{slots.length > 1 ? 'x' : ''})
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-[#666666]">
+                <Users className="inline h-4 w-4 mr-1" />
+                {serviceReservations.length} rés. · {serviceGuests} pers.
+              </div>
+              <div className="text-xs text-[#999999] mt-1">
+                {serviceOccupation.toFixed(0)}% {serviceCapacity > 0 && `/ ${serviceCapacity} couverts`}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full bg-[#F5F5F5] rounded-full h-1.5 mb-4">
+            <div
+              className={cn(
+                'h-1.5 rounded-full transition-all',
+                serviceOccupation >= 90 ? 'bg-red-500' : serviceOccupation >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
+              )}
+              style={{ width: `${Math.min(serviceOccupation, 100)}%` }}
+            />
+          </div>
+
+          <div className="space-y-1">
+            {slots.map((timeStr) => {
+              const slotReservations = getReservationsForSlot(timeStr);
+              const hasReservations = slotReservations.length > 0;
+
+              return (
+                <div
+                  key={timeStr}
+                  className={cn(
+                    'flex items-center gap-2 p-2 rounded-lg border transition-colors',
+                    hasReservations ? 'bg-white border-[#E5E5E5]' : 'bg-white border-[#E5E5E5] hover:bg-[#FAFAFA]'
+                  )}
+                >
+                  <div className="w-14 text-sm font-mono font-medium text-[#2A2A2A] flex-shrink-0">
+                    {timeStr}
+                  </div>
+                  <div className="flex-1">
+                    {hasReservations && (
+                      <div className="flex flex-wrap gap-1.5 mb-1">
+                        {slotReservations.map((reservation) => {
+                          const isExpanded = selectedId === reservation._id;
+                          return (
+                            <div key={reservation._id} className="group">
+                              <button
+                                onClick={() => handleReservationTap(reservation)}
+                                className={cn(
+                                  'px-3 py-1.5 rounded-lg border text-sm transition-colors text-left',
+                                  statusConfig[reservation.status as keyof typeof statusConfig] || statusConfig.pending,
+                                  isExpanded ? 'ring-2 ring-[#0066FF] shadow-md z-10 relative' : ''
+                                )}
+                              >
+                                <div className="font-medium">{reservation.customerName}</div>
+                                <div className="text-xs opacity-75">{reservation.numberOfGuests} pers.</div>
+                              </button>
+                              {isExpanded && (
+                                <div className="mt-0.5 p-2 bg-white border border-[#0066FF]/30 rounded-md text-xs space-y-1.5 shadow-sm sm:hidden">
+                                  <div className="font-medium text-[#2A2A2A]">{reservation.customerName}</div>
+                                  <div className="text-gray-500">{reservation.time} · {reservation.numberOfGuests} pers.</div>
+                                  <div className="text-gray-400">{reservation.customerEmail}</div>
+                                  <button
+                                    onClick={() => { onReservationClick?.(reservation); setSelectedId(null); }}
+                                    className="flex items-center gap-1 text-[#0066FF] text-xs font-medium hover:underline mt-1"
+                                  >
+                                    <Eye className="h-3 w-3" />
+                                    Voir la réservation
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {onQuickCreate && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onQuickCreate(timeStr)}
+                        className="text-[#0066FF] hover:text-[#0052CC] hover:bg-[#0066FF]/5"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        {hasReservations ? `+ Ajouter (${slotReservations.length})` : 'Créer'}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -166,66 +237,50 @@ export const DayView = ({
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 space-y-2 md:space-y-0">
             <div className="flex items-center gap-3">
-              <Calendar className="h-6 w-6 text-slate-700" />
+              <Calendar className="h-6 w-6 text-[#0066FF]" />
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 capitalize">
-                  <span className="md:hidden">
-                    {format(currentDay, 'EEE d MMM', { locale: fr })}
-                  </span>
-                  <span className="hidden md:inline">
-                    {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
-                  </span>
+                <h2 className="text-xl font-light text-[#2A2A2A] capitalize">
+                  {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
                 </h2>
                 {isToday(currentDay) && (
-                  <p className="text-sm text-blue-600 font-medium mt-1">Aujourd&apos;hui</p>
+                  <p className="text-sm text-[#0066FF] font-medium mt-1">Aujourd&apos;hui</p>
                 )}
               </div>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handlePreviousDay}
-                className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
-              >
+              <Button variant="outline" size="sm" onClick={handlePreviousDay} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleNextDay}
-                className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5"
-              >
+              <Button variant="outline" size="sm" onClick={handleToday}>Aujourd&apos;hui</Button>
+              <Button variant="outline" size="sm" onClick={handleNextDay} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5">
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          {/* Day Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-900">{dayReservations.length}</div>
-              <div className="text-xs text-blue-700">Réservations</div>
+            <div className="text-center rounded-lg bg-[#0066FF]/5 p-3">
+              <div className="text-2xl font-light text-[#0066FF]">{dayReservations.length}</div>
+              <div className="text-xs text-[#666666]">Réservations</div>
             </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-900">{totalGuests}</div>
-              <div className="text-xs text-green-700">Couverts</div>
+            <div className="text-center rounded-lg bg-emerald-50 p-3">
+              <div className="text-2xl font-light text-emerald-600">{totalGuests}</div>
+              <div className="text-xs text-[#666666]">Couverts</div>
             </div>
-            <div className="text-center p-3 bg-amber-50 rounded-lg">
-              <div className="text-2xl font-bold text-amber-900">{occupationRate.toFixed(0)}%</div>
-              <div className="text-xs text-amber-700">Occupation</div>
+            <div className="text-center rounded-lg bg-amber-50 p-3">
+              <div className="text-2xl font-light text-amber-600">{occupationRate.toFixed(0)}%</div>
+              <div className="text-xs text-[#666666]">Occupation</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Closed Day Message */}
       {restaurant && isClosed && (
         <Card>
           <CardContent className="pt-6">
             <div className="text-center py-8">
-              <p className="text-lg font-medium text-slate-700">Restaurant fermé ce jour</p>
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-lg font-light text-[#2A2A2A]">Restaurant fermé ce jour</p>
+              <p className="text-sm text-[#666666] mt-2">
                 Le restaurant est fermé le {format(currentDay, 'EEEE', { locale: fr })}
               </p>
             </div>
@@ -233,160 +288,35 @@ export const DayView = ({
         </Card>
       )}
 
-      {/* Services Timeline */}
-      {!isClosed &&
-        services.map((service) => {
-          const serviceReservations = dayReservations.filter((r) => {
-            const hour = parseInt(r.time.split(':')[0]);
-            return hour >= service.start && hour < service.end;
-          });
+      {!restaurant && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <p className="text-lg font-light text-[#2A2A2A]">Chargement des créneaux...</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          const serviceGuests = serviceReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-          let serviceCapacity = maxCapacity / 2; // Half capacity per service fallback
-          if (advancedCapacity) {
-            if (service.name === 'Déjeuner') {
-              serviceCapacity = advancedCapacity.serviceCapacities.lunch.maxCapacity;
-            } else if (service.name === 'Dîner') {
-              serviceCapacity = advancedCapacity.serviceCapacities.dinner.maxCapacity;
-            }
-          }
-          const serviceOccupation =
-            serviceCapacity > 0 ? (serviceGuests / serviceCapacity) * 100 : 0;
+      {restaurant && !isClosed && availableSlots.length === 0 && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <p className="text-lg font-light text-[#2A2A2A]">Aucun créneau configuré</p>
+              <p className="text-sm text-[#666666] mt-2">
+                Configurez vos horaires d&apos;ouverture dans les paramètres pour voir les créneaux.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          const timeSlots = generateTimeSlots(service.start, service.end, service.slots);
-
-          return (
-            <Card key={service.name}>
-              <CardContent className="pt-6">
-                {/* Service Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-5 w-5 text-slate-600" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-900">{service.name}</h3>
-                      <p className="text-sm text-slate-500">
-                        {service.start}h - {service.end}h
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="text-sm text-slate-600">
-                        <Users className="inline h-4 w-4 mr-1" />
-                        {serviceReservations.length} rés. · {serviceGuests} pers.
-                      </div>
-                      <div className="text-xs text-slate-500 mt-1">
-                        Occupation: {serviceOccupation.toFixed(0)}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Capacity Bar with numeric indicator */}
-                <div className="space-y-1 mb-4">
-                  <div className="flex justify-between text-xs text-slate-600">
-                    <span>
-                      {serviceGuests} / {serviceCapacity} couverts
-                    </span>
-                    <span>{serviceOccupation.toFixed(0)}%</span>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
-                    <div
-                      className={cn(
-                        'h-2 rounded-full transition-all',
-                        serviceOccupation >= 90
-                          ? 'bg-red-500'
-                          : serviceOccupation >= 70
-                            ? 'bg-amber-500'
-                            : 'bg-green-500'
-                      )}
-                      style={{ width: `${Math.min(serviceOccupation, 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Timeline */}
-                <div className="space-y-1">
-                  {timeSlots.map(({ hour, minute }) => {
-                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-                    const slotReservations = getReservationsForTime(hour, minute);
-                    const hasReservations = slotReservations.length > 0;
-
-                    return (
-                      <div
-                        key={timeStr}
-                        className={cn(
-                          'flex items-center gap-2 p-2 rounded border transition-colors',
-                          hasReservations
-                            ? 'bg-slate-50 border-slate-300'
-                            : 'bg-white border-slate-200 hover:bg-slate-50'
-                        )}
-                      >
-                        {/* Time */}
-                        <div className="w-16 text-sm font-medium text-slate-600 flex-shrink-0">
-                          {timeStr}
-                        </div>
-
-                        {/* Reservations or Empty Slot */}
-                        <div className="flex-1">
-                          {hasReservations ? (
-                            <div className="flex flex-wrap gap-2">
-                              {slotReservations.map((reservation) => (
-                                <button
-                                  key={reservation._id}
-                                  onClick={() => onReservationClick?.(reservation)}
-                                  className={cn(
-                                    'px-3 py-1.5 rounded border text-sm transition-colors',
-                                    getStatusColor(reservation.status)
-                                  )}
-                                >
-                                  <div className="font-semibold">{reservation.customerName}</div>
-                                  <div className="text-xs opacity-75">
-                                    {reservation.numberOfGuests} pers.
-                                  </div>
-                                </button>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-slate-400">Créneau libre</span>
-                              {onQuickCreate && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => onQuickCreate(timeStr)}
-                                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                >
-                                  <Plus className="h-4 w-4 mr-1" />
-                                  Créer
-                                </Button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                {/* Occupancy legend */}
-                <div className="flex flex-wrap gap-3 text-xs mt-4 pt-3 border-t border-slate-100">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-slate-600">Faible (&lt;70%)</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                    <span className="text-slate-600">Moyen (70-90%)</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <span className="text-slate-600">Élevé (&gt;90%)</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {!isClosed && (
+        <>
+          {renderTimeline(lunchSlots, 'Midi', <Sun className="h-5 w-5 text-amber-500" />)}
+          {renderTimeline(dinnerSlots, 'Soir', <Moon className="h-5 w-5 text-indigo-400" />)}
+        </>
+      )}
     </div>
   );
 };

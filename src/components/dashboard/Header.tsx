@@ -28,7 +28,7 @@ export default function DashboardHeader({ onToggleMobileMenu }: DashboardHeaderP
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-[#E5E5E5] bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-[#E5E5E5] bg-white/95 backdrop-blur-sm px-4 sm:px-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       {/* Mobile menu button */}
       <Button
         variant="ghost"

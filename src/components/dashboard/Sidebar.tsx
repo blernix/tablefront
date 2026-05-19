@@ -13,6 +13,7 @@ import {
   Users,
   CalendarX,
   MessageSquare,
+  UserCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +32,12 @@ const navigation = [
     name: 'Réservations',
     href: '/dashboard/reservations',
     icon: Calendar,
+    allowedRoles: ['admin', 'restaurant', 'server'] as const,
+  },
+  {
+    name: 'Clients',
+    href: '/dashboard/customers',
+    icon: UserCheck,
     allowedRoles: ['admin', 'restaurant', 'server'] as const,
   },
   {
@@ -156,8 +163,8 @@ export default function DashboardSidebar({
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#0066FF]" />
 
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center border border-[#E5E5E5] bg-[#0066FF]">
-              <span className="text-sm font-bold text-white">TM</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0066FF]">
+              <span className="text-sm font-semibold text-white">TM</span>
             </div>
             <h1 className="text-lg font-light text-[#2A2A2A]">TableMaster</h1>
           </div>
@@ -182,10 +189,10 @@ export default function DashboardSidebar({
                 href={item.href}
                 onClick={closeMobileMenu}
                 className={cn(
-                  'group flex items-center gap-3 border px-3 py-2.5 text-sm font-light transition-colors',
+                  'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-light transition-all duration-200',
                   isActive
-                    ? 'border-[#0066FF] bg-[#FAFAFA] text-[#0066FF]'
-                    : 'border-transparent text-[#666666] hover:bg-[#FAFAFA] hover:text-[#2A2A2A]'
+                    ? 'bg-[#0066FF]/5 text-[#0066FF] border border-[#0066FF]/10'
+                    : 'text-[#666666] hover:bg-[#FAFAFA] hover:text-[#2A2A2A]'
                 )}
                 data-tour={item.name === 'Paramètres' ? 'sidebar-settings' : undefined}
               >
@@ -213,8 +220,8 @@ export default function DashboardSidebar({
 
         {/* Footer */}
         <div className="border-t border-[#E5E5E5] p-4">
-          <div className="flex items-center gap-3 border border-[#E5E5E5] bg-[#FAFAFA] px-3 py-2">
-            <div className="flex h-8 w-8 items-center justify-center border border-[#0066FF] bg-[#0066FF] text-sm font-semibold text-white">
+          <div className="flex items-center gap-3 rounded-lg border border-[#E5E5E5] bg-[#FAFAFA] px-3 py-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0066FF] text-sm font-semibold text-white">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">

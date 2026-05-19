@@ -8,6 +8,7 @@ import { shouldShowCookieConsent } from '@/utils/pageDetection';
 declare global {
   interface Window {
     tarteaucitron: any;
+    dataLayer: any[];
   }
 }
 
@@ -54,6 +55,23 @@ export default function TarteaucitronProvider() {
       };
       window.addEventListener('tac.close_alert', handleCloseAlert);
 
+      // Helper: update Google Consent Mode via dataLayer
+      const updateGoogleConsent = (analyticsGranted: boolean) => {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(...args: any[]) {
+          window.dataLayer.push(args);
+        }
+        gtag('consent', 'update', {
+          analytics_storage: analyticsGranted ? 'granted' : 'denied',
+          ad_storage: analyticsGranted ? 'granted' : 'denied',
+          ad_user_data: analyticsGranted ? 'granted' : 'denied',
+          ad_personalization: analyticsGranted ? 'granted' : 'denied',
+          functionality_storage: 'granted',
+          personalization_storage: analyticsGranted ? 'granted' : 'denied',
+          security_storage: 'granted',
+        });
+      };
+
       // Define custom services BEFORE initialization
       // Session service (mandatory, no consent needed)
       window.tarteaucitron.services.session = {
@@ -91,21 +109,21 @@ export default function TarteaucitronProvider() {
         },
       };
 
-      // Analytics placeholder service (optional, requires consent)
-      // This ensures the banner appears since there's at least one service that needs consent
+      // Analytics service (optional, requires consent)
       window.tarteaucitron.services.analytics = {
         key: 'analytics',
         type: 'analytic',
-        name: 'Analytics (Placeholder)',
-        uri: '',
-        needConsent: true, // Optional, requires consent
-        cookies: ['_ga', '_gid', '_gat'],
+        name: 'Google Analytics',
+        uri: 'https://policies.google.com/privacy',
+        needConsent: true,
+        cookies: ['_ga', '_gid', '_gat', '_ga_*'],
         js: function () {
           'use strict';
-          // We don't actually load analytics, this is just a placeholder for GDPR compliance
+          updateGoogleConsent(true);
         },
         fallback: function () {
           'use strict';
+          updateGoogleConsent(false);
         },
       };
 
@@ -169,9 +187,11 @@ export default function TarteaucitronProvider() {
         // Callbacks
         onAccept: function () {
           setTarteaucitronReady(true);
+          updateGoogleConsent(true);
         },
         onDecline: function () {
           setTarteaucitronReady(true);
+          updateGoogleConsent(false);
         },
       });
 

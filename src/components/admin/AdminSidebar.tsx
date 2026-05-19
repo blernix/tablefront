@@ -13,6 +13,7 @@ import {
   LogOut,
   User,
   X,
+  UserPlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
@@ -44,6 +45,11 @@ const navItems: NavItem[] = [
     label: 'Analytics',
     href: '/admin/analytics/notifications',
     icon: BarChart3,
+  },
+  {
+    label: 'Commerciaux',
+    href: '/admin/commercials',
+    icon: UserPlus,
   },
 ];
 

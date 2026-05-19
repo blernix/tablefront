@@ -5,6 +5,6 @@ export function useRestaurantMonitoring() {
   return useQuery({
     queryKey: ['restaurantMonitoring'],
     queryFn: () => apiClient.admin.getRestaurantMonitoring(),
-    refetchInterval: 60000, // Refetch every minute for real-time monitoring
+    refetchInterval: 300000, // Refetch every 5 min (was 60s — endpoint is expensive)
   });
 }

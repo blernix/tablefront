@@ -16,8 +16,8 @@ function DashboardSkeleton() {
         <div className="relative flex h-16 items-center justify-between border-b border-[#E5E5E5] px-6">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-slate-200" />
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-slate-200 rounded" />
-            <div className="h-6 w-32 bg-slate-200 rounded" />
+            <div className="h-8 w-8 bg-slate-200 rounded-lg" />
+            <div className="h-6 w-32 bg-slate-200 rounded-lg" />
           </div>
         </div>
       </div>
@@ -27,10 +27,10 @@ function DashboardSkeleton() {
         {/* Header skeleton */}
         <div className="border-b border-[#E5E5E5] bg-white px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="h-8 w-48 bg-slate-200 rounded" />
+              <div className="h-8 w-48 bg-slate-200 rounded-lg" />
             <div className="flex items-center gap-4">
               <div className="h-10 w-10 bg-slate-200 rounded-full" />
-              <div className="h-10 w-24 bg-slate-200 rounded" />
+              <div className="h-10 w-24 bg-slate-200 rounded-lg" />
             </div>
           </div>
         </div>

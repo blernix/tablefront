@@ -187,11 +187,11 @@ export default function DashboardPage() {
 
         {/* Subscription Indicator for Self-Service */}
         {subscriptionInfo.shouldShow && (
-          <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white">
-            <CardContent className="p-6">
+          <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white rounded-xl">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF] bg-[#0066FF]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0066FF]">
                     <Crown className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -374,15 +374,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-tour="stats-cards">
-          <Card className="card-hover p-4 sm:p-8">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
-              <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
-                Réservations du jour
-              </CardTitle>
-              <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
-                <Calendar className="h-5 w-5 text-[#0066FF]" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4" data-tour="stats-cards">
+          <Card className="p-4 sm:p-6">
+            <CardHeader className="flex flex-col pb-2 p-0 gap-2">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-[#0066FF]/5">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-[#0066FF]" />
               </div>
+              <CardTitle className="text-[11px] sm:text-xs font-medium text-[#666666] uppercase tracking-wider truncate">Réservations du jour</CardTitle>
             </CardHeader>
             <CardContent className="p-0 pt-4">
               <div className="text-3xl font-light text-[#2A2A2A]">
@@ -394,14 +392,14 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover p-4 sm:p-8">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
-              <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+          <Card className="p-4 sm:p-6">
+            <CardHeader className="flex flex-col pb-2 p-0 gap-2">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-[#0066FF]/5">
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-[#0066FF]" />
+              </div>
+              <CardTitle className="text-[11px] sm:text-xs font-medium text-[#666666] uppercase tracking-wider truncate">
                 Cette semaine
               </CardTitle>
-              <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
-                <TrendingUp className="h-5 w-5 text-[#0066FF]" />
-              </div>
             </CardHeader>
             <CardContent className="p-0 pt-4">
               <div className="text-3xl font-light text-[#2A2A2A]">
@@ -411,14 +409,14 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover p-4 sm:p-8">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
-              <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+          <Card className="p-4 sm:p-6">
+            <CardHeader className="flex flex-col pb-2 p-0 gap-2">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-[#0066FF]/5">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#0066FF]" />
+              </div>
+              <CardTitle className="text-[11px] sm:text-xs font-medium text-[#666666] uppercase tracking-wider truncate">
                 Occupation moyenne
               </CardTitle>
-              <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
-                <Users className="h-5 w-5 text-[#0066FF]" />
-              </div>
             </CardHeader>
             <CardContent className="p-0 pt-4">
               <div className="text-3xl font-light text-[#2A2A2A]">
@@ -429,14 +427,14 @@ export default function DashboardPage() {
           </Card>
 
           <FeatureUpgradeSection feature="revenue-tracking">
-            <Card className="card-hover p-4 sm:p-8">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 p-0">
-                <CardTitle className="text-xs font-medium text-[#666666] uppercase tracking-[0.2em]">
+            <Card className="p-4 sm:p-6">
+              <CardHeader className="flex flex-col pb-2 p-0 gap-2">
+                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-[#059669]/5">
+                  <Euro className="h-4 w-4 sm:h-5 sm:w-5 text-[#059669]" />
+                </div>
+                <CardTitle className="text-[11px] sm:text-xs font-medium text-[#666666] uppercase tracking-wider truncate">
                   CA estimé
                 </CardTitle>
-                <div className="flex h-10 w-10 items-center justify-center border border-[#E5E5E5]">
-                  <Euro className="h-5 w-5 text-[#0066FF]" />
-                </div>
               </CardHeader>
               <CardContent className="p-0 pt-4">
                 {revenueInfo.isConfigured ? (
@@ -460,11 +458,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Integration Card */}
-        <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white">
-          <CardContent className="p-6">
+        <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white rounded-xl">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center border border-[#0066FF] bg-[#0066FF]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0066FF]">
                   <Globe className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -573,14 +571,14 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="border border-[#E5E5E5] p-4 rounded-md text-center">
+                <div className="rounded-lg bg-[#0066FF]/5 border border-[#0066FF]/10 p-4 text-center">
                   <Utensils className="h-8 w-8 text-[#0066FF] mx-auto mb-2" />
                   <div className="text-2xl font-light text-[#2A2A2A]">
                     {stats.menu.categories || 0}
                   </div>
                   <p className="text-sm text-[#666666]">Catégories</p>
                 </div>
-                <div className="border border-[#E5E5E5] p-4 rounded-md text-center">
+                <div className="rounded-lg bg-[#0066FF]/5 border border-[#0066FF]/10 p-4 text-center">
                   <Utensils className="h-8 w-8 text-[#0066FF] mx-auto mb-2" />
                   <div className="text-2xl font-light text-[#2A2A2A]">{stats.menu.dishes || 0}</div>
                   <p className="text-sm text-[#666666]">Plats</p>

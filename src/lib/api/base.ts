@@ -22,8 +22,11 @@ export class ApiClient {
     this.onUnauthorizedCallback = callback;
   }
 
+  getToken(): string | null {
+    return this.token || (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+  }
+
   setToken(token: string | null) {
-    // Validate token format if provided
     if (token && token.split('.').length !== 3) {
       console.error(
         '[API] Invalid token format (not a JWT), rejecting token:',

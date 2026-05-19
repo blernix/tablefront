@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   email: string;
-  role: 'admin' | 'restaurant' | 'server';
+  role: 'admin' | 'restaurant' | 'server' | 'commercial';
   restaurantId?: string;
   status: 'active' | 'inactive';
   createdAt: string;
@@ -220,6 +220,28 @@ export interface Reservation {
   numberOfGuests: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Customer {
+  _id: string;
+  restaurantId: string;
+  email: string;
+  name: string;
+  phone: string;
+  totalReservations: number;
+  completedReservations: number;
+  cancelledReservations: number;
+  noShowCount: number;
+  lastVisit: string | null;
+  firstVisit: string;
+  averageGuests: number;
+  tags: string[];
+  notes: string;
+  marketingConsent: boolean;
+  cancellationRate?: number;
+  isVip?: boolean;
   createdAt: string;
   updatedAt: string;
 }

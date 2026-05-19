@@ -1,8 +1,9 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { Reservation, Restaurant } from '@/types';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Eye } from 'lucide-react';
 import {
   format,
   startOfWeek,
@@ -35,6 +36,32 @@ export const WeekView = ({
   restaurant,
   maxCapacity = 50,
 }: WeekViewProps) => {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setSelectedId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleReservationTap = (reservation: Reservation) => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    if (!isMobile) {
+      onReservationClick?.(reservation);
+      return;
+    }
+    if (selectedId === reservation._id) {
+      onReservationClick?.(reservation);
+    } else {
+      setSelectedId(reservation._id);
+    }
+  };
+
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
@@ -233,23 +260,42 @@ export const WeekView = ({
                       closed ? 'bg-slate-100 opacity-50' : ''
                     )}
                   >
-                    {slotReservations.map((reservation) => (
-                      <button
-                        key={reservation._id}
-                        onClick={() => onReservationClick?.(reservation)}
-                        className={cn(
-                          'w-full text-left p-1.5 rounded border mb-1 text-xs hover:shadow-md transition-shadow',
-                          getStatusColor(reservation.status)
-                        )}
-                      >
-                        <div className="font-semibold truncate">
-                          {reservation.time} - {reservation.customerName}
+                    {slotReservations.map((reservation) => {
+                      const isExpanded = selectedId === reservation._id;
+                      return (
+                        <div key={reservation._id} className="group">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleReservationTap(reservation); }}
+                            className={cn(
+                              'w-full text-left p-1.5 rounded border text-xs hover:shadow-md transition-shadow',
+                              getStatusColor(reservation.status),
+                              isExpanded ? 'ring-2 ring-[#0066FF] shadow-md z-10 relative' : ''
+                            )}
+                          >
+                            <div className="font-semibold truncate">
+                              {reservation.time} - {reservation.customerName}
+                            </div>
+                            <div className="text-[10px] opacity-75">
+                              {reservation.numberOfGuests} pers.
+                            </div>
+                          </button>
+                          {isExpanded && (
+                            <div className="mt-0.5 p-2 bg-white border border-[#0066FF]/30 rounded-md text-xs space-y-1.5 shadow-sm sm:hidden">
+                              <div className="font-medium text-[#2A2A2A]">{reservation.customerName}</div>
+                              <div className="text-gray-500">{reservation.time} · {reservation.numberOfGuests} pers.</div>
+                              <div className="text-gray-400">{reservation.customerEmail}</div>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onReservationClick?.(reservation); setSelectedId(null); }}
+                                className="flex items-center gap-1 text-[#0066FF] text-xs font-medium hover:underline mt-1"
+                              >
+                                <Eye className="h-3 w-3" />
+                                Voir la réservation
+                              </button>
+                            </div>
+                          )}
                         </div>
-                        <div className="text-[10px] opacity-75">
-                          {reservation.numberOfGuests} pers.
-                        </div>
-                      </button>
-                    ))}
+                      );
+                    })}
                     {getOccupancyBar(totalGuests)}
                   </div>
                 );

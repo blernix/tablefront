@@ -9,6 +9,7 @@ import DirectLinkFormDemo from './DirectLinkFormDemo';
 import CalendarViewDemo from './CalendarViewDemo';
 import ListViewDemo from './ListViewDemo';
 import EmailReviewDemo from './EmailReviewDemo';
+import CustomerDemo from './CustomerDemo';
 import DemoChapter from './DemoChapter';
 import { useChapterScroll } from '@/hooks/useChapterScroll';
 
@@ -22,6 +23,7 @@ import {
   Calendar,
   List,
   Star,
+  Users,
 } from 'lucide-react';
 
 export default function ParallaxDemoSection() {
@@ -32,7 +34,7 @@ export default function ParallaxDemoSection() {
       title: 'Découverte',
       description: 'Widget flottant discret sur votre site',
       detailedDescription:
-        "Intégrez notre widget flottant en 1 ligne de code. Son design épuré reste discret tout en étant accessible.",
+        'Intégrez notre widget flottant en 1 ligne de code. Son design épuré reste discret tout en étant accessible.',
       component: <FloatingWidgetDemo />,
       icon: <Sparkles className="w-4 h-4" />,
       features: [
@@ -138,7 +140,7 @@ export default function ParallaxDemoSection() {
             'Permettez aux clients de réserver leur prochaine table avant même de partir.',
         },
         {
-          title: "Prêt pour utilisation",
+          title: 'Prêt pour utilisation',
           description: 'Dès votre inscription, commencez à utiliser le formulaire.',
         },
       ],
@@ -186,7 +188,8 @@ export default function ParallaxDemoSection() {
         },
         {
           title: 'Filtres intelligents',
-          description: 'Affichez uniquement ce qui compte (ex: "En attente" ou "réservation du jour").',
+          description:
+            'Affichez uniquement ce qui compte (ex: "En attente" ou "réservation du jour").',
         },
       ],
     },
@@ -211,6 +214,29 @@ export default function ParallaxDemoSection() {
         {
           title: 'Cercle vertueux',
           description: "Plus d'avis = plus de visibilité = plus de réservations.",
+        },
+      ],
+    },
+    {
+      id: 9,
+      title: 'CRM',
+      description: 'Base de données clients et export CSV',
+      detailedDescription:
+        "Chaque réservation enrichit automatiquement votre base clients. Exportez vos contacts en CSV pour vos campagnes d'emailing marketing (Mailchimp, Brevo, etc.).",
+      component: <CustomerDemo />,
+      icon: <Users className="w-4 h-4" />,
+      features: [
+        {
+          title: 'CRM automatique',
+          description: 'Chaque réservation enrichit votre base clients avec nom, email, téléphone et historique.',
+        },
+        {
+          title: 'Export emailing',
+          description: 'Exportez vos contacts en CSV pour vos campagnes marketing en un clic.',
+        },
+        {
+          title: '100 % RGPD',
+          description: 'Seuls les clients ayant donné leur consentement marketing sont exportés.',
         },
       ],
     },
@@ -256,7 +282,7 @@ export default function ParallaxDemoSection() {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#2A2A2A] mb-4">
-            Découvrez les 8 fonctionnalités clés
+            Découvrez les 9 fonctionnalités clés
           </h2>
           <p className="text-xl text-[#666666] font-light max-w-3xl mx-auto">
             Parcourez chaque fonctionnalité en scrollant. De la réservation à l&apos;avis Google.
@@ -299,7 +325,8 @@ export default function ParallaxDemoSection() {
               Prêt à offrir cette expérience à vos clients ?
             </h3>
             <p className="text-xl text-[#666666] font-light mb-8 leading-relaxed">
-             Toutes les fonctions de gestion sont incluses dès le Pack Gestion. Passez au Pack Croissance pour automatiser vos avis Google et personnaliser votre image."
+              Toutes les fonctions de gestion sont incluses dès le Pack Gestion. Passez au Pack
+              Croissance pour automatiser vos avis Google et personnaliser votre image.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -324,7 +351,7 @@ export default function ParallaxDemoSection() {
             {/* Stats */}
             <div className="mt-12 grid grid-cols-3 gap-4 max-w-lg mx-auto">
               <div className="text-center">
-                <div className="text-2xl font-light text-[#0066FF]">8</div>
+                <div className="text-2xl font-light text-[#0066FF]">9</div>
                 <div className="text-sm text-[#666666] font-light">fonctionnalités clés</div>
               </div>
               <div className="text-center">

@@ -116,7 +116,7 @@ export const SwipeableCard = ({
           transform: `translateX(${swipeOffset}px)`,
           transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
         }}
-        className="relative bg-white touch-pan-y"
+        className="relative touch-pan-y"
       >
         {children}
       </div>

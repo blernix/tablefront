@@ -9,18 +9,19 @@ interface PageMetadata {
 export const pageMetadata: PageMetadata = {
   // Page d'accueil
   '/': {
-    title: 'TableMaster | Réservation Restaurant sans Commission & Avis Google',
+    title:
+      'TableMaster | Alternative TheFork & Zenchef Sans Commission - Logiciel Réservation Restaurant',
     description:
-      'Gérez vos réservations sans commission (0€/couvert). Pack Gestion à 39€/mois. Boostez vos avis Google automatiquement. 14 jours d’essai gratuit.',
+      'Alternative TheFork et Zenchef sans commission (0€/couvert). Économisez 15% vs TheFork. Pack Gestion 39€/mois. Gestion mobile, widget intégrable, avis Google automatiques. Essai gratuit 14 jours.',
     keywords:
-      'cahier de réservation digital, logiciel réservation restaurant, alternative TheFork sans commission, gestion restaurant mobile, avis Google restaurant automatique, carnet de réservation en ligne, QR code restaurant',
+      'alternative TheFork, alternative Zenchef, logiciel réservation restaurant sans commission, comparatif TheFork TableMaster, système réservation sans commission, cahier réservation digital, gestion restaurant mobile, avis Google automatique, widget réservation site web, carnet réservation en ligne, QR code restaurant, réservation en ligne restaurant, logiciel gestion restaurant, tablemaster, réservation directe restaurant, booster avis Google, économiser commission restaurant, logiciel réservation moins cher, the fork alternative, zenchef concurrent',
     alternates: {
       canonical: siteUrl,
     },
     openGraph: {
-      title: 'TableMaster | Logiciel de Réservation Restaurant 0% Commission',
+      title: 'TableMaster | Alternative TheFork & Zenchef - Logiciel Réservation 0% Commission',
       description:
-        "Installez votre système de réservation avant le prochain service. Simple, mobile et conçu pour booster vos avis Google. 14 jours d'essai.",
+        "Économisez 15% vs TheFork. Alternative sans commission aux plateformes de réservation. Simple, mobile, widget intégrable, avis Google automatiques. 14 jours d'essai gratuit.",
       type: 'website',
       locale: 'fr_FR',
       url: siteUrl,
@@ -30,21 +31,23 @@ export const pageMetadata: PageMetadata = {
           url: `${siteUrl}/og-image.png`,
           width: 1200,
           height: 630,
-          alt: 'TableMaster - Simplifiez la gestion de votre restaurant',
+          alt: 'TableMaster - Alternative TheFork Zenchef sans commission',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'TableMaster | 0% de commission sur vos réservations',
-      description: 'Reprenez le contrôle de votre salle et de votre réputation Google. 14 jours d’essai gratuit.',
+      title: 'TableMaster | Alternative TheFork - 0% commission',
+      description:
+        'Économisez 15% vs TheFork, boostez vos avis Google. Alternative sans commission aux plateformes de réservation. Essai gratuit 14 jours.',
       images: [`${siteUrl}/og-image.png`],
     },
   },
 
   '/signup': {
     title: 'Essai Gratuit 14 Jours - TableMaster',
-    description: 'Créez votre compte en 2 minutes et testez TableMaster gratuitement pendant 14 jours. Sans engagement.',
+    description:
+      'Créez votre compte en 2 minutes et testez TableMaster gratuitement pendant 14 jours. Sans engagement.',
     robots: 'noindex, nofollow',
   },
   '/login': {
@@ -68,7 +71,8 @@ export const pageMetadata: PageMetadata = {
 // Métadonnées par défaut
 export const defaultMetadata: Metadata = {
   title: 'TableMaster - Système de Réservation pour Restaurants',
-  description: 'Logiciel de réservation sans commission et boosteur d’avis Google pour restaurants.',
+  description:
+    'Logiciel de réservation sans commission et boosteur d’avis Google pour restaurants.',
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
@@ -112,7 +116,8 @@ export const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'TableMaster',
-  description: 'Logiciel de réservation directe sans commission et gestion d’avis Google pour restaurants.',
+  description:
+    'Logiciel de réservation directe sans commission et gestion d’avis Google pour restaurants.',
   url: siteUrl,
   logo: `${siteUrl}/logo_512.png`,
   contactPoint: {
@@ -134,7 +139,7 @@ export const softwareStructuredData = {
     lowPrice: '39.00',
     highPrice: '69.00',
     priceCurrency: 'EUR',
-    offerCount: '2'
+    offerCount: '2',
   },
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -151,7 +156,8 @@ export const pricingStructuredData = {
     {
       '@type': 'Product',
       name: 'TableMaster Pack Gestion',
-      description: "Solution complète de réservation, jusqu'à 400 réservations/mois, 0% commission.",
+      description:
+        "Solution complète de réservation, jusqu'à 400 réservations/mois, 0% commission.",
       offers: {
         '@type': 'Offer',
         price: '39.00',
@@ -167,6 +173,110 @@ export const pricingStructuredData = {
         price: '69.00',
         priceCurrency: 'EUR',
       },
+    },
+  ],
+};
+
+export const faqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'TableMaster vs TheFork : quelle est la principale différence de coût ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'TableMaster coûte 39€ à 69€/mois forfait fixe, tandis que TheFork prend une commission de 1,50€ à 2,50€ par couvert. Pour un restaurant avec 300 couverts/mois, TableMaster à 39€ fait économiser 400€ à 700€ par mois vs TheFork qui coûterait 450€ à 750€.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'TableMaster vs Zenchef : lequel est le plus économique ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Zenchef coûte 129€ à 249€/mois. TableMaster coûte 39€ à 69€/mois. Pour les mêmes fonctionnalités essentielles (réservations en ligne, gestion mobile, avis Google), TableMaster est 2 à 6 fois moins cher que Zenchef.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Comment TableMaster génère-t-il des avis Google sans commission ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'TableMaster envoie automatiquement des emails après chaque réservation pour inviter vos clients à laisser un avis Google directement sur votre fiche. Contrairement à TheFork qui redirige vers sa propre plateforme, nous favorisons votre visibilité Google locale sans intermédiaire.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Puis-je tester TableMaster en parallèle de ma solution actuelle ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Oui, TableMaster peut fonctionner en parallèle de TheFork ou Zenchef pendant notre période d'essai de 14 jours. Cela vous permet de comparer les interfaces et tester les fonctionnalités sans interrompre votre service actuel.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'TableMaster offre-t-il une interface mobile comme TheFork Manager ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Oui, TableMaster propose une interface mobile optimisée qui fonctionne sur tous les smartphones. Vous recevez des notifications push en temps réel pour les nouvelles réservations, annulations et modifications, sans besoin d'installer une application dédiée.",
+      },
+    },
+  ],
+};
+
+export const productComparisonStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'TableMaster - Alternative TheFork & Zenchef',
+  description:
+    'Logiciel de réservation restaurant sans commission, alternative économique à TheFork et Zenchef.',
+  brand: {
+    '@type': 'Brand',
+    name: 'TableMaster',
+  },
+  offers: {
+    '@type': 'Offer',
+    price: '39',
+    priceCurrency: 'EUR',
+    priceValidUntil: '2026-12-31',
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '55',
+    bestRating: '5',
+    worstRating: '1',
+  },
+  additionalProperty: [
+    {
+      '@type': 'PropertyValue',
+      name: 'Commission par couvert',
+      value: '0€',
+      valueReference: 'TheFork: 1.50-2.50€/couvert, Zenchef: forfait fixe',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Forfait mensuel fixe',
+      value: '39€',
+      valueReference: 'TheFork: commission variable, Zenchef: 129-249€/mois',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Avis Google automatiques',
+      value: 'Inclus',
+      valueReference: 'TheFork: non, Zenchef: supplément',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Widget personnalisable',
+      value: 'Inclus',
+      valueReference: 'TheFork: limité, Zenchef: limité',
+    },
+    {
+      '@type': 'PropertyValue',
+      name: 'Données clients',
+      value: '100% propriétaire',
+      valueReference: 'TheFork: partagées, Zenchef: partagées',
     },
   ],
 };

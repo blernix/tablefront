@@ -40,7 +40,7 @@ export default function LoginPage() {
 
     // Redirect if already authenticated (only on initial mount, not after login)
     if (isAuthenticated && user) {
-      const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+      const redirectPath = user.role === 'admin' ? '/admin' : user.role === 'commercial' ? '/commercial' : '/dashboard';
       hasRedirectedRef.current = true;
       router.push(redirectPath);
     }

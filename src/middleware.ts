@@ -45,6 +45,7 @@ function isKnownSystemPath(pathname: string): boolean {
     '/signup',
     '/login',
     '/dashboard',
+    '/commercial',
     '/forgot-password',
     '/reset-password',
     '/embed', // Just /embed without a slug

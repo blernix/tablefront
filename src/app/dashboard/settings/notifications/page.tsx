@@ -315,7 +315,7 @@ export default function NotificationsSettingsPage() {
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button onClick={handleSavePreferences} disabled={isSaving || !isSubscribed}>
+              <Button onClick={handleSavePreferences} disabled={isSaving}>
                 {isSaving ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
