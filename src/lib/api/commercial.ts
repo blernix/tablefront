@@ -10,7 +10,9 @@ export class CommercialApiClient extends ApiClient {
     address: string;
     phone: string;
     email: string;
-    plan: 'starter' | 'pro' | 'trial';
+    plan: 'starter' | 'pro';
+    trialDays?: number;
+    discountPercent?: number;
     tablesConfig?: { totalTables: number; averageCapacity: number };
   }) {
     return this.request('/api/commercial/restaurants', {
@@ -26,7 +28,40 @@ export class CommercialApiClient extends ApiClient {
     return this.request(`/api/commercial/restaurants?${query.toString()}`);
   }
 
+  async getRestaurantDetail(id: string) {
+    return this.request(`/api/commercial/restaurants/${id}`);
+  }
+
   async getMyStats() {
     return this.request('/api/commercial/stats');
+  }
+
+  async updateObjectives(monthlySignups: number) {
+    return this.request('/api/commercial/objectives', {
+      method: 'PUT',
+      body: JSON.stringify({ monthlySignups }),
+    });
+  }
+
+  async getProfile() {
+    return this.request('/api/commercial/profile');
+  }
+
+  async updateProfile(data: { firstName?: string; lastName?: string; phone?: string; photoUrl?: string }) {
+    return this.request('/api/commercial/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    return this.request('/api/commercial/profile/password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  }
+
+  async uploadProfilePhoto(file: File) {
+    return this.uploadFile('/api/commercial/profile/photo', file, 'photo');
   }
 }

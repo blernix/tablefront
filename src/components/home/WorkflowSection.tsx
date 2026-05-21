@@ -16,7 +16,7 @@ export default function WorkflowSection() {
             Logiciel réservation restaurant complet : de la réservation à l&apos;avis client
           </h2>
           <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-            Installation en 1 minute. Gestion depuis votre mobile. Avis Google automatisés.
+            Installation en 5 minutes. Gestion depuis votre mobile. Avis Google automatisés.
           </p>
         </div>
 

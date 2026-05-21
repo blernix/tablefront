@@ -15,6 +15,7 @@ import {
   Code2,
   Palette,
   Download,
+  Key,
 } from 'lucide-react';
 
 const settingsCategories = [
@@ -86,6 +87,13 @@ const settingsCategories = [
     description: 'Exportez vos réservations par mois ou année',
     icon: Download,
     href: '/dashboard/settings/export',
+    available: true,
+  },
+  {
+    title: 'Compte & mot de passe',
+    description: 'Modifier votre mot de passe',
+    icon: Key,
+    href: '/dashboard/settings/account',
     available: true,
   },
 ];

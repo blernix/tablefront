@@ -257,11 +257,6 @@ export default function ParallaxDemoSection() {
     intersectionThreshold: 0.1, // Section must be 10% visible to activate animations
   });
 
-  // Debug logging
-  // console.log(
-  //   `ParallaxDemoSection: isSectionVisible=${isSectionVisible}, activeChapter=${activeChapter}, chapterProgress=${chapterProgress}`
-  // );
-
   return (
     <section
       id="demo"

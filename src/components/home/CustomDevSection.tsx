@@ -163,7 +163,7 @@ export default function CustomDevSection() {
                 De la conception à la maintenance, tout est géré pour vous.
               </p>
               <a
-                href="mailto:contact@tablemaster.fr"
+                href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@tablemaster.fr'}`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0066FF] font-light hover:bg-white/90 transition-colors"
               >
                 Discuter de mon projet

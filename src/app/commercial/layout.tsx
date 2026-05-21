@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
-import { Store, BarChart3, PlusCircle, LogOut } from 'lucide-react';
+import { Store, BarChart3, PlusCircle, LogOut, UserCircle } from 'lucide-react';
 
 export default function CommercialLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -41,6 +41,9 @@ export default function CommercialLayout({ children }: { children: React.ReactNo
             </Link>
             <Link href="/commercial/restaurants/new">
               <Button size="sm" className="bg-[#0066FF] hover:bg-[#0052CC] ml-2"><PlusCircle className="h-4 w-4 mr-1.5" /> Nouveau</Button>
+            </Link>
+            <Link href="/commercial/profil">
+              <Button variant="ghost" size="sm"><UserCircle className="h-4 w-4 mr-1.5" /> Profil</Button>
             </Link>
             <Button variant="ghost" size="sm" onClick={() => { logout(); router.push('/login'); }} className="ml-4"><LogOut className="h-4 w-4" /></Button>
           </nav>

@@ -22,12 +22,12 @@ export default function CTASection() {
             S&apos;inscrire gratuitement maintenant
             <ArrowRight className="ml-3 w-5 h-5" />
           </Link>
-          <a
-            href="#pricing"
+          <Link
+            href="/#pricing"
             className="inline-flex items-center justify-center px-10 py-5 border-2 border-white text-white text-lg font-light hover:bg-white/10 transition-colors"
           >
             Voir les tarifs
-          </a>
+          </Link>
         </div>
         <p className="text-sm text-white/80 font-light mt-6">
           • Installation en 5 minutes • Support inclus

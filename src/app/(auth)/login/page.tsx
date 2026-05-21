@@ -74,7 +74,7 @@ export default function LoginPage() {
         document.cookie = cookieString;
 
         // Redirect based on role
-        const redirectPath = currentUser.role === 'admin' ? '/admin' : '/dashboard';
+        const redirectPath = currentUser.role === 'admin' ? '/admin' : currentUser.role === 'commercial' ? '/commercial' : '/dashboard';
 
         // Mark that we're redirecting to prevent useEffect from also redirecting
         hasRedirectedRef.current = true;
@@ -120,7 +120,7 @@ export default function LoginPage() {
     document.cookie = cookieString;
 
     // Redirect based on role
-    const redirectPath = response.user.role === 'admin' ? '/admin' : '/dashboard';
+    const redirectPath = response.user.role === 'admin' ? '/admin' : response.user.role === 'commercial' ? '/commercial' : '/dashboard';
 
     // Close modal and navigate
     setShowTwoFactorModal(false);

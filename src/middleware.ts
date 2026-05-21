@@ -49,6 +49,8 @@ function isKnownSystemPath(pathname: string): boolean {
     '/forgot-password',
     '/reset-password',
     '/embed', // Just /embed without a slug
+    '/site-sur-mesure',
+    '/developpement-web',
   ];
 
   return systemPaths.includes(pathname);

@@ -46,7 +46,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
   const navigation = [
     { name: 'Fonctionnalités', href: '/#features' },
     { name: 'Tarifs', href: '/#pricing' },
-    { name: 'Développement', href: '/#custom-dev' },
+    { name: 'Site sur mesure', href: '/site-sur-mesure' },
     { name: 'Connexion', href: '/login' },
     { name: "S'inscrire", href: '/signup' },
   ];

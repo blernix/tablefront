@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
   LinkIcon,
   QrCode,
@@ -15,7 +16,7 @@ import {
   Monitor,
   FileCode,
   ArrowRight,
-  MessageSquare,
+  Camera,
   Users,
 } from 'lucide-react';
 
@@ -32,7 +33,7 @@ const platformItems: PlatformItem[] = [
   {
     id: 'instagram',
     name: 'Instagram',
-    icon: <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8" />,
+    icon: <Camera className="w-6 h-6 sm:w-8 sm:h-8" />,
     category: 'direct-link',
     description: 'Ajoutez le lien dans votre bio',
   },
@@ -154,8 +155,8 @@ function Carousel({ items, speed = 20, direction = 'left' }: CarouselProps) {
         ))}
       </motion.div>
       {/* Gradient overlays for smooth edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#FAFAFA] to-transparent pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#FAFAFA] to-transparent pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -214,13 +215,13 @@ export default function IntegrationCarousel() {
             <p className="text-[#666666] font-light mb-6">
               Démarrez en quelques minutes. Aucune compétence technique requise.
             </p>
-            <a
+            <Link
               href="/signup"
               className="inline-flex items-center gap-2 px-8 py-3 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
             >
               Commencer gratuitement
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

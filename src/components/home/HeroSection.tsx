@@ -60,7 +60,7 @@ const floatingCards = [
 const checkItems = [
   'Sans engagement',
   'Installation rapide',
-  'Économisez 15% vs TheFork',
+  'Forfait fixe · 0€/couvert',
   'Widget intégrable',
 ];
 
@@ -172,10 +172,9 @@ export default function HeroSection() {
             variants={itemVariants}
             className="text-lg md:text-xl text-[#666666] leading-relaxed font-light max-w-2xl mx-auto"
           >
-            Alternative TheFork et Zenchef sans commission (0€/couvert). Logiciel de réservation
-            restaurant simple, mobile. TableMaster s&apos;occupe de tout : économisez 15% vs
-            TheFork, widget sur votre site, avis Google automatisés. Gérez vos réservations en
-            temps réel.
+            Logiciel de réservation restaurant sans commission (0€/couvert).
+            Simple, mobile. TableMaster s&apos;occupe de tout : widget sur votre site, avis Google automatisés, rappels 24h.
+            Gérez vos réservations en temps réel.
           </motion.p>
 
           {/* Badge */}
@@ -204,12 +203,12 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
             </Link>
-            <a
-              href="#pricing"
+            <Link
+              href="/#pricing"
               className="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-[#2A2A2A] font-light hover:border-[#0066FF] hover:text-[#0066FF] transition-all rounded-lg text-lg bg-white/50 backdrop-blur-sm"
             >
               Voir les tarifs
-            </a>
+            </Link>
           </motion.div>
 
           {/* Checkmarks */}

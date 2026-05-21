@@ -10,6 +10,7 @@ import {
   BarChart3,
   Clock,
   Users,
+  BellRing,
 } from 'lucide-react';
 
 export default function FeaturesSection() {
@@ -18,10 +19,10 @@ export default function FeaturesSection() {
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">
-            Fonctionnalités complètes vs TheFork & Zenchef
+            Fonctionnalités complètes
           </h2>
           <p className="text-xl text-[#666666] font-light max-w-2xl mx-auto">
-            Tout ce que les plateformes traditionnelles offrent, sans leurs commissions
+            Tout ce dont vous avez besoin pour gérer vos réservations, sans commission par couvert
           </p>
         </div>
 
@@ -288,6 +289,43 @@ export default function FeaturesSection() {
                 <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                 <span className="text-[#666666] font-light">
                   Tags (VIP, Fidèle) et filtrage — 100% RGPD
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Rappels automatiques */}
+          <div className="border-2 border-[#E5E5E5] p-8 hover:border-[#0066FF] transition-colors">
+            <BellRing className="w-10 h-10 text-[#0066FF] mb-6" />
+            <h3 className="text-2xl font-light text-[#2A2A2A] mb-4">
+              Rappels automatiques
+            </h3>
+            <p className="text-[#666666] font-light mb-6 leading-relaxed">
+              Réduisez les no-show avec des rappels envoyés automatiquement 24h avant chaque réservation.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                <span className="text-[#666666] font-light">
+                  Rappel automatique 24h avant la réservation
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                <span className="text-[#666666] font-light">
+                  Réduction des no-show jusqu&apos;à 40 %
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                <span className="text-[#666666] font-light">
+                  Email personnalisé avec les détails de la réservation
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
+                <span className="text-[#666666] font-light">
+                  Aucune configuration nécessaire — 100 % automatique
                 </span>
               </li>
             </ul>

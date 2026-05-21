@@ -38,8 +38,8 @@ export default function AdminCommercialsPage() {
     if (!email || !password) { toast.error('Remplis tous les champs'); return; }
     try {
       setSaving(true);
-      await apiClient.admin.createCommercialUser(email, password);
-      toast.success('Compte commercial créé');
+      const result = await apiClient.admin.createCommercialUser(email, password) as any;
+      toast.success(`Compte créé — Code : ${result?.user?.referralCode || 'N/A'}`);
       setEmail('');
       setPassword('');
       setShowForm(false);
@@ -102,7 +102,7 @@ export default function AdminCommercialsPage() {
       ) : (
         <div className="space-y-3">
           {commercials.map((c: any) => (
-            <Card key={c._id}>
+              <Card key={c._id} className="cursor-pointer hover:shadow-sm transition-shadow" onClick={() => window.location.href = `/admin/commercials/${c._id}`}>
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ export default function AdminCommercialsPage() {
                     </div>
                     <div>
                       <div className="text-sm font-medium">{c.email}</div>
-                      <div className="text-xs text-gray-400">Créé le {new Date(c.createdAt).toLocaleDateString('fr-FR')}</div>
+                      <div className="text-xs text-gray-400">Créé le {new Date(c.createdAt).toLocaleDateString('fr-FR')}{c.referralCode ? ` · ${c.referralCode}` : ''}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

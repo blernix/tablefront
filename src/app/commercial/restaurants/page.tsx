@@ -11,13 +11,15 @@ export default function CommercialRestaurantsPage() {
   const [data, setData] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   useEffect(() => {
     setLoading(true);
     apiClient.commercial.getMyRestaurants({ page, limit: 20 }).then(setData).catch(() => {}).finally(() => setLoading(false));
   }, [page]);
 
-  const restaurants = data?.restaurants || [];
+  const allRestaurants = data?.restaurants || [];
+  const restaurants = statusFilter === 'all' ? allRestaurants : allRestaurants.filter((r: any) => r.status === statusFilter);
   const pagination = data?.pagination;
 
   return (
@@ -32,6 +34,16 @@ export default function CommercialRestaurantsPage() {
         <Link href="/commercial/restaurants/new">
           <Button className="bg-[#0066FF] hover:bg-[#0052CC]">+ Nouveau</Button>
         </Link>
+      </div>
+
+      <div className="flex gap-2">
+        {(['all', 'active', 'inactive'] as const).map((f) => (
+          <button key={f} onClick={() => setStatusFilter(f)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${statusFilter === f ? 'bg-[#0066FF] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+          >
+            {f === 'all' ? 'Tous' : f === 'active' ? 'Actifs' : 'En attente'}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -50,17 +62,21 @@ export default function CommercialRestaurantsPage() {
         <>
           <div className="space-y-3">
             {restaurants.map((r: any) => (
-              <Card key={r._id}>
+              <Card key={r._id} className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => window.location.href = `/commercial/restaurants/${r._id}`}>
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-[#2A2A2A]">{r.name}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">{r.address}</div>
-                      <div className="text-xs text-gray-400">{r.email}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-[#2A2A2A] truncate">{r.name}</div>
+                      <div className="text-xs text-gray-400 mt-0.5 truncate">{r.address}</div>
+                      <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
+                        <span>{r.email}</span>
+                        <span>·</span>
+                        <span>Créé le {new Date(r.createdAt).toLocaleDateString('fr-FR')}</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.subscription?.plan === 'pro' ? 'bg-green-100 text-green-700' : r.subscription?.plan === 'starter' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                        {r.subscription?.plan === 'trial' ? 'Essai' : r.subscription?.plan === 'pro' ? 'Pro' : 'Starter'}
+                    <div className="text-right flex-shrink-0 ml-4">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === 'inactive' ? 'bg-amber-100 text-amber-700' : r.subscription?.plan === 'pro' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                        {r.status === 'inactive' ? 'Paiement en attente' : r.subscription?.plan === 'pro' ? 'Pro actif' : 'Starter actif'}
                       </span>
                       <div className="text-xs text-gray-400 mt-1">{new Date(r.createdAt).toLocaleDateString('fr-FR')}</div>
                     </div>

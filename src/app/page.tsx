@@ -9,7 +9,7 @@ import FeaturesSection from '@/components/home/FeaturesSection';
 // import CaseStudiesSection from '@/components/home/CaseStudiesSection';
 // import ResourcesSection from '@/components/home/ResourcesSection';
 import PricingSection from '@/components/home/PricingSection';
-import CustomDevSection from '@/components/home/CustomDevSection';
+// import CustomDevSection from '@/components/home/CustomDevSection';
 import TargetAudienceSection from '@/components/home/TargetAudienceSection';
 import StatsSection from '@/components/home/StatsSection';
 import FAQSection from '@/components/home/FAQSection';
@@ -50,7 +50,7 @@ export default function HomePage() {
       {/* <CaseStudiesSection /> */}
       {/* <ResourcesSection /> */}
       <PricingSection />
-      <CustomDevSection />
+      {/* <CustomDevSection /> */}
       <TargetAudienceSection />
       <StatsSection />
       <FAQSection />
