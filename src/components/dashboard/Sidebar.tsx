@@ -14,6 +14,7 @@ import {
   CalendarX,
   MessageSquare,
   UserCheck,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -69,6 +70,12 @@ const navigation = [
     href: '/dashboard/settings',
     icon: Settings,
     allowedRoles: ['admin', 'restaurant'] as const,
+  },
+  {
+    name: 'Profil',
+    href: '/dashboard/profil',
+    icon: User,
+    allowedRoles: ['restaurant', 'server'] as const,
   },
 ];
 

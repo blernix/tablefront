@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import {
   useDashboardData,
-  useShouldShowSubscription,
   useShouldShowQuota,
   useHasRevenueTracking,
   FeatureUpgradeSection,
@@ -49,14 +48,13 @@ export default function DashboardPage() {
 
   // Use our optimized dashboard hooks
   const dashboardData = useDashboardData();
-  const subscriptionInfo = useShouldShowSubscription();
   const quotaInfo = useShouldShowQuota();
 
   const revenueInfo = useHasRevenueTracking();
 
   const isStarter = useIsStarter();
 
-  const { restaurant, stats, isLoading, isSelfService, plan } = dashboardData;
+  const { restaurant, stats, isLoading, isSelfService } = dashboardData;
 
   // Initialize auth
   useEffect(() => {
@@ -173,84 +171,9 @@ export default function DashboardPage() {
                 {isLoading ? 'Rafraîchissement...' : 'Rafraîchir'}
               </Button>
               <TourTrigger variant="badge" />
-              {isStarter && !subscriptionInfo.shouldShow && (
-                <UpgradeCTA
-                  feature="widget-customization"
-                  type="simple"
-                  buttonText="Passer au Pro"
-                  className="h-10 sm:h-8"
-                />
-              )}
             </div>
           </div>
         </div>
-
-        {/* Subscription Indicator for Self-Service */}
-        {subscriptionInfo.shouldShow && (
-          <Card className="border-[#0066FF] bg-gradient-to-r from-blue-50 to-white rounded-xl">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0066FF]">
-                    <Crown className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-[#2A2A2A]">
-                      Plan {plan === 'starter' ? 'Pack Gestion' : 'Pack Croissance'}
-                    </h3>
-                    <p className="text-sm text-[#666666]">
-                      Statut :{' '}
-                      {restaurant.subscription?.status === 'trial' ? (
-                        <Badge
-                          variant="outline"
-                          className="border-amber-500 text-amber-700 bg-amber-50"
-                        >
-                          Essai gratuit
-                        </Badge>
-                      ) : restaurant.subscription?.status === 'active' ? (
-                        <Badge variant="success">Actif</Badge>
-                      ) : (
-                        <Badge variant="danger">
-                          {restaurant.subscription?.status || 'Inactif'}
-                        </Badge>
-                      )}
-                    </p>
-                    {restaurant.subscription?.status === 'trial' &&
-                    restaurant.subscription?.trialEndsAt ? (
-                      <p className="text-xs text-[#666666] mt-1">
-                        Essai se termine le{' '}
-                        {new Date(restaurant.subscription.trialEndsAt).toLocaleDateString('fr-FR')}
-                      </p>
-                    ) : (
-                      restaurant.subscription?.currentPeriodEnd && (
-                        <p className="text-xs text-[#666666] mt-1">
-                          Renouvellement le{' '}
-                          {new Date(restaurant.subscription.currentPeriodEnd).toLocaleDateString(
-                            'fr-FR'
-                          )}
-                        </p>
-                      )
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-4 md:mt-0"
-                  onClick={handleManageSubscription}
-                  disabled={isManagingSubscription}
-                >
-                  {isManagingSubscription ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <SettingsIcon className="h-4 w-4" />
-                  )}
-                  Gérer mon abonnement
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Quota Indicator for Starter Plan */}
         {quotaInfo.shouldShow && quotaInfo.quota && (
@@ -501,7 +424,7 @@ export default function DashboardPage() {
         )}
 
         {/* Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div>
           {/* Upcoming Reservations */}
           <Card data-tour="upcoming-reservations">
             <CardHeader>
@@ -551,65 +474,6 @@ export default function DashboardPage() {
                   <p className="text-sm text-[#666666]">
                     Aucune réservation à venir aujourd&apos;hui
                   </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Menu Summary */}
-          <Card data-tour="menu-summary">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Carte & Menus</CardTitle>
-                  <CardDescription>Votre offre</CardDescription>
-                </div>
-                <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/menus')}>
-                  Gérer <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-lg bg-[#0066FF]/5 border border-[#0066FF]/10 p-4 text-center">
-                  <Utensils className="h-8 w-8 text-[#0066FF] mx-auto mb-2" />
-                  <div className="text-2xl font-light text-[#2A2A2A]">
-                    {stats.menu.categories || 0}
-                  </div>
-                  <p className="text-sm text-[#666666]">Catégories</p>
-                </div>
-                <div className="rounded-lg bg-[#0066FF]/5 border border-[#0066FF]/10 p-4 text-center">
-                  <Utensils className="h-8 w-8 text-[#0066FF] mx-auto mb-2" />
-                  <div className="text-2xl font-light text-[#2A2A2A]">{stats.menu.dishes || 0}</div>
-                  <p className="text-sm text-[#666666]">Plats</p>
-                </div>
-              </div>
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#666666]">Configuration des tables</span>
-                  <Badge variant="outline">
-                    {restaurant.tablesConfig?.mode === 'detailed' ? 'Détaillée' : 'Simple'}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#666666]">Total tables</span>
-                  <span className="text-sm font-medium">{getTotalTables()}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#666666]">Capacité totale</span>
-                  <span className="text-sm font-medium">{getTotalCapacity()} couverts</span>
-                </div>
-              </div>
-
-              {/* Upgrade CTA for menus feature */}
-              {isStarter && (
-                <div className="mt-6 pt-6 border-t border-[#E5E5E5]">
-                  <UpgradeCTA
-                    feature="menus"
-                    type="inline"
-                    title="Gestion Complète des Menus"
-                    description="Passez au plan Pro pour créer et gérer votre carte numérique."
-                  />
                 </div>
               )}
             </CardContent>

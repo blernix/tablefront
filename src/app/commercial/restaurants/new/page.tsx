@@ -140,7 +140,7 @@ export default function NewRestaurantPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs font-medium text-[#2A2A2A]">Période d&apos;essai</Label>
                 <div className="flex gap-2 mt-1">

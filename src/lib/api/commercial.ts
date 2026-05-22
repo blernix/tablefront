@@ -44,24 +44,24 @@ export class CommercialApiClient extends ApiClient {
   }
 
   async getProfile() {
-    return this.request('/api/commercial/profile');
+    return this.request('/api/profile');
   }
 
   async updateProfile(data: { firstName?: string; lastName?: string; phone?: string; photoUrl?: string }) {
-    return this.request('/api/commercial/profile', {
+    return this.request('/api/profile', {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
   async changePassword(currentPassword: string, newPassword: string) {
-    return this.request('/api/commercial/profile/password', {
+    return this.request('/api/profile/password', {
       method: 'PUT',
       body: JSON.stringify({ currentPassword, newPassword }),
     });
   }
 
   async uploadProfilePhoto(file: File) {
-    return this.uploadFile('/api/commercial/profile/photo', file, 'photo');
+    return this.uploadFile('/api/profile/photo', file, 'photo');
   }
 }

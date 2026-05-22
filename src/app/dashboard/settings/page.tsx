@@ -90,8 +90,8 @@ const settingsCategories = [
     available: true,
   },
   {
-    title: 'Compte & mot de passe',
-    description: 'Modifier votre mot de passe',
+    title: 'Compte & abonnement',
+    description: 'Gérer votre plan et votre facturation',
     icon: Key,
     href: '/dashboard/settings/account',
     available: true,
