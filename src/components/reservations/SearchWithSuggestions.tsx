@@ -63,7 +63,38 @@ export const SearchWithSuggestions = ({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <div className="relative">
+      {/* Mobile: iOS-style search field */}
+      <div className="md:hidden relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8E8E93] pointer-events-none" />
+        <Input
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setShowSuggestions(true);
+            setActiveSuggestion(-1);
+          }}
+          onFocus={() => value && setShowSuggestions(true)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="pl-9 pr-10 h-9 bg-[#E5E5EA]/60 border-0 rounded-lg text-[15px] placeholder:text-[#8E8E93] focus-visible:ring-0 focus-visible:bg-[#E5E5EA]"
+        />
+        {value && (
+          <button
+            onClick={() => {
+              onChange('');
+              setShowSuggestions(false);
+              setActiveSuggestion(-1);
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93] active:text-[#6D6D72]"
+            aria-label="Effacer"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Desktop search */}
+      <div className="hidden md:block relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
         <Input
           value={value}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { X, Search, Minus, Plus, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Search, Minus, Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -146,9 +146,6 @@ export function ReservationForm({
     return cards;
   }, []);
 
-  const [dateScrollIndex, setDateScrollIndex] = useState(0);
-  const maxScrollIndex = Math.max(0, dateCards.length - 7);
-
   const handleDateSelect = (iso: string) => {
     setValue('date', iso);
     setValue('time', '');
@@ -170,9 +167,9 @@ export function ReservationForm({
           type="button"
           onClick={onCancel}
           disabled={isSaving}
-          className="w-8 h-8 rounded-full hover:bg-gray-50 flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full hover:bg-gray-50 flex items-center justify-center transition-colors"
         >
-          <X className="h-4 w-4 text-gray-400" />
+          <X className="h-5 w-5 text-gray-400" />
         </button>
       </div>
 
@@ -182,58 +179,34 @@ export function ReservationForm({
           {/* Date selector */}
           <div>
             <Label className="text-xs font-medium text-[#2A2A2A] mb-2 block">Date</Label>
-            <div className="relative">
-              {dateScrollIndex > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setDateScrollIndex((p) => Math.max(0, p - 6))}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-1 z-10 w-6 h-6 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center hover:border-gray-300 transition-colors"
-                >
-                  <ChevronLeft className="h-3 w-3 text-gray-400" />
-                </button>
-              )}
-              <div className="overflow-hidden px-2">
-                <div className="flex gap-1.5">
-                  {dateCards
-                    .slice(dateScrollIndex, dateScrollIndex + 7)
-                    .map((d) => {
-                      const isSelected = selectedFormDate === d.iso;
-                      return (
-                        <button
-                          key={d.iso}
-                          type="button"
-                          onClick={() => handleDateSelect(d.iso)}
-                          disabled={isSaving}
-                          className={`flex-1 min-w-0 flex flex-col items-center py-2 rounded-xl transition-all duration-200 border ${
-                            isSelected
-                              ? 'border-transparent text-white shadow-md scale-105 bg-[#0066FF]'
-                              : 'border-gray-100 hover:border-gray-200 bg-white'
-                          }`}
-                        >
-                          <span className="text-[10px] uppercase tracking-wider font-medium opacity-70">
-                            {d.dayName}
-                          </span>
-                          <span className="text-base font-semibold my-0.5">{d.day}</span>
-                          <span className="text-[10px] opacity-70">{d.month}</span>
-                          {d.isToday && !isSelected && (
-                            <span className="w-1 h-1 rounded-full mt-0.5 bg-[#0066FF]" />
-                          )}
-                        </button>
-                      );
-                    })}
-                </div>
+            <div className="overflow-x-auto no-scrollbar -mx-2 px-2" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <div className="flex gap-1.5 snap-x snap-mandatory">
+                {dateCards.map((d) => {
+                  const isSelected = selectedFormDate === d.iso;
+                  return (
+                    <button
+                      key={d.iso}
+                      type="button"
+                      onClick={() => handleDateSelect(d.iso)}
+                      disabled={isSaving}
+                      className={`flex-shrink-0 snap-start w-[52px] flex flex-col items-center py-2 rounded-xl transition-all duration-200 border ${
+                        isSelected
+                          ? 'border-transparent text-white shadow-md scale-105 bg-[#0066FF]'
+                          : 'border-gray-100 hover:border-gray-200 bg-white'
+                      }`}
+                    >
+                      <span className="text-[10px] uppercase tracking-wider font-medium opacity-70">
+                        {d.dayName}
+                      </span>
+                      <span className="text-base font-semibold my-0.5">{d.day}</span>
+                      <span className="text-[10px] opacity-70">{d.month}</span>
+                      {d.isToday && !isSelected && (
+                        <span className="w-1 h-1 rounded-full mt-0.5 bg-[#0066FF]" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-              {dateScrollIndex < maxScrollIndex && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDateScrollIndex((p) => Math.min(p + 6, maxScrollIndex))
-                  }
-                  className="absolute right-0 top-1/2 -translate-y-1/2 -mr-1 z-10 w-6 h-6 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center hover:border-gray-300 transition-colors"
-                >
-                  <ChevronRight className="h-3 w-3 text-gray-400" />
-                </button>
-              )}
             </div>
             {errors.date && <p className="text-xs text-red-500 mt-1">{errors.date.message}</p>}
             <input type="hidden" {...register('date')} />
@@ -475,7 +448,7 @@ export function ReservationForm({
             ) : editing ? (
               'Modifier'
             ) : (
-              'Créer la réservation'
+              'Valider'
             )}
           </Button>
         </div>

@@ -184,6 +184,15 @@
 }
 
 @layer utilities {
+  /* Hide scrollbar for horizontal scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   /* Minimal animations - purpose-driven only */
   .animate-fade-in {
     animation: fade-in 300ms ease-out;

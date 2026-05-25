@@ -234,10 +234,10 @@ export default function ReservationsPage() {
   const handleQuickCreateFromDay = (time: string) => { handleStartCreate(); reset({ customerName: '', customerEmail: '', customerPhone: '', date: getLocalDateString(currentDay), time, numberOfGuests: '', status: 'pending', notes: '' }); };
   const handleReservationClickFromCalendar = (r: Reservation) => router.push(`/dashboard/reservations/${r._id}`);
 
-  if (isLoading && !showForm) return <div className="space-y-6 animate-pulse p-4 md:p-6"><div className="h-20 bg-[#E5E5E5]" /><div className="h-40 bg-[#E5E5E5]" /></div>;
+  if (isLoading && !showForm) return <div className="space-y-6 animate-pulse md:p-6"><div className="h-20 bg-[#E5E5E5] mx-4 md:mx-0 rounded-lg" /><div className="h-40 bg-[#E5E5E5] mx-4 md:mx-0 rounded-lg" /></div>;
 
   return (
-    <div className="space-y-6 p-4 md:p-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in md:p-6">
       <ReservationHeader isConnected={isConnected} totalCount={filters.filteredReservations.length} upcomingCount={upcomingCount} pastCount={pastCount} activeTab={activeTab} onNewReservation={handleStartCreate} />
 
       {!showForm && showMobileActions && (
@@ -252,16 +252,16 @@ export default function ReservationsPage() {
       )}
 
       {!showForm && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <ReservationTabs activeTab={activeTab} upcomingCount={upcomingCount} pastCount={pastCount} onTabChange={setActiveTab} />
 
           {activeTab === 'past' && (
-            <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full px-4 md:px-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-slate-700">Période :</span>
-                <div className="flex bg-slate-100 rounded-lg p-0.5 sm:p-1 w-full sm:w-auto justify-center">
+                <span className="text-sm font-medium text-[#8E8E93] md:text-slate-700">Période :</span>
+                <div className="flex bg-[#E5E5EA] md:bg-slate-100 rounded-lg p-0.5 w-full sm:w-auto justify-center">
                   {(['month', 'week', 'year'] as const).map((t) => (
-                    <button key={t} type="button" onClick={() => setPastPeriodType(t)} className={`px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm font-medium rounded-md transition-colors capitalize ${pastPeriodType === t ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
+                    <button key={t} type="button" onClick={() => setPastPeriodType(t)} className={`px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm font-medium rounded-md transition-colors capitalize flex-1 sm:flex-initial ${pastPeriodType === t ? 'bg-white text-[#000000] md:text-slate-900 shadow-sm' : 'text-[#6D6D72] md:text-slate-600'}`}>
                       {t === 'month' ? 'Mois' : t === 'week' ? 'Semaine' : 'Année'}
                     </button>
                   ))}
@@ -269,7 +269,7 @@ export default function ReservationsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Button variant="outline" size="sm" onClick={goToPreviousPeriod} className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0">←</Button>
-                <div className="text-center w-full sm:w-auto"><div className="font-medium text-slate-900">{formatCurrentPeriod()}</div><button type="button" onClick={resetToCurrentPeriod} className="text-xs text-slate-500 hover:text-slate-700 hover:underline mt-0.5">Revenir à aujourd&apos;hui</button></div>
+                <div className="text-center w-full sm:w-auto"><div className="font-medium text-[#000000] md:text-slate-900 text-[15px] md:text-base">{formatCurrentPeriod()}</div><button type="button" onClick={resetToCurrentPeriod} className="text-xs text-[#0066FF] md:text-slate-500 hover:underline mt-0.5">Revenir à aujourd&apos;hui</button></div>
                 <Button variant="outline" size="sm" onClick={goToNextPeriod} className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0">→</Button>
               </div>
             </div>
@@ -277,11 +277,47 @@ export default function ReservationsPage() {
         </div>
       )}
 
-      {showForm && <ReservationForm form={form} restaurant={restaurant} editing={!!editingReservation} isSaving={isSaving} onCancel={handleCancelForm} onSubmit={onSubmit} />}
+      {showForm && (
+        <>
+          {/* Mobile: full-screen overlay */}
+          <div className="md:hidden fixed inset-0 z-50 bg-white overflow-y-auto [&_>_div]:rounded-none [&_>_div]:border-0 [&_>_div]:shadow-none">
+            <div className="min-h-full" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))' }}>
+              <ReservationForm form={form} restaurant={restaurant} editing={!!editingReservation} isSaving={isSaving} onCancel={handleCancelForm} onSubmit={onSubmit} />
+            </div>
+          </div>
+
+          {/* Desktop: inline card */}
+          <div className="hidden md:block">
+            <ReservationForm form={form} restaurant={restaurant} editing={!!editingReservation} isSaving={isSaving} onCancel={handleCancelForm} onSubmit={onSubmit} />
+          </div>
+        </>
+      )}
 
       {!showForm && (
-        <div className="space-y-4">
-          <div className="flex gap-2 flex-wrap items-center justify-between">
+        <div className="space-y-3">
+          {/* Mobile: Search + chips */}
+          <div className="md:hidden px-4 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <SearchWithSuggestions value={filters.searchTerm} onChange={filters.setSearchTerm} suggestions={[]} placeholder="Rechercher..." />
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setShowAdvancedFilters(!showAdvancedFilters)} className={`h-9 w-9 rounded-lg flex-shrink-0 ${showAdvancedFilters ? 'bg-[#0066FF]/10 text-[#0066FF]' : 'text-[#8E8E93]'}`}>
+                <Filter className="h-5 w-5" />
+              </Button>
+              <div className="flex bg-[#E5E5EA] rounded-lg p-0.5 flex-shrink-0">
+                <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('list')} className={`h-8 w-8 p-0 ${viewMode === 'list' ? 'shadow-sm' : ''}`}>
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button variant={viewMode === 'calendar' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('calendar')} className={`h-8 w-8 p-0 ${viewMode === 'calendar' ? 'shadow-sm' : ''}`}>
+                  <CalendarIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <QuickFilters filters={quickFilters} />
+          </div>
+
+          {/* Desktop filter bar */}
+          <div className="hidden md:flex gap-2 flex-wrap items-center justify-between">
             <div className="flex gap-2 flex-wrap items-center">
               <Button variant="outline" size="sm" onClick={() => setShowAdvancedFilters(!showAdvancedFilters)} className={showAdvancedFilters ? 'border-[#0066FF] text-[#0066FF]' : ''}><Filter className="h-4 w-4" /></Button>
               <QuickFilters filters={quickFilters} />
@@ -340,10 +376,10 @@ export default function ReservationsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-6 border-t bg-white sticky bottom-0">
+                  <div className="p-6 border-t bg-white sticky bottom-0 md:pb-6 pb-[calc(1.5rem+3.5rem+env(safe-area-inset-bottom,0px))]">
                     <div className="flex gap-3">
-                      <Button variant="outline" className="flex-1 h-12 text-base" onClick={filters.clearAllFilters} disabled={filters.activeFilterCount === 0}>Tout effacer</Button>
-                      <Button className="flex-1 h-12 text-base" onClick={() => setShowAdvancedFilters(false)}>Appliquer</Button>
+                      <Button variant="outline" className="flex-1 h-10 text-sm" onClick={filters.clearAllFilters} disabled={filters.activeFilterCount === 0}>Tout effacer</Button>
+                      <Button className="flex-1 h-10 text-sm" onClick={() => setShowAdvancedFilters(false)}>Appliquer</Button>
                     </div>
                   </div>
                 </div>
@@ -363,16 +399,18 @@ export default function ReservationsPage() {
       )}
 
       {!showForm && viewMode === 'calendar' && (
-        <ReservationCalendarSection
-          calendarViewType={calendarViewType} filteredReservations={filters.filteredReservations} blockedDays={blockedDays} selectedDate={selectedDate}
-          currentMonth={currentMonth} currentWeek={currentWeek} currentDay={currentDay} restaurant={restaurant}
-          onCalendarViewTypeChange={setCalendarViewType}
-          onDateSelectFromMonth={(d) => { setSelectedDate(d); setCurrentDay(d); }}
-          onMonthChange={setCurrentMonth} onWeekChange={setCurrentWeek} onDayChange={setCurrentDay}
-          onReservationClick={handleReservationClickFromCalendar}
-          onQuickCreateFromCalendar={handleQuickCreateFromCalendar}
-          onQuickCreateFromDay={handleQuickCreateFromDay}
-        />
+        <div className="px-4 md:px-0">
+          <ReservationCalendarSection
+            calendarViewType={calendarViewType} filteredReservations={filters.filteredReservations} blockedDays={blockedDays} selectedDate={selectedDate}
+            currentMonth={currentMonth} currentWeek={currentWeek} currentDay={currentDay} restaurant={restaurant}
+            onCalendarViewTypeChange={setCalendarViewType}
+            onDateSelectFromMonth={(d) => { setSelectedDate(d); setCurrentDay(d); }}
+            onMonthChange={setCurrentMonth} onWeekChange={setCurrentWeek} onDayChange={setCurrentDay}
+            onReservationClick={handleReservationClickFromCalendar}
+            onQuickCreateFromCalendar={handleQuickCreateFromCalendar}
+            onQuickCreateFromDay={handleQuickCreateFromDay}
+          />
+        </div>
       )}
 
       {!showForm && viewMode === 'list' && (

@@ -132,7 +132,7 @@ export default function ReservationDetailPage({ params }: { params: { id: string
   if (isLoading) {
     return (
       <div className="space-y-6 p-4 md:p-6 animate-pulse">
-        <div className="h-10 bg-slate-200 rounded-lg w-48" />
+        <div className="h-10 bg-slate-200 rounded-lg w-48 hidden md:block" />
         <div className="h-64 bg-slate-200 rounded-lg" />
         <div className="h-40 bg-slate-200 rounded-lg" />
       </div>
@@ -144,8 +144,8 @@ export default function ReservationDetailPage({ params }: { params: { id: string
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-6 max-w-4xl mx-auto">
-      <div>
+    <div className="space-y-6 px-4 md:p-6 max-w-4xl mx-auto">
+      <div className="hidden md:block">
         <Button variant="outline" onClick={() => router.push('/dashboard/reservations')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour aux réservations

@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api';
-import { ChevronLeft, ChevronRight, Store } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Store, Search, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CommercialRestaurantsPage() {
@@ -12,11 +13,23 @@ export default function CommercialRestaurantsPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    apiClient.commercial.getMyRestaurants({ page, limit: 20 }).then(setData).catch(() => {}).finally(() => setLoading(false));
-  }, [page]);
+    apiClient.commercial.getMyRestaurants({ page, limit: 20, search: searchQuery || undefined }).then(setData).catch(() => {}).finally(() => setLoading(false));
+  }, [page, searchQuery]);
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      setSearchQuery(value);
+      setPage(1);
+    }, 300);
+  };
 
   const allRestaurants = data?.restaurants || [];
   const restaurants = statusFilter === 'all' ? allRestaurants : allRestaurants.filter((r: any) => r.status === statusFilter);
@@ -36,14 +49,31 @@ export default function CommercialRestaurantsPage() {
         </Link>
       </div>
 
-      <div className="flex gap-2">
-        {(['all', 'active', 'inactive'] as const).map((f) => (
-          <button key={f} onClick={() => setStatusFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${statusFilter === f ? 'bg-[#0066FF] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-          >
-            {f === 'all' ? 'Tous' : f === 'active' ? 'Actifs' : 'En attente'}
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex gap-2">
+          {(['all', 'active', 'inactive'] as const).map((f) => (
+            <button key={f} onClick={() => setStatusFilter(f)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${statusFilter === f ? 'bg-[#0066FF] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+            >
+              {f === 'all' ? 'Tous' : f === 'active' ? 'Actifs' : 'En attente'}
+            </button>
+          ))}
+        </div>
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+          <Input
+            type="text"
+            value={searchInput}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Rechercher un restaurant..."
+            className="pl-8 pr-8 h-8 text-xs"
+          />
+          {searchInput && (
+            <button onClick={() => { setSearchInput(''); setSearchQuery(''); }} className="absolute right-2 top-1/2 -translate-y-1/2">
+              <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
+            </button>
+          )}
+        </div>
       </div>
 
       {loading ? (

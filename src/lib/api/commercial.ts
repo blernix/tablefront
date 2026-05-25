@@ -21,10 +21,11 @@ export class CommercialApiClient extends ApiClient {
     });
   }
 
-  async getMyRestaurants(params?: { page?: number; limit?: number }) {
+  async getMyRestaurants(params?: { page?: number; limit?: number; search?: string }) {
     const query = new URLSearchParams();
     if (params?.page) query.set('page', String(params.page));
     if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.search) query.set('search', params.search);
     return this.request(`/api/commercial/restaurants?${query.toString()}`);
   }
 
@@ -63,5 +64,16 @@ export class CommercialApiClient extends ApiClient {
 
   async uploadProfilePhoto(file: File) {
     return this.uploadFile('/api/profile/photo', file, 'photo');
+  }
+
+  async getRestaurantNote(restaurantId: string) {
+    return this.request(`/api/commercial/restaurants/${restaurantId}/notes`);
+  }
+
+  async updateRestaurantNote(restaurantId: string, text: string) {
+    return this.request(`/api/commercial/restaurants/${restaurantId}/notes`, {
+      method: 'PUT',
+      body: JSON.stringify({ text }),
+    });
   }
 }

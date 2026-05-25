@@ -105,50 +105,47 @@ export const ReservationsListView = ({
 
   if (sortedDates.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-12">
-          <p className="text-center text-[#666666] font-light">Aucune réservation trouvée</p>
-        </CardContent>
-      </Card>
+      <>
+        <div className="md:hidden flex flex-col items-center justify-center py-20 px-4 bg-white">
+          <div className="h-16 w-16 rounded-full bg-[#F2F2F7] flex items-center justify-center mb-4">
+            <CalendarIcon className="h-8 w-8 text-[#C7C7CC]" />
+          </div>
+          <p className="text-[17px] font-medium text-[#000000]">Aucune réservation</p>
+          <p className="text-[15px] text-[#8E8E93] text-center mt-1">Les réservations apparaîtront ici une fois créées.</p>
+        </div>
+        <div className="hidden md:block">
+          <Card>
+            <CardContent className="py-12">
+              <p className="text-center text-[#666666] font-light">Aucune réservation trouvée</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
   return (
     <>
-      {/* Mobile View */}
-      <div className="md:hidden space-y-6">
+      {/* Mobile View — native app style */}
+      <div className="md:hidden">
         {sortedDates.map((dateKey) => {
           const services = reservationsByDateAndService[dateKey];
           const allDayReservations = [...services.lunch, ...services.dinner];
-          const capacity = calculateDailyCapacity(allDayReservations, dateKey, restaurant);
 
           return (
-            <div key={dateKey} className="space-y-3">
-              <div className="relative">
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-[#0066FF]" />
-                <div className="flex items-center gap-2 px-2 pt-2 pb-1">
-                  <CalendarIcon className="h-4 w-4 text-[#0066FF]" />
-                  <h3 className="text-base font-light text-[#2A2A2A] capitalize">
-                    {formatDateHeader(dateKey)}
-                  </h3>
-                  <span className="text-xs text-[#999999]">({allDayReservations.length})</span>
-                </div>
+            <div key={dateKey}>
+              {/* Sticky date header — iOS style */}
+              <div className="sticky top-0 z-10 bg-[#F2F2F7] px-4 py-2.5 border-b border-[#C6C6C8]/30">
+                <h3 className="text-[13px] font-semibold text-[#6D6D72] uppercase tracking-wide">
+                  {formatDateHeader(dateKey)}
+                  <span className="ml-1.5 font-normal text-[#8E8E93]">{allDayReservations.length}</span>
+                </h3>
               </div>
 
-              <CapacityIndicator
-                currentGuests={capacity.totalGuests}
-                maxCapacity={capacity._advanced?.maxDailyCapacity || capacity.maxCapacity}
-                maxDailyCapacity={capacity._advanced?.maxDailyCapacity}
-                simultaneousCapacity={capacity._advanced?.maxSimultaneousCapacity}
-                serviceCapacities={capacity._advanced?.serviceCapacities}
-              />
-
               {services.lunch.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 px-2">
-                    <Sun className="h-4 w-4 text-amber-500" />
-                    <h4 className="text-sm font-medium text-[#666666]">Midi</h4>
-                    <span className="text-xs text-[#999999]">{services.lunch.length} résa{services.lunch.length > 1 ? 's' : ''}</span>
+                <div>
+                  <div className="px-4 pt-3 pb-1.5 bg-white">
+                    <span className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">Déjeuner</span>
                   </div>
                   {services.lunch.map((reservation) => {
                     const cfg = getSwipeConfig(reservation);
@@ -183,11 +180,9 @@ export const ReservationsListView = ({
               )}
 
               {services.dinner.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 px-2">
-                    <Moon className="h-4 w-4 text-indigo-400" />
-                    <h4 className="text-sm font-medium text-[#666666]">Soir</h4>
-                    <span className="text-xs text-[#999999]">{services.dinner.length} résa{services.dinner.length > 1 ? 's' : ''}</span>
+                <div>
+                  <div className="px-4 pt-3 pb-1.5 bg-white">
+                    <span className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">Dîner</span>
                   </div>
                   {services.dinner.map((reservation) => {
                     const cfg = getSwipeConfig(reservation);

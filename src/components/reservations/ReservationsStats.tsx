@@ -176,106 +176,143 @@ export const ReservationsStats = ({
   }, [reservations, maxCapacity, averagePrice, restaurant, currentMonth]);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {/* Total Reservations */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Réservations</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalReservations}</p>
-              <p className="text-xs text-slate-500 mt-1">
-                {stats.statusBreakdown.pending} en attente
-              </p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-blue-600" />
-            </div>
+    <>
+      {/* Mobile: compact stats — 2x2 grid, no cards */}
+      <div className="md:hidden grid grid-cols-2 gap-0.5 bg-[#E5E5EA]/50 px-4 py-3">
+        <div className="bg-white px-3 py-2.5">
+          <p className="text-[11px] font-medium text-[#8E8E93] uppercase">Réservations</p>
+          <p className="text-[20px] font-semibold text-[#000000] mt-0.5">{stats.totalReservations}</p>
+          <p className="text-[12px] text-[#8E8E93] mt-0.5">{stats.statusBreakdown.pending} en attente</p>
+        </div>
+        <div className="bg-white px-3 py-2.5">
+          <p className="text-[11px] font-medium text-[#8E8E93] uppercase">Couverts</p>
+          <p className="text-[20px] font-semibold text-[#000000] mt-0.5">{stats.totalGuests}</p>
+          <p className="text-[12px] text-[#8E8E93] mt-0.5">Moy. {stats.avgGuestsPerReservation}/rés.</p>
+        </div>
+        <div className="bg-white px-3 py-2.5">
+          <p className="text-[11px] font-medium text-[#8E8E93] uppercase">Occupation</p>
+          <p className="text-[20px] font-semibold text-[#000000] mt-0.5">{stats.occupationRate}%</p>
+          <p className="text-[12px] text-[#8E8E93] mt-0.5">{stats.displayCapacity} max/créneau</p>
+        </div>
+        <div className="bg-white px-3 py-2.5">
+          <p className="text-[11px] font-medium text-[#8E8E93] uppercase">Jour chargé</p>
+          <p className="text-[20px] font-semibold text-[#000000] mt-0.5 capitalize">{stats.busiestDay}</p>
+          <p className="text-[12px] text-[#8E8E93] mt-0.5">{stats.busiestDayGuests} couverts</p>
+        </div>
+      </div>
+      
+      {/* Mobile: Revenue card — full width */}
+      <div className="md:hidden px-4 pb-3 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-medium text-[#8E8E93] uppercase">CA estimé</p>
+            <p className="text-[24px] font-semibold text-[#000000] mt-0.5">
+              {stats.estimatedRevenue.toLocaleString('fr-FR')} €
+            </p>
+            <p className="text-[12px] text-[#8E8E93] mt-0.5">
+              Basé sur {averagePrice}€/couvert · {stats.dateRange}
+            </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Total Guests */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Couverts</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalGuests}</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Moy. {stats.avgGuestsPerReservation} / rés.
-              </p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center">
-              <Users className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Occupation Rate */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Taux d&apos;occupation</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{stats.occupationRate}%</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Capacité max: {stats.simultaneousCapacity}/créneau
-              </p>
-            </div>
-            <div
-              className={`h-12 w-12 rounded-full flex items-center justify-center ${
-                parseFloat(stats.occupationRate) >= 70 ? 'bg-amber-50' : 'bg-slate-50'
-              }`}
-            >
-              <TrendingUp
-                className={`h-6 w-6 ${
-                  parseFloat(stats.occupationRate) >= 70 ? 'text-amber-600' : 'text-slate-600'
-                }`}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Busiest Day */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Jour le plus chargé</p>
-              <p className="text-lg font-bold text-slate-900 mt-1 capitalize">{stats.busiestDay}</p>
-              <p className="text-xs text-slate-500 mt-1">{stats.busiestDayGuests} couverts</p>
-            </div>
-            <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-red-600" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Estimated Revenue - Full width on mobile, half on desktop */}
-      <Card className="col-span-2 md:col-span-4">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Chiffre d&apos;affaires estimé</p>
-              <p className="text-3xl font-bold text-slate-900 mt-1">
-                {stats.estimatedRevenue.toLocaleString('fr-FR')} €
-              </p>
-              <div className="flex flex-wrap gap-2 text-xs text-slate-500 mt-1">
-                <span>Basé sur {averagePrice}€ de panier moyen par couvert</span>
-                <span className="text-slate-400">•</span>
-                <span>Période: {stats.dateRange}</span>
+      {/* Desktop: original card layout */}
+      <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Réservations</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalReservations}</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {stats.statusBreakdown.pending} en attente
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-blue-600" />
               </div>
             </div>
-            <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center">
-              <DollarSign className="h-8 w-8 text-emerald-600" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Couverts</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalGuests}</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Moy. {stats.avgGuestsPerReservation} / rés.
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center">
+                <Users className="h-6 w-6 text-green-600" />
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Taux d&apos;occupation</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{stats.occupationRate}%</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Capacité max: {stats.simultaneousCapacity}/créneau
+                </p>
+              </div>
+              <div
+                className={`h-12 w-12 rounded-full flex items-center justify-center ${
+                  parseFloat(stats.occupationRate) >= 70 ? 'bg-amber-50' : 'bg-slate-50'
+                }`}
+              >
+                <TrendingUp
+                  className={`h-6 w-6 ${
+                    parseFloat(stats.occupationRate) >= 70 ? 'text-amber-600' : 'text-slate-600'
+                  }`}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Jour le plus chargé</p>
+                <p className="text-lg font-bold text-slate-900 mt-1 capitalize">{stats.busiestDay}</p>
+                <p className="text-xs text-slate-500 mt-1">{stats.busiestDayGuests} couverts</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center">
+                <AlertCircle className="h-6 w-6 text-red-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-2 md:col-span-4">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Chiffre d&apos;affaires estimé</p>
+                <p className="text-3xl font-bold text-slate-900 mt-1">
+                  {stats.estimatedRevenue.toLocaleString('fr-FR')} €
+                </p>
+                <div className="flex flex-wrap gap-2 text-xs text-slate-500 mt-1">
+                  <span>Basé sur {averagePrice}€ de panier moyen par couvert</span>
+                  <span className="text-slate-400">•</span>
+                  <span>Période: {stats.dateRange}</span>
+                </div>
+              </div>
+              <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center">
+                <DollarSign className="h-8 w-8 text-emerald-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };

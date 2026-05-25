@@ -89,81 +89,54 @@ export const ReservationCard = ({
 
   if (variant === 'compact') {
     return (
+      // Mobile/tablet: native app row — edge-to-edge, separator lines, no cards
       <div
         onClick={onClick}
         className={cn(
-          'rounded-lg border-l-[3px] p-3 transition-all',
-          config.bgColor,
-          config.borderColor,
-          onClick && 'cursor-pointer active:scale-[0.985]',
-          'border border-[#E5E5E5] border-l-[3px]'
+          'flex items-center gap-3 px-4 py-3 transition-colors',
+          'bg-white active:bg-gray-50/80',
+          'border-b border-gray-100',
+          onClick && 'cursor-pointer'
         )}
-        style={{ borderLeftColor: config.barColor }}
       >
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-[#2A2A2A] truncate text-sm">{reservation.customerName}</h3>
-            <div className="flex items-center gap-2 mt-0.5">
-              <Circle className={cn('h-2 w-2 fill-current', config.iconColor)} />
-              <span className={cn('text-[11px] font-medium', config.iconColor)}>{config.label}</span>
-            </div>
-          </div>
+        {/* Status indicator dot */}
+        <div className="flex-shrink-0 self-start mt-1">
+          <span className="block h-3 w-3 rounded-full" style={{ backgroundColor: config.barColor }} />
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-[#666666]">
-          <span className="flex items-center gap-1 font-mono font-medium text-[#2A2A2A]">
-            <Clock className="h-3.5 w-3.5 flex-shrink-0 text-[#999999]" />
-            {reservation.time}
-          </span>
-          <span className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5 flex-shrink-0 text-[#999999]" />
-            {reservation.numberOfGuests} pers.
-          </span>
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[17px] font-medium text-[#000000] truncate">{reservation.customerName}</h3>
+            <span
+              className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+              style={{ backgroundColor: `${config.barColor}14`, color: config.barColor }}
+            >
+              {config.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 mt-0.5 text-[15px] text-[#8E8E93]">
+            <span className="flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5 flex-shrink-0" />
+              {reservation.time}
+            </span>
+            <span className="text-[#C6C6C8]">·</span>
+            <span className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5 flex-shrink-0" />
+              {reservation.numberOfGuests} pers.
+            </span>
+          </div>
+          {reservation.notes && (
+            <p className="mt-1 text-[13px] text-[#8E8E93] truncate">
+              {reservation.notes}
+            </p>
+          )}
         </div>
 
-        {reservation.notes && (
-          <div className="mt-2 flex items-start gap-1.5">
-            <StickyNote className="h-3 w-3 text-[#CCCCCC] mt-0.5 flex-shrink-0" />
-            <p className="text-[11px] text-[#999999] italic truncate">{reservation.notes}</p>
-          </div>
-        )}
-
-        {(onConfirm || onCancel || onComplete) && (
-          <div className="mt-2 pt-2 border-t border-black/5 flex gap-1.5">
-            {reservation.status === 'pending' && onConfirm && (
-              <button
-                className="flex-1 py-1.5 px-2 bg-emerald-500 text-white text-[11px] font-medium rounded-md hover:bg-emerald-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => { e.stopPropagation(); onConfirm(reservation); }}
-              >
-                <Check className="h-3 w-3" /> Confirmer
-              </button>
-            )}
-            {reservation.status === 'pending' && onCancel && (
-              <button
-                className="flex-1 py-1.5 px-2 bg-red-500 text-white text-[11px] font-medium rounded-md hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}
-              >
-                <X className="h-3 w-3" /> Refuser
-              </button>
-            )}
-            {reservation.status === 'confirmed' && onComplete && (
-              <button
-                className="flex-1 py-1.5 px-2 bg-[#0066FF] text-white text-[11px] font-medium rounded-md hover:bg-[#0052CC] transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => { e.stopPropagation(); onComplete(reservation); }}
-              >
-                <CheckCircle className="h-3 w-3" /> Terminer
-              </button>
-            )}
-            {reservation.status === 'confirmed' && onCancel && (
-              <button
-                className="flex-1 py-1.5 px-2 bg-amber-500 text-white text-[11px] font-medium rounded-md hover:bg-amber-600 transition-colors flex items-center justify-center gap-1"
-                onClick={(e) => { e.stopPropagation(); onCancel(reservation); }}
-              >
-                <X className="h-3 w-3" /> Annuler
-              </button>
-            )}
-          </div>
-        )}
+        {/* Chevron */}
+        <svg className="h-4 w-4 text-[#C7C7CC] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </div>
     );
   }

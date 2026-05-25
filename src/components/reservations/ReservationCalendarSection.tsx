@@ -5,6 +5,7 @@ import CalendarViewImproved from '@/components/reservations/CalendarViewImproved
 import { WeekView } from '@/components/reservations/WeekView';
 import { DayView } from '@/components/reservations/DayView';
 import { getMaxCapacityFromRestaurant } from '@/hooks/useRestaurantCapacity';
+import { cn } from '@/lib/utils';
 import { Reservation, Restaurant } from '@/types';
 
 interface ReservationCalendarSectionProps {
@@ -48,7 +49,22 @@ export function ReservationCalendarSection({
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex bg-[#F2F2F7] rounded-xl p-0.5 w-fit md:hidden">
+        {(['week', 'day', 'month'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => onCalendarViewTypeChange(t)}
+            className={cn(
+              'px-4 py-1.5 text-[13px] font-medium rounded-lg transition-colors',
+              calendarViewType === t ? 'bg-white text-[#000000] shadow-sm' : 'text-[#8E8E93]'
+            )}
+          >
+            {t === 'week' ? 'Sem.' : t === 'day' ? 'Jour' : 'Mois'}
+          </button>
+        ))}
+      </div>
+
+      <div className="hidden md:flex gap-2">
         <Button
           variant={calendarViewType === 'week' ? 'default' : 'outline'}
           size="sm"

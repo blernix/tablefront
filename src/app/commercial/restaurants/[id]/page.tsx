@@ -1,21 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Store, Mail, Phone, MapPin, Calendar, CreditCard, Clock, BarChart3, Link as LinkIcon, ExternalLink } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Store, Mail, Phone, MapPin, Calendar, CreditCard, Clock, BarChart3, Link as LinkIcon, ExternalLink, StickyNote } from 'lucide-react';
 
 export default function RestaurantDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [note, setNote] = useState('');
+  const noteTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     apiClient.commercial.getRestaurantDetail(id).then((d: any) => setData(d)).catch(() => {}).finally(() => setLoading(false));
+    apiClient.commercial.getRestaurantNote(id).then((d: any) => setNote(d?.note || '')).catch(() => {});
   }, [id]);
+
+  const handleNoteChange = (value: string) => {
+    setNote(value);
+    if (noteTimeout.current) clearTimeout(noteTimeout.current);
+    noteTimeout.current = setTimeout(() => {
+      apiClient.commercial.updateRestaurantNote(id, value).catch(() => {});
+    }, 500);
+  };
 
   if (loading) return <div className="text-sm text-gray-400 py-10 text-center">Chargement...</div>;
   if (!data?.restaurant) return <div className="text-sm text-red-400 py-10 text-center">Restaurant introuvable.</div>;
@@ -84,6 +96,23 @@ export default function RestaurantDetailPage() {
             <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium">{r.tablesConfig?.totalTables || '—'}</div><div className="text-xs text-gray-400">Tables</div></div>
             <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium">{r.tablesConfig?.averageCapacity || '—'}</div><div className="text-xs text-gray-400">Couverts</div></div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-5 space-y-3">
+          <h3 className="text-sm font-medium text-[#2A2A2A] flex items-center gap-2">
+            <StickyNote className="h-4 w-4 text-amber-500" /> Notes privées
+          </h3>
+          <Textarea
+            value={note}
+            onChange={(e) => handleNoteChange(e.target.value)}
+            placeholder="Rappeler vendredi, le chef hésite sur le Pro, à relancer lundi..."
+            rows={3}
+            maxLength={2000}
+            className="text-sm resize-none rounded-xl border-gray-200 focus:ring-[#0066FF]/20 focus:border-[#0066FF]"
+          />
+          <p className="text-[10px] text-gray-400 text-right">Sauvegarde automatique · Visible uniquement par vous</p>
         </CardContent>
       </Card>
 

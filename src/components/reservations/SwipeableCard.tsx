@@ -77,35 +77,31 @@ export const SwipeableCard = ({
     trackTouch: true,
   });
 
-  const showRightAction = swipeOffset > 50;
-  const showLeftAction = swipeOffset < -50;
+  const showRightAction = swipeOffset > 20;
+  const showLeftAction = swipeOffset < -20;
+  const bgRightColor = rightColor.replace('text-', 'bg-');
+  const bgLeftColor = leftColor.replace('text-', 'bg-');
 
   return (
     <div className={cn('relative overflow-hidden', className)}>
-      {/* Background actions */}
-      <div className="absolute inset-0 flex items-center justify-between px-6 pointer-events-none">
-        {/* Right swipe action (confirm) */}
-        <div
-          className={cn(
-            'flex items-center gap-2 font-semibold transition-opacity duration-200',
-            rightColor,
-            showRightAction ? 'opacity-100' : 'opacity-0'
-          )}
-        >
-          {rightIcon}
-          <span className="hidden sm:inline">{rightLabel}</span>
-        </div>
-
-        {/* Left swipe action (cancel) */}
-        <div
-          className={cn(
-            'flex items-center gap-2 font-semibold transition-opacity duration-200',
-            leftColor,
-            showLeftAction ? 'opacity-100' : 'opacity-0'
-          )}
-        >
-          <span className="hidden sm:inline">{leftLabel}</span>
+      {/* Left action background (swipe right to reveal) */}
+      <div
+        className={cn('absolute inset-y-0 left-0 flex items-center justify-start px-5 transition-opacity duration-150', bgLeftColor)}
+        style={{ width: Math.abs(swipeOffset) > 0 ? `${Math.min(Math.abs(swipeOffset), 150)}px` : '0px', opacity: showLeftAction ? 1 : 0 }}
+      >
+        <div className="flex items-center gap-1.5 text-white font-semibold text-[15px]">
           {leftIcon}
+          {leftLabel}
+        </div>
+      </div>
+      {/* Right action background (swipe left to reveal) */}
+      <div
+        className={cn('absolute inset-y-0 right-0 flex items-center justify-end px-5 transition-opacity duration-150', bgRightColor)}
+        style={{ width: Math.abs(swipeOffset) > 0 ? `${Math.min(Math.abs(swipeOffset), 150)}px` : '0px', opacity: showRightAction ? 1 : 0 }}
+      >
+        <div className="flex items-center gap-1.5 text-white font-semibold text-[15px]">
+          {rightIcon}
+          {rightLabel}
         </div>
       </div>
 
@@ -114,9 +110,9 @@ export const SwipeableCard = ({
         {...handlers}
         style={{
           transform: `translateX(${swipeOffset}px)`,
-          transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
+          transition: isSwiping ? 'none' : 'transform 0.25s ease-out',
         }}
-        className="relative touch-pan-y"
+        className="relative bg-white"
       >
         {children}
       </div>

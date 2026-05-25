@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import { Reservation, Restaurant } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Calendar, Plus, Users, Clock, Sun, Moon, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Sun, Moon, Clock } from 'lucide-react';
 import { format, addDays, subDays, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -22,10 +20,10 @@ interface DayViewProps {
   restaurant?: Restaurant | null;
 }
 
-const statusConfig = {
-  confirmed: 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100',
-  pending: 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100',
-  completed: 'bg-blue-50 border-blue-100 text-blue-700 hover:bg-blue-100',
+const statusStyle: Record<string, string> = {
+  confirmed: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+  pending: 'bg-amber-50 border-amber-200 text-amber-800',
+  completed: 'bg-blue-50 border-blue-100 text-blue-700',
   cancelled: 'bg-red-50 border-red-100 text-red-700',
 };
 
@@ -38,283 +36,186 @@ export const DayView = ({
   maxCapacity = 50,
   restaurant,
 }: DayViewProps) => {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setSelectedId(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleReservationTap = (reservation: Reservation) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    if (!isMobile) {
-      onReservationClick?.(reservation);
-      return;
-    }
-    if (selectedId === reservation._id) {
-      onReservationClick?.(reservation);
-    } else {
-      setSelectedId(reservation._id);
-    }
-  };
+  const prev = () => onDayChange(subDays(currentDay, 1));
+  const next = () => onDayChange(addDays(currentDay, 1));
 
   const dayOfWeek = currentDay.getDay();
-
   const availableSlots = restaurant ? getAvailableTimeSlots(restaurant, dayOfWeek) : [];
-
-  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-  const dayName = dayNames[dayOfWeek];
+  const DAY_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+  const dayName = DAY_KEYS[dayOfWeek];
   const isClosed = restaurant?.openingHours?.[dayName]?.closed || false;
-
-  const handlePreviousDay = () => onDayChange(subDays(currentDay, 1));
-  const handleNextDay = () => onDayChange(addDays(currentDay, 1));
-  const handleToday = () => onDayChange(new Date());
 
   const currentDayStr = getLocalDateString(currentDay);
   const dayReservations = reservations.filter((r) => {
-    const resDate = getLocalDateString(r.date);
-    return resDate === currentDayStr && r.status !== 'cancelled';
+    return getLocalDateString(r.date) === currentDayStr && r.status !== 'cancelled';
   });
 
-  const advancedCapacity = restaurant
-    ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant)
-    : null;
+  const advancedCapacity = restaurant ? calculateDailyCapacityAdvanced(reservations, currentDayStr, restaurant) : null;
+  const totalGuests = dayReservations.reduce((s, r) => s + r.numberOfGuests, 0);
+  const occupationRate = advancedCapacity?.dailyOccupationPercentage ?? (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
 
-  const totalGuests = dayReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-  const occupationRate =
-    advancedCapacity?.dailyOccupationPercentage ??
-    (maxCapacity > 0 ? (totalGuests / maxCapacity) * 100 : 0);
-
-  // Group available slots by service (lunch < 17h, dinner >= 17h)
   const lunchSlots = availableSlots.filter((s) => parseInt(s.split(':')[0]) < 17);
   const dinnerSlots = availableSlots.filter((s) => parseInt(s.split(':')[0]) >= 17);
 
-  // Match reservations to the closest available slot (15-min tolerance)
   const getReservationsForSlot = (slotTime: string) => {
     const [sh, sm] = slotTime.split(':').map(Number);
     const slotMin = sh * 60 + sm;
     return dayReservations.filter((r) => {
       const [rh, rm] = r.time.split(':').map(Number);
-      const resMin = rh * 60 + rm;
-      return Math.abs(resMin - slotMin) <= 15;
+      return Math.abs(rh * 60 + rm - slotMin) <= 15;
     });
   };
 
-  const renderTimeline = (slots: string[], serviceName: string, icon: React.ReactNode) => {
+  const renderService = (slots: string[], label: string, icon: React.ReactNode) => {
     if (slots.length === 0) return null;
 
-    const serviceReservations = dayReservations.filter((r) => {
-      const hour = parseInt(r.time.split(':')[0]);
-      return serviceName === 'Midi' ? hour < 17 : hour >= 17;
+    const svcRes = dayReservations.filter((r) => {
+      const h = parseInt(r.time.split(':')[0]);
+      return label === 'Midi' ? h < 17 : h >= 17;
     });
-    const serviceGuests = serviceReservations.reduce((sum, r) => sum + r.numberOfGuests, 0);
-    let serviceCapacity = maxCapacity / 2;
+    const svcGuests = svcRes.reduce((s, r) => s + r.numberOfGuests, 0);
+    let svcCap = maxCapacity / 2;
     if (advancedCapacity) {
-      serviceCapacity = serviceName === 'Midi'
-        ? advancedCapacity.serviceCapacities.lunch.maxCapacity
-        : advancedCapacity.serviceCapacities.dinner.maxCapacity;
+      svcCap = label === 'Midi' ? advancedCapacity.serviceCapacities.lunch.maxCapacity : advancedCapacity.serviceCapacities.dinner.maxCapacity;
     }
-    const serviceOccupation = serviceCapacity > 0 ? (serviceGuests / serviceCapacity) * 100 : 0;
+    const svcOcc = svcCap > 0 ? (svcGuests / svcCap) * 100 : 0;
 
     return (
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-lg md:border md:border-slate-200 md:shadow-sm">
+        {/* Service header */}
+        <div className="p-4 md:p-5 border-b border-[#E5E5EA] md:border-slate-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
               {icon}
               <div>
-                <h3 className="text-lg font-light text-[#2A2A2A]">{serviceName}</h3>
-                <p className="text-sm text-[#999999]">
-                  {slots[0]} - {slots[slots.length - 1]} ({slots.length} créneau{slots.length > 1 ? 'x' : ''})
-                </p>
+                <h3 className="text-[15px] font-semibold text-[#000000] md:text-lg md:font-light md:text-[#2A2A2A]">{label}</h3>
+                <p className="text-[11px] text-[#8E8E93] md:text-sm md:text-[#999999]">{slots[0]} – {slots[slots.length - 1]} · {slots.length} créneau{slots.length > 1 ? 'x' : ''}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-[#666666]">
-                <Users className="inline h-4 w-4 mr-1" />
-                {serviceReservations.length} rés. · {serviceGuests} pers.
+              <div className="text-[11px] text-[#8E8E93] md:text-sm md:text-[#666666]">
+                {svcRes.length} rés · {svcGuests} pers.
               </div>
-              <div className="text-xs text-[#999999] mt-1">
-                {serviceOccupation.toFixed(0)}% {serviceCapacity > 0 && `/ ${serviceCapacity} couverts`}
+              <div className="text-[10px] text-[#8E8E93] mt-0.5 md:text-xs md:text-[#999999]">
+                {svcOcc.toFixed(0)}% / {svcCap} cvts
               </div>
             </div>
           </div>
-
-          <div className="w-full bg-[#F5F5F5] rounded-full h-1.5 mb-4">
+          <div className="w-full bg-[#F2F2F7] rounded-full h-1 mt-3 md:bg-[#F5F5F5] md:h-1.5">
             <div
-              className={cn(
-                'h-1.5 rounded-full transition-all',
-                serviceOccupation >= 90 ? 'bg-red-500' : serviceOccupation >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
-              )}
-              style={{ width: `${Math.min(serviceOccupation, 100)}%` }}
+              className={cn('h-1 rounded-full transition-all md:h-1.5', svcOcc >= 90 ? 'bg-red-500' : svcOcc >= 70 ? 'bg-amber-500' : 'bg-emerald-500')}
+              style={{ width: `${Math.min(svcOcc, 100)}%` }}
             />
           </div>
+        </div>
 
-          <div className="space-y-1">
-            {slots.map((timeStr) => {
-              const slotReservations = getReservationsForSlot(timeStr);
-              const hasReservations = slotReservations.length > 0;
-
-              return (
-                <div
-                  key={timeStr}
-                  className={cn(
-                    'flex items-center gap-2 p-2 rounded-lg border transition-colors',
-                    hasReservations ? 'bg-white border-[#E5E5E5]' : 'bg-white border-[#E5E5E5] hover:bg-[#FAFAFA]'
-                  )}
-                >
-                  <div className="w-14 text-sm font-mono font-medium text-[#2A2A2A] flex-shrink-0">
-                    {timeStr}
-                  </div>
-                  <div className="flex-1">
-                    {hasReservations && (
-                      <div className="flex flex-wrap gap-1.5 mb-1">
-                        {slotReservations.map((reservation) => {
-                          const isExpanded = selectedId === reservation._id;
-                          return (
-                            <div key={reservation._id} className="group">
-                              <button
-                                onClick={() => handleReservationTap(reservation)}
-                                className={cn(
-                                  'px-3 py-1.5 rounded-lg border text-sm transition-colors text-left',
-                                  statusConfig[reservation.status as keyof typeof statusConfig] || statusConfig.pending,
-                                  isExpanded ? 'ring-2 ring-[#0066FF] shadow-md z-10 relative' : ''
-                                )}
-                              >
-                                <div className="font-medium">{reservation.customerName}</div>
-                                <div className="text-xs opacity-75">{reservation.numberOfGuests} pers.</div>
-                              </button>
-                              {isExpanded && (
-                                <div className="mt-0.5 p-2 bg-white border border-[#0066FF]/30 rounded-md text-xs space-y-1.5 shadow-sm sm:hidden">
-                                  <div className="font-medium text-[#2A2A2A]">{reservation.customerName}</div>
-                                  <div className="text-gray-500">{reservation.time} · {reservation.numberOfGuests} pers.</div>
-                                  <div className="text-gray-400">{reservation.customerEmail}</div>
-                                  <button
-                                    onClick={() => { onReservationClick?.(reservation); setSelectedId(null); }}
-                                    className="flex items-center gap-1 text-[#0066FF] text-xs font-medium hover:underline mt-1"
-                                  >
-                                    <Eye className="h-3 w-3" />
-                                    Voir la réservation
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {onQuickCreate && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onQuickCreate(timeStr)}
-                        className="text-[#0066FF] hover:text-[#0052CC] hover:bg-[#0066FF]/5"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        {hasReservations ? `+ Ajouter (${slotReservations.length})` : 'Créer'}
-                      </Button>
-                    )}
-                  </div>
+        {/* Slots */}
+        <div className="divide-y divide-[#E5E5EA] md:divide-slate-50">
+          {slots.map((timeStr) => {
+            const slotRes = getReservationsForSlot(timeStr);
+            return (
+              <div key={timeStr} className="flex items-start gap-3 p-3 md:p-3 md:gap-4">
+                <div className="flex items-center gap-1.5 pt-1 flex-shrink-0 w-12 md:w-14">
+                  <Clock className="h-3 w-3 text-[#8E8E93] md:h-3.5 md:w-3.5 md:text-slate-400" />
+                  <span className="text-xs font-mono font-medium text-[#8E8E93] md:text-sm md:text-[#2A2A2A]">{timeStr}</span>
                 </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                <div className="flex-1 min-w-0 space-y-1">
+                  {slotRes.map((r) => (
+                    <button
+                      key={r._id}
+                      onClick={() => onReservationClick?.(r)}
+                      className={cn(
+                        'w-full text-left px-3 py-2 rounded-lg md:rounded-xl border text-xs md:text-sm transition-colors active:ring-1 active:ring-[#0066FF]',
+                        statusStyle[r.status] || statusStyle.pending
+                      )}
+                    >
+                      <div className="font-medium truncate">{r.customerName}</div>
+                      <div className="text-[10px] opacity-60 md:opacity-75">{r.numberOfGuests} pers.</div>
+                    </button>
+                  ))}
+                  {onQuickCreate && (
+                    <button
+                      onClick={() => onQuickCreate(timeStr)}
+                      className="flex items-center gap-1 text-[11px] text-[#0066FF] font-medium py-1.5 px-2 -mx-2 rounded-lg active:bg-[#0066FF]/5 transition-colors md:text-xs"
+                    >
+                      <Plus className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                      {slotRes.length > 0 ? `Ajouter (${slotRes.length})` : 'Créer'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 space-y-2 md:space-y-0">
-            <div className="flex items-center gap-3">
-              <Calendar className="h-6 w-6 text-[#0066FF]" />
-              <div>
-                <h2 className="text-xl font-light text-[#2A2A2A] capitalize">
-                  {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
-                </h2>
-                {isToday(currentDay) && (
-                  <p className="text-sm text-[#0066FF] font-medium mt-1">Aujourd&apos;hui</p>
-                )}
-              </div>
+    <div className="space-y-4 md:space-y-6">
+      {/* Header card */}
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-lg md:border md:border-slate-200 md:shadow-sm">
+        <div className="p-4 md:p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-[15px] font-semibold text-[#000000] capitalize md:text-xl md:font-light md:text-[#2A2A2A]">
+                {format(currentDay, 'EEEE d MMMM yyyy', { locale: fr })}
+              </h2>
+              {isToday(currentDay) && (
+                <p className="text-[11px] text-[#0066FF] font-medium mt-0.5 md:text-sm">Aujourd&apos;hui</p>
+              )}
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handlePreviousDay} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleToday}>Aujourd&apos;hui</Button>
-              <Button variant="outline" size="sm" onClick={handleNextDay} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5">
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+            <div className="flex gap-1.5">
+              <Button variant="outline" size="sm" onClick={prev} className="h-9 w-9 md:h-8 md:w-8 p-0"><ChevronLeft className="h-4 w-4" /></Button>
+              <Button variant="outline" size="sm" onClick={() => onDayChange(new Date())} className="text-[11px] md:text-xs h-9 md:h-8">Auj.</Button>
+              <Button variant="outline" size="sm" onClick={next} className="h-9 w-9 md:h-8 md:w-8 p-0"><ChevronRight className="h-4 w-4" /></Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center rounded-lg bg-[#0066FF]/5 p-3">
-              <div className="text-2xl font-light text-[#0066FF]">{dayReservations.length}</div>
-              <div className="text-xs text-[#666666]">Réservations</div>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-2 md:gap-4">
+            <div className="text-center rounded-xl bg-[#0066FF]/5 p-2 md:p-3">
+              <div className="text-xl font-bold text-[#0066FF] md:text-2xl md:font-light">{dayReservations.length}</div>
+              <div className="text-[9px] text-[#8E8E93] md:text-xs">Réservations</div>
             </div>
-            <div className="text-center rounded-lg bg-emerald-50 p-3">
-              <div className="text-2xl font-light text-emerald-600">{totalGuests}</div>
-              <div className="text-xs text-[#666666]">Couverts</div>
+            <div className="text-center rounded-xl bg-emerald-50 p-2 md:p-3">
+              <div className="text-xl font-bold text-emerald-600 md:text-2xl md:font-light">{totalGuests}</div>
+              <div className="text-[9px] text-[#8E8E93] md:text-xs">Couverts</div>
             </div>
-            <div className="text-center rounded-lg bg-amber-50 p-3">
-              <div className="text-2xl font-light text-amber-600">{occupationRate.toFixed(0)}%</div>
-              <div className="text-xs text-[#666666]">Occupation</div>
+            <div className="text-center rounded-xl bg-amber-50 p-2 md:p-3">
+              <div className="text-xl font-bold text-amber-600 md:text-2xl md:font-light">{occupationRate.toFixed(0)}%</div>
+              <div className="text-[9px] text-[#8E8E93] md:text-xs">Occupation</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
+      {/* Closed / No restaurant / No slots */}
       {restaurant && isClosed && (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <p className="text-lg font-light text-[#2A2A2A]">Restaurant fermé ce jour</p>
-              <p className="text-sm text-[#666666] mt-2">
-                Le restaurant est fermé le {format(currentDay, 'EEEE', { locale: fr })}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] p-6 text-center md:rounded-lg md:border md:border-slate-200 md:shadow-sm">
+          <p className="text-[15px] font-semibold text-[#000000] md:text-lg md:font-light">Restaurant fermé ce jour</p>
+          <p className="text-[13px] text-[#8E8E93] mt-1 md:text-sm">Fermé le {format(currentDay, 'EEEE', { locale: fr })}</p>
+        </div>
       )}
 
       {!restaurant && (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <p className="text-lg font-light text-[#2A2A2A]">Chargement des créneaux...</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] p-6 text-center md:rounded-lg md:border md:border-slate-200 md:shadow-sm">
+          <p className="text-[15px] font-semibold text-[#000000] md:text-lg md:font-light">Chargement…</p>
+        </div>
       )}
 
       {restaurant && !isClosed && availableSlots.length === 0 && (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <p className="text-lg font-light text-[#2A2A2A]">Aucun créneau configuré</p>
-              <p className="text-sm text-[#666666] mt-2">
-                Configurez vos horaires d&apos;ouverture dans les paramètres pour voir les créneaux.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] p-6 text-center md:rounded-lg md:border md:border-slate-200 md:shadow-sm">
+          <p className="text-[15px] font-semibold text-[#000000] md:text-lg md:font-light">Aucun créneau</p>
+          <p className="text-[13px] text-[#8E8E93] mt-1 md:text-sm">Configurez vos horaires d&apos;ouverture</p>
+        </div>
       )}
 
-      {!isClosed && (
+      {/* Service blocks */}
+      {!isClosed && restaurant && (
         <>
-          {renderTimeline(lunchSlots, 'Midi', <Sun className="h-5 w-5 text-amber-500" />)}
-          {renderTimeline(dinnerSlots, 'Soir', <Moon className="h-5 w-5 text-indigo-400" />)}
+          {renderService(lunchSlots, 'Midi', <Sun className="h-5 w-5 text-amber-500" />)}
+          {renderService(dinnerSlots, 'Soir', <Moon className="h-5 w-5 text-indigo-400" />)}
         </>
       )}
     </div>
