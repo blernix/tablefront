@@ -1,24 +1,37 @@
 'use client';
 
 import { useSwipeable } from 'react-swipeable';
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Check, XCircle, CheckCircle } from 'lucide-react';
 
 interface SwipeableCardProps {
   children: React.ReactNode;
-  onSwipeRight?: () => void; // Confirmer
-  onSwipeLeft?: () => void; // Annuler
+  onSwipeRight?: () => void;
+  onSwipeLeft?: () => void;
   rightLabel?: string;
   leftLabel?: string;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
-  rightColor?: string; // Classe Tailwind pour la couleur
-  leftColor?: string; // Classe Tailwind pour la couleur
-  sameActionOnBothSides?: boolean; // Si vrai, les deux directions déclenchent onSwipeRight
+  rightColor?: string;
+  leftColor?: string;
+  sameActionOnBothSides?: boolean;
   disabled?: boolean;
   className?: string;
 }
+
+const colorMap: Record<string, string> = {
+  'text-emerald-500': 'bg-emerald-500',
+  'text-red-500': 'bg-red-500',
+  'text-[#0066FF]': 'bg-[#0066FF]',
+};
+
+const resolveBgColor = (textColor: string): string => {
+  if (colorMap[textColor]) return colorMap[textColor];
+  const match = textColor.match(/text-\[(.+)\]/);
+  if (match) return `bg-[${match[1]}]`;
+  return textColor.replace('text-', 'bg-');
+};
 
 export const SwipeableCard = ({
   children,
@@ -36,23 +49,31 @@ export const SwipeableCard = ({
 }: SwipeableCardProps) => {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const THRESHOLD = 100;
+  const MAX_SWIPE = 150;
+
+  // Reset offset when disabled changes or component mounts
+  useEffect(() => {
+    setSwipeOffset(0);
+  }, [disabled]);
 
   const handlers = useSwipeable({
     onSwiping: (e) => {
       if (disabled) return;
       setIsSwiping(true);
-      // Limit swipe distance to prevent over-swiping
-      const maxSwipe = 150;
-      const limitedOffset = Math.max(-maxSwipe, Math.min(maxSwipe, e.deltaX));
-      setSwipeOffset(limitedOffset);
+      const limited = Math.max(-MAX_SWIPE, Math.min(MAX_SWIPE, e.deltaX));
+      setSwipeOffset(limited);
     },
     onSwipedLeft: () => {
       if (disabled) return;
-      if (swipeOffset < -100) {
+      if (swipeOffset < -THRESHOLD) {
         if (sameActionOnBothSides && onSwipeRight) {
           onSwipeRight();
-        } else if (!sameActionOnBothSides && onSwipeLeft) {
+          return;
+        }
+        if (!sameActionOnBothSides && onSwipeLeft) {
           onSwipeLeft();
+          return;
         }
       }
       setSwipeOffset(0);
@@ -60,57 +81,91 @@ export const SwipeableCard = ({
     },
     onSwipedRight: () => {
       if (disabled) return;
-      if (swipeOffset > 100 && onSwipeRight) {
+      if (swipeOffset > THRESHOLD && onSwipeRight) {
         onSwipeRight();
+        return;
       }
       setSwipeOffset(0);
       setIsSwiping(false);
     },
     onTouchEndOrOnMouseUp: () => {
-      // Reset if swipe wasn't strong enough
-      if (Math.abs(swipeOffset) < 100) {
+      if (Math.abs(swipeOffset) < THRESHOLD) {
         setSwipeOffset(0);
       }
       setIsSwiping(false);
     },
-    trackMouse: true, // Enable mouse tracking for desktop testing
+    trackMouse: false,
     trackTouch: true,
+    preventScrollOnSwipe: true,
   });
 
-  const showRightAction = swipeOffset > 20;
-  const showLeftAction = swipeOffset < -20;
-  const bgRightColor = rightColor.replace('text-', 'bg-');
-  const bgLeftColor = leftColor.replace('text-', 'bg-');
+  // Calculate progressive opacity based on swipe distance
+  const leftProgress = Math.max(0, Math.min(1, swipeOffset / THRESHOLD));
+  const rightProgress = Math.max(0, Math.min(1, Math.abs(swipeOffset) / THRESHOLD));
+
+  // Ensure we have valid background colors
+  const bgRight = resolveBgColor(rightColor);
+  const bgLeft = resolveBgColor(leftColor);
+
+  // Pulsing when past threshold
+  const leftTriggered = swipeOffset > THRESHOLD;
+  const rightTriggered = swipeOffset < -THRESHOLD;
 
   return (
     <div className={cn('relative overflow-hidden', className)}>
-      {/* Left action background (swipe right to reveal) */}
-      <div
-        className={cn('absolute inset-y-0 left-0 flex items-center justify-start px-5 transition-opacity duration-150', bgLeftColor)}
-        style={{ width: Math.abs(swipeOffset) > 0 ? `${Math.min(Math.abs(swipeOffset), 150)}px` : '0px', opacity: showLeftAction ? 1 : 0 }}
-      >
-        <div className="flex items-center gap-1.5 text-white font-semibold text-[15px]">
-          {leftIcon}
-          {leftLabel}
+      {/* Left action (appears when swiping right) */}
+      {(leftProgress > 0 || leftTriggered) && (
+        <div
+          className={cn(
+            'absolute inset-y-0 left-0 flex items-center justify-start px-5 rounded-l-lg transition-all duration-150',
+            bgLeft,
+            leftTriggered && 'opacity-100',
+            !leftTriggered && leftProgress > 0 && 'opacity-90'
+          )}
+          style={{
+            width: `${Math.min(Math.abs(swipeOffset), MAX_SWIPE)}px`,
+          }}
+        >
+          <div className={cn(
+            'flex items-center gap-1.5 text-white font-semibold text-[15px] transition-transform duration-200',
+            leftTriggered && 'scale-110'
+          )}>
+            {leftIcon}
+            {leftLabel}
+          </div>
         </div>
-      </div>
-      {/* Right action background (swipe left to reveal) */}
-      <div
-        className={cn('absolute inset-y-0 right-0 flex items-center justify-end px-5 transition-opacity duration-150', bgRightColor)}
-        style={{ width: Math.abs(swipeOffset) > 0 ? `${Math.min(Math.abs(swipeOffset), 150)}px` : '0px', opacity: showRightAction ? 1 : 0 }}
-      >
-        <div className="flex items-center gap-1.5 text-white font-semibold text-[15px]">
-          {rightIcon}
-          {rightLabel}
+      )}
+
+      {/* Right action (appears when swiping left) */}
+      {(rightProgress > 0 || rightTriggered) && (
+        <div
+          className={cn(
+            'absolute inset-y-0 right-0 flex items-center justify-end px-5 rounded-r-lg transition-all duration-150',
+            bgRight,
+            rightTriggered && 'opacity-100',
+            !rightTriggered && rightProgress > 0 && 'opacity-90'
+          )}
+          style={{
+            width: `${Math.min(Math.abs(swipeOffset), MAX_SWIPE)}px`,
+          }}
+        >
+          <div className={cn(
+            'flex items-center gap-1.5 text-white font-semibold text-[15px] transition-transform duration-200',
+            rightTriggered && 'scale-110'
+          )}>
+            {rightIcon}
+            {rightLabel}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Card content */}
       <div
         {...handlers}
         style={{
           transform: `translateX(${swipeOffset}px)`,
-          transition: isSwiping ? 'none' : 'transform 0.25s ease-out',
+          transition: isSwiping ? 'none' : 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          borderRadius: swipeOffset !== 0 ? (swipeOffset > 0 ? '0 12px 12px 0' : '12px 0 0 12px') : '0',
         }}
         className="relative bg-white"
       >
