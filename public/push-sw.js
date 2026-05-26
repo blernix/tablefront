@@ -1,6 +1,9 @@
 // Push Notification Service Worker
 // Handles push events and notification clicks
 
+// Will be set by main app via postMessage
+let API_BASE_URL = '';
+
 self.addEventListener('push', function(event) {
   // Push event received
   if (!event.data) {
@@ -43,59 +46,73 @@ self.addEventListener('push', function(event) {
 });
 
 self.addEventListener('notificationclick', function(event) {
-  // Notification clicked
-
   event.notification.close();
 
   const notificationData = event.notification.data || {};
-  let url = '/dashboard';
 
-  // Determine URL based on notification type
+  // If a button action was clicked, try to process it via API directly (no app open)
+  if (event.action === 'confirm_reservation' || event.action === 'cancel_reservation') {
+    const reservationId = notificationData.reservationId;
+    if (!reservationId) {
+      // No reservation ID, fallback to opening app
+      return event.waitUntil(clients.openWindow('/dashboard/reservations'));
+    }
+
+    const newStatus = event.action === 'confirm_reservation' ? 'confirmed' : 'cancelled';
+    const statusLabel = newStatus === 'confirmed' ? 'confirmée' : 'annulée';
+    const apiUrl = API_BASE_URL || '';
+
+    event.waitUntil(
+      fetch(`${apiUrl}/api/reservations/${reservationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+        credentials: 'include',
+      })
+        .then(function(response) {
+          if (!response.ok) throw new Error('API error ' + response.status);
+          return response.json();
+        })
+        .then(function() {
+          return self.registration.showNotification(
+            'TableMaster',
+            {
+              body: 'Réservation ' + statusLabel + ' ✓',
+              icon: '/icons/icon-192x192.png',
+              badge: '/icons/badge-72x72.png',
+              tag: 'action-result-' + reservationId,
+              timestamp: Date.now(),
+            }
+          );
+        })
+        .catch(function(error) {
+          console.error('[Push SW] API call failed, opening app:', error);
+          // If fetch fails (dev env, network issue, unauthenticated),
+          // fall back to opening the app with action param
+          return clients.openWindow(
+            `/dashboard/reservations/${reservationId}?action=${event.action === 'confirm_reservation' ? 'confirm' : 'cancel'}`
+          );
+        })
+    );
+    return;
+  }
+
+  // No action button clicked — user tapped the notification itself
+  // Open the reservation detail
+  let url = '/dashboard';
   if (notificationData.url) {
-    url = notificationData.url;
+    url = notificationData.url.split('?')[0].replace(/^https?:\/\/[^/]+/, '');
   } else if (notificationData.reservationId) {
     url = `/dashboard/reservations/${notificationData.reservationId}`;
-  } else if (notificationData.type === 'reservation_created' ||
-             notificationData.type === 'reservation_confirmed' ||
-             notificationData.type === 'reservation_cancelled' ||
-             notificationData.type === 'reservation_updated') {
-    url = '/dashboard/reservations';
   }
 
-  // Handle button actions if present
-  if (event.action) {
-    // Action clicked
-    // You can add custom handling for different actions here
-    if (event.action === 'view_reservation' && notificationData.reservationId) {
-      url = `/dashboard/reservations/${notificationData.reservationId}`;
-    } else if (event.action === 'confirm_reservation' && notificationData.reservationId) {
-      url = `/dashboard/reservations/${notificationData.reservationId}?action=confirm`;
-    } else if (event.action === 'cancel_reservation' && notificationData.reservationId) {
-      url = `/dashboard/reservations/${notificationData.reservationId}?action=cancel`;
-    }
-  }
-
-  // Focus or open the appropriate page
   event.waitUntil(
-    clients.matchAll({
-      type: 'window',
-      includeUncontrolled: true
-    }).then(function(clientList) {
-      // Check if there's already a window/tab open with the target URL
-      for (const client of clientList) {
-        if (client.url === url || client.url.includes(url.split('?')[0])) {
-          // Found existing client
-          return client.focus();
-        }
-      }
-      
-      // If no matching client found, open a new window/tab
-      // Opening new client
-      return clients.openWindow(url);
-    }).catch(error => {
-      console.error('[Push SW] Error handling notification click:', error);
-      // Fallback to opening a new window
-      return clients.openWindow(url);
+    clients.openWindow(url).catch(function(error) {
+      console.error('[Push SW] Error opening window:', error);
+      return clients.matchAll({ type: 'window' }).then(function(clientList) {
+        if (clientList.length > 0) return clientList[0].focus();
+        return clients.openWindow('/dashboard');
+      });
     })
   );
 });
@@ -134,10 +151,11 @@ self.addEventListener('activate', function(event) {
 
 // Handle messages from the main thread
 self.addEventListener('message', function(event) {
-  // Message received
-  
+  if (event.data && event.data.type === 'SET_API_URL') {
+    API_BASE_URL = event.data.apiUrl || '';
+  }
+
   if (event.data && event.data.type === 'GET_SUBSCRIPTION') {
-    // Return current subscription to the client
     self.registration.pushManager.getSubscription()
       .then(subscription => {
         event.ports[0].postMessage({ subscription });

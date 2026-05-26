@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
@@ -25,6 +25,7 @@ function ResetPasswordForm() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [tokenError, setTokenError] = useState('');
+  const isSubmitting = useRef(false);
 
   useEffect(() => {
     if (!token) {
@@ -35,6 +36,9 @@ function ResetPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
 
     if (!token) {
       setError('Token manquant');
@@ -72,6 +76,7 @@ function ResetPasswordForm() {
       setError(errorMessage);
     } finally {
       setIsLoading(false);
+      isSubmitting.current = false;
     }
   };
 

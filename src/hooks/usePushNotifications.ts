@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { apiClient } from '@/lib/api';
+import { API_URL } from '@/lib/api/base';
 import { NotificationPreferences, PushSubscription } from '@/types';
 
 interface UsePushNotificationsReturn {
@@ -65,6 +66,13 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       if (supported) {
         setPermission(Notification.permission);
         checkSubscription();
+
+        // Send API URL to service worker for direct API calls from notifications
+        navigator.serviceWorker.ready.then(function(registration) {
+          if (registration.active) {
+            registration.active.postMessage({ type: 'SET_API_URL', apiUrl: API_URL });
+          }
+        });
       }
     };
 

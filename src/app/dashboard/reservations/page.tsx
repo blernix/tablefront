@@ -34,6 +34,8 @@ import { Ban, Filter, List, Calendar as CalendarIcon, MoreVertical, Plus, ArrowL
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { ReservationsListView } from '@/components/reservations/ReservationsListView';
+import { ReservationDetailView } from '@/components/reservations/ReservationDetailView';
+import { BottomSheet } from '@/components/ui/bottom-sheet';
 import { QuickFilters, QuickFilter } from '@/components/reservations/QuickFilters';
 import { ReservationsStats } from '@/components/reservations/ReservationsStats';
 import { SearchWithSuggestions } from '@/components/reservations/SearchWithSuggestions';
@@ -130,6 +132,7 @@ export default function ReservationsPage() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [currentDay, setCurrentDay] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedCalendarReservation, setSelectedCalendarReservation] = useState<Reservation | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showMobileActions, setShowMobileActions] = useState(false);
   const [blockedDays, setBlockedDays] = useState<any[]>([]);
@@ -232,7 +235,14 @@ export default function ReservationsPage() {
   const resetToCurrentPeriod = () => { const d = new Date(); d.setDate(d.getDate() - 1); setPastPeriodDate(d); };
   const handleQuickCreateFromCalendar = (date: Date) => { handleStartCreate(); reset({ customerName: '', customerEmail: '', customerPhone: '', date: getLocalDateString(date), time: '', numberOfGuests: '', status: 'pending', notes: '' }); };
   const handleQuickCreateFromDay = (time: string) => { handleStartCreate(); reset({ customerName: '', customerEmail: '', customerPhone: '', date: getLocalDateString(currentDay), time, numberOfGuests: '', status: 'pending', notes: '' }); };
-  const handleReservationClickFromCalendar = (r: Reservation) => router.push(`/dashboard/reservations/${r._id}`);
+  const handleReservationClickFromCalendar = (r: Reservation) => setSelectedCalendarReservation(r);
+
+  const handleCalendarDetailStatusChange = (status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
+    if (selectedCalendarReservation) {
+      handleStatusChange(selectedCalendarReservation, status);
+      setSelectedCalendarReservation(null);
+    }
+  };
 
   if (isLoading && !showForm) return <div className="space-y-6 animate-pulse md:p-6"><div className="h-20 bg-[#E5E5E5] mx-4 md:mx-0 rounded-lg" /><div className="h-40 bg-[#E5E5E5] mx-4 md:mx-0 rounded-lg" /></div>;
 
@@ -416,6 +426,21 @@ export default function ReservationsPage() {
       {!showForm && viewMode === 'list' && (
         <ReservationsListView reservations={filters.filteredReservations} onConfirm={handleConfirm} onCancel={handleCancel} onComplete={handleComplete} onEdit={handleStartEdit} onDelete={handleDelete} onStatusChange={handleStatusChange} restaurant={restaurant} />
       )}
+
+      <BottomSheet
+        isOpen={!!selectedCalendarReservation}
+        onClose={() => setSelectedCalendarReservation(null)}
+        title="Détails de la réservation"
+      >
+        {selectedCalendarReservation && (
+          <ReservationDetailView
+            reservation={selectedCalendarReservation}
+            onEdit={() => { setSelectedCalendarReservation(null); handleStartEdit(selectedCalendarReservation); }}
+            onDelete={() => { setSelectedCalendarReservation(null); handleDelete(selectedCalendarReservation); }}
+            onStatusChange={handleCalendarDetailStatusChange}
+          />
+        )}
+      </BottomSheet>
 
       <EmailConfirmationModal modal={emailConfirmationModal} dontAskAgain={dontAskAgain} onDontAskAgainChange={setDontAskAgain} isSaving={isSaving} onConfirm={confirmActionWithEmail} onClose={closeEmailConfirmationModal} />
     </div>
