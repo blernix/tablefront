@@ -4,20 +4,11 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-
 import { toast } from 'sonner';
-import { Download, Calendar, Loader2 } from 'lucide-react';
+import { Download, Calendar, Loader2, FileText, Clock, Hash } from 'lucide-react';
 
-// Generate months for selection (1-12 with French names)
-const months = Array.from({ length: 12 }, (_, i) => ({
-  value: i + 1,
-  label: format(new Date(2024, i, 1), 'MMMM', { locale: fr }),
-}));
-
-// Generate years (from 2020 to current year + 1)
+const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: format(new Date(2024, i, 1), 'MMMM', { locale: fr }) }));
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => currentYear - i);
 
@@ -30,240 +21,117 @@ export default function ExportPage() {
   const handleExport = async () => {
     setIsLoading(true);
     try {
-      let startDate: Date;
-      let endDate: Date;
-
+      let startDate: Date, endDate: Date;
       if (exportType === 'month') {
-        // First day of selected month/year
         startDate = new Date(selectedYear, selectedMonth - 1, 1);
-        // Last day of selected month/year
         endDate = new Date(selectedYear, selectedMonth, 0);
       } else {
-        // First day of selected year
         startDate = new Date(selectedYear, 0, 1);
-        // Last day of selected year
         endDate = new Date(selectedYear, 11, 31);
       }
-
-      // Format dates as YYYY-MM-DD
       const startDateStr = startDate.toISOString().split('T')[0];
       const endDateStr = endDate.toISOString().split('T')[0];
-
-      // Fetch reservations for the selected period
-      const response = await apiClient.getReservations({
-        startDate: startDateStr,
-        endDate: endDateStr,
-      });
-
+      const response = await apiClient.getReservations({ startDate: startDateStr, endDate: endDateStr });
       const reservations = response.reservations;
+      if (reservations.length === 0) { toast.error('Aucune réservation trouvée pour cette période'); setIsLoading(false); return; }
 
-      if (reservations.length === 0) {
-        toast.error('Aucune réservation trouvée pour la période sélectionnée');
-        setIsLoading(false);
-        return;
-      }
-
-      // Status labels (same as in reservations page)
-      const statusLabels = {
-        pending: 'En attente',
-        confirmed: 'Confirmée',
-        cancelled: 'Annulée',
-        completed: 'Terminée',
-      };
-
-      const headers = [
-        'ID',
-        'Nom du client',
-        'Email',
-        'Téléphone',
-        'Date',
-        'Heure',
-        'Nombre de personnes',
-        'Statut',
-        'Notes',
-        'Date de création',
-      ];
-
+      const statusLabels: Record<string, string> = { pending: 'En attente', confirmed: 'Confirmée', cancelled: 'Annulée', completed: 'Terminée' };
+      const headers = ['ID', 'Nom du client', 'Email', 'Téléphone', 'Date', 'Heure', 'Nb personnes', 'Statut', 'Notes', 'Date de création'];
       const rows = reservations.map((r) => [
-        r._id,
-        r.customerName,
-        r.customerEmail,
-        r.customerPhone,
-        format(new Date(r.date), 'dd/MM/yyyy'),
-        r.time,
-        r.numberOfGuests.toString(),
-        statusLabels[r.status as keyof typeof statusLabels] || r.status,
-        r.notes || '',
+        r._id, r.customerName, r.customerEmail, r.customerPhone,
+        format(new Date(r.date), 'dd/MM/yyyy'), r.time, r.numberOfGuests.toString(),
+        statusLabels[r.status as keyof typeof statusLabels] || r.status, r.notes || '',
         format(new Date(r.createdAt), 'dd/MM/yyyy HH:mm'),
       ]);
-
-      const csvContent = [
-        headers.join(';'),
-        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(';')),
-      ].join('\n');
-
+      const csvContent = [headers.join(';'), ...rows.map((row) => row.map((cell) => `"${cell}"`).join(';'))].join('\n');
       const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
-      const date = format(new Date(), 'yyyy-MM-dd_HHmm');
-
-      const periodLabel =
-        exportType === 'month'
-          ? `${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`
-          : selectedYear.toString();
-
-      link.setAttribute('href', url);
-      link.setAttribute('download', `reservations_${periodLabel}_${date}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast.success(
-        `${reservations.length} réservation(s) exportée(s) pour ${exportType === 'month' ? 'le mois' : "l'année"} sélectionné(e)`
-      );
-    } catch (error) {
-      console.error('Export error:', error);
-      toast.error("Erreur lors de l'export");
-    } finally {
-      setIsLoading(false);
-    }
+      const periodLabel = exportType === 'month' ? `${selectedYear}-${String(selectedMonth).padStart(2, '0')}` : selectedYear.toString();
+      link.setAttribute('href', url); link.setAttribute('download', `reservations_${periodLabel}_${format(new Date(), 'yyyy-MM-dd_HHmm')}.csv`);
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      toast.success(`${reservations.length} réservation(s) exportée(s)`);
+    } catch (error) { console.error('Export error:', error); toast.error("Erreur lors de l'export"); }
+    finally { setIsLoading(false); }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Export des données</h1>
-        <p className="mt-2 text-gray-600">Exportez vos réservations par mois ou par année</p>
+        <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Export</h1>
+        <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">Téléchargez vos réservations au format CSV</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Exporter les réservations</CardTitle>
-          <CardDescription>
-            Sélectionnez une période et téléchargez les données au format CSV
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Type d&apos;export</Label>
-              <select
-                value={exportType}
-                onChange={(e) => setExportType(e.target.value as 'month' | 'year')}
-                className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="month">Export par mois</option>
-                <option value="year">Export par année</option>
-              </select>
-            </div>
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+        <div className="p-4 md:p-5 space-y-4">
+          <h2 className="text-[17px] font-semibold text-[#000000] md:text-lg">Exporter les réservations</h2>
 
-            {exportType === 'month' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Mois</Label>
-                  <select
-                    value={selectedMonth.toString()}
-                    onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
-                    className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {months.map((month) => (
-                      <option key={month.value} value={month.value.toString()}>
-                        {month.label.charAt(0).toUpperCase() + month.label.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Année</Label>
-                  <select
-                    value={selectedYear.toString()}
-                    onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                    className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {years.map((year) => (
-                      <option key={year} value={year.toString()}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Label>Année</Label>
-                <select
-                  value={selectedYear.toString()}
-                  onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                  className="w-full p-2 border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {years.map((year) => (
-                    <option key={year} value={year.toString()}>
-                      {year}
-                    </option>
-                  ))}
+          {/* Type selector */}
+          <div className="flex bg-[#F2F2F7] rounded-xl p-0.5 w-fit">
+            {(['month', 'year'] as const).map((t) => (
+              <button key={t} onClick={() => setExportType(t)}
+                className={`px-4 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${exportType === t ? 'bg-white text-[#000000] shadow-sm' : 'text-[#8E8E93]'}`}>
+                {t === 'month' ? 'Par mois' : 'Par année'}
+              </button>
+            ))}
+          </div>
+
+          {/* Date selects */}
+          <div className="grid grid-cols-2 gap-3">
+            {exportType === 'month' && (
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Mois</label>
+                <select value={selectedMonth.toString()} onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
+                  className="w-full h-11 px-3 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 appearance-none md:h-10 md:text-sm">
+                  {months.map((m) => (<option key={m.value} value={m.value}>{m.label.charAt(0).toUpperCase() + m.label.slice(1)}</option>))}
                 </select>
               </div>
             )}
-
-            <div className="pt-4">
-              <Button onClick={handleExport} disabled={isLoading} className="min-w-[200px]">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Export en cours...
-                  </>
-                ) : (
-                  <>
-                    <Download className="mr-2 h-4 w-4" />
-                    Exporter les réservations
-                  </>
-                )}
-              </Button>
-              <p className="mt-2 text-sm text-gray-500">
-                Les données seront exportées au format CSV (séparateur point-virgule)
-              </p>
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Année</label>
+              <select value={selectedYear.toString()} onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                className="w-full h-11 px-3 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 appearance-none md:h-10 md:text-sm">
+                {years.map((y) => (<option key={y} value={y}>{y}</option>))}
+              </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Informations sur l&apos;export</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="space-y-1">
-            <h4 className="font-medium text-gray-900">Colonnes incluses</h4>
-            <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-              <li>ID de la réservation</li>
-              <li>Nom du client</li>
-              <li>Email</li>
-              <li>Téléphone</li>
-              <li>Date de la réservation</li>
-              <li>Heure de la réservation</li>
-              <li>Nombre de personnes</li>
-              <li>Statut (En attente, Confirmée, Annulée, Terminée)</li>
-              <li>Notes</li>
-              <li>Date de création</li>
-            </ul>
+          <Button onClick={handleExport} disabled={isLoading} className="w-full h-12 rounded-xl text-[15px] font-semibold md:w-auto md:h-10 md:text-sm md:font-medium">
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+            {isLoading ? 'Export en cours...' : 'Exporter au format CSV'}
+          </Button>
+          <p className="text-[11px] text-[#8E8E93] md:text-xs">Format CSV — séparateur point-virgule, encodage UTF-8</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+        <div className="p-4 md:p-5">
+          <h2 className="text-[17px] font-semibold text-[#000000] mb-4 md:text-lg">Fichier exporté</h2>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center flex-shrink-0"><FileText className="h-4 w-4 text-[#8E8E93]" /></div>
+              <div>
+                <p className="text-[14px] font-medium text-[#000000] md:text-sm">Colonnes incluses</p>
+                <p className="text-[12px] text-[#8E8E93] mt-1 md:text-xs">ID, Nom, Email, Téléphone, Date, Heure, Nb personnes, Statut, Notes, Création</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center flex-shrink-0"><Calendar className="h-4 w-4 text-[#8E8E93]" /></div>
+              <div>
+                <p className="text-[14px] font-medium text-[#000000] md:text-sm">Format des dates</p>
+                <p className="text-[12px] text-[#8E8E93] mt-1 md:text-xs">JJ/MM/AAAA pour les dates, HH:MM pour les heures</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center flex-shrink-0"><Clock className="h-4 w-4 text-[#8E8E93]" /></div>
+              <div>
+                <p className="text-[14px] font-medium text-[#000000] md:text-sm">Période</p>
+                <p className="text-[12px] text-[#8E8E93] mt-1 md:text-xs">Toutes les réservations (passées, à venir, annulées) de la période choisie</p>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1">
-            <h4 className="font-medium text-gray-900">Format des dates</h4>
-            <p className="text-sm text-gray-600">
-              Les dates sont au format JJ/MM/AAAA et les heures au format HH:MM
-            </p>
-          </div>
-          <div className="space-y-1">
-            <h4 className="font-medium text-gray-900">Période d&apos;export</h4>
-            <p className="text-sm text-gray-600">
-              Vous pouvez exporter les réservations pour un mois spécifique ou pour toute une année.
-              Les exports incluent toutes les réservations (passées, à venir, et annulées) dans la
-              période sélectionnée.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

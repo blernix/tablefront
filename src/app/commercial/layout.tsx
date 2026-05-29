@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
 import { Store, BarChart3, PlusCircle, LogOut, UserCircle, Menu, X } from 'lucide-react';
+import CommercialMobileTabBar from '@/components/commercial/CommercialMobileTabBar';
 
 const navItems = [
   { href: '/commercial', icon: BarChart3, label: 'Dashboard' },
@@ -34,7 +35,7 @@ export default function CommercialLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
+      <header className="bg-white border-b border-[#E5E5EA] sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-lg font-light text-[#2A2A2A]">TableMaster</span>
@@ -93,7 +94,8 @@ export default function CommercialLayout({ children }: { children: React.ReactNo
           </>
         )}
       </header>
-      <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+      <main className="max-w-6xl mx-auto px-4 pt-6 pb-20 md:py-6">{children}</main>
+      <CommercialMobileTabBar />
     </div>
   );
 }

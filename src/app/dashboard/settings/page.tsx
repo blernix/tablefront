@@ -1,143 +1,50 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-  ChevronRight,
-  Building2,
-  Clock,
-  CalendarX,
-  Utensils,
-  Calendar,
-  Users,
-  Bell,
-  Code2,
-  Palette,
-  Download,
-  Key,
-} from 'lucide-react';
+import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download, Key } from 'lucide-react';
 
 const settingsCategories = [
-  {
-    title: 'Informations de base',
-    description: 'Nom, adresse, téléphone et email',
-    icon: Building2,
-    href: '/dashboard/settings/basic-info',
-    available: true,
-  },
-  {
-    title: "Horaires d'ouverture",
-    description: 'Définissez vos horaires par jour de la semaine',
-    icon: Clock,
-    href: '/dashboard/settings/opening-hours',
-    available: true,
-  },
-  {
-    title: 'Fermetures exceptionnelles',
-    description: 'Vacances, jours fériés, événements',
-    icon: CalendarX,
-    href: '/dashboard/settings/closures',
-    available: true,
-  },
-  {
-    title: 'Configuration des tables',
-    description: 'Nombre de tables et capacité',
-    icon: Utensils,
-    href: '/dashboard/settings/tables',
-    available: true,
-  },
-  {
-    title: 'Configuration des réservations',
-    description: 'Durée et créneaux de réservation',
-    icon: Calendar,
-    href: '/dashboard/settings/reservations',
-    available: true,
-  },
-  {
-    title: 'Gestion des serveurs',
-    description: 'Créez des comptes serveurs avec accès limité',
-    icon: Users,
-    href: '/dashboard/settings/servers',
-    available: true,
-  },
-  {
-    title: 'Intégrations',
-    description: 'Widget, WordPress, Wix, Shopify et plus',
-    icon: Code2,
-    href: '/dashboard/settings/integrations',
-    available: true,
-  },
-  {
-    title: 'Apparence du widget',
-    description: 'Personnalisez couleurs, police et style',
-    icon: Palette,
-    href: '/dashboard/settings/widget',
-    available: true,
-  },
-  {
-    title: 'Notifications',
-    description: 'Gérez vos préférences de notifications push et email',
-    icon: Bell,
-    href: '/dashboard/settings/notifications',
-    available: true,
-  },
-  {
-    title: 'Export des données',
-    description: 'Exportez vos réservations par mois ou année',
-    icon: Download,
-    href: '/dashboard/settings/export',
-    available: true,
-  },
-  {
-    title: 'Compte & abonnement',
-    description: 'Gérer votre plan et votre facturation',
-    icon: Key,
-    href: '/dashboard/settings/account',
-    available: true,
-  },
+  { title: 'Informations', desc: 'Nom, adresse, téléphone, email', icon: Building2, href: '/dashboard/settings/basic-info' },
+  { title: 'Horaires', desc: 'Horaires par jour de la semaine', icon: Clock, href: '/dashboard/settings/opening-hours' },
+  { title: 'Fermetures', desc: 'Vacances, jours fériés, événements', icon: CalendarX, href: '/dashboard/settings/closures' },
+  { title: 'Tables', desc: 'Nombre de tables et capacité', icon: Utensils, href: '/dashboard/settings/tables' },
+  { title: 'Créneaux', desc: 'Durée et créneaux de réservation', icon: Calendar, href: '/dashboard/settings/reservations' },
+  { title: 'Serveurs', desc: 'Comptes serveurs avec accès limité', icon: Users, href: '/dashboard/settings/servers' },
+  { title: 'Notifications', desc: 'Préférences push et email', icon: Bell, href: '/dashboard/settings/notifications' },
+  { title: 'Intégrations', desc: 'Widget, WordPress, Wix, Shopify...', icon: Code2, href: '/dashboard/settings/integrations' },
+  { title: 'Personnalisation', desc: 'Couleurs, police et style du widget', icon: Palette, href: '/dashboard/settings/widget' },
+  { title: 'Export', desc: 'Exportez vos réservations', icon: Download, href: '/dashboard/settings/export' },
+  { title: 'Compte & abonnement', desc: 'Plan et facturation', icon: Key, href: '/dashboard/settings/account' },
 ];
 
 export default function SettingsPage() {
   const router = useRouter();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
-        <p className="mt-2 text-gray-600">Configurez votre restaurant</p>
+        <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Paramètres</h1>
+        <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">Configurez votre restaurant</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {settingsCategories.map((category) => {
-          const Icon = category.icon;
-
+      <div className="space-y-2 md:space-y-2 md:grid md:grid-cols-2 md:gap-2">
+        {settingsCategories.map((cat) => {
+          const Icon = cat.icon;
           return (
-            <Card
-              key={category.title}
-              className={category.available ? 'cursor-pointer hover:border-gray-400' : 'opacity-60'}
-              onClick={() => category.available && router.push(category.href)}
+            <button
+              key={cat.title}
+              onClick={() => router.push(cat.href)}
+              className="w-full flex items-center gap-3 p-4 bg-white rounded-2xl border border-[#E5E5EA] active:bg-[#F2F2F7] transition-colors text-left md:rounded-xl md:p-4"
             >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                      <Icon className="h-5 w-5 text-gray-600" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">{category.title}</CardTitle>
-                      <CardDescription className="mt-1">{category.description}</CardDescription>
-                    </div>
-                  </div>
-                  {category.available && <ChevronRight className="h-5 w-5 text-gray-400" />}
-                </div>
-              </CardHeader>
-              {!category.available && (
-                <CardContent>
-                  <p className="text-xs text-muted-foreground">Disponible prochainement</p>
-                </CardContent>
-              )}
-            </Card>
+              <div className="h-11 w-11 rounded-xl bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+                <Icon className="h-5 w-5 text-[#0066FF]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-semibold text-[#000000] md:text-base">{cat.title}</p>
+                <p className="text-[12px] text-[#8E8E93] mt-0.5 truncate md:text-sm">{cat.desc}</p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-[#C7C7CC] flex-shrink-0" />
+            </button>
           );
         })}
       </div>

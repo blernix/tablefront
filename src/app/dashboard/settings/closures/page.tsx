@@ -5,16 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { apiClient } from '@/lib/api';
 import { formatDateShort } from '@/lib/formatters';
 import { Closure } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Calendar, X, Loader2 } from 'lucide-react';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 
@@ -32,9 +27,8 @@ export default function ClosuresPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const isFetchingRef = useRef(false); // Prevent multiple simultaneous calls
+  const isFetchingRef = useRef(false);
 
-  // Delete confirmation
   const {
     isOpen: isDeleteModalOpen,
     itemToDelete: closureToDelete,
@@ -61,14 +55,10 @@ export default function ClosuresPage() {
   useEffect(() => {
     fetchClosures();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
+  }, []);
 
   const fetchClosures = async () => {
-    // Prevent multiple simultaneous calls
-    if (isFetchingRef.current) {
-      return;
-    }
-
+    if (isFetchingRef.current) return;
     try {
       isFetchingRef.current = true;
       setIsLoading(true);
@@ -108,134 +98,158 @@ export default function ClosuresPage() {
   };
 
   if (isLoading) {
-    return <div className="text-muted-foreground">Chargement...</div>;
+    return (
+      <div className="space-y-4">
+        <div className="h-10 bg-slate-200 rounded-lg w-32 hidden md:block animate-pulse" />
+        <div className="h-8 bg-slate-200 rounded-lg w-56 animate-pulse" />
+        <div className="h-44 bg-slate-200 rounded-2xl animate-pulse" />
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="h-20 bg-slate-200 rounded-2xl animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
+    <div className="space-y-4 md:space-y-6">
+      <div className="hidden md:block">
         <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/settings')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Fermetures exceptionnelles</h1>
-            <p className="mt-2 text-gray-600">
-              Gérez vos périodes de fermeture (vacances, jours fériés)
-            </p>
+      </div>
+
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Fermetures</h1>
+          <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">Gérez vos périodes de fermeture</p>
+        </div>
+        {!showForm && (
+          <Button onClick={() => setShowForm(true)} className="hidden md:inline-flex">
+            <Plus className="mr-2 h-4 w-4" />
+            Ajouter une fermeture
+          </Button>
+        )}
+      </div>
+
+      {/* Add form */}
+      {showForm && (
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+          <div className="flex items-center justify-between p-4 md:p-5 border-b border-[#E5E5EA]">
+            <h2 className="text-[17px] font-semibold text-[#000000] md:text-lg">Nouvelle fermeture</h2>
+            <button
+              onClick={() => { setShowForm(false); reset(); }}
+              className="h-8 w-8 rounded-full flex items-center justify-center text-[#8E8E93] active:bg-[#F2F2F7] transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          {!showForm && (
-            <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
-              Ajouter une fermeture
-            </Button>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-5 space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="space-y-1.5">
+                <label htmlFor="startDate" className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Date de début</label>
+                <input
+                  id="startDate"
+                  type="date"
+                  {...register('startDate')}
+                  disabled={isCreating}
+                  className="w-full h-11 px-3 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 disabled:opacity-50 md:h-10 md:text-sm"
+                />
+                {errors.startDate && (
+                  <p className="text-[12px] text-red-500">{errors.startDate.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="endDate" className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Date de fin (optionnelle)</label>
+                <input
+                  id="endDate"
+                  type="date"
+                  {...register('endDate')}
+                  disabled={isCreating}
+                  className="w-full h-11 px-3 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 disabled:opacity-50 md:h-10 md:text-sm"
+                />
+                <p className="text-[11px] text-[#8E8E93]">Laissez vide pour un seul jour</p>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="reason" className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Raison (optionnelle)</label>
+              <input
+                id="reason"
+                {...register('reason')}
+                placeholder="Vacances, jour férié..."
+                disabled={isCreating}
+                className="w-full h-11 px-3 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] placeholder:text-[#C7C7CC] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 disabled:opacity-50 md:h-10 md:text-sm"
+              />
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => { setShowForm(false); reset(); }}
+                disabled={isCreating}
+                className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"
+              >
+                Annuler
+              </Button>
+              <Button
+                type="submit"
+                disabled={isCreating}
+                className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"
+              >
+                {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isCreating ? 'Création...' : 'Valider'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* List */}
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+        <div className="p-4 md:p-5 border-b border-[#E5E5EA] flex items-center justify-between">
+          <span className="text-[13px] font-medium text-[#8E8E93] md:text-sm">
+            {closures.length} fermeture{closures.length !== 1 ? 's' : ''} programmée{closures.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+
+        <div className="divide-y divide-[#E5E5EA]">
+          {closures.length === 0 ? (
+            <div className="py-12 text-center">
+              <Calendar className="h-10 w-10 text-[#E5E5EA] mx-auto mb-3" />
+              <p className="text-[15px] text-[#8E8E93] md:text-sm">Aucune fermeture programmée</p>
+            </div>
+          ) : (
+            closures.map((closure) => (
+              <div key={closure._id} className="flex items-center justify-between p-4 md:p-5">
+                <div className="min-w-0 flex-1 mr-4">
+                  <p className="text-[15px] font-medium text-[#000000] md:text-base">
+                    {formatDateShort(closure.startDate)}
+                    {closure.startDate !== closure.endDate && (
+                      <span> – {formatDateShort(closure.endDate)}</span>
+                    )}
+                  </p>
+                  {closure.reason && (
+                    <p className="text-[13px] text-[#8E8E93] mt-0.5 md:text-sm truncate">{closure.reason}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleDelete(closure)}
+                  className="h-9 w-9 flex items-center justify-center rounded-lg text-[#8E8E93] active:bg-red-50 active:text-red-500 transition-colors flex-shrink-0 md:h-8 md:w-8"
+                  aria-label="Supprimer"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))
           )}
         </div>
       </div>
 
-      {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Nouvelle fermeture</CardTitle>
-            <CardDescription>Ajoutez une période de fermeture</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Date de début</Label>
-                  <Input
-                    id="startDate"
-                    type="date"
-                    {...register('startDate')}
-                    disabled={isCreating}
-                  />
-                  {errors.startDate && (
-                    <p className="text-sm text-destructive">{errors.startDate.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="endDate">Date de fin (optionnelle)</Label>
-                  <Input id="endDate" type="date" {...register('endDate')} disabled={isCreating} />
-                  <p className="text-xs text-muted-foreground">
-                    Laissez vide pour une fermeture d&apos;un seul jour
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="reason">Raison (optionnelle)</Label>
-                <Input
-                  id="reason"
-                  {...register('reason')}
-                  placeholder="Ex: Vacances d'été, Jour férié..."
-                  disabled={isCreating}
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowForm(false);
-                    reset();
-                  }}
-                  disabled={isCreating}
-                >
-                  Annuler
-                </Button>
-                <Button type="submit" disabled={isCreating}>
-                  {isCreating ? 'Création...' : 'Créer la fermeture'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Fermetures programmées</CardTitle>
-          <CardDescription>
-            {closures.length} fermeture{closures.length > 1 ? 's' : ''} enregistrée
-            {closures.length > 1 ? 's' : ''}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {closures.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">Aucune fermeture programmée</p>
-          ) : (
-            <div className="space-y-3">
-              {closures.map((closure) => (
-                <div
-                  key={closure._id}
-                  className="flex items-center justify-between border rounded-lg p-4"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {formatDateShort(closure.startDate)}
-                      {closure.startDate !== closure.endDate && (
-                        <span> - {formatDateShort(closure.endDate)}</span>
-                      )}
-                    </p>
-                    {closure.reason && (
-                      <p className="text-sm text-muted-foreground">{closure.reason}</p>
-                    )}
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(closure)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
@@ -244,6 +258,16 @@ export default function ClosuresPage() {
         itemName={closureToDelete?.name}
         isLoading={isDeleting}
       />
+
+      {!showForm && (
+        <Button
+          onClick={() => setShowForm(true)}
+          size="icon"
+          className="md:hidden fixed bottom-20 right-4 z-40 h-14 w-14 rounded-full shadow-[0_4px_20px_rgba(0,102,255,0.35)] active:scale-95 transition-transform"
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      )}
     </div>
   );
 }

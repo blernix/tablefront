@@ -67,10 +67,14 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         setPermission(Notification.permission);
         checkSubscription();
 
-        // Send API URL to service worker for direct API calls from notifications
+        // Send API URL and auth token to service worker for direct API calls from notifications
         navigator.serviceWorker.ready.then(function(registration) {
           if (registration.active) {
             registration.active.postMessage({ type: 'SET_API_URL', apiUrl: API_URL });
+            var token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+            if (token) {
+              registration.active.postMessage({ type: 'SET_AUTH_TOKEN', token: token });
+            }
           }
         });
       }
@@ -78,6 +82,17 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
     checkSupport();
   }, [checkSubscription]);
+
+  // Keep SW in sync with auth token changes
+  useEffect(function() {
+    if (!isSupported) return;
+    var token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+    navigator.serviceWorker.ready.then(function(registration) {
+      if (registration.active) {
+        registration.active.postMessage({ type: 'SET_AUTH_TOKEN', token: token || '' });
+      }
+    });
+  }, [isSupported]);
 
   // Request notification permission
   const requestPermission = useCallback(async (): Promise<NotificationPermission> => {

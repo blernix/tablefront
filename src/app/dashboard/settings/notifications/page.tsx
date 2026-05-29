@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import type { NotificationPreferences } from '@/types';
-import { Bell, BellOff, Check, Loader2, AlertCircle } from 'lucide-react';
+import { Bell, BellOff, Check, Loader2, AlertCircle, Mail, Smartphone, Zap, Info } from 'lucide-react';
 import { UpgradeCTA, useIsStarter } from '@/features';
 
 export default function NotificationsSettingsPage() {
@@ -27,12 +25,10 @@ export default function NotificationsSettingsPage() {
   const [localPreferences, setLocalPreferences] = useState(preferences);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Update local preferences when preferences change
   useEffect(() => {
     setLocalPreferences(preferences);
   }, [preferences]);
 
-  // Handle toggle subscription
   const handleToggleSubscription = async () => {
     if (isSubscribed) {
       await unsubscribe();
@@ -42,20 +38,13 @@ export default function NotificationsSettingsPage() {
     await loadPreferences();
   };
 
-  // Handle preference change
   const handlePreferenceChange = (key: keyof NotificationPreferences, value: boolean) => {
     if (!localPreferences) return;
-
-    setLocalPreferences({
-      ...localPreferences,
-      [key]: value,
-    });
+    setLocalPreferences({ ...localPreferences, [key]: value });
   };
 
-  // Save preferences
   const handleSavePreferences = async () => {
     if (!localPreferences) return;
-
     setIsSaving(true);
     try {
       await updatePreferences({
@@ -71,23 +60,35 @@ export default function NotificationsSettingsPage() {
     }
   };
 
+  const ToggleSwitch = ({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) => (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => !disabled && onChange(!checked)}
+      className={`relative inline-flex h-7 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-out focus:outline-none ${
+        checked ? 'bg-[#0066FF]' : 'bg-[#E5E5EA]'
+      } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
+    >
+      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-out ${
+        checked ? 'translate-x-5' : 'translate-x-0'
+      }`} />
+    </button>
+  );
+
   if (!isSupported) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-          <p className="mt-2 text-gray-600">Gérez vos préférences de notifications</p>
+          <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Notifications</h1>
+          <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">Gérez vos préférences de notifications</p>
         </div>
-
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <div className="flex items-start">
-            <AlertCircle className="mr-2 h-4 w-4 text-red-600 mt-0.5" />
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 md:rounded-xl md:p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-red-800">
-              <p className="font-medium">Navigateur non supporté</p>
-              <p className="mt-1">
-                Les notifications push ne sont pas supportées par votre navigateur. Veuillez
-                utiliser un navigateur moderne comme Chrome, Firefox ou Edge.
-              </p>
+              <p className="font-semibold">Navigateur non supporté</p>
+              <p className="mt-1">Les notifications push ne sont pas supportées par votre navigateur. Utilisez Chrome, Firefox, Edge ou Safari.</p>
             </div>
           </div>
         </div>
@@ -96,259 +97,195 @@ export default function NotificationsSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-        <p className="mt-2 text-gray-600">Gérez vos préférences de notifications push et email</p>
+        <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Notifications</h1>
+        <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">Gérez vos préférences de notifications push et email</p>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <div className="flex items-start">
-            <AlertCircle className="mr-2 h-4 w-4 text-red-600 mt-0.5" />
-            <div className="text-sm text-red-800">
-              <p className="font-medium">Erreur</p>
-              <p className="mt-1">{error}</p>
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 md:rounded-xl">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-sm text-red-800">Erreur</p>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
             </div>
           </div>
         </div>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Notifications Push
-          </CardTitle>
-          <CardDescription>
-            Recevez des notifications en temps réel sur votre appareil
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Activer les notifications push</h3>
-              <p className="text-sm text-gray-500">
+      {/* Push toggle */}
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+        <div className="p-5 md:p-6">
+          <div className="flex items-center gap-4">
+            <div className="h-11 w-11 rounded-xl bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
+              <Bell className="h-5 w-5 text-[#0066FF]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-[17px] font-semibold text-[#000000] md:text-lg">Notifications push</h3>
+              <p className="text-[13px] text-[#8E8E93] mt-0.5 md:text-sm">
                 {isSubscribed
-                  ? 'Vous recevez déjà des notifications push'
+                  ? 'Vous recevez des notifications push en temps réel'
                   : permission === 'denied'
-                    ? 'Vous avez bloqué les notifications. Veuillez modifier les paramètres de votre navigateur.'
+                    ? 'Notifications bloquées dans les paramètres du navigateur'
                     : permission === 'default'
-                      ? "Vous n'avez pas encore autorisé les notifications"
-                      : 'Activez pour recevoir des notifications en temps réel'}
+                      ? 'Autorisez les notifications pour être alerté en temps réel'
+                      : 'Activez les notifications push'}
               </p>
             </div>
+          </div>
+
+          <div className="mt-4">
             <Button
               variant={isSubscribed ? 'destructive' : 'default'}
               onClick={handleToggleSubscription}
               disabled={isLoading || permission === 'denied'}
+              className="w-full h-11 rounded-xl text-[15px] font-medium md:w-auto md:h-10 md:text-sm"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : isSubscribed ? (
-                <>
-                  <BellOff className="mr-2 h-4 w-4" />
-                  Désactiver
-                </>
+                <><BellOff className="mr-2 h-4 w-4" /> Désactiver</>
               ) : (
-                <>
-                  <Bell className="mr-2 h-4 w-4" />
-                  Activer
-                </>
+                <><Bell className="mr-2 h-4 w-4" /> Activer</>
               )}
             </Button>
           </div>
 
           {permission === 'denied' && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <div className="flex items-start">
-                <AlertCircle className="mr-2 h-4 w-4 text-blue-600 mt-0.5" />
+            <div className="mt-4 rounded-xl bg-blue-50 border border-blue-100 p-4 md:rounded-lg">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-blue-800">
                   <p className="font-medium">Notifications bloquées</p>
                   <p className="mt-1">
-                    Vous avez bloqué les notifications. Pour les activer, allez dans les paramètres
-                    de votre navigateur et autorisez les notifications pour ce site.
+                    Ouvrez les paramètres de votre navigateur et autorisez les notifications pour TableMaster.
                   </p>
                 </div>
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
+      {/* Event preferences */}
       {localPreferences && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Préférences de notification</CardTitle>
-            <CardDescription>
-              Choisissez les événements pour lesquels vous souhaitez recevoir des notifications
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+          <div className="p-5 md:p-6">
+            <h3 className="text-[17px] font-semibold text-[#000000] mb-4 md:text-lg md:mb-5">Préférences par événement</h3>
+
             {/* Global toggles */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="push-enabled" className="font-medium">
-                    Notifications push
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Activer/désactiver toutes les notifications push
-                  </p>
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center justify-between py-1.5">
+                <div className="flex items-center gap-3">
+                  <Smartphone className="h-5 w-5 text-[#8E8E93] flex-shrink-0" />
+                  <div>
+                    <p className="text-[15px] font-medium text-[#000000] md:text-base">Push</p>
+                    <p className="text-[12px] text-[#8E8E93] mt-0.5 md:text-sm">Notifiez-moi sur mon appareil</p>
+                  </div>
                 </div>
-                <input
-                  type="checkbox"
-                  id="push-enabled"
+                <ToggleSwitch
                   checked={localPreferences.pushEnabled}
-                  onChange={(e) => handlePreferenceChange('pushEnabled', e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  onChange={(v) => handlePreferenceChange('pushEnabled', v)}
                   disabled={!isSubscribed}
                 />
               </div>
 
               {isStarter ? (
-                <div className="mb-4">
+                <div className="mt-2">
                   <UpgradeCTA feature="automated-emails" type="banner" />
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="email-enabled" className="font-medium">
-                      Notifications email
-                    </Label>
-                    <p className="text-sm text-gray-500">
-                      Activer/désactiver toutes les notifications email
-                    </p>
+                <div className="flex items-center justify-between py-1.5">
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-[#8E8E93] flex-shrink-0" />
+                    <div>
+                      <p className="text-[15px] font-medium text-[#000000] md:text-base">Email</p>
+                      <p className="text-[12px] text-[#8E8E93] mt-0.5 md:text-sm">Recevoir des résumés par email</p>
+                    </div>
                   </div>
-                  <input
-                    type="checkbox"
-                    id="email-enabled"
+                  <ToggleSwitch
                     checked={localPreferences.emailEnabled}
-                    onChange={(e) => handlePreferenceChange('emailEnabled', e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    onChange={(v) => handlePreferenceChange('emailEnabled', v)}
                   />
                 </div>
               )}
             </div>
 
-            {/* Event-specific preferences */}
-            <div className="space-y-4">
-              <h3 className="font-medium">Notifications par événement</h3>
+            {/* Divider */}
+            <div className="border-t border-[#E5E5EA] mb-5" />
 
-              <div className="space-y-4 pl-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="reservation-created" className="font-medium">
-                      Nouvelle réservation
-                    </Label>
-                    <p className="text-sm text-gray-500">
-                      Quand un client fait une nouvelle réservation
-                    </p>
+            {/* Per-event toggles */}
+            <div className="space-y-1">
+              {[
+                { key: 'reservationCreated' as const, label: 'Nouvelle réservation', desc: 'Quand un client fait une nouvelle réservation' },
+                { key: 'reservationConfirmed' as const, label: 'Réservation confirmée', desc: 'Quand vous confirmez une réservation' },
+                { key: 'reservationCancelled' as const, label: 'Réservation annulée', desc: 'Quand une réservation est annulée' },
+                { key: 'reservationUpdated' as const, label: 'Réservation modifiée', desc: 'Quand une réservation est mise à jour' },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="flex items-center justify-between py-3">
+                  <div className="flex-1 min-w-0 mr-4">
+                    <p className="text-[15px] font-medium text-[#000000] md:text-base">{label}</p>
+                    <p className="text-[12px] text-[#8E8E93] mt-0.5 md:text-sm">{desc}</p>
                   </div>
-                  <input
-                    type="checkbox"
-                    id="reservation-created"
-                    checked={localPreferences.reservationCreated}
-                    onChange={(e) => handlePreferenceChange('reservationCreated', e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  <ToggleSwitch
+                    checked={!!localPreferences[key]}
+                    onChange={(v) => handlePreferenceChange(key, v)}
                     disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
                   />
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="reservation-confirmed" className="font-medium">
-                      Réservation confirmée
-                    </Label>
-                    <p className="text-sm text-gray-500">Quand vous confirmez une réservation</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    id="reservation-confirmed"
-                    checked={localPreferences.reservationConfirmed}
-                    onChange={(e) =>
-                      handlePreferenceChange('reservationConfirmed', e.target.checked)
-                    }
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="reservation-cancelled" className="font-medium">
-                      Réservation annulée
-                    </Label>
-                    <p className="text-sm text-gray-500">Quand une réservation est annulée</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    id="reservation-cancelled"
-                    checked={localPreferences.reservationCancelled}
-                    onChange={(e) =>
-                      handlePreferenceChange('reservationCancelled', e.target.checked)
-                    }
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="reservation-updated" className="font-medium">
-                      Réservation modifiée
-                    </Label>
-                    <p className="text-sm text-gray-500">
-                      Quand une réservation est mise à jour (date, heure, nombre de personnes)
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    id="reservation-updated"
-                    checked={localPreferences.reservationUpdated}
-                    onChange={(e) => handlePreferenceChange('reservationUpdated', e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    disabled={!localPreferences.pushEnabled && !localPreferences.emailEnabled}
-                  />
-                </div>
-              </div>
+              ))}
             </div>
 
-            <div className="flex justify-end pt-4">
-              <Button onClick={handleSavePreferences} disabled={isSaving}>
-                {isSaving ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Check className="mr-2 h-4 w-4" />
-                )}
+            <div className="flex justify-end mt-6 pt-4 border-t border-[#E5E5EA]">
+              <Button onClick={handleSavePreferences} disabled={isSaving} className="w-full h-11 rounded-xl text-[15px] font-medium md:w-auto md:h-10 md:text-sm">
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
                 Enregistrer les préférences
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>À propos des notifications</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-600">
-          <p>
-            <strong>Notifications push :</strong> Vous recevez des notifications directement sur
-            votre appareil même lorsque l&apos;application n&apos;est pas ouverte. Elles nécessitent
-            une connexion internet.
-          </p>
-          <p>
-            <strong>Notifications email :</strong> Vous recevez des emails pour les événements
-            importants. Assurez-vous que votre adresse email est à jour dans vos paramètres.
-          </p>
-          <p>
-            <strong>Compatibilité :</strong> Les notifications push sont supportées sur Chrome,
-            Firefox, Edge et Safari (macOS). Elles ne sont pas disponibles sur iOS en raison des
-            restrictions d&apos;Apple.
-          </p>
-        </CardContent>
-      </Card>
+      {/* Info card */}
+      <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+        <div className="p-5 md:p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center flex-shrink-0">
+              <Zap className="h-5 w-5 text-[#8E8E93]" />
+            </div>
+            <div>
+              <h3 className="text-[17px] font-semibold text-[#000000] md:text-lg">Comment ça marche</h3>
+              <p className="text-[12px] text-[#8E8E93] mt-0.5 md:text-sm md:text-gray-500">Tout ce qu&apos;il faut savoir sur les notifications</p>
+            </div>
+          </div>
+
+          <div className="space-y-3 text-[13px] text-[#8E8E93] leading-relaxed md:text-sm md:text-gray-600">
+            <div className="flex items-start gap-3">
+              <Bell className="h-4 w-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-[#000000] md:text-gray-900">Push : </strong>
+                Recevez des notifications directement sur votre appareil, même quand l&apos;application n&apos;est pas ouverte. Une connexion internet est nécessaire.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Mail className="h-4 w-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-[#000000] md:text-gray-900">Email : </strong>
+                Recevez des emails pour les événements importants. Vérifiez que votre adresse email est à jour.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Smartphone className="h-4 w-4 text-[#0066FF] flex-shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-[#000000] md:text-gray-900">Compatibilité : </strong>
+                Chrome, Firefox, Edge, Safari (macOS et iOS 16.4+). Disponible sur ordinateur et mobile.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

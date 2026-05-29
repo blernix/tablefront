@@ -28,10 +28,10 @@ function ResetPasswordForm() {
   const isSubmitting = useRef(false);
 
   useEffect(() => {
-    if (!token) {
+    if (!token && !success) {
       setTokenError('Token manquant ou invalide. Veuillez utiliser le lien reçu par email.');
     }
-  }, [token]);
+  }, [token, success]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,11 +87,24 @@ function ResetPasswordForm() {
           Réinitialiser le mot de passe
         </CardTitle>
         <CardDescription className="text-center">
-          {tokenError ? 'Token invalide' : 'Entrez votre nouveau mot de passe'}
+          {success ? 'Mot de passe mis à jour' : tokenError ? 'Token invalide' : 'Entrez votre nouveau mot de passe'}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {tokenError ? (
+        {success ? (
+          <div className="space-y-4">
+            <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
+              <p className="font-medium">Mot de passe réinitialisé!</p>
+              <p className="mt-1">Votre mot de passe a été mis à jour avec succès.</p>
+              <p className="mt-2">
+                Vous allez être redirigé vers la page de connexion dans 3 secondes...
+              </p>
+            </div>
+            <Button className="w-full" onClick={() => router.push('/login')}>
+              Se connecter
+            </Button>
+          </div>
+        ) : tokenError ? (
           <div className="space-y-4">
             <div className="rounded-md bg-destructive/10 p-4 text-sm text-destructive">
               <p className="font-medium">{tokenError}</p>
@@ -106,19 +119,6 @@ function ResetPasswordForm() {
             </div>
             <Button className="w-full" onClick={() => router.push('/forgot-password')}>
               Demander un nouveau lien
-            </Button>
-          </div>
-        ) : success ? (
-          <div className="space-y-4">
-            <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
-              <p className="font-medium">Mot de passe réinitialisé!</p>
-              <p className="mt-1">Votre mot de passe a été mis à jour avec succès.</p>
-              <p className="mt-2">
-                Vous allez être redirigé vers la page de connexion dans 3 secondes...
-              </p>
-            </div>
-            <Button className="w-full" onClick={() => router.push('/login')}>
-              Se connecter
             </Button>
           </div>
         ) : (

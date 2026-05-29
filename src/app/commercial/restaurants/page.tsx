@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api';
-import { ChevronLeft, ChevronRight, Store, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Store, Search, X, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CommercialRestaurantsPage() {
@@ -15,112 +13,75 @@ export default function CommercialRestaurantsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const timeout = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    setLoading(true);
-    apiClient.commercial.getMyRestaurants({ page, limit: 20, search: searchQuery || undefined }).then(setData).catch(() => {}).finally(() => setLoading(false));
-  }, [page, searchQuery]);
+  useEffect(() => { setLoading(true); apiClient.commercial.getMyRestaurants({ page, limit: 20, search: searchQuery || undefined }).then(setData).catch(() => {}).finally(() => setLoading(false)); }, [page, searchQuery]);
 
-  const handleSearchChange = (value: string) => {
-    setSearchInput(value);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => {
-      setSearchQuery(value);
-      setPage(1);
-    }, 300);
-  };
+  const handleSearch = (v: string) => { setSearchInput(v); if (timeout.current) clearTimeout(timeout.current); timeout.current = setTimeout(() => { setSearchQuery(v); setPage(1); }, 300); };
 
-  const allRestaurants = data?.restaurants || [];
-  const restaurants = statusFilter === 'all' ? allRestaurants : allRestaurants.filter((r: any) => r.status === statusFilter);
+  const all = data?.restaurants || [];
+  const restaurants = statusFilter === 'all' ? all : all.filter((r: any) => r.status === statusFilter);
   const pagination = data?.pagination;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-light text-[#2A2A2A]">Mes restaurants</h1>
-          <p className="text-sm text-gray-400 mt-1">
-            {pagination ? `${pagination.total} restaurant${pagination.total > 1 ? 's' : ''} créé${pagination.total > 1 ? 's' : ''}` : 'Chargement...'}
-          </p>
+          <h1 className="text-[28px] font-bold text-[#000000] leading-tight tracking-tight md:text-3xl">Restaurants</h1>
+          <p className="mt-1 text-[15px] text-[#8E8E93] md:text-gray-600">{pagination ? `${pagination.total} restaurant${pagination.total > 1 ? 's' : ''}` : 'Chargement...'}</p>
         </div>
-        <Link href="/commercial/restaurants/new">
-          <Button className="bg-[#0066FF] hover:bg-[#0052CC]">+ Nouveau</Button>
-        </Link>
+        <Link href="/commercial/restaurants/new"><Button className="h-10 rounded-xl text-[13px] font-medium md:h-9 md:text-xs hidden md:inline-flex"><Plus className="h-4 w-4 mr-1.5" /> Nouveau</Button></Link>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-1">
           {(['all', 'active', 'inactive'] as const).map((f) => (
             <button key={f} onClick={() => setStatusFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${statusFilter === f ? 'bg-[#0066FF] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-            >
+              className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors md:text-xs ${statusFilter === f ? 'bg-[#0066FF] text-white' : 'text-[#8E8E93] active:bg-[#F2F2F7]'}`}>
               {f === 'all' ? 'Tous' : f === 'active' ? 'Actifs' : 'En attente'}
             </button>
           ))}
         </div>
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-          <Input
-            type="text"
-            value={searchInput}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Rechercher un restaurant..."
-            className="pl-8 pr-8 h-8 text-xs"
-          />
-          {searchInput && (
-            <button onClick={() => { setSearchInput(''); setSearchQuery(''); }} className="absolute right-2 top-1/2 -translate-y-1/2">
-              <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
-            </button>
-          )}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8E8E93]" />
+          <input value={searchInput} onChange={(e) => handleSearch(e.target.value)} placeholder="Rechercher..."
+            className="w-full h-10 pl-9 pr-8 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] placeholder:text-[#C7C7CC] focus:outline-none focus:border-[#0066FF] md:text-sm" />
+          {searchInput && <button onClick={() => { setSearchInput(''); setSearchQuery(''); }} className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center rounded-full text-[#8E8E93] active:bg-[#F2F2F7]"><X className="h-3.5 w-3.5" /></button>}
         </div>
       </div>
 
       {loading ? (
-        <div className="text-sm text-gray-400 py-10 text-center">Chargement...</div>
+        <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => (<div key={i} className="h-20 bg-slate-200 rounded-2xl animate-pulse" />))}</div>
       ) : restaurants.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6 text-center py-10">
-            <Store className="h-10 w-10 mx-auto text-gray-200 mb-3" />
-            <p className="text-sm text-gray-400">Aucun restaurant créé pour le moment</p>
-            <Link href="/commercial/restaurants/new" className="inline-block mt-3">
-              <Button size="sm">Créer un premier restaurant</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] p-8 text-center md:rounded-xl">
+          <div className="h-12 w-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center mx-auto mb-4"><Store className="h-6 w-6 text-[#C7C7CC]" /></div>
+          <p className="text-[15px] font-medium text-[#8E8E93] mb-4 md:text-sm">Aucun restaurant</p>
+          <Link href="/commercial/restaurants/new"><Button size="sm" className="rounded-xl">Créer un restaurant</Button></Link>
+        </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {restaurants.map((r: any) => (
-              <Card key={r._id} className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => window.location.href = `/commercial/restaurants/${r._id}`}>
-                <CardContent className="pt-4 pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium text-[#2A2A2A] truncate">{r.name}</div>
-                      <div className="text-xs text-gray-400 mt-0.5 truncate">{r.address}</div>
-                      <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
-                        <span>{r.email}</span>
-                        <span>·</span>
-                        <span>Créé le {new Date(r.createdAt).toLocaleDateString('fr-FR')}</span>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0 ml-4">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === 'inactive' ? 'bg-amber-100 text-amber-700' : r.subscription?.plan === 'pro' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                        {r.status === 'inactive' ? 'Paiement en attente' : r.subscription?.plan === 'pro' ? 'Pro actif' : 'Starter actif'}
-                      </span>
-                      <div className="text-xs text-gray-400 mt-1">{new Date(r.createdAt).toLocaleDateString('fr-FR')}</div>
-                    </div>
+              <Link key={r._id} href={`/commercial/restaurants/${r._id}`} className="block bg-white rounded-2xl border border-[#E5E5EA] p-4 active:bg-[#F2F2F7] transition-colors md:rounded-xl">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-semibold text-[#000000] truncate md:text-base">{r.name}</p>
+                    <p className="text-[12px] text-[#8E8E93] mt-0.5 truncate md:text-sm">{r.address}</p>
+                    <p className="text-[12px] text-[#8E8E93] mt-1 md:text-sm">{r.email} · {new Date(r.createdAt).toLocaleDateString('fr-FR')}</p>
                   </div>
-                </CardContent>
-              </Card>
+                  <span className={`text-[11px] px-2.5 py-1 rounded-full font-medium ml-2 flex-shrink-0 md:text-xs ${r.status === 'inactive' ? 'bg-amber-50 text-amber-700' : r.subscription?.plan === 'pro' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-[#0066FF]'}`}>
+                    {r.status === 'inactive' ? 'En attente' : r.subscription?.plan === 'pro' ? 'Pro' : 'Starter'}
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
 
           {pagination && pagination.pages > 1 && (
             <div className="flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}><ChevronLeft className="h-4 w-4" /></Button>
-              <span className="text-sm text-gray-400">Page {page} / {pagination.pages}</span>
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))} disabled={page >= pagination.pages}><ChevronRight className="h-4 w-4" /></Button>
+              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="h-9 w-9 p-0 rounded-lg md:h-8 md:w-8"><ChevronLeft className="h-4 w-4" /></Button>
+              <span className="text-[13px] text-[#8E8E93] md:text-xs">Page {page} / {pagination.pages}</span>
+              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))} disabled={page >= pagination.pages} className="h-9 w-9 p-0 rounded-lg md:h-8 md:w-8"><ChevronRight className="h-4 w-4" /></Button>
             </div>
           )}
         </>

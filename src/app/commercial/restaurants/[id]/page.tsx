@@ -4,9 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Store, Mail, Phone, MapPin, Calendar, CreditCard, Clock, BarChart3, Link as LinkIcon, ExternalLink, StickyNote } from 'lucide-react';
 
 export default function RestaurantDetailPage() {
@@ -16,109 +13,102 @@ export default function RestaurantDetailPage() {
   const [note, setNote] = useState('');
   const noteTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    apiClient.commercial.getRestaurantDetail(id).then((d: any) => setData(d)).catch(() => {}).finally(() => setLoading(false));
-    apiClient.commercial.getRestaurantNote(id).then((d: any) => setNote(d?.note || '')).catch(() => {});
-  }, [id]);
+  useEffect(() => { apiClient.commercial.getRestaurantDetail(id).then((d: any) => setData(d)).catch(() => {}).finally(() => setLoading(false)); apiClient.commercial.getRestaurantNote(id).then((d: any) => setNote(d?.note || '')).catch(() => {}); }, [id]);
 
-  const handleNoteChange = (value: string) => {
-    setNote(value);
-    if (noteTimeout.current) clearTimeout(noteTimeout.current);
-    noteTimeout.current = setTimeout(() => {
-      apiClient.commercial.updateRestaurantNote(id, value).catch(() => {});
-    }, 500);
-  };
+  const handleNoteChange = (v: string) => { setNote(v); if (noteTimeout.current) clearTimeout(noteTimeout.current); noteTimeout.current = setTimeout(() => { apiClient.commercial.updateRestaurantNote(id, v).catch(() => {}); }, 500); };
 
-  if (loading) return <div className="text-sm text-gray-400 py-10 text-center">Chargement...</div>;
-  if (!data?.restaurant) return <div className="text-sm text-red-400 py-10 text-center">Restaurant introuvable.</div>;
+  if (loading) return (
+    <div className="space-y-4">
+      <div className="h-8 bg-slate-200 rounded-lg w-32 animate-pulse" />
+      <div className="grid grid-cols-2 gap-2">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-20 bg-slate-200 rounded-2xl animate-pulse" />))}</div>
+      <div className="h-40 bg-slate-200 rounded-2xl animate-pulse" />
+      <div className="h-32 bg-slate-200 rounded-2xl animate-pulse" />
+    </div>
+  );
+  if (!data?.restaurant) return <div className="text-center py-10"><p className="text-[15px] text-red-500 md:text-sm">Restaurant introuvable.</p><Link href="/commercial/restaurants" className="text-[#0066FF] mt-2 inline-block md:text-sm">← Retour</Link></div>;
 
-  const r = data.restaurant;
-  const s = data.stats;
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://tablemaster.fr';
+  const r = data.restaurant; const s = data.stats; const sub = r.subscription || {}; const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://tablemaster.fr';
 
-  const sub = r.subscription || {};
-  const isActive = r.status === 'active';
-  const isCancelled = sub.status === 'cancelled';
+  const Section = ({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) => (
+    <div className="bg-white rounded-2xl border border-[#E5E5EA] overflow-hidden md:rounded-xl">
+      <div className="p-4 md:p-5">
+        <div className="flex items-center gap-2 mb-4"><div className="h-8 w-8 rounded-lg bg-[#0066FF]/10 flex items-center justify-center">{icon}</div><h3 className="text-[15px] font-semibold text-[#000000] md:text-base">{title}</h3></div>
+        {children}
+      </div>
+    </div>
+  );
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/commercial/restaurants"><ArrowLeft className="h-5 w-5 text-gray-400 hover:text-gray-600" /></Link>
-        <h1 className="text-xl font-light text-[#2A2A2A]">{r.name}</h1>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-green-100 text-green-700' : isCancelled ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
-          {isActive ? 'Actif' : isCancelled ? 'Résilié' : 'En attente'}
+        <Link href="/commercial/restaurants" className="h-9 w-9 flex items-center justify-center rounded-lg text-[#8E8E93] active:bg-[#F2F2F7]"><ArrowLeft className="h-5 w-5" /></Link>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[24px] font-bold text-[#000000] leading-tight truncate md:text-2xl">{r.name}</h1>
+        </div>
+        <span className={`text-[12px] px-2.5 py-1 rounded-full font-medium flex-shrink-0 md:text-xs ${r.status === 'active' ? 'bg-emerald-50 text-emerald-700' : sub.status === 'cancelled' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
+          {r.status === 'active' ? 'Actif' : sub.status === 'cancelled' ? 'Résilié' : 'En attente'}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card><CardContent className="pt-4 pb-3 px-4 text-center"><div className="text-lg font-light text-[#0066FF]">{s?.activeReservations || 0}</div><div className="text-[10px] text-gray-400">Résas en cours</div></CardContent></Card>
-        <Card><CardContent className="pt-4 pb-3 px-4 text-center"><div className="text-lg font-light">{s?.totalReservations || 0}</div><div className="text-[10px] text-gray-400">Total réservations</div></CardContent></Card>
-        <Card><CardContent className="pt-4 pb-3 px-4 text-center"><div className="text-lg font-light">{sub.plan === 'pro' ? 'Pro' : sub.plan === 'starter' ? 'Starter' : '—'}</div><div className="text-[10px] text-gray-400">Plan</div></CardContent></Card>
-        <Card><CardContent className="pt-4 pb-3 px-4 text-center"><div className="text-lg font-light">{sub.status === 'active' ? 'Actif' : sub.status === 'trial' ? 'Essai' : sub.status || '—'}</div><div className="text-[10px] text-gray-400">Abonnement</div></CardContent></Card>
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+        {[
+          { v: s?.activeReservations || 0, l: 'Résas en cours', c: 'text-[#0066FF]' },
+          { v: s?.totalReservations || 0, l: 'Total résas' },
+          { v: sub.plan === 'pro' ? 'Pro' : sub.plan === 'starter' ? 'Starter' : '—', l: 'Plan' },
+          { v: sub.status === 'active' ? 'Actif' : sub.status === 'trial' ? 'Essai' : sub.status || '—', l: 'Abonnement' },
+        ].map((x) => (
+          <div key={x.l} className="bg-white rounded-2xl border border-[#E5E5EA] p-3 text-center md:rounded-xl md:p-4">
+            <div className={`text-xl font-bold ${x.c || 'text-[#000000]'} md:text-2xl md:font-light`}>{x.v}</div>
+            <div className="text-[11px] text-[#8E8E93] mt-0.5 md:text-xs">{x.l}</div>
+          </div>
+        ))}
       </div>
 
-      <Card>
-        <CardContent className="pt-5 space-y-3">
-          <h3 className="text-sm font-medium text-[#2A2A2A] flex items-center gap-2"><Store className="h-4 w-4 text-[#0066FF]" /> Informations</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Email :</span><span>{r.email}</span></div>
-            <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Tél :</span><span>{r.phone}</span></div>
-            <div className="flex items-center gap-2 sm:col-span-2"><MapPin className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Adresse :</span><span>{r.address}</span></div>
+      <Section icon={<Store className="h-4 w-4 text-[#0066FF]" />} title="Informations">
+        <div className="space-y-2 text-[14px] md:text-sm">
+          <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#8E8E93] flex-shrink-0" /><span className="text-[#8E8E93]">Email :</span><span className="text-[#000000]">{r.email}</span></div>
+          <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#8E8E93] flex-shrink-0" /><span className="text-[#8E8E93]">Tél :</span><span className="text-[#000000]">{r.phone}</span></div>
+          <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#8E8E93] flex-shrink-0" /><span className="text-[#8E8E93]">Adresse :</span><span className="text-[#000000]">{r.address}</span></div>
+        </div>
+        {r.publicSlug && (
+          <div className="mt-3 flex items-center gap-2 bg-[#0066FF]/5 rounded-xl p-3">
+            <LinkIcon className="h-4 w-4 text-[#0066FF] flex-shrink-0" />
+            <code className="text-[13px] text-[#0066FF] truncate flex-1 md:text-sm">{frontendUrl}/{r.publicSlug}</code>
+            <a href={`${frontendUrl}/${r.publicSlug}`} target="_blank" rel="noopener noreferrer" className="flex-shrink-0"><ExternalLink className="h-4 w-4 text-[#8E8E93] active:text-[#0066FF]" /></a>
           </div>
-          {r.publicSlug && (
-            <div className="flex items-center gap-2 text-sm bg-gray-50 rounded-lg p-2.5">
-              <LinkIcon className="h-3.5 w-3.5 text-[#0066FF]" />
-              <code className="text-[#0066FF] text-xs truncate flex-1">{frontendUrl}/{r.publicSlug}</code>
-              <a href={`${frontendUrl}/${r.publicSlug}`} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-3.5 w-3.5 text-gray-400 hover:text-[#0066FF]" /></a>
+        )}
+      </Section>
+
+      <Section icon={<CreditCard className="h-4 w-4 text-[#0066FF]" />} title="Abonnement">
+        <div className="grid grid-cols-1 gap-2 text-[14px] md:grid-cols-2 md:text-sm">
+          <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-[#8E8E93]" /><span className="text-[#8E8E93]">Créé le :</span><span className="text-[#000000]">{new Date(r.createdAt).toLocaleDateString('fr-FR')}</span></div>
+          <div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-[#8E8E93]" /><span className="text-[#8E8E93]">Plan :</span><span className="font-medium text-[#000000]">{sub.plan === 'pro' ? 'Pro (69€/mois)' : sub.plan === 'starter' ? 'Starter (39€/mois)' : '—'}</span></div>
+          <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-[#8E8E93]" /><span className="text-[#8E8E93]">Statut :</span><span className="text-[#000000]">{sub.status === 'active' ? 'Actif' : sub.status === 'trial' ? "Période d'essai" : sub.status === 'cancelled' ? 'Résilié' : sub.status || '—'}</span></div>
+          {sub.currentPeriodEnd && <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-[#8E8E93]" /><span className="text-[#8E8E93]">Prochain paiement :</span><span className="text-[#000000]">{new Date(sub.currentPeriodEnd).toLocaleDateString('fr-FR')}</span></div>}
+        </div>
+      </Section>
+
+      <Section icon={<BarChart3 className="h-4 w-4 text-[#0066FF]" />} title="Activité">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+          {[
+            { v: s?.activeReservations || 0, l: 'En cours', c: 'text-[#0066FF]' },
+            { v: s?.totalReservations || 0, l: 'Total' },
+            { v: r.tablesConfig?.totalTables || '—', l: 'Tables' },
+            { v: r.tablesConfig?.averageCapacity || '—', l: 'Couverts' },
+          ].map((x) => (
+            <div key={x.l} className="bg-[#F2F2F7] rounded-xl p-3 text-center">
+              <div className={`text-lg font-bold ${x.c || 'text-[#000000]'} md:text-xl md:font-light`}>{x.v}</div>
+              <div className="text-[11px] text-[#8E8E93] md:text-xs">{x.l}</div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      </Section>
 
-      <Card>
-        <CardContent className="pt-5 space-y-3">
-          <h3 className="text-sm font-medium text-[#2A2A2A] flex items-center gap-2"><CreditCard className="h-4 w-4 text-[#0066FF]" /> Abonnement</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Crée le :</span><span>{new Date(r.createdAt).toLocaleDateString('fr-FR')}</span></div>
-            <div className="flex items-center gap-2"><CreditCard className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Plan :</span><span className="font-medium">{sub.plan === 'pro' ? 'Pro (69€/mois)' : sub.plan === 'starter' ? 'Starter (39€/mois)' : '—'}</span></div>
-            <div className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Statut :</span><span>{sub.status === 'active' ? 'Actif' : sub.status === 'trial' ? 'Période d\'essai' : sub.status === 'cancelled' ? 'Résilié' : sub.status || '—'}</span></div>
-            {sub.currentPeriodEnd && <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-gray-400" /><span className="text-gray-400">Prochain paiement :</span><span>{new Date(sub.currentPeriodEnd).toLocaleDateString('fr-FR')}</span></div>}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-5 space-y-3">
-          <h3 className="text-sm font-medium text-[#2A2A2A] flex items-center gap-2"><BarChart3 className="h-4 w-4 text-[#0066FF]" /> Activité</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium text-[#0066FF]">{s?.activeReservations || 0}</div><div className="text-xs text-gray-400">En cours</div></div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium">{s?.totalReservations || 0}</div><div className="text-xs text-gray-400">Total</div></div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium">{r.tablesConfig?.totalTables || '—'}</div><div className="text-xs text-gray-400">Tables</div></div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg"><div className="font-medium">{r.tablesConfig?.averageCapacity || '—'}</div><div className="text-xs text-gray-400">Couverts</div></div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-5 space-y-3">
-          <h3 className="text-sm font-medium text-[#2A2A2A] flex items-center gap-2">
-            <StickyNote className="h-4 w-4 text-amber-500" /> Notes privées
-          </h3>
-          <Textarea
-            value={note}
-            onChange={(e) => handleNoteChange(e.target.value)}
-            placeholder="Rappeler vendredi, le chef hésite sur le Pro, à relancer lundi..."
-            rows={3}
-            maxLength={2000}
-            className="text-sm resize-none rounded-xl border-gray-200 focus:ring-[#0066FF]/20 focus:border-[#0066FF]"
-          />
-          <p className="text-[10px] text-gray-400 text-right">Sauvegarde automatique · Visible uniquement par vous</p>
-        </CardContent>
-      </Card>
-
-      <Link href="/commercial/restaurants">
-        <Button variant="outline" size="sm"><ArrowLeft className="h-4 w-4 mr-2" /> Retour à la liste</Button>
-      </Link>
+      <Section icon={<StickyNote className="h-4 w-4 text-amber-500" />} title="Notes privées">
+        <textarea value={note} onChange={(e) => handleNoteChange(e.target.value)} placeholder="Rappeler vendredi, le chef hésite sur le Pro..." rows={4} maxLength={2000}
+          className="w-full px-3 py-2.5 rounded-xl border border-[#E5E5EA] bg-white text-[15px] text-[#000000] placeholder:text-[#C7C7CC] focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF]/20 resize-none md:text-sm" />
+        <p className="text-[11px] text-[#8E8E93] text-right mt-1 md:text-xs">Sauvegarde automatique · Visible uniquement par vous</p>
+      </Section>
     </div>
   );
 }
