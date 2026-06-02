@@ -7,548 +7,353 @@
   <title>Formation Commerciale — TableMaster</title>
   <link rel="icon" href="/favicon.ico">
   <style>
-    :root {
-      --blue: #0066FF;
-      --blue-light: #0066FF10;
-      --black: #000000;
-      --gray: #8E8E93;
-      --gray-light: #E5E5EA;
-      --bg: #F2F2F7;
-      --white: #FFFFFF;
-      --green: #10B981;
-      --red: #EF4444;
-      --amber: #F59E0B;
-      --radius: 16px;
-      --radius-sm: 12px;
-      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font); background: var(--bg); color: var(--black); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+    :root { --blue:#0066FF; --blue-light:#0066FF10; --black:#000; --gray:#8E8E93; --gray-light:#E5E5EA; --bg:#F2F2F7; --white:#FFF; --green:#10B981; --red:#EF4444; --amber:#F59E0B; --r:16px; --rs:12px; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--black); line-height:1.7; }
+    .wrap { max-width:960px; margin:0 auto; padding:16px; }
 
-    /* Header */
-    .header { background: var(--white); border-bottom: 1px solid var(--gray-light); padding: 16px 0; position: sticky; top: 0; z-index: 10; margin-bottom: 20px; }
-    .header-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 20px; font-weight: 700; color: var(--black); letter-spacing: -0.5px; }
-    .logo span { color: var(--blue); }
-    .badge { font-size: 11px; background: var(--blue-light); color: var(--blue); padding: 4px 12px; border-radius: 100px; font-weight: 600; }
+    header { background:var(--white); border-bottom:1px solid var(--gray-light); padding:16px 0; position:sticky; top:0; z-index:10; margin-bottom:20px; }
+    .hdr { max-width:960px; margin:0 auto; padding:0 16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .logo { font-size:20px; font-weight:700; letter-spacing:-.5px; } .logo span { color:var(--blue); }
+    .badge { font-size:11px; background:var(--blue-light); color:var(--blue); padding:4px 12px; border-radius:100px; font-weight:600; }
 
-    /* Module nav */
-    .modules { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .modules::-webkit-scrollbar { display: none; }
-    .module-btn { white-space: nowrap; padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--gray-light); background: var(--white); font-size: 14px; font-weight: 500; color: var(--gray); cursor: pointer; transition: all .15s; flex-shrink: 0; }
-    .module-btn:hover { border-color: var(--blue); color: var(--blue); }
-    .module-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); font-weight: 600; }
-    .module-btn.done { border-color: var(--green); }
-    .module-btn.done::after { content: ' ✓'; color: var(--green); font-weight: 700; }
+    /* Nav */
+    .mods { display:flex; overflow-x:auto; gap:8px; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none; flex-wrap:nowrap; }
+    .mods::-webkit-scrollbar{display:none;}
+    .mod-btn { white-space:nowrap; padding:10px 16px; border-radius:var(--rs); border:1px solid var(--gray-light); background:var(--white); font-size:13px; font-weight:500; color:var(--gray); cursor:pointer; transition:all .15s; flex-shrink:0; }
+    .mod-btn:hover{ border-color:var(--blue); color:var(--blue); }
+    .mod-btn.active{ background:var(--blue); color:var(--white); border-color:var(--blue); font-weight:600; }
+    .mod-btn.done{ border-color:var(--green); }
+    .mod-btn.done::after{ content:' ✓'; color:var(--green); font-weight:700; }
+
+    .mod-btn-new { border-color:var(--amber); background:#FFFBEB; color:#92400E; }
+    .mod-btn-new::after { content:' ★'; color:var(--amber); }
 
     /* Cards */
-    .card { background: var(--white); border: 1px solid var(--gray-light); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
-    .card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.3px; }
-    .card h3 { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
-    .card p, .card li { font-size: 14px; color: var(--gray); }
-    .card .subtitle { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+    .card { background:var(--white); border:1px solid var(--gray-light); border-radius:var(--r); padding:28px; margin-bottom:16px; }
+    .card h2 { font-size:22px; font-weight:700; margin-bottom:12px; letter-spacing:-.3px; }
+    .card h3 { font-size:17px; font-weight:600; margin:24px 0 12px; }
+    .card h4 { font-size:15px; font-weight:600; margin:18px 0 8px; color:var(--black); }
+    .card p,.card li { font-size:15px; color:var(--gray); margin-bottom:8px; }
+    .card .sub { font-size:15px; color:var(--gray); margin-bottom:24px; }
+    .card ul { padding-left:20px; }
+    .card ul li { margin-bottom:6px; }
+    .card strong { color:var(--black); }
+    .card em { color:var(--blue); font-style:normal; }
+
+    /* Boxes */
+    .box { background:var(--bg); border-radius:var(--rs); padding:16px 20px; margin:16px 0; }
+    .box-blue { background:var(--blue-light); border-left:4px solid var(--blue); }
+    .box-green { background:#ECFDF5; border-left:4px solid var(--green); }
+    .box-amber { background:#FFFBEB; border-left:4px solid var(--amber); }
+    .box-red { background:#FEF2F2; border-left:4px solid var(--red); }
+    .box-title { font-size:14px; font-weight:600; color:var(--black); margin-bottom:6px; }
 
     /* Schema */
-    .schema { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 20px 0; }
-    .schema-box { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; text-align: center; }
-    .schema-box .icon { font-size: 28px; margin-bottom: 8px; }
-    .schema-box .label { font-size: 14px; font-weight: 600; color: var(--black); }
-    .schema-box .sub { font-size: 12px; color: var(--gray); margin-top: 4px; }
-    .schema-arrow { display: flex; align-items: center; justify-content: center; color: var(--blue); font-size: 20px; font-weight: 700; }
+    .schema { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:20px 0; }
+    .s-box { background:var(--bg); border-radius:var(--rs); padding:20px 16px; text-align:center; }
+    .s-box .ico { font-size:30px; margin-bottom:8px; }
+    .s-box .lbl { font-size:14px; font-weight:600; color:var(--black); }
+    .s-box .sbt { font-size:12px; color:var(--gray); margin-top:4px; line-height:1.4; }
+    .schema-arrow { display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:22px; font-weight:700; }
 
     /* Feature grid */
-    .feature-grid { display: grid; gap: 12px; margin: 20px 0; }
-    .feature { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--bg); border-radius: var(--radius-sm); }
-    .feature .f-icon { font-size: 24px; flex-shrink: 0; }
-    .feature .f-title { font-size: 15px; font-weight: 600; color: var(--black); }
-    .feature .f-desc { font-size: 13px; color: var(--gray); margin-top: 2px; }
+    .fg { display:grid; gap:12px; margin:20px 0; }
+    .fg-2 { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+    .ft { display:flex; align-items:flex-start; gap:14px; padding:16px; background:var(--bg); border-radius:var(--rs); }
+    .ft .fi { font-size:26px; flex-shrink:0; width:40px; text-align:center; }
+    .ft .fx { flex:1; }
+    .ft .ftl { font-size:15px; font-weight:600; color:var(--black); }
+    .ft .ftd { font-size:13px; color:var(--gray); margin-top:4px; line-height:1.5; }
 
-    /* Plan comparison */
-    .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
-    .plan-card { background: var(--bg); border-radius: var(--radius-sm); padding: 20px; text-align: center; border: 2px solid transparent; }
-    .plan-card.popular { border-color: var(--blue); background: var(--blue-light); }
-    .plan-card .plan-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .plan-card .plan-price { font-size: 28px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
-    .plan-card .plan-price span { font-size: 14px; font-weight: 400; color: var(--gray); }
-    .plan-card ul { list-style: none; text-align: left; font-size: 13px; color: var(--gray); margin-top: 12px; }
-    .plan-card ul li { padding: 4px 0; }
-    .plan-card ul li::before { content: '✓ '; color: var(--green); font-weight: 700; }
-    .popular-badge { background: var(--blue); color: white; font-size: 11px; padding: 3px 12px; border-radius: 100px; display: inline-block; margin-bottom: 8px; font-weight: 600; }
-
-    /* Quiz */
-    .quiz { margin-top: 20px; }
-    .quiz-q { background: var(--bg); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 12px; }
-    .quiz-q .q-text { font-size: 15px; font-weight: 600; color: var(--black); margin-bottom: 12px; }
-    .quiz-q .q-opts { display: flex; flex-direction: column; gap: 8px; }
-    .quiz-q .q-opt { padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--gray-light); background: var(--white); font-size: 14px; cursor: pointer; transition: all .15s; text-align: left; }
-    .quiz-q .q-opt:hover { border-color: var(--blue); background: var(--blue-light); }
-    .quiz-q .q-opt.correct { border-color: var(--green); background: #ECFDF5; color: #065F46; font-weight: 600; }
-    .quiz-q .q-opt.wrong { border-color: var(--red); background: #FEF2F2; color: #991B1B; font-weight: 600; }
-    .quiz-q .q-opt:disabled { cursor: default; opacity: 0.7; }
-    .quiz-q .feedback { margin-top: 10px; font-size: 13px; font-weight: 500; }
-    .quiz-q .feedback.correct { color: #065F46; }
-    .quiz-q .feedback.wrong { color: #991B1B; }
-
-    /* Score */
-    .score-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .score { font-size: 18px; font-weight: 700; }
-    .score.ok { color: var(--green); }
-    .score.ko { color: var(--red); }
-    .reset-btn { font-size: 13px; color: var(--blue); background: none; border: none; cursor: pointer; font-weight: 500; }
-    .reset-btn:hover { text-decoration: underline; }
+    /* Plans */
+    .plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:20px 0; }
+    .pc { background:var(--bg); border-radius:var(--rs); padding:24px; text-align:center; border:2px solid transparent; }
+    .pc.pop { border-color:var(--blue); background:var(--blue-light); }
+    .pc .pn { font-size:17px; font-weight:700; margin-bottom:4px; }
+    .pc .pp { font-size:30px; font-weight:700; color:var(--blue); margin-bottom:4px; }
+    .pc .pp span { font-size:14px; font-weight:400; color:var(--gray); }
+    .pc ul { list-style:none; text-align:left; font-size:13px; color:var(--gray); margin-top:14px; }
+    .pc ul li { padding:5px 0; }
+    .pc ul li::before { content:'✓ '; color:var(--green); font-weight:700; }
+    .pop-badge { background:var(--blue); color:white; font-size:11px; padding:3px 14px; border-radius:100px; display:inline-block; margin-bottom:8px; font-weight:600; }
 
     /* Tabs */
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg); border-radius: var(--radius-sm); padding: 4px; }
-    .tab { flex: 1; padding: 10px; border-radius: 10px; border: none; background: transparent; font-size: 14px; font-weight: 500; color: var(--gray); cursor: pointer; transition: all .15s; text-align: center; }
-    .tab:hover { color: var(--black); }
-    .tab.active { background: var(--white); color: var(--black); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .tabs { display:flex; gap:4px; margin-bottom:20px; background:var(--bg); border-radius:var(--rs); padding:4px; }
+    .tab { flex:1; padding:12px; border-radius:10px; border:none; background:transparent; font-size:14px; font-weight:500; color:var(--gray); cursor:pointer; text-align:center; }
+    .tab:hover{color:var(--black);}
+    .tab.active{background:var(--white);color:var(--black);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);}
 
-    /* Argument cards */
-    .arg-card { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 10px; }
-    .arg-card .arg-title { font-size: 15px; font-weight: 600; color: var(--black); }
-    .arg-card .arg-desc { font-size: 13px; color: var(--gray); margin-top: 4px; }
-    .arg-card .arg-script { font-size: 13px; color: var(--blue); font-style: italic; margin-top: 8px; padding: 10px; background: var(--white); border-radius: 8px; border-left: 3px solid var(--blue); }
+    /* Quiz */
+    .qq { background:var(--bg); border-radius:var(--rs); padding:20px; margin-bottom:14px; }
+    .qq .qt { font-size:15px; font-weight:600; color:var(--black); margin-bottom:12px; }
+    .qq .qo { display:flex; flex-direction:column; gap:8px; }
+    .qq .qob { padding:12px 16px; border-radius:var(--rs); border:1px solid var(--gray-light); background:var(--white); font-size:14px; cursor:pointer; text-align:left; transition:all .15s; }
+    .qq .qob:hover{ border-color:var(--blue); background:var(--blue-light); }
+    .qq .qob.correct{ border-color:var(--green); background:#ECFDF5; color:#065F46; font-weight:600; }
+    .qq .qob.wrong{ border-color:var(--red); background:#FEF2F2; color:#991B1B; font-weight:600; }
+    .qq .qob:disabled{ cursor:default; opacity:.7; }
+    .feedback{ margin-top:10px; font-size:14px; font-weight:500; }
+    .feedback.correct{ color:#065F46; }
+    .feedback.wrong{ color:#991B1B; }
 
-    @media (max-width: 600px) {
-      .card { padding: 16px; }
-      .card h2 { font-size: 20px; }
-      .schema { grid-template-columns: 1fr 1fr; }
-      .plans { grid-template-columns: 1fr; }
-      .tabs { flex-direction: column; }
+    .score-bar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .score{ font-size:18px; font-weight:700; }
+    .score.ok{ color:var(--green); } .score.ko{ color:var(--red); }
+    .reset-btn{ font-size:13px; color:var(--blue); background:none; border:none; cursor:pointer; font-weight:500; }
+
+    /* Glossary */
+    .gloss-term { font-weight:700; color:var(--black); font-size:15px; margin-top:16px; }
+    .gloss-def { font-size:14px; color:var(--gray); margin-bottom:16px; padding-left:12px; border-left:3px solid var(--gray-light); }
+
+    /* Script */
+    .script { background:var(--white); border-left:4px solid var(--blue); padding:14px 18px; border-radius:0 8px 8px 0; margin:8px 0 16px; font-size:14px; color:var(--blue); font-style:italic; line-height:1.7; }
+
+    @media(max-width:600px){
+      .card{padding:18px;}
+      .card h2{font-size:20px;}
+      .schema{grid-template-columns:1fr 1fr;}
+      .plans{grid-template-columns:1fr;}
+      .tabs{flex-direction:column;}
+      .mods{gap:6px;}
+      .mod-btn{padding:8px 12px; font-size:12px;}
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-inner">
+  <header>
+    <div class="hdr">
       <div class="logo">Table<span>Master</span></div>
       <span class="badge">Formation Commerciale</span>
     </div>
   </header>
-
-  <div class="container">
-    <!-- Module Navigation -->
-    <div class="modules" id="modules"></div>
-
-    <!-- Content Area -->
+  <div class="wrap">
+    <div class="mods" id="mods"></div>
     <div id="content"></div>
   </div>
 
-  <script>
-    // ============================================================
-    // DATA: Modules, schemas, quizzes, arguments
-    // ============================================================
-
-    const MODULES = [
+<script>
+const M = [
+  {
+    id:'intro', name:'Accueil', sections:[{
+      id:'learn',
+      content:'<div class="card"><h2>Bienvenue dans la formation TableMaster</h2><p class="sub">Cette page est votre guide complet pour maîtriser le produit TableMaster et le vendre efficacement.</p><div class="box box-blue"><div class="box-title">🎯 Objectif de cette formation</div><p style="font-size:14px;color:var(--gray);margin:0">À la fin de cette formation, vous saurez : <strong>expliquer ce qu\'est TableMaster</strong>, <strong>faire une démonstration</strong>, <strong>répondre à toutes les questions</strong> d\'un restaurateur, et <strong>conclure une vente</strong>.</p></div><h3>Comment utiliser cette page ?</h3><ul><li>Chaque onglet en haut correspond à un <strong>module de formation</strong>.</li><li>Dans chaque module, vous avez un onglet <strong>📖 Apprendre</strong> (le contenu à connaître) et un onglet <strong>❓ Quiz</strong> (pour tester vos connaissances).</li><li>Quand vous réussissez tous les quiz d\'un module, une coche <strong>✓</strong> apparaît.</li><li>Vos scores sont sauvegardés — vous pouvez revenir plus tard.</li></ul><div class="box box-amber"><div class="box-title">⚠️ Important</div><p style="font-size:14px;color:var(--gray);margin:0">Cette formation part du principe que vous n\'avez <strong>aucune connaissance technique</strong>. Chaque terme est expliqué simplement. Prenez votre temps, faites les modules dans l\'ordre.</p></div></div>'
+    }]
+  },
+  {
+    id:'presentation', name:'TableMaster',
+    sections:[
       {
-        id: 'presentation',
-        name: 'TableMaster',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Qu'est-ce que TableMaster ?</h2>
-                <p class="subtitle">Une plateforme SaaS qui permet aux restaurants de gérer leurs réservations en ligne, sans commission.</p>
-
-                <div class="schema">
-                  <div class="schema-box"><div class="icon">🍽️</div><div class="label">Restaurant</div><div class="sub">S'inscrit et configure son compte</div></div>
-                  <div class="schema-box"><div class="icon">🔗</div><div class="label">Widget</div><div class="sub">Bouton de réservation sur le site du resto</div></div>
-                  <div class="schema-box"><div class="icon">👤</div><div class="label">Client</div><div class="sub">Réserve une table en ligne</div></div>
-                  <div class="schema-box"><div class="icon">📱</div><div class="label">Restaurateur</div><div class="sub">Reçoit la résa, confirme ou refuse</div></div>
-                </div>
-
-                <div class="feature-grid" style="margin-top:24px">
-                  <div class="feature"><div class="f-icon">📅</div><div><div class="f-title">Gestion des réservations</div><div class="f-desc">Dashboard complet : liste, calendrier, création manuelle</div></div></div>
-                  <div class="feature"><div class="f-icon">🔔</div><div><div class="f-title">Notifications temps réel</div><div class="f-desc">Push et email à chaque nouvelle réservation</div></div></div>
-                  <div class="feature"><div class="f-icon">🎨</div><div><div class="f-title">Widget personnalisable</div><div class="f-desc">Bouton flottant aux couleurs du restaurant (Pro)</div></div></div>
-                  <div class="feature"><div class="f-icon">👥</div><div><div class="f-title">CRM intégré</div><div class="f-desc">Fichier clients, tags, historique des visites</div></div></div>
-                  <div class="feature"><div class="f-icon">📊</div><div><div class="f-title">Statistiques</div><div class="f-desc">Occupation, revenus estimés, tendances</div></div></div>
-                  <div class="feature"><div class="f-icon">💳</div><div><div class="f-title">Paiement Stripe</div><div class="f-desc">Abonnement sécurisé, essai 14 jours gratuit</div></div></div>
-                </div>
-
-                <p style="margin-top:24px;font-size:14px;color:var(--gray)"><strong style="color:var(--black)">Différence clé :</strong> Contrairement à TheFork ou LaFourchette, TableMaster ne prend <strong style="color:var(--blue)">aucune commission</strong> sur les réservations. Le restaurant paie un abonnement fixe.</p>
-              </div>
-            `
-          },
-          {
-            id: 'quiz',
-            content: `
-              <div class="card">
-                <h3>Quiz — Présentation</h3>
-                <div id="quiz-presentation"></div>
-                <div id="score-presentation" class="score-bar" style="margin-top:16px"></div>
-              </div>
-            `
-          }
-        ]
+        id:'learn',
+        content:'<div class="card"><h2>Qu\'est-ce que TableMaster ?</h2><p class="sub">Une explication simple, sans jargon, pour comprendre le produit que vous vendez.</p><div class="box box-blue"><div class="box-title">📌 Définition simple</div><p style="font-size:15px;color:var(--gray);margin:0">TableMaster est un <strong>site internet</strong> (on appelle ça une <em>plateforme SaaS</em>) qui aide les restaurants à <strong>gérer leurs réservations</strong>. Au lieu d\'utiliser un carnet papier ou de répondre au téléphone toute la journée, le restaurateur se connecte à TableMaster sur son ordinateur ou son téléphone, et il voit toutes ses réservations au même endroit.</p></div><h3>Pourquoi les restaurants en ont besoin ?</h3><div class="fg fg-2"><div class="ft"><div class="fi">📞</div><div class="fx"><div class="ftl">Le téléphone, c\'est chronophage</div><div class="ftd">Un restaurateur passe en moyenne <strong>1 à 2 heures par jour</strong> au téléphone pour prendre des réservations. C\'est du temps qu\'il ne passe pas en salle avec ses clients.</div></div></div><div class="ft"><div class="fi">📋</div><div class="fx"><div class="ftl">Le carnet papier, c\'est risqué</div><div class="ftd">Une réservation mal notée, une page arrachée, une écriture illisible... et c\'est une table vide ou un client mécontent.</div></div></div><div class="ft"><div class="fi">🕐</div><div class="fx"><div class="ftl">Les clients veulent réserver 24h/24</div><div class="ftd"><strong>70% des réservations en ligne</strong> sont faites en dehors des heures d\'ouverture du restaurant. Sans système en ligne, ces clients vont chez le concurrent.</div></div></div><div class="ft"><div class="fi">💸</div><div class="fx"><div class="ftl">Les commissions, c\'est de l\'argent perdu</div><div class="ftd">TheFork prend <strong>2€ par couvert</strong>. Sur 500 couverts/mois = <strong>1000€ de commissions</strong>. TableMaster, c\'est <strong>39€/mois</strong>, quel que soit le nombre de couverts.</div></div></div></div><h3>Comment ça marche, concrètement ?</h3><div class="schema"><div class="s-box"><div class="ico">🏪</div><div class="lbl">1. Le restaurant s\'inscrit</div><div class="sbt">Il crée son compte en 5 minutes. Il renseigne son nom, son adresse, ses horaires.</div></div><div class="s-box"><div class="ico">🔗</div><div class="lbl">2. Il obtient un bouton</div><div class="sbt">Un bouton « Réserver » à installer sur son site web. Ou un lien à partager.</div></div><div class="s-box"><div class="ico">👤</div><div class="lbl">3. Le client réserve</div><div class="sbt">Il choisit une date, une heure, un nombre de personnes. Il reçoit un email de confirmation.</div></div><div class="s-box"><div class="ico">📱</div><div class="lbl">4. Le resto est notifié</div><div class="sbt">Notification sur son téléphone. Il peut confirmer ou refuser en un clic.</div></div></div><div class="box box-green"><div class="box-title">✅ Ce que TableMaster n\'est PAS</div><p style="font-size:14px;color:var(--gray);margin:0">TableMaster <strong>n\'est pas</strong> un site de réservation comme TheFork ou LaFourchette. TableMaster ne prend <strong>aucune commission</strong> et ne fait <strong>pas de mise en avant</strong> du restaurant. C\'est un <strong>outil de travail</strong> pour le restaurateur, pas une place de marché.</p></div></div>'
       },
       {
-        id: 'plans',
-        name: 'Plans & Prix',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Plans et tarification</h2>
-                <p class="subtitle">Deux offres pour répondre à tous les besoins. Essai gratuit de 14 jours.</p>
-
-                <div class="plans">
-                  <div class="plan-card">
-                    <div class="plan-name">Pack Gestion</div>
-                    <div class="plan-price">39€<span>/mois</span></div>
-                    <ul>
-                      <li>400 réservations / mois</li>
-                      <li>Notifications push temps réel</li>
-                      <li>Widget de réservation standard</li>
-                      <li>Emails de confirmation auto</li>
-                      <li>Export CSV</li>
-                      <li>Support par email</li>
-                      <li>Gestion des tables et horaires</li>
-                    </ul>
-                  </div>
-                  <div class="plan-card popular">
-                    <div class="popular-badge">⭐ Recommandé</div>
-                    <div class="plan-name">Pack Croissance</div>
-                    <div class="plan-price">69€<span>/mois</span></div>
-                    <ul>
-                      <li>Réservations illimitées</li>
-                      <li>Tout le Pack Gestion</li>
-                      <li>Comptes serveurs illimités</li>
-                      <li>Support prioritaire</li>
-                      <li>Personnalisation du widget</li>
-                      <li>URL personnalisée</li>
-                      <li>Demandes d'avis Google</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:var(--radius-sm)">
-                  <div class="f-title" style="margin-bottom:8px">💡 Argument de vente</div>
-                  <p style="font-size:13px;color:var(--gray)">« Pour le prix de <strong style="color:var(--black)">3 couverts par mois</strong>, vous digitalisez tout votre processus de réservation et supprimez les commissions. »</p>
-                </div>
-              </div>
-            `
-          },
-          {
-            id: 'quiz',
-            content: `
-              <div class="card">
-                <h3>Quiz — Plans & Prix</h3>
-                <div id="quiz-plans"></div>
-                <div id="score-plans" class="score-bar" style="margin-top:16px"></div>
-              </div>
-            `
-          }
-        ]
-      },
-      {
-        id: 'widget',
-        name: 'Widget',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Le widget de réservation</h2>
-                <p class="subtitle">Le cœur de TableMaster : un bouton de réservation qui s'intègre sur n'importe quel site.</p>
-
-                <div class="schema">
-                  <div class="schema-box"><div class="icon">🔗</div><div class="label">Lien direct</div><div class="sub">URL à partager (bio Instagram, QR code, emails)</div></div>
-                  <div class="schema-box"><div class="icon">📜</div><div class="label">Script JS</div><div class="sub">Bouton flottant sur le site du restaurant</div></div>
-                </div>
-
-                <div class="feature-grid" style="margin-top:20px">
-                  <div class="feature"><div class="f-icon">🌐</div><div><div class="f-title">Compatible partout</div><div class="f-desc">WordPress, Wix, Shopify, Webflow, site HTML</div></div></div>
-                  <div class="feature"><div class="f-icon">📱</div><div><div class="f-title">100% responsive</div><div class="f-desc">Fonctionne sur mobile, tablette et desktop</div></div></div>
-                  <div class="feature"><div class="f-icon">🎨</div><div><div class="f-title">Personnalisable (Pro)</div><div class="f-desc">Couleurs, texte, forme du bouton, police</div></div></div>
-                  <div class="feature"><div class="f-icon">⚡</div><div><div class="f-title">Installation facile</div><div class="f-desc">Une ligne de code à copier-coller</div></div></div>
-                </div>
-
-                <p style="margin-top:20px;font-size:13px;color:var(--gray)">Le client ne quitte jamais le site du restaurant. Le formulaire s'ouvre dans une fenêtre superposée.</p>
-              </div>
-            `
-          },
-          {
-            id: 'quiz',
-            content: `
-              <div class="card">
-                <h3>Quiz — Widget</h3>
-                <div id="quiz-widget"></div>
-                <div id="score-widget" class="score-bar" style="margin-top:16px"></div>
-              </div>
-            `
-          }
-        ]
-      },
-      {
-        id: 'reservations',
-        name: 'Réservations',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Gestion des réservations</h2>
-                <p class="subtitle">Tout ce que le restaurateur peut faire depuis son dashboard.</p>
-
-                <div class="feature-grid">
-                  <div class="feature"><div class="f-icon">📋</div><div><div class="f-title">Vue liste</div><div class="f-desc">Toutes les réservations avec filtres, tri et recherche. Swipe pour confirmer/annuler sur mobile.</div></div></div>
-                  <div class="feature"><div class="f-icon">📅</div><div><div class="f-title">Vue calendrier</div><div class="f-desc">Affichage par jour, semaine ou mois. Code couleur selon l'occupation.</div></div></div>
-                  <div class="feature"><div class="f-icon">➕</div><div><div class="f-title">Création manuelle</div><div class="f-desc">Le restaurateur peut créer une réservation pour un appel téléphonique.</div></div></div>
-                  <div class="feature"><div class="f-icon">✅</div><div><div class="f-title">Actions rapides</div><div class="f-desc">Confirmer, annuler ou marquer comme terminé en un clic.</div></div></div>
-                  <div class="feature"><div class="f-icon">📧</div><div><div class="f-title">Emails automatiques</div><div class="f-desc">Confirmation, annulation et rappel envoyés au client.</div></div></div>
-                  <div class="feature"><div class="f-icon">🔔</div><div><div class="f-title">Notifications push</div><div class="f-desc">Alerte instantanée, possibilité de valider/refuser depuis la notification.</div></div></div>
-                </div>
-              </div>
-            `
-          },
-          {
-            id: 'quiz',
-            content: `
-              <div class="card">
-                <h3>Quiz — Réservations</h3>
-                <div id="quiz-reservations"></div>
-                <div id="score-reservations" class="score-bar" style="margin-top:16px"></div>
-              </div>
-            `
-          }
-        ]
-      },
-      {
-        id: 'clients',
-        name: 'Clients',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Gestion des clients (CRM)</h2>
-                <p class="subtitle">Un fichier client intelligent intégré à la plateforme.</p>
-
-                <div class="feature-grid">
-                  <div class="feature"><div class="f-icon">📇</div><div><div class="f-title">Fichier automatique</div><div class="f-desc">Chaque client qui réserve est automatiquement enregistré.</div></div></div>
-                  <div class="feature"><div class="f-icon">🏷️</div><div><div class="f-title">Tags personnalisés</div><div class="f-desc">VIP, Fidèle, Régulier, À risque — segmentation automatique.</div></div></div>
-                  <div class="feature"><div class="f-icon">📊</div><div><div class="f-title">Statistiques par client</div><div class="f-desc">Nombre de visites, taux d'annulation, dernière visite.</div></div></div>
-                  <div class="feature"><div class="f-icon">📝</div><div><div class="f-title">Notes internes</div><div class="f-desc">Préférences, allergies, remarques visibles par l'équipe.</div></div></div>
-                  <div class="feature"><div class="f-icon">📤</div><div><div class="f-title">Export CSV / JSON</div><div class="f-desc">Pour vos campagnes marketing (clients avec consentement).</div></div></div>
-                </div>
-
-                <p style="margin-top:20px;font-size:13px;color:var(--gray)"><strong style="color:var(--black)">Argument :</strong> « Vous connaissez vos clients. Avec TableMaster, vous savez qui revient, qui annule souvent, et qui est fidèle. »</p>
-              </div>
-            `
-          },
-          {
-            id: 'quiz',
-            content: `
-              <div class="card">
-                <h3>Quiz — Clients</h3>
-                <div id="quiz-clients"></div>
-                <div id="score-clients" class="score-bar" style="margin-top:16px"></div>
-              </div>
-            `
-          }
-        ]
-      },
-      {
-        id: 'arguments',
-        name: 'Vente',
-        sections: [
-          {
-            id: 'learn',
-            content: `
-              <div class="card">
-                <h2>Argumentaire de vente</h2>
-                <p class="subtitle">Les points clés pour convaincre un restaurateur.</p>
-
-                <div class="arg-card"><div class="arg-title">💸 Pas de commission</div><div class="arg-desc">Contrairement à TheFork (2€ par couvert), TableMaster est un abonnement fixe.</div><div class="arg-script">« Avec TheFork, 100 couverts = 200€ de commissions. Avec TableMaster, 100 ou 1000 couverts = toujours 39€. »</div></div>
-
-                <div class="arg-card"><div class="arg-title">⏱️ Gain de temps</div><div class="arg-desc">Fini le cahier de réservations. Tout est centralisé, automatique.</div><div class="arg-script">« Vous passez moins de temps au téléphone et plus de temps en salle avec vos clients. »</div></div>
-
-                <div class="arg-card"><div class="arg-title">📱 Modernité</div><div class="arg-desc">Les clients veulent réserver en ligne, 24h/24, sans appeler.</div><div class="arg-script">« 70% des réservations en ligne se font en dehors des heures d'ouverture. Ne manquez plus aucune réservation. »</div></div>
-
-                <div class="arg-card"><div class="arg-title">🔔 Réactivité</div><div class="arg-desc">Notifications instantanées sur téléphone. Validation en un clic.</div><div class="arg-script">« Vous savez immédiatement quand une table se remplit. Vous gérez votre salle en temps réel. »</div></div>
-
-                <div class="arg-card"><div class="arg-title">🆓 Essai 14 jours gratuit</div><div class="arg-desc">Aucun engagement, pas de carte bancaire requise pour commencer.</div><div class="arg-script">« Testez pendant 2 semaines. Si ça ne vous convient pas, vous n'avez rien à payer. »</div></div>
-
-                <div class="arg-card"><div class="arg-title">🎯 Le prix d'un couvert</div><div class="arg-desc">39€/mois = le prix de 2 à 3 couverts. Amorti dès la première réservation.</div><div class="arg-script">« Pour moins de 2€ par jour, vous avez un système de réservation professionnel. »</div></div>
-              </div>
-            `
-          }
-        ]
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — TableMaster</h3><div id="quiz-presentation"></div><div id="score-presentation" class="score-bar" style="margin-top:16px"></div></div>'
       }
-    ];
-
-    const QUIZZES = {
-      presentation: [
-        { q: 'Quelle est la différence principale entre TableMaster et TheFork ?', opts: ['TableMaster est plus cher', 'TableMaster ne prend pas de commission sur les réservations', 'TableMaster n\'a pas de widget', 'TableMaster ne fonctionne que sur mobile'], correct: 1 },
-        { q: 'Comment le client réserve-t-il une table ?', opts: ['Par téléphone uniquement', 'Via le widget intégré au site du restaurant', 'Par email', 'En se rendant au restaurant'], correct: 1 },
-        { q: 'Quels types de notifications TableMaster propose-t-il ?', opts: ['SMS uniquement', 'Email uniquement', 'Push et email', 'Aucune notification'], correct: 2 },
-        { q: 'TableMaster est une plateforme...', opts: ['De livraison de repas', 'De gestion de réservations (SaaS)', 'De paiement en ligne', 'De gestion de stock'], correct: 1 },
-      ],
-      plans: [
-        { q: 'Quel est le prix du Pack Gestion ?', opts: ['29€/mois', '39€/mois', '49€/mois', '69€/mois'], correct: 1 },
-        { q: 'Quelle est la limite de réservations du Pack Gestion ?', opts: ['200 / mois', '400 / mois', '600 / mois', 'Illimité'], correct: 1 },
-        { q: 'Quel plan permet la personnalisation du widget ?', opts: ['Pack Gestion', 'Pack Croissance (Pro)', 'Aucun', 'Les deux'], correct: 1 },
-        { q: 'Quelle est la durée de l\'essai gratuit ?', opts: ['7 jours', '14 jours', '30 jours', 'Pas d\'essai gratuit'], correct: 1 },
-      ],
-      widget: [
-        { q: 'Sur quelles plateformes le widget peut-il être installé ?', opts: ['WordPress uniquement', 'WordPress, Wix, Shopify, Webflow et HTML', 'Shopify uniquement', 'Aucune intégration possible'], correct: 1 },
-        { q: 'Le client quitte-t-il le site du restaurant pour réserver ?', opts: ['Oui, il est redirigé', 'Non, le formulaire s\'ouvre dans une fenêtre superposée', 'Oui, vers une application mobile', 'Ça dépend du navigateur'], correct: 1 },
-        { q: 'Combien de code faut-il pour installer le widget ?', opts: ['Plusieurs fichiers', 'Une seule ligne de script', 'Un plugin payant', 'Une application mobile'], correct: 1 },
-        { q: 'La personnalisation du widget (couleurs, texte) est disponible sur...', opts: ['Tous les plans', 'Le plan Pro uniquement', 'Le plan Starter uniquement', 'Aucun plan'], correct: 1 },
-      ],
-      reservations: [
-        { q: 'Quelles vues sont disponibles dans le calendrier des réservations ?', opts: ['Liste uniquement', 'Jour, semaine, mois', 'Mois uniquement', 'Semaine uniquement'], correct: 1 },
-        { q: 'Peut-on créer une réservation manuellement ?', opts: ['Non', 'Oui, pour les appels téléphoniques', 'Oui, mais uniquement le jour même', 'Non, seuls les clients peuvent réserver'], correct: 1 },
-        { q: 'Que peut-on faire depuis une notification push ?', opts: ['Rien, juste la lire', 'Valider ou refuser la réservation sans ouvrir l\'application', 'Modifier les horaires du restaurant', 'Contacter le client par téléphone'], correct: 1 },
-        { q: 'Quels emails sont envoyés automatiquement ?', opts: ['Aucun', 'Confirmation, annulation et rappel 24h avant', 'Uniquement la confirmation', 'Un compte-rendu mensuel'], correct: 1 },
-      ],
-      clients: [
-        { q: 'Comment les clients sont-ils ajoutés au CRM ?', opts: ['Manuellement par le restaurateur', 'Automatiquement à chaque réservation', 'Par import CSV uniquement', 'Via une API externe'], correct: 1 },
-        { q: 'Quels tags client existe-t-il ?', opts: ['VIP, Fidèle, Régulier, À risque', 'Or, Argent, Bronze', 'Premium, Standard, Basic', 'Aucun tag disponible'], correct: 0 },
-        { q: 'Quelles informations sont disponibles par client ?', opts: ['Nom uniquement', 'Nombre de visites, taux d\'annulation, dernière visite', 'Adresse postale', 'Coordonnées bancaires'], correct: 1 },
-        { q: 'Peut-on exporter la liste des clients ?', opts: ['Non', 'Oui, en CSV et JSON', 'Oui, en PDF uniquement', 'Oui, mais uniquement les clients Pro'], correct: 1 },
-      ],
-    };
-
-    // ============================================================
-    // STATE
-    // ============================================================
-    let activeModule = 'presentation';
-    let activeSection = 'learn';
-    const scores = JSON.parse(localStorage.getItem('tm-training-scores') || '{}');
-
-    function saveScores() { localStorage.setItem('tm-training-scores', JSON.stringify(scores)); }
-
-    function getScore(moduleId) { return scores[moduleId] || { correct: 0, total: 0 }; }
-
-    // ============================================================
-    // RENDER
-    // ============================================================
-    function render() {
-      renderModules();
-      renderContent();
-    }
-
-    function renderModules() {
-      const el = document.getElementById('modules');
-      el.innerHTML = MODULES.map(m => {
-        const s = getScore(m.id);
-        const done = s.total > 0 && s.correct === s.total;
-        return `<button class="module-btn ${m.id === activeModule ? 'active' : ''} ${done ? 'done' : ''}" onclick="selectModule('${m.id}')">${m.name}</button>`;
-      }).join('');
-    }
-
-    function selectModule(id) { activeModule = id; activeSection = 'learn'; render(); }
-
-    function renderContent() {
-      const mod = MODULES.find(m => m.id === activeModule);
-      if (!mod) return;
-      const section = mod.sections.find(s => s.id === activeSection);
-      if (!section) return;
-
-      let html = '';
-
-      // Tabs
-      html += '<div class="tabs">';
-      mod.sections.forEach(s => {
-        html += `<button class="tab ${s.id === activeSection ? 'active' : ''}" onclick="selectSection('${s.id}')">${s.id === 'learn' ? '📖 Apprendre' : '❓ Quiz'}</button>`;
-      });
-      html += '</div>';
-
-      // Content
-      html += section.content;
-
-      document.getElementById('content').innerHTML = html;
-
-      // Render quizzes if needed
-      if (activeSection === 'quiz') renderQuiz(activeModule);
-    }
-
-    function selectSection(id) { activeSection = id; render(); }
-
-    function renderQuiz(moduleId) {
-      const quiz = QUIZZES[moduleId];
-      if (!quiz) return;
-      const s = getScore(moduleId);
-
-      let html = '';
-      quiz.forEach((q, qi) => {
-        html += `<div class="quiz-q"><div class="q-text">${qi + 1}. ${q.q}</div><div class="q-opts">`;
-        q.opts.forEach((opt, oi) => {
-          html += `<button class="q-opt" onclick="answer('${moduleId}', ${qi}, ${oi})">${opt}</button>`;
-        });
-        html += '</div></div>';
-      });
-
-      const quizEl = document.getElementById('quiz-' + moduleId);
-      if (quizEl) quizEl.innerHTML = html;
-
-      const scoreEl = document.getElementById('score-' + moduleId);
-      if (scoreEl) {
-        scoreEl.innerHTML = `
-          <span class="score ${s.correct === s.total && s.total > 0 ? 'ok' : 'ko'}">Score : ${s.correct}/${s.total}</span>
-          <button class="reset-btn" onclick="resetQuiz('${moduleId}')">🔄 Recommencer</button>
-        `;
+    ]
+  },
+  {
+    id:'plans', name:'Plans & Prix',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Les plans tarifaires</h2><p class="sub">Comprendre ce que chaque plan contient et à qui le vendre.</p><div class="plans"><div class="pc"><div class="pn">Pack Gestion</div><div class="pp">39€<span>/mois</span></div><ul><li>400 réservations / mois</li><li>Notifications push</li><li>Widget standard</li><li>Emails automatiques</li><li>Export des données</li><li>Support par email</li></ul></div><div class="pc pop"><div class="pop-badge">⭐ Recommandé</div><div class="pn">Pack Croissance</div><div class="pp">69€<span>/mois</span></div><ul><li>Réservations illimitées</li><li>Widget personnalisable</li><li>URL personnalisée</li><li>Comptes serveurs illimités</li><li>Support prioritaire</li><li>Demandes d\'avis Google</li></ul></div></div><h3>Quand recommander chaque plan ?</h3><div class="box box-blue"><div class="box-title">🧑‍🍳 Pack Gestion (39€/mois)</div><p style="font-size:14px;color:var(--gray);margin:0">Idéal pour les <strong>petits restaurants</strong> (moins de 30 couverts par service) qui veulent simplement <strong>arrêter le cahier papier</strong>. Ils n\'ont pas besoin de personnaliser le widget, le design par défaut leur suffit.</p></div><div class="box box-blue"><div class="box-title">🏢 Pack Croissance (69€/mois)</div><p style="font-size:14px;color:var(--gray);margin:0">Idéal pour les restaurants qui veulent <strong>une image de marque cohérente</strong> (personnalisation aux couleurs du resto), qui ont une <strong>équipe en salle</strong> (comptes serveurs), ou qui font plus de <strong>400 réservations par mois</strong>. C\'est le plan que nous recommandons dans <strong>90% des cas</strong> car la personnalisation est importante pour l\'image du restaurant.</p></div><h3>L\'essai gratuit de 14 jours</h3><div class="box box-green"><div class="box-title">🆓 Aucun risque pour le restaurateur</div><p style="font-size:14px;color:var(--gray);margin:0">Les 14 premiers jours sont <strong>totalement gratuits</strong>. Le restaurateur peut tester <strong>toutes</strong> les fonctionnalités sans engagement. Sa carte bancaire n\'est <strong>pas débitée</strong> avant la fin de l\'essai. Il peut annuler à tout moment. C\'est un argument très fort : « Vous ne payez que si vous êtes convaincu. »</p></div></div>'
+      },
+      {
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — Plans & Prix</h3><div id="quiz-plans"></div><div id="score-plans" class="score-bar" style="margin-top:16px"></div></div>'
       }
-    }
-
-    function answer(moduleId, qi, oi) {
-      const quiz = QUIZZES[moduleId];
-      if (!quiz) return;
-      const q = quiz[qi];
-      const correct = oi === q.correct;
-      const s = getScore(moduleId);
-
-      if (!scores[moduleId]) scores[moduleId] = { correct: 0, total: 0 };
-      if (typeof q.answered === 'undefined') {
-        q.answered = true;
-        scores[moduleId].total++;
-        if (correct) scores[moduleId].correct++;
-        saveScores();
+    ]
+  },
+  {
+    id:'widget', name:'Le Widget',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Le widget de réservation</h2><p class="sub">Le widget, c\'est le bouton magique qui transforme un site web en outil de réservation. Voici comment ça marche.</p><div class="box box-blue"><div class="box-title">📌 Qu\'est-ce qu\'un widget ?</div><p style="font-size:15px;color:var(--gray);margin:0">Un <strong>widget</strong> (prononcez « ouidjette »), c\'est un petit bouton qu\'on ajoute sur un site internet. Vous l\'avez déjà vu : c\'est le bouton de chat en direct de beaucoup de sites, ou le bouton « Commander » d\'un site de vente en ligne. TableMaster fournit un widget « <strong>Réserver une table</strong> » que le restaurateur installe sur son propre site.</p></div><h3>Comment le client voit le widget ?</h3><div class="schema"><div class="s-box"><div class="ico">🔘</div><div class="lbl">Le client voit un bouton</div><div class="sbt">Un bouton flottant en bas à droite du site, toujours visible même en scrollant.</div></div><div class="s-box"><div class="ico">👆</div><div class="lbl">Il clique dessus</div><div class="sbt">Une fenêtre s\'ouvre <strong>par-dessus</strong> le site, sans le quitter.</div></div><div class="s-box"><div class="ico">📝</div><div class="lbl">Il remplit le formulaire</div><div class="sbt">Nom, email, téléphone, date, heure, nombre de personnes.</div></div><div class="s-box"><div class="ico">✅</div><div class="lbl">Réservation confirmée</div><div class="sbt">Le client reçoit un email. Le resto reçoit une notification.</div></div></div><h3>Les deux façons d\'utiliser le widget</h3><div class="fg fg-2"><div class="ft"><div class="fi">🔗</div><div class="fx"><div class="ftl">Lien direct (tous les plans)</div><div class="ftd">Une simple URL comme <em>tablemaster.fr/mon-restaurant</em>. Le restaurateur la met dans sa bio Instagram, sur sa page Facebook, dans ses emails, ou en QR code sur sa vitrine. Rien à installer.</div></div></div><div class="ft"><div class="fi">📜</div><div class="fx"><div class="ftl">Script à installer (tous les plans)</div><div class="ftd">Une ligne de code à copier-coller sur son site. Le bouton « Réserver une table » apparaît automatiquement en bas à droite de chaque page. Compatible WordPress, Wix, Shopify, Webflow, et tout site HTML.</div></div></div></div><h3>Où le restaurateur installe-t-il le widget ?</h3><p>TableMaster fournit des <strong>instructions pas à pas</strong> pour chaque plateforme :</p><ul><li><strong>WordPress</strong> : via un bloc HTML personnalisé (2 clics)</li><li><strong>Wix</strong> : via l\'élément « HTML intégré »</li><li><strong>Shopify</strong> : via une section HTML personnalisée</li><li><strong>Webflow</strong> : via l\'élément « Embed »</li><li><strong>Site HTML classique</strong> : une balise &lt;script&gt; à placer avant &lt;/body&gt;</li></ul><div class="box box-green"><div class="box-title">💡 Ce qu\'il faut dire au restaurateur</div><p style="font-size:14px;color:var(--gray);margin:0">« L\'installation prend <strong>2 minutes</strong>. Vous copiez une ligne, vous la collez sur votre site, et c\'est fait. Si vous êtes bloqué, on le fait pour vous. »</p></div></div>'
+      },
+      {
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — Le Widget</h3><div id="quiz-widget"></div><div id="score-widget" class="score-bar" style="margin-top:16px"></div></div>'
       }
+    ]
+  },
+  {
+    id:'reservations', name:'Réservations',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Gérer les réservations</h2><p class="sub">Une fois que le widget est installé et que les clients réservent, que voit le restaurateur ? Voici le tableau de bord en détail.</p><h3>La vue liste</h3><p>La vue par défaut. Toutes les réservations s\'affichent les unes en dessous des autres, comme une liste de mails.</p><div class="fg fg-2"><div class="ft"><div class="fi">🔍</div><div class="fx"><div class="ftl">Recherche et filtres</div><div class="ftd">Cherchez par nom de client, filtrez par date, statut (en attente, confirmé, terminé), ou service (midi/soir).</div></div></div><div class="ft"><div class="fi">👈</div><div class="fx"><div class="ftl">Swipe sur mobile</div><div class="ftd">Sur téléphone, glissez une réservation vers la droite pour la <strong>confirmer</strong>, vers la gauche pour l\'<strong>annuler</strong>. Un geste, c\'est tout.</div></div></div><div class="ft"><div class="fi">🔔</div><div class="fx"><div class="ftl">Actions depuis la notification</div><div class="ftd">Quand une nouvelle réservation arrive, le restaurateur peut la <strong>valider ou la refuser directement depuis la notification</strong>, sans même ouvrir l\'application.</div></div></div><div class="ft"><div class="fi">📊</div><div class="fx"><div class="ftl">Statistiques en direct</div><div class="ftd">En haut de la liste : nombre de réservations du jour, couverts prévus, tendances.</div></div></div></div><h3>La vue calendrier</h3><p>Une alternative visuelle à la liste. Le restaurateur voit ses réservations sur un calendrier, comme un agenda.</p><div class="fg fg-2"><div class="ft"><div class="fi">📅</div><div class="fx"><div class="ftl">Trois modes d\'affichage</div><div class="ftd"><strong>Jour</strong> : un planning détaillé avec les créneaux du midi et du soir. <strong>Semaine</strong> : toutes les résas de la semaine en un coup d\'œil. <strong>Mois</strong> : chaque jour du mois avec un indicateur visuel de remplissage.</div></div></div><div class="ft"><div class="fi">🟢</div><div class="fx"><div class="ftl">Code couleur d\'occupation</div><div class="ftd">Vert = faible occupation, jaune = moyen, orange = élevé, rouge = presque complet. Le restaurateur sait d\'un coup d\'œil si sa salle est pleine.</div></div></div><div class="ft"><div class="fi">➕</div><div class="fx"><div class="ftl">Création rapide</div><div class="ftd">Sur mobile, un bouton <strong>+</strong> flottant permet de créer une réservation en quelques secondes (pour un appel téléphonique).</div></div></div></div><h3>La fiche de réservation</h3><p>Quand le restaurateur clique sur une réservation, il voit tous les détails :</p><ul><li><strong>Nom du client</strong>, téléphone (appel en un clic), email</li><li><strong>Date et heure</strong> de la réservation</li><li><strong>Nombre de personnes</strong></li><li><strong>Statut</strong> : en attente, confirmée, annulée, terminée</li><li><strong>Actions</strong> : confirmer, annuler, modifier, supprimer</li><li><strong>Notes</strong> : le restaurateur peut ajouter des remarques</li></ul><div class="box box-green"><div class="box-title">💡 Argument</div><p style="font-size:14px;color:var(--gray);margin:0">« Vous avez une vue complète de votre salle en un coup d\'œil. Vous savez combien de couverts sont prévus, à quelle heure, et par qui. Plus jamais de double réservation ou de table vide à cause d\'une erreur de carnet. »</p></div></div>'
+      },
+      {
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — Réservations</h3><div id="quiz-reservations"></div><div id="score-reservations" class="score-bar" style="margin-top:16px"></div></div>'
+      }
+    ]
+  },
+  {
+    id:'clients', name:'Clients',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Le fichier clients (CRM)</h2><p class="sub">Chaque personne qui réserve est automatiquement enregistrée. Voici ce que ça permet de faire.</p><div class="box box-blue"><div class="box-title">📌 Qu\'est-ce qu\'un CRM ?</div><p style="font-size:15px;color:var(--gray);margin:0"><strong>CRM</strong> = Customer Relationship Management = <strong>Gestion de la relation client</strong>. C\'est un fichier qui garde en mémoire tous vos clients, leurs habitudes, leurs préférences. Avant TableMaster, les restaurants gardaient ça « dans leur tête ». Avec TableMaster, tout est <strong>écrit, organisé, consultable</strong>.</p></div><h3>Ce que le restaurateur peut faire</h3><div class="fg fg-2"><div class="ft"><div class="fi">📇</div><div class="fx"><div class="ftl">Fichier automatique</div><div class="ftd">Chaque nouveau client est <strong>automatiquement</strong> enregistré dès sa première réservation. Le restaurateur n\'a rien à faire.</div></div></div><div class="ft"><div class="fi">🏷️</div><div class="fx"><div class="ftl">Tags de segmentation</div><div class="ftd"><strong>VIP</strong> : clients importants à chouchouter. <strong>Fidèle</strong> : clients réguliers à récompenser. <strong>Régulier</strong> : bonne fréquence. <strong>À risque</strong> : clients qui annulent souvent.</div></div></div><div class="ft"><div class="fi">📊</div><div class="fx"><div class="ftl">Statistiques par client</div><div class="ftd">Nombre de visites, nombre d\'annulations, date de la dernière visite, nombre moyen de convives par réservation.</div></div></div><div class="ft"><div class="fi">✏️</div><div class="fx"><div class="ftl">Notes internes</div><div class="ftd">Le restaurateur peut ajouter des notes privées : « Préfère la table près de la fenêtre », « Allergique aux noix », « Vient toujours avec son chien ».</div></div></div><div class="ft"><div class="fi">📤</div><div class="fx"><div class="ftl">Export des données</div><div class="ftd">Téléchargez la liste des clients en CSV (pour Excel) ou JSON. Utile pour les campagnes d\'emailing.</div></div></div><div class="ft"><div class="fi">🔍</div><div class="fx"><div class="ftl">Recherche et filtres</div><div class="ftd">Retrouvez un client par son nom, filtrez par tag, triez par date de dernière visite.</div></div></div></div><div class="box box-green"><div class="box-title">💡 Argument</div><p style="font-size:14px;color:var(--gray);margin:0">« Imaginez que Monsieur Dupont appelle pour réserver. Vous ouvrez TableMaster, vous tapez son nom, et vous voyez qu\'il est déjà venu 8 fois, qu\'il préfère le soir, et qu\'il est allergique aux fruits de mer. Vous lui proposez une table loin de la cuisine et vous vérifiez le menu du jour. Il se sent reconnu, valorisé. Il reviendra. »</p></div></div>'
+      },
+      {
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — Clients</h3><div id="quiz-clients"></div><div id="score-clients" class="score-bar" style="margin-top:16px"></div></div>'
+      }
+    ]
+  },
+  {
+    id:'config', name:'Configuration',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Configurer son restaurant</h2><p class="sub">Après l\'inscription, le restaurateur configure son établissement. Voici ce qu\'il peut paramétrer.</p><h3>Horaires d\'ouverture</h3><p>Le restaurateur définit pour <strong>chaque jour de la semaine</strong> ses horaires d\'ouverture. Il peut avoir plusieurs créneaux par jour (ex : 12h-14h pour le midi, 19h-22h pour le soir). Les jours où il est fermé, le widget n\'affiche <strong>aucun créneau</strong>.</p><div class="box box-amber"><div class="box-title">⚠️ Point important</div><p style="font-size:14px;color:var(--gray);margin:0">C\'est la <strong>première chose à faire</strong> après l\'inscription. Sans horaires configurés, le widget ne peut pas proposer de créneaux de réservation.</p></div><h3>Configuration des tables</h3><p>Le restaurateur indique combien de tables il a dans son restaurant et combien de personnes peuvent s\'asseoir à chaque table. Deux modes :</p><ul><li><strong>Mode simple</strong> : « J\'ai 20 tables de 4 personnes en moyenne »</li><li><strong>Mode détaillé</strong> : « J\'ai 5 tables de 2, 10 tables de 4, 3 tables de 6, et 2 tables de 8 »</li></ul><p>Cette configuration permet à TableMaster de calculer le <strong>taux d\'occupation</strong> et d\'afficher au restaurateur s\'il est bientôt complet.</p><h3>Durée d\'un service</h3><p>Le restaurateur définit combien de temps dure un repas en moyenne. Par défaut, c\'est <strong>1h30</strong> (90 minutes). Cela détermine l\'espacement entre deux réservations sur une même table. Si le restaurateur règle 2h, les créneaux seront espacés de 2 heures.</p><h3>Fermetures exceptionnelles</h3><p>Le restaurateur peut bloquer des dates spécifiques : vacances annuelles, jours fériés, fermeture pour travaux. Pendant ces dates, le widget n\'accepte <strong>aucune réservation</strong>.</p><h3>Notifications</h3><p>Le restaurateur choisit comment il veut être prévenu :</p><ul><li><strong>Push</strong> : notification sur son téléphone ou son ordinateur (même quand il n\'a pas TableMaster ouvert)</li><li><strong>Email</strong> : un email à chaque événement</li><li><strong>Les deux</strong> : pour ne rien rater</li></ul><p>Il peut aussi choisir pour quels événements il est notifié : nouvelle réservation, confirmation, annulation, modification.</p></div>'
+      },
+      {
+        id:'quiz',
+        content:'<div class="card"><h3>Quiz — Configuration</h3><div id="quiz-config"></div><div id="score-config" class="score-bar" style="margin-top:16px"></div></div>'
+      }
+    ]
+  },
+  {
+    id:'vente', name:'Argumentaire',
+    sections:[
+      {
+        id:'learn',
+        content:'<div class="card"><h2>Comment vendre TableMaster</h2><p class="sub">Voici les arguments clés, les réponses aux objections, et des scripts de vente prêts à l\'emploi.</p><h3>Les 6 arguments imparables</h3><div class="box"><div class="box-title">1. 💸 Pas de commission</div><p style="font-size:14px;color:var(--gray);margin:0">TheFork prend 2€ par couvert. Pour un restaurant qui fait 500 couverts/mois, c\'est <strong>1000€ de commissions</strong>. TableMaster, c\'est <strong>39€/mois</strong>, point. Qu\'il y ait 10 ou 1000 réservations, le prix ne change pas.</p><div class="script">« Avec TheFork, plus vous avez de clients, plus vous payez. Avec TableMaster, plus vous avez de clients, plus vous gagnez. »</div></div><div class="box"><div class="box-title">2. ⏱️ Gain de temps</div><p style="font-size:14px;color:var(--gray);margin:0">Un restaurateur passe 1 à 2 heures par jour au téléphone. Avec TableMaster, ce temps est <strong>récupéré</strong>. Il peut se concentrer sur sa cuisine et sa salle.</p><div class="script">« Vous passez combien de temps au téléphone chaque jour ? Imaginez récupérer ce temps pour vos clients en salle. »</div></div><div class="box"><div class="box-title">3. 📱 Les clients veulent réserver en ligne</div><p style="font-size:14px;color:var(--gray);margin:0">70% des réservations en ligne sont faites à des horaires où le restaurant est <strong>fermé</strong>. Sans système en ligne, ces clients réservent ailleurs.</p><div class="script">« Quand votre restaurant est fermé le lundi, vos clients cherchent une table pour samedi. Sans solution en ligne, ils vont chez votre concurrent. »</div></div><div class="box"><div class="box-title">4. 📊 Visibilité sur l\'activité</div><p style="font-size:14px;color:var(--gray);margin:0">Le restaurateur sait exactement combien de couverts il aura ce soir, demain, ce week-end. Il peut anticiper : courses, personnel, organisation.</p><div class="script">« Vous savez le matin combien de couverts vous aurez le soir. Vous commandez les bonnes quantités, vous prévoyez le bon nombre de serveurs. »</div></div><div class="box"><div class="box-title">5. 🔔 Réactivité</div><p style="font-size:14px;color:var(--gray);margin:0">Dès qu\'une réservation est faite le restaurateur est notifié sur son téléphone. Il valide ou refuse en un clic. Le client reçoit une confirmation <strong>instantanée</strong>.</p><div class="script">« Vous êtes au marché, vous recevez une notification : une table de 6 pour ce soir. Vous validez en 2 secondes, le client reçoit sa confirmation. Simple. »</div></div><div class="box"><div class="box-title">6. 🎯 Le prix d\'un couvert</div><p style="font-size:14px;color:var(--gray);margin:0">39€/mois = le prix de <strong>2 à 3 couverts</strong>. C\'est amorti dès la première semaine. Pour moins de 2€ par jour, le restaurant a un outil professionnel.</p><div class="script">« Pour le prix de deux cafés par jour, vous avez un système de réservation complet. »</div></div><h3>Les objections fréquentes et comment y répondre</h3><div class="box box-red"><div class="box-title">❌ « Je n\'ai pas de site internet »</div><p style="font-size:14px;color:var(--gray);margin:0">→ Vous n\'en avez pas besoin ! TableMaster vous fournit un <strong>lien direct</strong> que vous pouvez partager sur Facebook, Instagram, ou mettre en QR code sur votre vitrine. Vos clients cliquent et réservent.</p></div><div class="box box-red"><div class="box-title">❌ « Je ne suis pas à l\'aise avec l\'informatique »</div><p style="font-size:14px;color:var(--gray);margin:0">→ C\'est fait pour ! L\'interface est <strong>ultra simple</strong>, comme WhatsApp ou votre appli météo. Et si vous êtes bloqué, on est là pour vous aider par téléphone. On peut même le configurer avec vous.</p></div><div class="box box-red"><div class="box-title">❌ « Mes clients préfèrent appeler »</div><p style="font-size:14px;color:var(--gray);margin:0">→ Et vous pouvez continuer à prendre leurs appels ! Vous créez la réservation vous-même dans TableMaster en 30 secondes. Le système remplace votre carnet, pas votre téléphone.</p></div><div class="box box-red"><div class="box-title">❌ « C\'est trop cher »</div><p style="font-size:14px;color:var(--gray);margin:0">→ 39€ par mois, c\'est <strong>moins de 2€ par jour</strong>. Un couvert vous rapporte au moins 30€. Il vous suffit de <strong>2 couverts supplémentaires par mois</strong> (grâce aux réservations en ligne) pour que ce soit rentable. Et les 14 premiers jours sont gratuits pour tester.</p></div><div class="box box-red"><div class="box-title">❌ « Je suis déjà sur TheFork / LaFourchette »</div><p style="font-size:14px;color:var(--gray);margin:0">→ TableMaster n\'est pas un concurrent de TheFork, c\'est un <strong>complément</strong>. TheFork vous apporte des <strong>nouveaux clients</strong>. TableMaster gère <strong>vos clients existants</strong> et vos réservations directes (celles pour lesquelles vous ne payez aucune commission). Les deux peuvent coexister.</p></div><h3>Comment faire une démonstration efficace</h3><ol style="padding-left:20px"><li style="margin-bottom:8px;font-size:14px;color:var(--gray)"><strong>Ouvrez le widget</strong> sur votre téléphone. Montrez le bouton, cliquez, remplissez le formulaire.</li><li style="margin-bottom:8px;font-size:14px;color:var(--gray)"><strong>Montrez la notification</strong> qui arrive instantanément.</li><li style="margin-bottom:8px;font-size:14px;color:var(--gray)"><strong>Ouvrez le tableau de bord</strong>, montrez la réservation qui vient d\'apparaître.</li><li style="margin-bottom:8px;font-size:14px;color:var(--gray)"><strong>Confirmez-la</strong> en un clic.</li><li style="margin-bottom:8px;font-size:14px;color:var(--gray)"><strong>Montrez le fichier client</strong> : « Et voilà, ce client est maintenant enregistré. La prochaine fois qu\'il réserve, vous saurez tout de lui. »</li></ol><div class="box box-green"><div class="box-title">✅ L\'objectif de la démo</div><p style="font-size:14px;color:var(--gray);margin:0">Ne montrez <strong>pas tout</strong>. Montrez <strong>l\'essentiel</strong> : le parcours client (widget → réservation), la notification, le tableau de bord. En 3 minutes, le restaurateur doit comprendre <strong>ce que ça change pour lui</strong>.</p></div></div>'
+      }
+    ]
+  },
+  {
+    id:'glossaire', name:'Glossaire',
+    sections:[{
+      id:'learn',
+      content:'<div class="card"><h2>Glossaire</h2><p class="sub">Les mots techniques expliqués simplement.</p><div class="gloss-term">Widget</div><div class="gloss-def">Prononcé « ouidjette ». Un petit bouton qu\'on ajoute sur un site internet. Chez TableMaster, c\'est le bouton « Réserver une table ».</div><div class="gloss-term">Dashboard</div><div class="gloss-def">Prononcé « dashboarde ». Le tableau de bord. La page d\'accueil où le restaurateur voit toutes ses réservations d\'un coup d\'œil.</div><div class="gloss-term">SaaS</div><div class="gloss-def">Software as a Service. « Logiciel en tant que service ». Plutôt que d\'acheter un logiciel une fois, on paie un abonnement mensuel. Comme Netflix ou Spotify, mais pour un outil professionnel.</div><div class="gloss-term">CRM</div><div class="gloss-def">Customer Relationship Management. « Gestion de la relation client ». Le fichier qui garde en mémoire tous les clients et leurs habitudes.</div><div class="gloss-term">Notification push</div><div class="gloss-def">Un message qui apparaît sur votre téléphone ou votre ordinateur, même quand vous n\'avez pas l\'application ouverte. Comme une notification WhatsApp.</div><div class="gloss-term">Responsive</div><div class="gloss-def">Prononcé « responsive ». Un site « responsive » s\'adapte automatiquement à la taille de l\'écran : téléphone, tablette, ordinateur. TableMaster est 100% responsive.</div><div class="gloss-term">URL / Lien</div><div class="gloss-def">L\'adresse d\'une page web. Par exemple <em>tablemaster.fr/mon-restaurant</em>. Un lien direct que le restaurateur peut partager.</div><div class="gloss-term">Script</div><div class="gloss-def">Une ligne de code informatique qui ajoute une fonctionnalité à un site. Chez TableMaster, le script ajoute le bouton de réservation.</div><div class="gloss-term">CSV</div><div class="gloss-def">Un format de fichier qui s\'ouvre avec Excel. Permet d\'exporter des données (liste de clients, liste de réservations) pour les analyser.</div><div class="gloss-term">API</div><div class="gloss-def">« Interface de programmation ». C\'est ce qui permet à deux logiciels de communiquer entre eux. Le restaurateur n\'a pas besoin de comprendre ce que c\'est, c\'est technique et géré par TableMaster.</div><div class="gloss-term">Stripe</div><div class="gloss-def">La plateforme de paiement utilisée par TableMaster pour gérer les abonnements. Stripe est utilisée par des milliers d\'entreprises dans le monde (Amazon, Google, Deliveroo). C\'est 100% sécurisé.</div></div>'
+    }]
+  }
+];
 
-      // Update UI
-      const container = document.getElementById('quiz-' + moduleId);
-      if (!container) return;
-      const opts = container.querySelectorAll('.quiz-q')[qi].querySelectorAll('.q-opt');
-      opts.forEach((el, i) => {
-        el.disabled = true;
-        if (i === q.correct) el.classList.add('correct');
-        if (i === oi && !correct) el.classList.add('wrong');
-      });
+const Q = {
+  presentation:[
+    {q:'Qu\'est-ce que TableMaster ?',opts:['Un site pour commander à manger','Un outil pour gérer les réservations des restaurants','Un réseau social pour restaurateurs','Une application de livraison'],correct:1},
+    {q:'Quelle est la différence principale entre TableMaster et TheFork ?',opts:['TableMaster est plus cher','TableMaster ne prend pas de commission sur les couverts','TableMaster n\'a pas de site web','TheFork est gratuit'],correct:1},
+    {q:'Combien de temps un restaurateur passe-t-il au téléphone par jour pour les réservations ?',opts:['10 minutes','1 à 2 heures','4 à 5 heures','Il n\'y a pas de téléphone dans un restaurant'],correct:1},
+    {q:'Quel pourcentage des réservations en ligne est fait en dehors des heures d\'ouverture ?',opts:['10%','30%','50%','70%'],correct:3},
+    {q:'Le client doit-il quitter le site du restaurant pour réserver ?',opts:['Oui, il est redirigé vers TableMaster','Non, le formulaire s\'ouvre dans une fenêtre superposée','Oui, il doit télécharger une application','Non, il doit appeler le restaurant'],correct:1},
+    {q:'Comment le restaurateur est-il prévenu d\'une nouvelle réservation ?',opts:['Par courrier postal','Par notification sur son téléphone','Par fax','Il doit vérifier manuellement'],correct:1},
+    {q:'Que signifie SaaS ?',opts:['Service après-vente','Software as a Service (logiciel par abonnement)','Système d\'alarme','Service d\'assistance'],correct:1},
+    {q:'TableMaster prend-il une commission sur les réservations ?',opts:['Oui, 1€ par couvert','Oui, 5% du montant','Non, c\'est un abonnement fixe','Oui, uniquement les week-ends'],correct:2},
+  ],
+  plans:[
+    {q:'Quel est le prix du Pack Gestion ?',opts:['29€/mois','39€/mois','49€/mois','Gratuit'],correct:1},
+    {q:'Quel est le prix du Pack Croissance (Pro) ?',opts:['39€/mois','59€/mois','69€/mois','99€/mois'],correct:2},
+    {q:'Quelle est la limite de réservations du Pack Gestion ?',opts:['200/mois','400/mois','600/mois','Illimité'],correct:1},
+    {q:'Les réservations sont-elles limitées sur le Pack Croissance ?',opts:['Oui, 1000/mois','Oui, 2000/mois','Non, elles sont illimitées','Oui, 5000/mois'],correct:2},
+    {q:'Quelle est la durée de l\'essai gratuit ?',opts:['7 jours','14 jours','30 jours','Il n\'y a pas d\'essai'],correct:1},
+    {q:'Faut-il une carte bancaire pour l\'essai gratuit ?',opts:['Oui','Non','Seulement pour le plan Pro','Oui, mais elle n\'est pas débitée'],correct:1},
+    {q:'Quel plan recommandez-vous dans 90% des cas ?',opts:['Pack Gestion','Pack Croissance','Aucun des deux','Un plan sur mesure'],correct:1},
+    {q:'Combien de couverts faut-il pour rentabiliser le Pack Gestion ?',opts:['10 couverts/mois','2 à 3 couverts/mois','50 couverts/mois','100 couverts/mois'],correct:1},
+  ],
+  widget:[
+    {q:'Qu\'est-ce qu\'un widget ?',opts:['Un type de restaurant','Un petit bouton qu\'on ajoute sur un site web','Un logiciel de comptabilité','Un réseau social'],correct:1},
+    {q:'Comment le client voit-il le widget sur le site du restaurant ?',opts:['Comme une pop-up publicitaire','Comme un bouton flottant en bas à droite','Comme une bannière en haut','Il ne le voit pas'],correct:1},
+    {q:'Sur quelles plateformes le widget peut-il être installé ?',opts:['WordPress uniquement','WordPress, Wix, Shopify, Webflow, site HTML','Shopify uniquement','Aucune installation possible'],correct:1},
+    {q:'Que faut-il faire pour installer le widget sur un site ?',opts:['Engager un développeur','Copier-coller une ligne de code','Acheter un plugin payant','Télécharger une application'],correct:1},
+    {q:'Le lien direct peut-il être partagé sur Instagram ?',opts:['Non','Oui, dans la bio','Oui, mais uniquement en message privé','Non, Instagram ne le permet pas'],correct:1},
+    {q:'Un QR code peut-il être généré pour le lien de réservation ?',opts:['Non','Oui, avec n\'importe quel générateur de QR code','Seulement avec un abonnement Pro','Oui, mais uniquement pour les menus'],correct:1},
+    {q:'La personnalisation des couleurs du widget est disponible sur...',opts:['Tous les plans','Le Pack Croissance (Pro) uniquement','Le Pack Gestion uniquement','Aucun plan'],correct:1},
+    {q:'Combien de temps prend l\'installation du widget ?',opts:['Une journée','Environ 2 minutes','Plusieurs heures','Une semaine'],correct:1},
+  ],
+  reservations:[
+    {q:'Quelles vues sont disponibles pour voir les réservations ?',opts:['Liste uniquement','Liste et calendrier (jour, semaine, mois)','Mois uniquement','Tableau Excel'],correct:1},
+    {q:'Que signifie le code couleur vert dans le calendrier ?',opts:['Le restaurant est fermé','Faible occupation','Occupation élevée','Réservation annulée'],correct:1},
+    {q:'Peut-on créer une réservation manuellement ?',opts:['Non','Oui, pour les appels téléphoniques','Oui, mais uniquement le jour même','Non, seuls les clients peuvent réserver'],correct:1},
+    {q:'Quelle action peut-on faire depuis une notification push ?',opts:['Rien, juste la lire','Valider ou refuser la réservation sans ouvrir l\'application','Modifier les horaires','Contacter le client'],correct:1},
+    {q:'Que se passe-t-il quand on glisse une résa vers la droite sur mobile ?',opts:['Rien','La réservation est confirmée','La réservation est supprimée','Le client est appelé'],correct:1},
+    {q:'Quels emails sont envoyés automatiquement au client ?',opts:['Aucun','Confirmation, annulation et rappel 24h avant','Uniquement la confirmation','Un compte-rendu mensuel'],correct:1},
+    {q:'Combien de statuts différents une réservation peut-elle avoir ?',opts:['2 (confirmée, annulée)','4 (en attente, confirmée, annulée, terminée)','3 (nouvelle, vue, répondue)','1 (enregistrée)'],correct:1},
+    {q:'Le bouton + sur mobile (FAB) permet de...',opts:['Ajouter un restaurant','Créer rapidement une nouvelle réservation','Ajouter un serveur','Agrandir la vue'],correct:1},
+  ],
+  clients:[
+    {q:'Que signifie CRM ?',opts:['Centre de Réservation Mobile','Customer Relationship Management (gestion de la relation client)','Compte Rendu Mensuel','Carte de Réservation Manuelle'],correct:1},
+    {q:'Comment les clients sont-ils ajoutés au CRM ?',opts:['Manuellement un par un','Automatiquement à chaque réservation','Par import de fichier uniquement','Via une API externe'],correct:1},
+    {q:'Quel tag utiliser pour un client qui annule souvent ?',opts:['VIP','Fidèle','Régulier','À risque'],correct:3},
+    {q:'Quel tag utiliser pour un client important à chouchouter ?',opts:['VIP','Fidèle','Régulier','À risque'],correct:0},
+    {q:'Quelles informations peut-on voir dans la fiche d\'un client ?',opts:['Son nom uniquement','Nombre de visites, annulations, dernière visite','Son adresse postale','Ses coordonnées bancaires'],correct:1},
+    {q:'Les notes internes sur un client servent à...',opts:['Rien, c\'est décoratif','Noter des préférences visibles par toute l\'équipe','Envoyer un email au client','Modifier les horaires du restaurant'],correct:1},
+    {q:'Peut-on exporter la liste des clients ?',opts:['Non','Oui, en CSV (pour Excel) et JSON','Oui, en PDF uniquement','Oui, mais uniquement en Pro'],correct:1},
+    {q:'Quel est l\'intérêt du CRM pour un restaurant ?',opts:['Aucun','Connaître ses clients, personnaliser le service, fidéliser','C\'est obligatoire légalement','C\'est uniquement pour les grandes chaînes'],correct:1},
+  ],
+  config:[
+    {q:'Quelle est la première chose à configurer après l\'inscription ?',opts:['Le widget','Les horaires d\'ouverture','Les notifications','Le logo'],correct:1},
+    {q:'Combien de créneaux peut-on avoir par jour ?',opts:['Un seul','Plusieurs (midi et soir par exemple)','Deux maximum','Autant que l\'on veut'],correct:1},
+    {q:'Que se passe-t-il si un jour est marqué comme fermé ?',opts:['Rien de spécial','Le widget n\'affiche aucun créneau pour ce jour','Le restaurant est supprimé','Les réservations existantes sont annulées'],correct:1},
+    {q:'À quoi sert la durée d\'un service (90 min par défaut) ?',opts:['À calculer le temps de cuisson','À espacer les créneaux de réservation','À facturer le client','À rien, c\'est informatif'],correct:1},
+    {q:'Qu\'est-ce qu\'une fermeture exceptionnelle ?',opts:['Quand le restaurant ferme définitivement','Une date spécifique où le restaurant est fermé','Une erreur informatique','Quand un employé est malade'],correct:1},
+    {q:'Quels types de notifications le restaurateur peut-il recevoir ?',opts:['SMS uniquement','Push (téléphone) et email','Courrier postal','Appel téléphonique'],correct:1},
+    {q:'Le restaurateur peut-il choisir pour quels événements il est notifié ?',opts:['Non, il reçoit tout','Oui (nouvelle résa, confirmée, annulée, modifiée)','Oui, mais uniquement pour les annulations','Non, c\'est automatique'],correct:1},
+    {q:'Que permet le mode détaillé pour la configuration des tables ?',opts:['Rien de plus','De définir précisément chaque type de table (2, 4, 6 places...)','De changer la couleur des tables','De commander des tables en ligne'],correct:1},
+  ],
+};
 
-      // Add feedback
-      const qEl = container.querySelectorAll('.quiz-q')[qi];
-      const fb = document.createElement('div');
-      fb.className = `feedback ${correct ? 'correct' : 'wrong'}`;
-      fb.textContent = correct ? '✓ Bonne réponse !' : `✗ La bonne réponse était : ${q.opts[q.correct]}`;
-      qEl.appendChild(fb);
+// STATE
+let activeModule='presentation'; let activeSection='learn';
+const scores=JSON.parse(localStorage.getItem('tm2-scores')||'{}');
+function save(){localStorage.setItem('tm2-scores',JSON.stringify(scores));}
+function getS(m){return scores[m]||{correct:0,total:0};}
 
-      renderModules();
-      renderQuizScore(moduleId);
-    }
+// RENDER
+function render(){mods();content();}
+function mods(){
+  document.getElementById('mods').innerHTML=M.map(m=>{
+    const s=getS(m.id); const done=s.total>0&&s.correct===s.total;
+    let cls='mod-btn';
+    if(m.id===activeModule) cls+=' active';
+    else if(done) cls+=' done';
+    else if(m.id==='glossaire') cls+=' mod-btn-new';
+    return `<button class="${cls}" onclick="sel('${m.id}')">${m.name}</button>`;
+  }).join('');
+}
+function sel(id){activeModule=id;activeSection='learn';render();}
+function content(){
+  const mod=M.find(m=>m.id===activeModule); if(!mod) return;
+  const sec=mod.sections.find(s=>s.id===activeSection); if(!sec) return;
+  let h='<div class="tabs">';
+  mod.sections.forEach(s=>{h+=`<button class="tab${s.id===activeSection?' active':''}" onclick="selSec('${s.id}')">${s.id==='learn'?'📖 Apprendre':'❓ Quiz'}</button>`;});
+  h+='</div>'+sec.content;
+  document.getElementById('content').innerHTML=h;
+  if(activeSection==='quiz') renderQuiz(activeModule);
+}
+function selSec(id){activeSection=id;render();}
 
-    function renderQuizScore(moduleId) {
-      const s = getScore(moduleId);
-      const el = document.getElementById('score-' + moduleId);
-      if (!el) return;
-      el.innerHTML = `<span class="score ${s.correct === s.total && s.total > 0 ? 'ok' : 'ko'}">Score : ${s.correct}/${s.total}</span><button class="reset-btn" onclick="resetQuiz('${moduleId}')">🔄 Recommencer</button>`;
-    }
+function renderQuiz(mid){
+  const quiz=Q[mid]; if(!quiz) return;
+  const s=getS(mid);
+  let h=''; quiz.forEach((q,qi)=>{h+=`<div class="qq"><div class="qt">${qi+1}. ${q.q}</div><div class="qo">${q.opts.map((o,oi)=>`<button class="qob${typeof q.answered!=='undefined'?(oi===q.correct?' correct':(oi===q.selected&&!q.correctAns?' wrong':'')):''}" onclick="ans('${mid}',${qi},${oi})"${typeof q.answered!=='undefined'?' disabled':''}>${o}</button>`).join('')}</div></div>`;});
+  const el=document.getElementById('quiz-'+mid); if(el) el.innerHTML=h;
+  const sc=document.getElementById('score-'+mid); if(sc) sc.innerHTML=`<span class="score${s.correct===s.total&&s.total>0?' ok':' ko'}">Score : ${s.correct}/${s.total}</span><button class="reset-btn" onclick="rst('${mid}')">🔄 Recommencer</button>`;
+}
+function ans(mid,qi,oi){
+  const quiz=Q[mid]; if(!quiz||typeof quiz[qi].answered!=='undefined') return;
+  const correct=oi===quiz[qi].correct;
+  quiz[qi].answered=true; quiz[qi].selected=oi; quiz[qi].correctAns=correct;
+  if(!scores[mid]) scores[mid]={correct:0,total:0};
+  scores[mid].total++; if(correct) scores[mid].correct++; save();
+  const el=document.getElementById('quiz-'+mid); if(!el) return;
+  const qq=el.querySelectorAll('.qq')[qi]; const opts=qq.querySelectorAll('.qob');
+  opts.forEach((b,i)=>{b.disabled=true; if(i===quiz[qi].correct) b.classList.add('correct'); if(i===oi&&!correct) b.classList.add('wrong');});
+  const fb=document.createElement('div'); fb.className='feedback '+(correct?'correct':'wrong');
+  fb.textContent=correct?'✓ Bonne réponse !':`✗ Réponse : ${quiz[qi].opts[quiz[qi].correct]}`;
+  qq.appendChild(fb);
+  mods(); const sc=document.getElementById('score-'+mid);
+  const s=getS(mid); if(sc) sc.innerHTML=`<span class="score${s.correct===s.total&&s.total>0?' ok':' ko'}">Score : ${s.correct}/${s.total}</span><button class="reset-btn" onclick="rst('${mid}')">🔄 Recommencer</button>`;
+}
+function rst(mid){delete scores[mid];const q=Q[mid];if(q)q.forEach(x=>delete x.answered);save();render();}
 
-    function resetQuiz(moduleId) {
-      delete scores[moduleId];
-      const quiz = QUIZZES[moduleId];
-      if (quiz) quiz.forEach(q => delete q.answered);
-      saveScores();
-      render();
-    }
-
-    // init
-    render();
-  </script>
+render();
+</script>
 </body>
 </html>
