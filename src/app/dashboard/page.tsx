@@ -294,6 +294,14 @@ export default function DashboardPage() {
             <Calendar className="h-4 w-4" />
             Voir le calendrier
           </Button>
+          <Button
+            variant="ghost"
+            onClick={() => router.push('/dashboard/guide')}
+            className="w-full sm:w-auto"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Guide de démarrage
+          </Button>
         </div>
 
         {/* Stats Cards */}

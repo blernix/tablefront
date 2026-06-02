@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download, Key } from 'lucide-react';
+import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download, Key, HelpCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const settingsCategories = [
+const settingsCategories: { title: string; desc: string; icon: any; href: string; highlight?: boolean }[] = [
+  { title: 'Guide de démarrage', desc: 'Premiers pas avec TableMaster', icon: HelpCircle, href: '/dashboard/guide', highlight: true },
   { title: 'Informations', desc: 'Nom, adresse, téléphone, email', icon: Building2, href: '/dashboard/settings/basic-info' },
   { title: 'Horaires', desc: 'Horaires par jour de la semaine', icon: Clock, href: '/dashboard/settings/opening-hours' },
   { title: 'Fermetures', desc: 'Vacances, jours fériés, événements', icon: CalendarX, href: '/dashboard/settings/closures' },
@@ -34,7 +36,10 @@ export default function SettingsPage() {
             <button
               key={cat.title}
               onClick={() => router.push(cat.href)}
-              className="w-full flex items-center gap-3 p-4 bg-white rounded-2xl border border-[#E5E5EA] active:bg-[#F2F2F7] transition-colors text-left md:rounded-xl md:p-4"
+              className={cn(
+                'w-full flex items-center gap-3 p-4 rounded-2xl border border-[#E5E5EA] active:bg-[#F2F2F7] transition-colors text-left md:rounded-xl md:p-4',
+                cat.highlight && 'bg-[#0066FF]/[0.03] border-[#0066FF]/20'
+              )}
             >
               <div className="h-11 w-11 rounded-xl bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
                 <Icon className="h-5 w-5 text-[#0066FF]" />
