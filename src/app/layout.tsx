@@ -92,7 +92,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               'functionality_storage': 'granted',
               'personalization_storage': 'denied',
               'security_storage': 'granted',
-              'wait_for_update': 2000,
+              'wait_for_update': 5000,
             });
           `}
         </Script>

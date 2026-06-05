@@ -70,6 +70,13 @@ export default function TarteaucitronProvider() {
           personalization_storage: analyticsGranted ? 'granted' : 'denied',
           security_storage: 'granted',
         });
+
+        // Push a custom event so GTM triggers can fire on consent
+        // (instead of relying on Page View timing)
+        window.dataLayer.push({
+          event: 'cookie_consent_updated',
+          analytics_granted: analyticsGranted,
+        });
       };
 
       // Define custom services BEFORE initialization
