@@ -206,6 +206,30 @@ export default function TarteaucitronProvider() {
       setTimeout(() => {
         if (window.tarteaucitron.userInterface) {
           setTarteaucitronReady(true);
+
+          // If consent was already given in a previous session, push the event
+          // so GTM triggers fire even without a new user action
+          var analyticsAccepted = false;
+          try {
+            var tac = window.tarteaucitron;
+            // Check state object (available in tarteaucitron v1.x)
+            if (tac.state && tac.state.analytics === true) {
+              analyticsAccepted = true;
+            }
+            // Fallback: check cookie
+            if (!analyticsAccepted) {
+              var match = document.cookie.match(/(?:^|;\s*)tarteaucitron=([^;]*)/);
+              if (match) {
+                var consent = decodeURIComponent(match[1]);
+                analyticsAccepted = consent.indexOf('analytics=true') !== -1;
+              }
+            }
+          } catch (e) {
+            // Silently fail
+          }
+          if (analyticsAccepted) {
+            updateGoogleConsent(true);
+          }
         } else {
           console.warn('Tarteaucitron userInterface not available after initialization');
         }
