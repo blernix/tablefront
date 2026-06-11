@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { apiClient } from '@/lib/api';
-import { API_URL } from '@/lib/api/base';
 import { NotificationPreferences, PushSubscription } from '@/types';
 
 interface UsePushNotificationsReturn {
@@ -67,32 +66,26 @@ export function usePushNotifications(): UsePushNotificationsReturn {
         setPermission(Notification.permission);
         checkSubscription();
 
-        // Send API URL and auth token to service worker for direct API calls from notifications
-        navigator.serviceWorker.ready.then(function(registration) {
-          if (registration.active) {
-            registration.active.postMessage({ type: 'SET_API_URL', apiUrl: API_URL });
-            var token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
-            if (token) {
-              registration.active.postMessage({ type: 'SET_AUTH_TOKEN', token: token });
-            }
-          }
-        });
+        // Force update of push service worker to ensure latest version is active
+        // This is needed because browsers cache SW for up to 24h,
+        // and on PWA (standalone mode) no navigation triggers the update check
+        if ('serviceWorker' in navigator) {
+          // Force update push-sw.js if registered
+          navigator.serviceWorker.getRegistration('/push-sw.js').then(function(reg) {
+            if (reg) reg.update();
+          });
+          // Also update the main SW
+          navigator.serviceWorker.getRegistration().then(function(reg) {
+            if (reg) reg.update();
+          });
+        }
       }
     };
 
     checkSupport();
   }, [checkSubscription]);
 
-  // Keep SW in sync with auth token changes
-  useEffect(function() {
-    if (!isSupported) return;
-    var token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
-    navigator.serviceWorker.ready.then(function(registration) {
-      if (registration.active) {
-        registration.active.postMessage({ type: 'SET_AUTH_TOKEN', token: token || '' });
-      }
-    });
-  }, [isSupported]);
+
 
   // Request notification permission
   const requestPermission = useCallback(async (): Promise<NotificationPermission> => {

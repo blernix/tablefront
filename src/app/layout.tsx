@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
+import ServiceWorkerUpdater from '@/components/ServiceWorkerUpdater';
 import TarteaucitronProvider from '@/components/TarteaucitronProvider';
 import { headers } from 'next/headers';
 import Script from 'next/script'; // Import important pour le GTM
@@ -163,6 +164,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </noscript>
 
         <TarteaucitronProvider />
+        <ServiceWorkerUpdater />
         <QueryProvider>
           {children}
           <Toaster position="top-right" richColors />
