@@ -57,26 +57,34 @@ export default function TarteaucitronProvider() {
 
       // Helper: update Google Consent Mode via dataLayer
       const updateGoogleConsent = (analyticsGranted: boolean) => {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(...args: any[]) {
-          window.dataLayer.push(args);
-        }
-        gtag('consent', 'update', {
-          analytics_storage: analyticsGranted ? 'granted' : 'denied',
-          ad_storage: analyticsGranted ? 'granted' : 'denied',
-          ad_user_data: analyticsGranted ? 'granted' : 'denied',
-          ad_personalization: analyticsGranted ? 'granted' : 'denied',
-          functionality_storage: 'granted',
-          personalization_storage: analyticsGranted ? 'granted' : 'denied',
-          security_storage: 'granted',
-        });
+        // Push consent update + custom event
+        var push = function () {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ 'gtm.start': undefined }); // safety reset
+          function gtag(...args: any[]) { window.dataLayer.push(args); }
+          gtag('consent', 'update', {
+            analytics_storage: analyticsGranted ? 'granted' : 'denied',
+            ad_storage: analyticsGranted ? 'granted' : 'denied',
+            ad_user_data: analyticsGranted ? 'granted' : 'denied',
+            ad_personalization: analyticsGranted ? 'granted' : 'denied',
+            functionality_storage: 'granted',
+            personalization_storage: analyticsGranted ? 'granted' : 'denied',
+            security_storage: 'granted',
+          });
+          window.dataLayer.push({
+            event: 'cookie_consent_updated',
+            analytics_granted: analyticsGranted,
+          });
+          console.log('[Tarteaucitron] cookie_consent_updated pushed, granted:', analyticsGranted);
+        };
 
-        // Push a custom event so GTM triggers can fire on consent
-        // (instead of relying on Page View timing)
-        window.dataLayer.push({
-          event: 'cookie_consent_updated',
-          analytics_granted: analyticsGranted,
-        });
+        // Delay push to ensure GTM has fully loaded and is listening
+        if (typeof (window as any).google_tag_manager !== 'undefined') {
+          push(); // GTM is loaded, push now
+        } else {
+          console.log('[Tarteaucitron] GTM not loaded yet, waiting 1s...');
+          setTimeout(push, 1000); // Wait for GTM
+        }
       };
 
       // Define custom services BEFORE initialization
@@ -207,8 +215,7 @@ export default function TarteaucitronProvider() {
         if (window.tarteaucitron.userInterface) {
           setTarteaucitronReady(true);
 
-          // If consent was already given in a previous session, push the event
-          // so GTM triggers fire even without a new user action
+          // Always push consent event after initialization so GTM picks it up
           var analyticsAccepted = false;
           try {
             var tac = window.tarteaucitron;
@@ -224,12 +231,9 @@ export default function TarteaucitronProvider() {
                 analyticsAccepted = consent.indexOf('analytics=true') !== -1;
               }
             }
-          } catch (e) {
-            // Silently fail
-          }
-          if (analyticsAccepted) {
-            updateGoogleConsent(true);
-          }
+          } catch (e) {}
+          updateGoogleConsent(analyticsAccepted);
+          console.log('[Tarteaucitron] Consent event pushed, analytics:', analyticsAccepted);
         } else {
           console.warn('Tarteaucitron userInterface not available after initialization');
         }

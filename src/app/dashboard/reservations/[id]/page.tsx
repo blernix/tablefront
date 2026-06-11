@@ -42,16 +42,30 @@ export default function ReservationDetailPage({ params }: { params: { id: string
     if (isLoading || actionProcessed || !reservation) return;
 
     const action = searchParams.get('action');
-    if (!action || (action !== 'confirm' && action !== 'cancel')) return;
+    if (!action || (action !== 'confirm' && action !== 'cancel')) {
+      // Clean URL even if no valid action
+      if (searchParams.get('action')) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      return;
+    }
+
+    const targetStatus = action === 'confirm' ? 'confirmed' : 'cancelled';
+    // Skip if reservation is already in target status
+    if (reservation.status === targetStatus) {
+      window.history.replaceState(null, '', window.location.pathname);
+      setActionProcessed(true);
+      return;
+    }
+
+    // Remove action from URL BEFORE API call to prevent re-execution on reload
+    window.history.replaceState(null, '', window.location.pathname);
 
     // Process the action
     const processAction = async () => {
       try {
         setIsUpdating(true);
-        const status = action === 'confirm' ? 'confirmed' : 'cancelled';
-        await apiClient.updateReservation(reservation._id, {
-          status,
-        });
+        await apiClient.updateReservation(reservation._id, { status: targetStatus });
 
         const statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
         toast.success(`Réservation ${statusLabel} depuis la notification`);
@@ -59,10 +73,6 @@ export default function ReservationDetailPage({ params }: { params: { id: string
         // Refresh reservation data
         const response = await apiClient.getReservation(params.id);
         setReservation(response.reservation);
-
-        // Remove action from URL to prevent re-execution
-        const newUrl = window.location.pathname;
-        window.history.replaceState(null, '', newUrl);
       } catch (error) {
         console.error('Error processing notification action:', error);
         toast.error(`Erreur lors de la ${action === 'confirm' ? 'confirmation' : 'annulation'}`);
