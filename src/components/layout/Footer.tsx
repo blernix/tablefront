@@ -26,17 +26,17 @@ export default function Footer() {
             <h3 className="font-normal mb-4">Produit</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#features" className="text-white/70 hover:text-white font-light text-sm">
+                <a href="#features" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-features-click">
                   Fonctionnalités
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-white/70 hover:text-white font-light text-sm">
+                <a href="#pricing" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-pricing-click">
                   Tarifs
                 </a>
               </li>
               <li>
-                <a href="#custom-dev" className="text-white/70 hover:text-white font-light text-sm">
+                <a href="#custom-dev" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-custom-dev-click">
                   Développement sur mesure
                 </a>
               </li>
@@ -47,12 +47,12 @@ export default function Footer() {
             <h3 className="font-normal mb-4">Support</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/signup" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/signup" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-signup-click">
                   S&apos;inscrire
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/login" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-login-click">
                   Connexion
                 </Link>
               </li>
@@ -60,6 +60,7 @@ export default function Footer() {
                 <a
                   href="mailto:contact@tablemaster.fr"
                   className="text-white/70 hover:text-white font-light text-sm"
+                  data-umami-event="footer-contact-click"
                 >
                   Contact
                 </a>
@@ -71,22 +72,22 @@ export default function Footer() {
             <h3 className="font-normal mb-4">Légal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/legal" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/legal" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-legal-click">
                   Mentions légales
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/privacy" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-privacy-click">
                   Confidentialité
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/cookies" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-cookies-click">
                   Cookies
                 </Link>
               </li>
               <li>
-                <Link href="/cgv" className="text-white/70 hover:text-white font-light text-sm">
+                <Link href="/cgv" className="text-white/70 hover:text-white font-light text-sm" data-umami-event="footer-cgv-click">
                   Conditions Générales de Vente
                 </Link>
               </li>

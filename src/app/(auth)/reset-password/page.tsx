@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
+import { track } from '@/lib/umami';
 
 // Force dynamic rendering because this page uses search params
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,7 @@ function ResetPasswordForm() {
 
   useEffect(() => {
     if (!token && !success) {
+      track('reset-password-invalid-token');
       setTokenError('Token manquant ou invalide. Veuillez utiliser le lien reçu par email.');
     }
   }, [token, success]);
@@ -64,6 +66,7 @@ function ResetPasswordForm() {
 
     try {
       await apiClient.resetPassword(token, newPassword);
+      track('reset-password-success');
       setSuccess(true);
       // Clear token from URL for security
       window.history.replaceState(null, '', '/reset-password');
@@ -72,6 +75,7 @@ function ResetPasswordForm() {
         router.push('/login');
       }, 3000);
     } catch (err) {
+      track('reset-password-error');
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
       setError(errorMessage);
     } finally {
@@ -100,7 +104,7 @@ function ResetPasswordForm() {
                 Vous allez être redirigé vers la page de connexion dans 3 secondes...
               </p>
             </div>
-            <Button className="w-full" onClick={() => router.push('/login')}>
+            <Button className="w-full" onClick={() => router.push('/login')} data-umami-event="reset-password-success-login-click">
               Se connecter
             </Button>
           </div>
@@ -117,7 +121,7 @@ function ResetPasswordForm() {
                 .
               </p>
             </div>
-            <Button className="w-full" onClick={() => router.push('/forgot-password')}>
+            <Button className="w-full" onClick={() => router.push('/forgot-password')} data-umami-event="reset-password-new-link-click">
               Demander un nouveau lien
             </Button>
           </div>
@@ -158,14 +162,14 @@ function ResetPasswordForm() {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading} data-umami-event="reset-password-submit">
               {isLoading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
             </Button>
           </form>
         )}
 
         <div className="mt-6 text-center text-sm">
-          <Link href="/login" className="text-primary hover:text-primary/80 hover:underline">
+          <Link href="/login" data-umami-event="reset-password-back-login-click" className="text-primary hover:text-primary/80 hover:underline">
             Retour à la connexion
           </Link>
         </div>

@@ -3,16 +3,19 @@
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
 import { ArrowRight, Check, Star } from 'lucide-react';
+import { useSectionView } from '@/hooks/useSectionView';
 
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@tablemaster.fr';
 
 export default function SiteSurMesureContent() {
+  useSectionView('custom-site-hero', 'section-view-custom-site');
+
   return (
     <div className="min-h-screen bg-white">
       <AuthNavbar />
 
       {/* Hero */}
-      <section className="py-24 md:py-36 px-6 relative overflow-hidden">
+      <section id="custom-site-hero" className="py-24 md:py-36 px-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#0066FF]/[0.03] rounded-full blur-3xl -translate-y-1/4 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-400/[0.03] rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
         <div className="max-w-4xl mx-auto text-center relative">
@@ -29,6 +32,7 @@ export default function SiteSurMesureContent() {
           <a
             href={`mailto:${contactEmail}?subject=Projet site web`}
             className="inline-flex items-center justify-center px-10 py-5 bg-[#0066FF] text-white font-light rounded-lg hover:bg-[#0052CC] transition-colors text-lg shadow-lg shadow-[#0066FF]/20 hover:shadow-[#0066FF]/30 hover:-translate-y-0.5 transition-all"
+            data-umami-event="custom-site-hero-contact-click"
           >
             Nous contacter
             <ArrowRight className="ml-3 w-5 h-5" />
@@ -181,6 +185,7 @@ export default function SiteSurMesureContent() {
           <a
             href={`mailto:${contactEmail}?subject=Projet site web`}
             className="inline-flex items-center justify-center px-10 py-5 bg-white text-[#0066FF] text-lg font-light rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+            data-umami-event="custom-site-cta-contact-click"
           >
             Nous contacter
             <ArrowRight className="ml-3 w-5 h-5" />

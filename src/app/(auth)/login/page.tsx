@@ -13,6 +13,7 @@ import { TwoFactorRequiredError } from '@/lib/api/auth';
 import { AuthResponse } from '@/types';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
+import { track } from '@/lib/umami';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -65,6 +66,7 @@ export default function LoginPage() {
       const currentToken = useAuthStore.getState().token;
 
       if (currentUser && currentToken) {
+        track('login-success', { role: currentUser.role });
         // Store user in localStorage for persistence
         localStorage.setItem('user', JSON.stringify(currentUser));
         localStorage.setItem('token', currentToken);
@@ -90,6 +92,7 @@ export default function LoginPage() {
 
       // Check if it's a 2FA required error
       if (err instanceof TwoFactorRequiredError) {
+        track('login-2fa-required');
         setTwoFactorData({
           tempToken: err.tempToken,
           userId: err.userId,
@@ -100,6 +103,7 @@ export default function LoginPage() {
         return;
       }
 
+      track('login-error');
       // For other errors, show the error message
       if (!error) {
         setLocalError('Erreur lors de la connexion. Vérifiez vos identifiants.');
@@ -206,6 +210,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
+                data-umami-event="login-submit"
                 className="w-full px-6 py-3 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Connexion en cours...' : 'Se connecter'}
@@ -215,6 +220,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <Link
                 href="/forgot-password"
+                data-umami-event="login-forgot-password-click"
                 className="text-sm text-[#666666] hover:text-[#0066FF] font-light transition-colors"
               >
                 Mot de passe oublié ?
@@ -226,6 +232,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <Link
               href="/"
+              data-umami-event="login-back-home-click"
               className="text-sm text-[#666666] hover:text-[#0066FF] font-light transition-colors"
             >
               ← Retour à l&apos;accueil

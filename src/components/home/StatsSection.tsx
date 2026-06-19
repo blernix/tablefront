@@ -1,6 +1,12 @@
+'use client';
+
+import { useSectionView } from '@/hooks/useSectionView';
+
 export default function StatsSection() {
+  useSectionView('stats', 'section-view-stats');
+
   return (
-    <section className="py-20 bg-white">
+    <section id="stats" className="py-20 bg-white">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">Nos chiffres clés</h2>

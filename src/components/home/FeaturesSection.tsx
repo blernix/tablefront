@@ -1,5 +1,6 @@
 'use client';
 
+import { useSectionView } from '@/hooks/useSectionView';
 import {
   Check,
   Calendar,
@@ -14,6 +15,8 @@ import {
 } from 'lucide-react';
 
 export default function FeaturesSection() {
+  useSectionView('features', 'section-view-features');
+
   return (
     <section id="features" className="py-20 bg-white">
       <div className="container mx-auto max-w-6xl px-6">

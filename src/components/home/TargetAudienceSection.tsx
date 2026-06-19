@@ -1,10 +1,13 @@
 'use client';
 
+import { useSectionView } from '@/hooks/useSectionView';
 import { ChefHat, Store, Building2, Users } from 'lucide-react';
 
 export default function TargetAudienceSection() {
+  useSectionView('audience', 'section-view-audience');
+
   return (
-    <section className="py-20 bg-[#FAFAFA]">
+    <section id="audience" className="py-20 bg-[#FAFAFA]">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A] mb-4">

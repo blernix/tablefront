@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Check, ArrowRight, Calendar, Users, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSectionView } from '@/hooks/useSectionView';
 
 const floatingCards = [
   {
@@ -84,8 +85,10 @@ const itemVariants = {
 };
 
 export default function HeroSection() {
+  useSectionView('hero', 'section-view-hero');
+
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center px-6 pt-20 pb-8 overflow-hidden">
+    <section id="hero" className="relative min-h-[92vh] flex items-center justify-center px-6 pt-20 pb-8 overflow-hidden">
       {/* Subtle radial gradient background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#0066FF]/[0.03] rounded-full blur-3xl -translate-y-1/4 translate-x-1/4" />
@@ -192,6 +195,7 @@ export default function HeroSection() {
           >
             <Link
               href="/signup"
+              data-umami-event="hero-signup-cta-click"
               className="group inline-flex items-center justify-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-all rounded-lg text-lg shadow-lg shadow-[#0066FF]/20 hover:shadow-[#0066FF]/30 hover:-translate-y-0.5"
             >
               Créer mon compte gratuitement
@@ -205,6 +209,7 @@ export default function HeroSection() {
             </Link>
             <Link
               href="/#pricing"
+              data-umami-event="hero-pricing-cta-click"
               className="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-[#2A2A2A] font-light hover:border-[#0066FF] hover:text-[#0066FF] transition-all rounded-lg text-lg bg-white/50 backdrop-blur-sm"
             >
               Voir les tarifs

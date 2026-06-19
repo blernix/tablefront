@@ -43,13 +43,13 @@ export default function SignupPage() {
           <div className="mt-10 text-center">
             <p className="text-[#666666]">
               Vous avez déjà un compte ?{' '}
-              <Link href="/login" className="font-medium text-[#0066FF] hover:text-[#0052CC] transition-colors">Connectez-vous ici</Link>
+              <Link href="/login" data-umami-event="signup-goto-login-click" className="font-medium text-[#0066FF] hover:text-[#0052CC] transition-colors">Connectez-vous ici</Link>
             </p>
             <p className="text-xs text-[#999999] mt-4">
               En créant un compte, vous acceptez nos{' '}
-              <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">CGV</a>, nos{' '}
-              <a href="/legal" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">CGU</a> et notre{' '}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">politique de confidentialité</a>.
+              <a href="/cgv" target="_blank" rel="noopener noreferrer" data-umami-event="signup-cgv-click" className="text-[#0066FF] hover:underline">CGV</a>, nos{' '}
+              <a href="/legal" target="_blank" rel="noopener noreferrer" data-umami-event="signup-cgu-click" className="text-[#0066FF] hover:underline">CGU</a> et notre{' '}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" data-umami-event="signup-privacy-click" className="text-[#0066FF] hover:underline">politique de confidentialité</a>.
             </p>
           </div>
 

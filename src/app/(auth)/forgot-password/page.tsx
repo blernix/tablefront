@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
+import { track } from '@/lib/umami';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -31,12 +32,14 @@ export default function ForgotPasswordPage() {
 
     try {
       await apiClient.forgotPassword(email);
+      track('forgot-password-success');
       setSuccess(true);
       // Auto-redirect to login after 5 seconds
       setTimeout(() => {
         router.push('/login');
       }, 5000);
     } catch (err) {
+      track('forgot-password-error');
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
       setError(errorMessage);
     } finally {
@@ -68,7 +71,7 @@ export default function ForgotPasswordPage() {
                     Vous allez être redirigé vers la page de connexion dans 5 secondes...
                   </p>
                 </div>
-                <Button className="w-full" onClick={() => router.push('/login')}>
+                <Button className="w-full" onClick={() => router.push('/login')} data-umami-event="forgot-password-back-login-click">
                   Retour à la connexion
                 </Button>
               </div>
@@ -98,14 +101,14 @@ export default function ForgotPasswordPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading} data-umami-event="forgot-password-submit">
                   {isLoading ? 'Envoi en cours...' : 'Envoyer le lien'}
                 </Button>
               </form>
             )}
 
             <div className="mt-6 text-center text-sm">
-              <Link href="/login" className="text-primary hover:text-primary/80 hover:underline">
+              <Link href="/login" data-umami-event="forgot-password-back-login-click" className="text-primary hover:text-primary/80 hover:underline">
                 Retour à la connexion
               </Link>
             </div>

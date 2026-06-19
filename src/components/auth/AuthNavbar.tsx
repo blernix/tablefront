@@ -44,11 +44,11 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
   }, [isMenuOpen]);
 
   const navigation = [
-    { name: 'Fonctionnalités', href: '/#features' },
-    { name: 'Tarifs', href: '/#pricing' },
-    { name: 'Site sur mesure', href: '/site-sur-mesure' },
-    { name: 'Connexion', href: '/login' },
-    { name: "S'inscrire", href: '/signup' },
+    { name: 'Fonctionnalités', href: '/#features', eventName: 'nav-features-click' },
+    { name: 'Tarifs', href: '/#pricing', eventName: 'nav-pricing-click' },
+    { name: 'Site sur mesure', href: '/site-sur-mesure', eventName: 'nav-custom-site-click' },
+    { name: 'Connexion', href: '/login', eventName: 'nav-login-click' },
+    { name: "S'inscrire", href: '/signup', eventName: 'nav-signup-click' },
   ];
 
   return (
@@ -58,7 +58,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-4" data-umami-event="header-logo-click">
                 <Image
                   src="/logo_512.png"
                   alt="TableMaster Logo"
@@ -76,6 +76,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  data-umami-event={item.eventName}
                   className={`text-[#666666] hover:text-[#0066FF] font-light transition-colors ${
                     (item.name === 'Connexion' && activePage === 'login') ||
                     (item.name === "S'inscrire" && activePage === 'signup')
@@ -95,6 +96,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
               className="md:hidden p-2 text-[#666666] hover:text-[#0066FF] transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Menu"
+              data-umami-event="mobile-menu-toggle"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -110,6 +112,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
               : 'opacity-0 pointer-events-none'
           }`}
           onClick={() => setIsMenuOpen(false)}
+          data-umami-event="mobile-menu-backdrop-close"
         />
 
         {/* Mobile menu sidebar - slides from right */}
@@ -151,6 +154,7 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
                   <Link
                     key={item.name}
                     href={item.href}
+                    data-umami-event={item.eventName}
                     className={`block text-lg font-light py-3 transition-colors ${
                       (item.name === 'Connexion' && activePage === 'login') ||
                       (item.name === "S'inscrire" && activePage === 'signup')

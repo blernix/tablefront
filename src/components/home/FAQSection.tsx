@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useSectionView } from '@/hooks/useSectionView';
 
 type FAQItem = {
   question: string;
@@ -10,6 +11,7 @@ type FAQItem = {
 };
 
 export default function FAQSection() {
+  useSectionView('faq', 'section-view-faq');
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggleFAQ = (index: number) => {
@@ -90,6 +92,8 @@ export default function FAQSection() {
             >
               <button
                 onClick={() => toggleFAQ(index)}
+                data-umami-event="faq-toggle"
+                data-umami-event-question={faq.question}
                 className="w-full text-left px-8 py-6 flex items-center justify-between hover:bg-[#FAFAFA] transition-colors"
                 aria-expanded={openIndex === index}
               >
@@ -144,6 +148,7 @@ export default function FAQSection() {
           </p>
           <a
             href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@tablemaster.fr'}?subject=Question%20TableMaster`}
+            data-umami-event="faq-ask-question-click"
             className="inline-flex items-center gap-2 px-8 py-3 bg-[#0066FF] text-white font-light rounded-lg hover:bg-[#0052CC] transition-colors"
           >
             <HelpCircle className="w-5 h-5" />

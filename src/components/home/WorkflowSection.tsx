@@ -1,5 +1,6 @@
 'use client';
 
+import { useSectionView } from '@/hooks/useSectionView';
 import {
   AnimatedWorkflowStep,
   AnimatedCircle,
@@ -8,6 +9,8 @@ import {
 } from '@/components/AnimatedWorkflow';
 
 export default function WorkflowSection() {
+  useSectionView('how-it-works', 'section-view-workflow');
+
   return (
     <section id="how-it-works" className="py-20 bg-white">
       <div className="container mx-auto max-w-6xl px-6">

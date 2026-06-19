@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Users, Minus, Plus, Clock, Loader2 } from 'lucide-react';
+import { track } from '@/lib/umami';
 
 const DAY_NAMES = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'] as const;
 const MONTH_NAMES = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'] as const;
@@ -68,7 +69,10 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
         });
         if (!response.ok) throw new Error('Restaurant not found');
         const data = await response.json();
-        if (!cancelled) setRestaurant(data.restaurant);
+        if (!cancelled) {
+          setRestaurant(data.restaurant);
+          track('public-reservation-form-view', { slug });
+        }
       } catch {
         if (!cancelled) setError('Impossible de charger les informations du restaurant.');
       } finally {
@@ -213,6 +217,7 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
         throw new Error(err.error?.message || 'Erreur lors de la réservation');
       }
       setSuccess(true);
+      track('public-reservation-form-submit', { slug });
       if (isEmbed && typeof window !== 'undefined' && window.parent !== window) {
         window.parent.postMessage({ type: 'tablemaster:close' }, '*');
       }
@@ -225,6 +230,7 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
       setNotes('');
       setHoneypot('');
     } catch (err: any) {
+      track('public-reservation-form-error', { slug });
       setError(err.message || 'Une erreur est survenue lors de la réservation.');
     } finally {
       setIsSubmitting(false);

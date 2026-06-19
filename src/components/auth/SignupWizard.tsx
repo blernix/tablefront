@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { track } from '@/lib/umami';
 
 type PlanType = 'starter' | 'pro';
 type SignupStep = 'plan' | 'restaurant' | 'account';
@@ -69,7 +70,7 @@ function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: { selectedPla
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {Object.values(PLANS).map((plan) => (
-          <div key={plan.id} onClick={() => onPlanSelect(plan.id)}
+          <div key={plan.id} onClick={() => onPlanSelect(plan.id)} data-umami-event={plan.id === 'starter' ? 'signup-plan-select-starter' : 'signup-plan-select-pro'}
             className={cn('relative border-2 rounded-2xl p-5 cursor-pointer transition-all active:scale-[0.99] md:rounded-xl md:p-6', selectedPlan === plan.id ? 'border-[#0066FF] bg-[#0066FF]/[0.04]' : 'border-[#E5E5EA] hover:border-[#0066FF]/30', plan.popular && 'border-[#0066FF]/30')}>
             {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="bg-[#0066FF] text-white px-3 py-1 rounded-full text-xs font-semibold md:text-sm">Populaire</span></div>}
             <div className="text-center">
@@ -89,7 +90,7 @@ function PlanSelectionStep({ selectedPlan, onPlanSelect, onNext }: { selectedPla
         ))}
       </div>
       <div className="flex justify-center pt-2">
-        <Button onClick={onNext} className="w-full md:w-auto md:min-w-[160px] h-12 rounded-xl text-[15px] font-semibold md:h-10 md:text-sm">Continuer <ArrowRight className="w-4 h-4 ml-2" /></Button>
+        <Button onClick={onNext} data-umami-event="signup-step-continue-plan" className="w-full md:w-auto md:min-w-[160px] h-12 rounded-xl text-[15px] font-semibold md:h-10 md:text-sm">Continuer <ArrowRight className="w-4 h-4 ml-2" /></Button>
       </div>
     </div>
   );
@@ -124,8 +125,8 @@ function RestaurantInfoStep({ data, errors, onChange, onBack, onNext }: { data: 
         </div>
       </div>
       <div className="flex gap-2 pt-2">
-        <Button variant="outline" onClick={onBack} className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"><ArrowLeft className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Retour</span></Button>
-        <Button onClick={onNext} disabled={!valid} className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:min-w-[140px] md:h-10 md:text-sm">Continuer <ArrowRight className="w-4 h-4 ml-2" /></Button>
+        <Button variant="outline" onClick={onBack} data-umami-event="signup-step-back-restaurant" className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"><ArrowLeft className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Retour</span></Button>
+        <Button onClick={onNext} disabled={!valid} data-umami-event="signup-step-continue-restaurant" className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:min-w-[140px] md:h-10 md:text-sm">Continuer <ArrowRight className="w-4 h-4 ml-2" /></Button>
       </div>
     </div>
   );
@@ -164,7 +165,7 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
 
         <div className="rounded-xl bg-[#F2F2F7] p-4">
           <label className="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" checked={data.acceptedTerms} onChange={(e) => onChange({ acceptedTerms: e.target.checked })} className="mt-0.5 h-5 w-5 rounded border-[#E5E5EA] text-[#0066FF] flex-shrink-0" />
+            <input type="checkbox" data-umami-event="signup-accept-terms" checked={data.acceptedTerms} onChange={(e) => onChange({ acceptedTerms: e.target.checked })} className="mt-0.5 h-5 w-5 rounded border-[#E5E5EA] text-[#0066FF] flex-shrink-0" />
             <span className="text-[13px] text-[#8E8E93] md:text-sm">J&apos;accepte les <a href="/cgv" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">CGV</a>, les <a href="/legal#cgu" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">CGU</a> et la <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0066FF] hover:underline">Politique de Confidentialité</a>. *</span>
           </label>
           {errors.acceptedTerms && <p className="mt-2 text-[12px] text-red-500">{errors.acceptedTerms}</p>}
@@ -176,8 +177,8 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
       </div>
 
       <div className="flex gap-2 pt-2">
-        <Button variant="outline" onClick={onBack} className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"><ArrowLeft className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Retour</span></Button>
-        <Button onClick={onSubmit} disabled={!valid || isLoading} className="flex-1 h-11 rounded-xl text-[15px] font-semibold md:flex-none md:min-w-[180px] md:h-10 md:text-sm">
+        <Button variant="outline" onClick={onBack} data-umami-event="signup-step-back-account" className="flex-1 h-11 rounded-xl text-[15px] font-medium md:flex-none md:h-10 md:text-sm"><ArrowLeft className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Retour</span></Button>
+        <Button onClick={onSubmit} disabled={!valid || isLoading} data-umami-event="signup-submit" className="flex-1 h-11 rounded-xl text-[15px] font-semibold md:flex-none md:min-w-[180px] md:h-10 md:text-sm">
           {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />En cours...</> : <>Finaliser <Check className="w-4 h-4 ml-2" /></>}
         </Button>
       </div>
@@ -240,9 +241,9 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error?.message || "Erreur lors de l'inscription");
-      if (data.checkout?.url) window.location.href = data.checkout.url;
+      if (data.checkout?.url) { track('signup-form-submit', { plan: selectedPlan }); track('signup-checkout-redirect', { plan: selectedPlan }); window.location.href = data.checkout.url; }
       else throw new Error('URL de paiement manquante');
-    } catch (err: any) { console.error(err); setSubmitError(err.message); onError?.(err.message); setIsLoading(false); }
+    } catch (err: any) { console.error(err); track('signup-error', { error: err.message }); setSubmitError(err.message); onError?.(err.message); setIsLoading(false); }
   };
 
   return (

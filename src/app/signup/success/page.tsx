@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
+import { track } from '@/lib/umami';
 
 function SignupSuccessContent() {
   const router = useRouter();
@@ -20,6 +21,7 @@ function SignupSuccessContent() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
+          track('signup-success-auto-redirect');
           router.push('/login');
           return 0;
         }
@@ -72,7 +74,7 @@ function SignupSuccessContent() {
             {/* Actions */}
             <div className="space-y-3">
               <Link href="/login" className="block">
-                <Button className="w-full">Se connecter maintenant</Button>
+                <Button className="w-full" data-umami-event="signup-success-login-click">Se connecter maintenant</Button>
               </Link>
 
               <p className="text-sm text-gray-500">
@@ -97,6 +99,7 @@ function SignupSuccessContent() {
             <a
               href="mailto:support@tablemaster.fr"
               className="font-medium text-blue-600 hover:text-blue-500"
+              data-umami-event="signup-success-support-click"
             >
               Contactez le support
             </a>

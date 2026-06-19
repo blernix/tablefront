@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { XCircle, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import { track } from '@/lib/umami';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -50,6 +51,7 @@ export default function SignupCancelPage() {
 
       setResumeSuccess(true);
       setCheckoutUrl(data.checkout.url);
+      track('signup-cancel-resume-success');
       toast.success('Session de paiement créée avec succès !');
 
       // Auto-redirect to Stripe after 2 seconds
@@ -59,6 +61,7 @@ export default function SignupCancelPage() {
         }
       }, 2000);
     } catch (error) {
+      track('signup-cancel-resume-error');
       toast.error(error instanceof Error ? error.message : 'Erreur inconnue');
     } finally {
       setIsLoading(false);
@@ -112,6 +115,7 @@ export default function SignupCancelPage() {
                     <button
                       onClick={() => setShowResumeForm(true)}
                       className="text-blue-700 font-medium underline hover:text-blue-800"
+                      data-umami-event="signup-cancel-resume-payment-click"
                     >
                       Reprendre le paiement pour votre compte existant
                     </button>
@@ -210,6 +214,7 @@ export default function SignupCancelPage() {
                         onClick={handleRedirectToStripe}
                         size="sm"
                         className="w-full bg-green-600 hover:bg-green-700"
+                        data-umami-event="signup-cancel-goto-stripe-click"
                       >
                         Aller directement vers le paiement
                       </Button>
@@ -230,14 +235,14 @@ export default function SignupCancelPage() {
             {/* Actions */}
             <div className="space-y-3">
               <Link href="/signup" className="block">
-                <Button className="w-full">
+                <Button className="w-full" data-umami-event="signup-cancel-back-signup-click">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Retourner à l&apos;inscription
                 </Button>
               </Link>
 
               <Link href="/login" className="block">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" data-umami-event="signup-cancel-login-click">
                   Se connecter avec un compte existant
                 </Button>
               </Link>
@@ -251,6 +256,7 @@ export default function SignupCancelPage() {
               <a
                 href="mailto:support@tablemaster.fr"
                 className="text-xs font-medium text-blue-600 hover:text-blue-500"
+                data-umami-event="signup-cancel-support-click"
               >
                 Contactez notre support
               </a>

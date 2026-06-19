@@ -357,6 +357,7 @@ export default function CookiesPage() {
                 <button
                   onClick={acceptAllCookies}
                   disabled={!tarteaucitronReady}
+                  data-umami-event="cookies-accept-all-click"
                   className={`p-4 border-2 font-light transition-colors text-center ${
                     !tarteaucitronReady
                       ? 'border-[#CCCCCC] text-[#CCCCCC] cursor-not-allowed'
@@ -374,6 +375,7 @@ export default function CookiesPage() {
                 <button
                   onClick={openCookieSettings}
                   disabled={!tarteaucitronReady}
+                  data-umami-event="cookies-customize-click"
                   className={`p-4 border-2 font-light transition-colors text-center ${
                     !tarteaucitronReady
                       ? 'border-[#CCCCCC] text-[#CCCCCC] cursor-not-allowed'
@@ -391,6 +393,7 @@ export default function CookiesPage() {
                 <button
                   onClick={refuseAllCookies}
                   disabled={!tarteaucitronReady}
+                  data-umami-event="cookies-refuse-all-click"
                   className={`p-4 border-2 font-light transition-colors text-center ${
                     !tarteaucitronReady
                       ? 'border-[#CCCCCC] text-[#CCCCCC] cursor-not-allowed'

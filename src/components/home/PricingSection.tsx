@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import { Check } from 'lucide-react';
+import { useSectionView } from '@/hooks/useSectionView';
 
 export default function PricingSection() {
+  useSectionView('pricing', 'section-view-pricing');
+
   return (
     <section id="pricing" className="py-20 bg-white">
       <div className="container mx-auto max-w-6xl px-6">
@@ -69,6 +72,7 @@ export default function PricingSection() {
 
             <Link
               href="/signup"
+              data-umami-event="pricing-starter-cta-click"
               className="block w-full text-center px-8 py-4 border-2 border-[#0066FF] text-[#0066FF] font-light hover:bg-[#0066FF] hover:text-white transition-colors"
             >
               Commencer avec le pack gestion
@@ -141,6 +145,7 @@ export default function PricingSection() {
 
             <Link
               href="/signup"
+              data-umami-event="pricing-pro-cta-click"
               className="block w-full text-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-colors"
             >
               Commencer avec le pack croissance
