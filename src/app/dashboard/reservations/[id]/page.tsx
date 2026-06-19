@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Reservation } from '@/types';
 import { ReservationDetailView } from '@/components/reservations/ReservationDetailView';
@@ -10,14 +10,31 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import DeleteConfirmModal from '@/components/modals/DeleteConfirmModal';
 
+function getActionFromURL(): string | null {
+  if (typeof window === 'undefined') return null;
+  // Read from both query param (?action=) and hash fragment (#action=)
+  var searchAction = new URLSearchParams(window.location.search).get('action');
+  if (searchAction === 'confirm' || searchAction === 'cancel') return searchAction;
+  var hash = window.location.hash;
+  if (hash === '#action=confirm') return 'confirm';
+  if (hash === '#action=cancel') return 'cancel';
+  return null;
+}
+
+function cleanActionFromURL() {
+  if (typeof window === 'undefined') return;
+  var url = window.location.pathname + window.location.search.replace(/[?&]action=[^&]*/g, '').replace(/^\?$/, '');
+  // Also clean hash
+  window.history.replaceState(null, '', url);
+}
+
 export default function ReservationDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [actionProcessed, setActionProcessed] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  var actionProcessedRef = useRef(false);
 
   useEffect(() => {
     const loadReservation = async () => {
@@ -38,52 +55,52 @@ export default function ReservationDetailPage({ params }: { params: { id: string
   }, [params.id, router]);
 
   // Handle action from notification (confirm/cancel)
+  // Uses window.location directly (not useSearchParams) because:
+  // 1. useSearchParams changes reference on every render causing effect cascades
+  // 2. Query params can be lost in PWA openWindow on Android
   useEffect(() => {
-    if (isLoading || actionProcessed || !reservation) return;
+    if (isLoading || actionProcessedRef.current || !reservation) return;
 
-    const action = searchParams.get('action');
-    if (!action || (action !== 'confirm' && action !== 'cancel')) {
-      // Clean URL even if no valid action
-      if (searchParams.get('action')) {
-        window.history.replaceState(null, '', window.location.pathname);
-      }
-      return;
-    }
+    var action = getActionFromURL();
+    console.log('[ReservationDetail] action from URL:', action, '| reservation.status:', reservation.status, '| URL:', window.location.href);
 
-    const targetStatus = action === 'confirm' ? 'confirmed' : 'cancelled';
+    if (!action) return;
+
+    var targetStatus = action === 'confirm' ? 'confirmed' : 'cancelled';
+
     // Skip if reservation is already in target status
     if (reservation.status === targetStatus) {
-      window.history.replaceState(null, '', window.location.pathname);
-      setActionProcessed(true);
+      cleanActionFromURL();
+      actionProcessedRef.current = true;
       return;
     }
 
-    // Remove action from URL BEFORE API call to prevent re-execution on reload
-    window.history.replaceState(null, '', window.location.pathname);
+    // Mark as processed BEFORE async call to prevent double execution
+    actionProcessedRef.current = true;
+    // Clean URL immediately
+    cleanActionFromURL();
 
-    // Process the action
-    const processAction = async () => {
+    var processAction = async function() {
       try {
         setIsUpdating(true);
         await apiClient.updateReservation(reservation._id, { status: targetStatus });
 
-        const statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
-        toast.success(`Réservation ${statusLabel} depuis la notification`);
+        var statusLabel = action === 'confirm' ? 'confirmée' : 'annulée';
+        toast.success('Réservation ' + statusLabel + ' depuis la notification');
 
         // Refresh reservation data
-        const response = await apiClient.getReservation(params.id);
+        var response = await apiClient.getReservation(params.id);
         setReservation(response.reservation);
       } catch (error) {
         console.error('Error processing notification action:', error);
-        toast.error(`Erreur lors de la ${action === 'confirm' ? 'confirmation' : 'annulation'}`);
+        toast.error('Erreur lors de la ' + (action === 'confirm' ? 'confirmation' : 'annulation'));
       } finally {
         setIsUpdating(false);
-        setActionProcessed(true);
       }
     };
 
     processAction();
-  }, [isLoading, actionProcessed, reservation, searchParams, params.id]);
+  }, [isLoading, reservation, params.id]);
 
   const handleStatusChange = async (
     status: 'pending' | 'confirmed' | 'cancelled' | 'completed'

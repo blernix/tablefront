@@ -38,25 +38,29 @@ self.addEventListener('notificationclick', function(event) {
   var notificationData = event.notification.data || {};
   var reservationId = notificationData.reservationId;
 
-  // Determine the target URL based on the action
-  var url = '/dashboard';
-  var fallbackAction = null;
+  var baseUrl = '/dashboard';
+  var action = null;
 
   if (event.action === 'confirm_reservation') {
-    fallbackAction = 'confirm';
+    action = 'confirm';
   } else if (event.action === 'cancel_reservation') {
-    fallbackAction = 'cancel';
+    action = 'cancel';
   }
 
   if (reservationId) {
-    url = '/dashboard/reservations/' + reservationId;
-    if (fallbackAction) {
-      url += '?action=' + fallbackAction;
-    }
+    baseUrl = '/dashboard/reservations/' + reservationId;
   } else if (notificationData.url) {
-    var cleanUrl = notificationData.url.split('?')[0].replace(/^https?:\/\/[^/]+/, '');
-    url = cleanUrl || '/dashboard';
+    baseUrl = notificationData.url.split('?')[0].replace(/^https?:\/\/[^/]+/, '') || '/dashboard';
   }
+
+  // Build URL with both query param AND hash fragment as redundant signal
+  // Hash fragment survives PWA window reuse scenarios better than query params
+  var url = baseUrl;
+  if (action) {
+    url += '?action=' + action + '#action=' + action;
+  }
+
+  console.log('[Push SW] Opening URL:', url, '| event.action:', event.action, '| reservationId:', reservationId);
 
   event.waitUntil(
     clients.openWindow(url).catch(function(error) {

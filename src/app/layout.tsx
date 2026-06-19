@@ -5,7 +5,7 @@ import QueryProvider from '@/providers/QueryProvider';
 import ServiceWorkerUpdater from '@/components/ServiceWorkerUpdater';
 import TarteaucitronProvider from '@/components/TarteaucitronProvider';
 import { headers } from 'next/headers';
-import Script from 'next/script'; // Import important pour le GTM
+import Script from 'next/script';
 import './globals.css';
 import {
   getPageMetadata,
@@ -80,34 +80,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="fr" data-theme="light">
       <head>
-        {/* --- GOOGLE CONSENT MODE V2 (doit être chargé AVANT GTM) --- */}
-        <Script id="google-consent-default" strategy="beforeInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){window.dataLayer.push(arguments);}
-            gtag('consent', 'default', {
-              'analytics_storage': 'denied',
-              'ad_storage': 'denied',
-              'ad_user_data': 'denied',
-              'ad_personalization': 'denied',
-              'functionality_storage': 'granted',
-              'personalization_storage': 'denied',
-              'security_storage': 'granted',
-              'wait_for_update': 5000,
-            });
-          `}
-        </Script>
-
-        {/* --- GOOGLE TAG MANAGER (Script) --- */}
-        <Script id="gtm-script" strategy="afterInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-5CBBW2XZ');
-          `}
-        </Script>
+        {/* --- Umami Analytics (privacy-first, no cookies, GDPR compliant) --- */}
+        <Script
+          src="https://cloud.umami.is/script.js"
+          data-website-id="73c4f97e-09db-42c3-b58c-b88a3fc52df6"
+          strategy="afterInteractive"
+        />
 
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
@@ -153,16 +131,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body className={`${inter.className} font-light antialiased bg-[#FAFAFA] text-[#2A2A2A]`}>
-        {/* --- GOOGLE TAG MANAGER (Noscript) --- */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-5CBBW2XZ"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-
         <TarteaucitronProvider />
         <ServiceWorkerUpdater />
         <QueryProvider>
