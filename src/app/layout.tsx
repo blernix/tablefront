@@ -86,6 +86,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           data-website-id="ab136b94-e68a-48c3-95da-f44e25f6c806"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://analytique.killian-lecrut.com/recorder.js"
+          data-website-id="ab136b94-e68a-48c3-95da-f44e25f6c806"
+          data-sample-rate="1"
+          data-mask-level="moderate"
+          data-max-duration="300000"
+          strategy="afterInteractive"
+        />
 
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
