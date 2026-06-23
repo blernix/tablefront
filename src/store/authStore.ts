@@ -2,6 +2,12 @@ import { create } from 'zustand';
 import { User } from '@/types';
 import { apiClient } from '@/lib/api';
 
+interface TwoFactorLoginData {
+  tempToken: string;
+  userId: string;
+  email: string;
+}
+
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -9,11 +15,13 @@ interface AuthState {
   isLoading: boolean;
   isInitialized: boolean;
   error: string | null;
+  twoFactorLoginData: TwoFactorLoginData | null;
 
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User, token: string) => void;
   clearError: () => void;
+  clearTwoFactorData: () => void;
   initAuth: () => void;
   syncCookie: () => void;
 }
@@ -25,9 +33,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   isInitialized: false,
   error: null,
+  twoFactorLoginData: null,
 
   login: async (email: string, password: string) => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, twoFactorLoginData: null });
     try {
       const response = await apiClient.login(email, password);
 
@@ -48,6 +57,20 @@ export const useAuthStore = create<AuthState>((set) => ({
         document.cookie = cookieString;
       }
     } catch (error) {
+      const err = error as Error & { tempToken?: string; userId?: string; email?: string };
+
+      if (typeof err.tempToken === 'string') {
+        set({
+          isLoading: false,
+          twoFactorLoginData: {
+            tempToken: err.tempToken,
+            userId: err.userId || '',
+            email: err.email || email,
+          },
+        });
+        return;
+      }
+
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
       console.error('[AuthStore] Login error:', errorMessage, 'Full error:', error);
       set({
@@ -57,7 +80,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         isLoading: false,
         error: errorMessage,
       });
-      throw error;
     }
   },
 
@@ -81,6 +103,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: false,
         isLoading: false,
         error: null,
+        twoFactorLoginData: null,
       });
     }
   },
@@ -106,6 +129,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearError: () => {
     set({ error: null });
+  },
+
+  clearTwoFactorData: () => {
+    set({ twoFactorLoginData: null });
   },
 
   initAuth: () => {

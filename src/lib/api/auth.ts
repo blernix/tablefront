@@ -2,14 +2,22 @@ import { ApiClient } from './base';
 import { AuthResponse, TwoFactorAuthResponse } from '@/types';
 
 export class TwoFactorRequiredError extends Error {
+  public tempToken: string;
+  public userId: string;
+  public email: string;
+
   constructor(
-    public tempToken: string,
-    public userId: string,
-    public email: string,
+    tempToken: string,
+    userId: string,
+    email: string,
     message: string = 'Two-factor authentication required'
   ) {
     super(message);
     this.name = 'TwoFactorRequiredError';
+    this.tempToken = tempToken;
+    this.userId = userId;
+    this.email = email;
+    Object.setPrototypeOf(this, TwoFactorRequiredError.prototype);
   }
 }
 

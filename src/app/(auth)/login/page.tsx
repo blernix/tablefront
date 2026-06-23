@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import TwoFactorVerificationModal from '@/components/modals/TwoFactorVerificationModal';
-import { TwoFactorRequiredError } from '@/lib/api/auth';
 import { AuthResponse } from '@/types';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
@@ -17,18 +16,13 @@ import { track } from '@/lib/umami';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized } =
+  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized, twoFactorLoginData, clearTwoFactorData } =
     useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
-  const [twoFactorData, setTwoFactorData] = useState<{
-    tempToken: string;
-    userId: string;
-    email: string;
-  } | null>(null);
   const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
@@ -36,10 +30,7 @@ export default function LoginPage() {
   }, [initAuth]);
 
   useEffect(() => {
-    // Wait for auth initialization before checking authentication
     if (!isInitialized || hasRedirectedRef.current) return;
-
-    // Redirect if already authenticated (only on initial mount, not after login)
     if (isAuthenticated && user) {
       const redirectPath = user.role === 'admin' ? '/admin' : user.role === 'commercial' ? '/commercial' : '/dashboard';
       hasRedirectedRef.current = true;
@@ -47,87 +38,66 @@ export default function LoginPage() {
     }
   }, [isInitialized, isAuthenticated, user, router]);
 
+  useEffect(() => {
+    if (twoFactorLoginData) {
+      setShowTwoFactorModal(true);
+    }
+  }, [twoFactorLoginData]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
     clearError();
-    hasRedirectedRef.current = true; // Prevent useEffect from redirecting while we handle login
+    clearTwoFactorData();
+    hasRedirectedRef.current = true;
 
     if (!email || !password) {
       setLocalError('Veuillez remplir tous les champs');
       return;
     }
 
-    try {
-      await login(email, password);
+    await login(email, password);
 
-      // Get updated state after login
-      const currentUser = useAuthStore.getState().user;
-      const currentToken = useAuthStore.getState().token;
+    // Check if 2FA is required (login sets twoFactorLoginData in the store)
+    const twoFactorState = useAuthStore.getState().twoFactorLoginData;
+    if (twoFactorState) {
+      track('login-2fa-required');
+      return;
+    }
 
-      if (currentUser && currentToken) {
-        track('login-success', { role: currentUser.role });
-        // Store user in localStorage for persistence
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        localStorage.setItem('token', currentToken);
+    // Normal login success
+    const currentUser = useAuthStore.getState().user;
+    const currentToken = useAuthStore.getState().token;
 
-        // Store token in cookie for middleware
-        const cookieString = `token=${currentToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`; // 7 days
-        document.cookie = cookieString;
+    if (currentUser && currentToken) {
+      track('login-success', { role: currentUser.role });
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      localStorage.setItem('token', currentToken);
 
-        // Redirect based on role
-        const redirectPath = currentUser.role === 'admin' ? '/admin' : currentUser.role === 'commercial' ? '/commercial' : '/dashboard';
+      const cookieString = `token=${currentToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      document.cookie = cookieString;
 
-        // Mark that we're redirecting to prevent useEffect from also redirecting
-        hasRedirectedRef.current = true;
-
-        // Navigate to the appropriate page
-        router.push(redirectPath);
-      } else {
-        console.error('[Login] No user or token after login');
-        setLocalError('Erreur lors de la connexion. Veuillez réessayer.');
-      }
-    } catch (err) {
-      console.error('[Login] Login failed:', err);
-
-      // Check if it's a 2FA required error
-      if (err instanceof TwoFactorRequiredError) {
-        track('login-2fa-required');
-        setTwoFactorData({
-          tempToken: err.tempToken,
-          userId: err.userId,
-          email: err.email,
-        });
-        setShowTwoFactorModal(true);
-        clearError();
-        return;
-      }
-
-      track('login-error');
-      // For other errors, show the error message
-      if (!error) {
-        setLocalError('Erreur lors de la connexion. Vérifiez vos identifiants.');
-      }
+      const redirectPath = currentUser.role === 'admin' ? '/admin' : currentUser.role === 'commercial' ? '/commercial' : '/dashboard';
+      hasRedirectedRef.current = true;
+      router.push(redirectPath);
+    } else {
+      console.error('[Login] No user or token after login');
+      setLocalError('Erreur lors de la connexion. Veuillez réessayer.');
     }
   };
 
   const handleTwoFactorSuccess = (response: AuthResponse) => {
-    // Update auth store with the response
     useAuthStore.getState().setUser(response.user, response.token);
-
-    // Store user in localStorage for persistence
     localStorage.setItem('user', JSON.stringify(response.user));
     localStorage.setItem('token', response.token);
 
-    // Store token in cookie for middleware
-    const cookieString = `token=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`; // 7 days
+    const cookieString = `token=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
     document.cookie = cookieString;
 
-    // Redirect based on role
     const redirectPath = response.user.role === 'admin' ? '/admin' : response.user.role === 'commercial' ? '/commercial' : '/dashboard';
 
-    // Close modal and navigate
     setShowTwoFactorModal(false);
+    clearTwoFactorData();
     router.push(redirectPath);
   };
 
@@ -138,7 +108,6 @@ export default function LoginPage() {
       <AuthNavbar activePage="login" />
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-6 pt-24 md:pt-6">
         <div className="w-full max-w-md">
-          {/* Logo & Title - hidden on desktop since navbar shows logo */}
           <div className="text-center mb-12 md:hidden">
             <div className="inline-flex items-center gap-3 mb-8">
               <Image
@@ -156,7 +125,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Desktop title */}
           <div className="text-center mb-12 hidden md:block">
             <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>
             <p className="text-[#666666] font-light">
@@ -164,7 +132,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form */}
           <div className="bg-white border border-[#E5E5E5] p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
@@ -228,7 +195,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Back to home */}
           <div className="mt-6 text-center">
             <Link
               href="/"
@@ -241,17 +207,17 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {twoFactorData && (
+      {twoFactorLoginData && (
         <TwoFactorVerificationModal
           isOpen={showTwoFactorModal}
           onClose={() => {
             setShowTwoFactorModal(false);
-            setTwoFactorData(null);
+            clearTwoFactorData();
           }}
           onSuccess={handleTwoFactorSuccess}
-          tempToken={twoFactorData.tempToken}
-          userId={twoFactorData.userId}
-          email={twoFactorData.email}
+          tempToken={twoFactorLoginData.tempToken}
+          userId={twoFactorLoginData.userId}
+          email={twoFactorLoginData.email}
         />
       )}
       <Footer />
