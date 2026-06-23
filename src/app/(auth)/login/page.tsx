@@ -16,7 +16,7 @@ import { track } from '@/lib/umami';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized, twoFactorLoginData, clearTwoFactorData } =
+  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized, twoFactorLoginData, clearTwoFactorData, paymentRequiredData, clearPaymentRequiredData } =
     useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -43,6 +43,13 @@ export default function LoginPage() {
       setShowTwoFactorModal(true);
     }
   }, [twoFactorLoginData]);
+
+  useEffect(() => {
+    if (paymentRequiredData?.checkoutUrl) {
+      track('login-payment-required-redirect');
+      window.location.href = paymentRequiredData.checkoutUrl;
+    }
+  }, [paymentRequiredData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

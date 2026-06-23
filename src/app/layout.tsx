@@ -82,8 +82,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         {/* --- Umami Analytics (privacy-first, no cookies, GDPR compliant) --- */}
         <Script
-          src="https://cloud.umami.is/script.js"
-          data-website-id="73c4f97e-09db-42c3-b58c-b88a3fc52df6"
+          src="https://analytique.killian-lecrut.com/script.js"
+          data-website-id="ab136b94-e68a-48c3-95da-f44e25f6c806"
           strategy="afterInteractive"
         />
 

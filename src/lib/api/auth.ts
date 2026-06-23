@@ -21,6 +21,21 @@ export class TwoFactorRequiredError extends Error {
   }
 }
 
+export class PaymentRequiredError extends Error {
+  public needsPayment: boolean = true;
+  public checkoutUrl: string;
+
+  constructor(
+    checkoutUrl: string,
+    message: string = 'Payment required to activate account'
+  ) {
+    super(message);
+    this.name = 'PaymentRequiredError';
+    this.checkoutUrl = checkoutUrl;
+    Object.setPrototypeOf(this, PaymentRequiredError.prototype);
+  }
+}
+
 export class AuthApi extends ApiClient {
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
@@ -28,6 +43,14 @@ export class AuthApi extends ApiClient {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
+
+      // Check if payment is required
+      if ('needsPayment' in response && (response as any).needsPayment) {
+        throw new PaymentRequiredError(
+          (response as any).checkoutUrl,
+          (response as any).message
+        );
+      }
 
       // Check if 2FA is required
       if ('requiresTwoFactor' in response && response.requiresTwoFactor) {

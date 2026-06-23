@@ -8,6 +8,10 @@ interface TwoFactorLoginData {
   email: string;
 }
 
+interface PaymentRequiredData {
+  checkoutUrl: string;
+}
+
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -16,12 +20,14 @@ interface AuthState {
   isInitialized: boolean;
   error: string | null;
   twoFactorLoginData: TwoFactorLoginData | null;
+  paymentRequiredData: PaymentRequiredData | null;
 
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User, token: string) => void;
   clearError: () => void;
   clearTwoFactorData: () => void;
+  clearPaymentRequiredData: () => void;
   initAuth: () => void;
   syncCookie: () => void;
 }
@@ -34,9 +40,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   isInitialized: false,
   error: null,
   twoFactorLoginData: null,
+  paymentRequiredData: null,
 
   login: async (email: string, password: string) => {
-    set({ isLoading: true, error: null, twoFactorLoginData: null });
+    set({ isLoading: true, error: null, twoFactorLoginData: null, paymentRequiredData: null });
     try {
       const response = await apiClient.login(email, password);
 
@@ -57,7 +64,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         document.cookie = cookieString;
       }
     } catch (error) {
-      const err = error as Error & { tempToken?: string; userId?: string; email?: string };
+      const err = error as Error & { tempToken?: string; userId?: string; email?: string; needsPayment?: boolean; checkoutUrl?: string };
 
       if (typeof err.tempToken === 'string') {
         set({
@@ -67,6 +74,14 @@ export const useAuthStore = create<AuthState>((set) => ({
             userId: err.userId || '',
             email: err.email || email,
           },
+        });
+        return;
+      }
+
+      if (err.needsPayment && err.checkoutUrl) {
+        set({
+          isLoading: false,
+          paymentRequiredData: { checkoutUrl: err.checkoutUrl },
         });
         return;
       }
@@ -104,6 +119,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isLoading: false,
         error: null,
         twoFactorLoginData: null,
+        paymentRequiredData: null,
       });
     }
   },
@@ -133,6 +149,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearTwoFactorData: () => {
     set({ twoFactorLoginData: null });
+  },
+
+  clearPaymentRequiredData: () => {
+    set({ paymentRequiredData: null });
   },
 
   initAuth: () => {

@@ -23,7 +23,7 @@ const PLANS: Record<PlanType, PlanInfo> = {
 
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePhone = (phone: string) => /^[\d\s\-\+\(\)\.]+$/.test(phone) && phone.replace(/\D/g, '').length >= 9;
-const validatePassword = (password: string) => password.length < 6 ? { valid: false, message: 'Minimum 6 caractères' } : { valid: true };
+const validatePassword = (password: string) => password.length < 8 ? { valid: false, message: 'Minimum 8 caractères' } : { valid: true };
 
 const Input = ({ type, value, onChange, placeholder, error, valid, className }: { type?: string; value: string; onChange: (v: string) => void; placeholder?: string; error?: string; valid?: boolean; className?: string }) => (
   <div>
@@ -151,7 +151,7 @@ function OwnerAccountStep({ data, errors, onChange, onBack, onSubmit, isLoading 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Mot de passe *</label>
-            <Input type="password" value={data.ownerPassword} onChange={(v) => onChange({ ownerPassword: v })} placeholder="Minimum 6 caractères" error={errors.ownerPassword || (data.ownerPassword && !pw.valid ? pw.message : undefined)} valid={pw.valid} />
+            <Input type="password" value={data.ownerPassword} onChange={(v) => onChange({ ownerPassword: v })} placeholder="Minimum 8 caractères" error={errors.ownerPassword || (data.ownerPassword && !pw.valid ? pw.message : undefined)} valid={pw.valid} />
           </div>
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium text-[#8E8E93] md:text-sm">Confirmer *</label>
@@ -237,7 +237,7 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ restaurantName: restaurantData.restaurantName, restaurantAddress: restaurantData.restaurantAddress, restaurantPhone: restaurantData.restaurantPhone, restaurantEmail: restaurantData.restaurantEmail, ownerEmail: accountData.ownerEmail, ownerPassword: accountData.ownerPassword, acceptedTerms: accountData.acceptedTerms, plan: selectedPlan }),
+        body: JSON.stringify({ restaurantName: restaurantData.restaurantName, restaurantAddress: restaurantData.restaurantAddress, restaurantPhone: restaurantData.restaurantPhone, restaurantEmail: restaurantData.restaurantEmail, ownerEmail: accountData.ownerEmail, ownerPassword: accountData.ownerPassword, acceptedTerms: accountData.acceptedTerms, plan: selectedPlan, website: '' }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error?.message || "Erreur lors de l'inscription");
@@ -248,6 +248,11 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
 
   return (
     <div className="w-full" ref={formRef}>
+      {/* Honeypot — invisible to humans, filled by bots */}
+      <div style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
       <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
 
       {submitError && <div className="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 md:rounded-xl"><p className="text-[13px] text-red-800 md:text-sm">{submitError}</p></div>}
