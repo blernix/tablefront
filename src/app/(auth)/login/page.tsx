@@ -1,3 +1,5 @@
+'use client';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -5,8 +7,6 @@ export const metadata: Metadata = {
   description: 'Accédez à votre cahier de réservation TableMaster.',
   robots: 'noindex, nofollow',
 };
-
-'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';

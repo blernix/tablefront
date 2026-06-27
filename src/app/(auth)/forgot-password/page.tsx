@@ -1,3 +1,5 @@
+'use client';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -5,8 +7,6 @@ export const metadata: Metadata = {
   description: 'Réinitialisez votre mot de passe TableMaster.',
   robots: 'noindex, nofollow',
 };
-
-'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

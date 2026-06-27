@@ -1,3 +1,5 @@
+'use client';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -6,8 +8,6 @@ export const metadata: Metadata = {
     'Créez votre compte en 2 minutes et testez TableMaster gratuitement pendant 14 jours. Sans engagement.',
   robots: 'noindex, nofollow',
 };
-
-'use client';
 
 import Link from 'next/link';
 import SignupWizard from '@/components/auth/SignupWizard';

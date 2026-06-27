@@ -1,3 +1,5 @@
+'use client';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -5,8 +7,6 @@ export const metadata: Metadata = {
   description:
     'Gérez vos préférences de cookies sur TableMaster. Contrôlez les cookies fonctionnels et marketing.',
 };
-
-'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
