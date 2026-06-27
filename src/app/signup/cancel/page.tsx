@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable react/no-unescaped-entities */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-export default function SignupCancelPage() {
+function SignupCancelForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showResumeForm, setShowResumeForm] = useState(false);
@@ -287,5 +287,13 @@ export default function SignupCancelPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupCancelPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Chargement...</div>}>
+      <SignupCancelForm />
+    </Suspense>
   );
 }

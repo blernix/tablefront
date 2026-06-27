@@ -1,13 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Gestion des cookies - TableMaster',
-  description:
-    'Gérez vos préférences de cookies sur TableMaster. Contrôlez les cookies fonctionnels et marketing.',
-};
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AuthNavbar from '@/components/auth/AuthNavbar';

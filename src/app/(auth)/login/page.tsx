@@ -1,13 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Connexion Restaurateur - TableMaster',
-  description: 'Accédez à votre cahier de réservation TableMaster.',
-  robots: 'noindex, nofollow',
-};
-
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

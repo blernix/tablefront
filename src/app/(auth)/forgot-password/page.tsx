@@ -1,13 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Mot de passe oublié - TableMaster',
-  description: 'Réinitialisez votre mot de passe TableMaster.',
-  robots: 'noindex, nofollow',
-};
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
