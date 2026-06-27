@@ -26,7 +26,7 @@ export class MenusApi extends ApiClient {
       headers['Authorization'] = `Bearer ${this['token']}`;
     }
 
-    const response = await fetch(`${this.baseUrl}/api/restaurant/menu/pdf`, {
+    const response = await fetch(`${this.baseUrl}/api/v1/restaurant/menu/pdf`, {
       method: 'POST',
       headers,
       body: formData,

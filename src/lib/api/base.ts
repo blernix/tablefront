@@ -1,9 +1,10 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
-const API_VERSION = '/api/v1';
+export const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX ?? '/api/v1';
 
 function normalizeEndpoint(endpoint: string): string {
-  return endpoint.replace(/^\/api/, API_VERSION);
+  if (endpoint.startsWith(API_PREFIX)) return endpoint;
+  return endpoint.replace(/^\/api/, API_PREFIX);
 }
 
 export class ApiClient {

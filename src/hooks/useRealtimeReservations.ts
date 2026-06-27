@@ -51,7 +51,7 @@ export const useRealtimeReservations = (options: UseRealtimeReservationsOptions 
 
     // Get the base URL for the API
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const streamUrl = `${baseUrl}/api/notifications/stream`;
+    const streamUrl = `${baseUrl}/api/v1/notifications/stream`;
 
     // Get token from localStorage
     const token = localStorage.getItem('token');

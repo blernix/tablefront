@@ -67,7 +67,7 @@ export class CustomersApi extends ApiClient {
     const query = new URLSearchParams();
     if (params?.tag) query.set('tag', params.tag);
     if (params?.format) query.set('format', params.format);
-    const url = `${this.baseUrl}/api/restaurant/customers/export?${query.toString()}`;
+    const url = `${this.baseUrl}/api/v1/restaurant/customers/export?${query.toString()}`;
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${this.getToken()}` },
     });

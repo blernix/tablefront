@@ -25,7 +25,7 @@ export default function QrCodeDisplay({
 
   // Generate stable QR code URL that redirects to current PDF
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-  const qrCodeUrl = `${backendUrl}/api/public/menu/pdf/${restaurantId}`;
+  const qrCodeUrl = `${backendUrl}/api/v1/public/menu/pdf/${restaurantId}`;
 
   const handleDownload = () => {
     const svg = document.getElementById('menu-qr-code');

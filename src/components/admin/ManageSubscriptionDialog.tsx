@@ -54,7 +54,7 @@ export function ManageSubscriptionDialog({
       setSyncStatus((prev) => ({ ...prev, loading: true }));
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/restaurants/${restaurantId}/subscription/sync-status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/restaurants/${restaurantId}/subscription/sync-status`,
         {
           method: 'GET',
           headers: {
@@ -105,7 +105,7 @@ export function ManageSubscriptionDialog({
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/restaurants/${restaurantId}/subscription/manage`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/restaurants/${restaurantId}/subscription/manage`,
         {
           method: 'POST',
           headers: {

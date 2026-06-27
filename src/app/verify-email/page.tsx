@@ -1,19 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const token = searchParams.get('token');
+  const ran = useRef(false);
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (ran.current) return;
+    ran.current = true;
+
     if (!token) {
       setStatus('error');
       setMessage('Lien de vérification invalide.');
@@ -33,7 +36,7 @@ export default function VerifyEmailPage() {
       })
       .catch(() => {
         setStatus('error');
-        setMessage('Impossible de vérifier votre email. Veuillez réessayer.');
+        setMessage('Impossible de vérifier votre email.');
       });
   }, [token]);
 

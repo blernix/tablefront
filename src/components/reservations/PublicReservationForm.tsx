@@ -64,7 +64,7 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
     (async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_URL}/api/public/restaurant-info`, {
+        const response = await fetch(`${API_URL}/api/v1/public/restaurant-info`, {
           headers: { 'x-slug': slug },
         });
         if (!response.ok) throw new Error('Restaurant not found');
@@ -88,7 +88,7 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
     (async () => {
       try {
         setIsLoadingSlots(true);
-        const response = await fetch(`${API_URL}/api/public/time-slots/${date}`, {
+        const response = await fetch(`${API_URL}/api/v1/public/time-slots/${date}`, {
           headers: { 'x-slug': slug },
         });
         if (!response.ok) throw new Error('Failed to fetch time slots');
@@ -196,7 +196,7 @@ export default function PublicReservationForm({ slug, isEmbed = false }: PublicR
 
     try {
       setIsSubmitting(true);
-      const response = await fetch(`${API_URL}/api/public/reservations`, {
+      const response = await fetch(`${API_URL}/api/v1/public/reservations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-slug': slug },
         body: JSON.stringify({
