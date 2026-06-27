@@ -4,11 +4,9 @@ import { Toaster } from 'sonner';
 import QueryProvider from '@/providers/QueryProvider';
 import ServiceWorkerUpdater from '@/components/ServiceWorkerUpdater';
 import TarteaucitronProvider from '@/components/TarteaucitronProvider';
-import { headers } from 'next/headers';
 import Script from 'next/script';
 import './globals.css';
 import {
-  getPageMetadata,
   organizationStructuredData,
   softwareStructuredData,
   pricingStructuredData,
@@ -22,15 +20,31 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const pathname = headersList.get('x-invoke-path') || '/';
-  const metadata = getPageMetadata(pathname);
-  return {
-    metadataBase: new URL('https://tablemaster.fr'),
-    ...metadata,
-  };
-}
+export const metadata: Metadata = {
+  metadataBase: new URL('https://tablemaster.fr'),
+  title:
+    'TableMaster | Alternative TheFork & Zenchef Sans Commission - Logiciel Réservation Restaurant',
+  description:
+    'Alternative TheFork et Zenchef sans commission (0€/couvert). Économisez 15% vs TheFork. Pack Gestion 39€/mois. Gestion mobile, widget intégrable, avis Google automatiques. Essai gratuit 14 jours.',
+  alternates: {
+    canonical: 'https://tablemaster.fr',
+  },
+  openGraph: {
+    title: 'TableMaster | Alternative TheFork & Zenchef - Logiciel Réservation 0% Commission',
+    description:
+      "Économisez 15% vs TheFork. Alternative sans commission aux plateformes de réservation. Simple, mobile, widget intégrable, avis Google automatiques. 14 jours d'essai gratuit.",
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://tablemaster.fr',
+    siteName: 'TableMaster',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TableMaster | Alternative TheFork - 0% commission',
+    description:
+      'Économisez 15% vs TheFork, boostez vos avis Google. Alternative sans commission aux plateformes de réservation. Essai gratuit 14 jours.',
+  },
+};
 
 export const viewport: Viewport = {
   themeColor: '#FAFAFA',
@@ -39,22 +53,7 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headersList = await headers();
-  const pathname = headersList.get('x-invoke-path') || '/';
-
-  // Mapping des noms de pages pour le fil d'Ariane
-  const pageNames: Record<string, string> = {
-    '/': 'Accueil',
-    '/legal': 'Mentions Légales',
-    '/privacy': 'Politique de Confidentialité',
-    '/cookies': 'Gestion des Cookies',
-    '/cgv': 'Conditions Générales de Vente',
-    '/signup': 'Inscription',
-    '/login': 'Connexion',
-    '/dashboard': 'Tableau de Bord',
-  };
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const breadcrumbStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -67,15 +66,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       },
     ],
   };
-
-  if (pathname !== '/' && pageNames[pathname]) {
-    breadcrumbStructuredData.itemListElement.push({
-      '@type': 'ListItem',
-      position: 2,
-      name: pageNames[pathname],
-      item: `https://tablemaster.fr${pathname}`,
-    });
-  }
 
   return (
     <html lang="fr" data-theme="light">

@@ -1,8 +1,31 @@
+import type { Metadata } from 'next';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Intégration widget réservation — TableMaster sur votre site actuel',
+  description:
+    'Un lien, un QR code ou un bouton. Intégrez TableMaster sur WordPress, Wix, Shopify, Instagram ou n\'importe quel site HTML. Copiez-collez, c\'est tout.',
+  alternates: {
+    canonical: 'https://tablemaster.fr/integrations',
+  },
+  openGraph: {
+    title: 'Intégration widget réservation — TableMaster sur votre site actuel',
+    description:
+      'Intégrez le widget de réservation TableMaster sur votre site WordPress, Wix ou Shopify en 2 minutes.',
+    type: 'website',
+    url: 'https://tablemaster.fr/integrations',
+    siteName: 'TableMaster',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Intégration widget réservation — TableMaster',
+    description: 'Ajoutez la réservation en ligne à votre site existant. WordPress, Wix, Shopify.',
+  },
+};
 
 const IntegrationCarousel = dynamic(() => import('@/components/IntegrationCarousel'), {
   ssr: false,

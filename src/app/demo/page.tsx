@@ -1,8 +1,31 @@
+import type { Metadata } from 'next';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import Footer from '@/components/layout/Footer';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Démo interactive TableMaster — Réservation restaurant en action',
+  description:
+    "Explorez l'interface TableMaster comme si vous y étiez. Widget, formulaire, dashboard, calendrier — tout est interactif. Testez la solution de réservation sans commission.",
+  alternates: {
+    canonical: 'https://tablemaster.fr/demo',
+  },
+  openGraph: {
+    title: 'Démo interactive TableMaster — Réservation restaurant en action',
+    description:
+      "Explorez l'interface TableMaster comme si vous y étiez. Widget, formulaire, dashboard, calendrier — tout est interactif.",
+    type: 'website',
+    url: 'https://tablemaster.fr/demo',
+    siteName: 'TableMaster',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Démo interactive TableMaster',
+    description: "Testez TableMaster en live. L'alternative TheFork & Zenchef sans commission.",
+  },
+};
 
 const ParallaxDemoSection = dynamic(() => import('@/components/demo/ParallaxDemoSection'), {
   ssr: false,
