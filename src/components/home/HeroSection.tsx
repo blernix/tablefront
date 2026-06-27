@@ -164,20 +164,19 @@ export default function HeroSection() {
             variants={itemVariants}
             className="text-5xl md:text-6xl lg:text-7xl font-light text-[#2A2A2A] leading-[1.1] tracking-tight max-w-3xl mx-auto"
           >
-            Votre système de réservation
+            Arrêtez de payer
             <span className="block text-[#0066FF] font-normal mt-3">
-              installé avant le prochain service.
+              pour vos propres clients.
             </span>
           </motion.h1>
 
-          {/* Description */}
           <motion.p
             variants={itemVariants}
             className="text-lg md:text-xl text-[#666666] leading-relaxed font-light max-w-2xl mx-auto"
           >
             Logiciel de réservation restaurant sans commission (0€/couvert).
-            Simple, mobile. TableMaster s&apos;occupe de tout : widget sur votre site, avis Google automatisés, rappels 24h.
-            Gérez vos réservations en temps réel.
+            Widget sur votre site, avis Google automatisés, rappels 24h.
+            Gérez vos réservations en temps réel, sans intermédiaire.
           </motion.p>
 
           {/* Badge */}
@@ -230,6 +229,11 @@ export default function HeroSection() {
               </div>
             ))}
           </motion.div>
+
+          {/* Sans CB badge */}
+          <motion.p variants={itemVariants} className="text-sm text-[#8E8E93] font-light">
+            14 jours d&apos;essai · Aucune carte bancaire requise · Résiliable à tout moment
+          </motion.p>
         </motion.div>
       </div>
 

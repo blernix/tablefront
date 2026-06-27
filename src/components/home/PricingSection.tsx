@@ -51,7 +51,7 @@ export default function PricingSection() {
               <li className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-[#0066FF] flex-shrink-0 mt-0.5" />
                 <span className="text-[#666666] font-light">
-                  Widget & URL de réservation non personnalisable
+                  Widget de réservation standard inclus
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -156,6 +156,9 @@ export default function PricingSection() {
         <div className="mt-12 text-center">
           <p className="text-[#666666] font-light mb-4">
             Sans engagement • Résiliable à tout moment
+          </p>
+          <p className="text-sm text-[#0066FF] font-light mb-4">
+            14 jours d&apos;essai gratuit · Aucune carte bancaire requise
           </p>
           <p className="text-sm text-[#666666] font-light">
             Tous les plans incluent : Mises à jour gratuites • Hébergement sécurisé • Sauvegardes

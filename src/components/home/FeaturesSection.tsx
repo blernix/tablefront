@@ -1,7 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useSectionView } from '@/hooks/useSectionView';
 import {
+  ArrowRight,
   Check,
   Calendar,
   Globe,
@@ -97,6 +99,22 @@ export default function FeaturesSection() {
                 </span>
               </li>
             </ul>
+            <Link
+              href="/integrations"
+              className="inline-flex items-center gap-1 mt-5 text-sm text-[#0066FF] font-light hover:underline"
+            >
+              Voir toutes les intégrations
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <div className="mt-3">
+              <Link
+                href="/demo"
+                className="inline-flex items-center gap-1 text-sm text-[#0066FF] font-light hover:underline"
+              >
+                Voir la démo interactive
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
 
           {/* Emails & Avis */}

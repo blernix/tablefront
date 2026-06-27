@@ -14,6 +14,7 @@ export default function Footer() {
                 width={32}
                 height={32}
                 className="w-8 h-8 object-contain"
+                unoptimized
               />
               <span className="text-lg font-light">TableMaster</span>
             </div>

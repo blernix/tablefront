@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 interface AuthNavbarProps {
@@ -44,8 +43,10 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
   }, [isMenuOpen]);
 
   const navigation = [
+    { name: 'Démo', href: '/demo', eventName: 'nav-demo-click' },
     { name: 'Fonctionnalités', href: '/#features', eventName: 'nav-features-click' },
     { name: 'Tarifs', href: '/#pricing', eventName: 'nav-pricing-click' },
+    { name: 'Intégrations', href: '/integrations', eventName: 'nav-integrations-click' },
     { name: 'Site sur mesure', href: '/site-sur-mesure', eventName: 'nav-custom-site-click' },
     { name: 'Connexion', href: '/login', eventName: 'nav-login-click' },
     { name: "S'inscrire", href: '/signup', eventName: 'nav-signup-click' },
@@ -59,11 +60,9 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
           <nav className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-4" data-umami-event="header-logo-click">
-                <Image
+                <img
                   src="/logo_512.png"
                   alt="TableMaster Logo"
-                  width={68}
-                  height={68}
                   className="w-14 h-14 object-contain"
                 />
                 <span className="text-xl font-light text-[#2A2A2A]">TableMaster</span>
@@ -128,11 +127,9 @@ export default function AuthNavbar({ activePage = 'home' }: AuthNavbarProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b">
               <div className="flex items-center gap-4">
-                <Image
+                <img
                   src="/logo_512.png"
                   alt="TableMaster Logo"
-                  width={48}
-                  height={48}
                   className="w-12 h-12 object-contain"
                 />
                 <span className="text-xl font-light text-[#2A2A2A]">TableMaster</span>

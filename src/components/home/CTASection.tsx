@@ -10,13 +10,16 @@ export default function CTASection() {
   return (
     <section id="cta" className="py-20 bg-gradient-to-br from-[#0066FF] to-[#0052CC]">
       <div className="container mx-auto max-w-4xl px-6 text-center">
-        <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
-          Prêt à transformer votre gestion de réservations ?
-        </h2>
-        <p className="text-xl text-white/90 font-light mb-10 max-w-2xl mx-auto">
-          Rejoignez les restaurateurs qui économisent des centaines d&apos;euros par mois avec
-          TableMaster.
-        </p>
+          <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
+            Arrêtez de payer pour vos propres clients.
+          </h2>
+          <p className="text-xl text-white/90 font-light mb-4 max-w-2xl mx-auto">
+            Rejoignez les restaurateurs qui économisent en moyenne 250€ par mois en supprimant les
+            commissions.
+          </p>
+          <p className="text-sm text-white/70 font-light mb-10">
+            14 jours d&apos;essai · Aucune carte bancaire requise
+          </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/signup"

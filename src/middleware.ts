@@ -80,6 +80,12 @@ const PUBLIC_PATHS = new Set([
 function isPublicRoute(pathname: string): boolean {
   const clean = pathname.replace(/\/$/, '') || '/';
 
+  if (
+    /\.(png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|css|js|json|xml|txt|webmanifest)$/.test(clean)
+  ) {
+    return true;
+  }
+
   if (PUBLIC_PATHS.has(clean)) return true;
 
   if (PUBLIC_PREFIXES.some((prefix) => clean.startsWith(prefix))) return true;

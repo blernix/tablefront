@@ -173,13 +173,14 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-12 md:hidden">
             <div className="inline-flex items-center gap-3 mb-8">
-              <Image
-                src="/logo_512.png"
-                alt="TableMaster Logo"
-                width={40}
-                height={40}
-                className="w-10 h-10 object-contain"
-              />
+                <Image
+                  src="/logo_512.png"
+                  alt="TableMaster Logo"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 object-contain"
+                  unoptimized
+                />
               <span className="text-2xl font-light text-[#2A2A2A]">TableMaster</span>
             </div>
             <h1 className="text-4xl font-light text-[#2A2A2A] mb-3">Connexion</h1>

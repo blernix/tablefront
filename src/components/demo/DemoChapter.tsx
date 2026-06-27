@@ -54,8 +54,8 @@ export default function DemoChapter({
   const localProgress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   // State to track if animation has been completed (once)
-  const [hasBeenAnimated, setHasBeenAnimated] = useState(false);
-  const hasBeenAnimatedMotion = useMotionValue<number>(0); // 0 = not animated, 1 = animated
+  const [hasBeenAnimated, setHasBeenAnimated] = useState(externalIsActive);
+  const hasBeenAnimatedMotion = useMotionValue<number>(externalIsActive ? 1 : 0); // 0 = not animated, 1 = animated
 
   // Debug: log progress values
   useEffect(() => {
@@ -77,9 +77,9 @@ export default function DemoChapter({
   }, [hasBeenAnimated, hasBeenAnimatedMotion]);
 
   // Widget animation values - directly controlled
-  const widgetOpacity = useMotionValue(0);
-  const widgetScale = useMotionValue(0.8);
-  const widgetTranslateY = useMotionValue(50);
+  const widgetOpacity = useMotionValue(externalIsActive ? 1 : 0);
+  const widgetScale = useMotionValue(externalIsActive ? 1 : 0.8);
+  const widgetTranslateY = useMotionValue(externalIsActive ? 0 : 50);
 
   // Text animation values
   const textOpacity = useTransform(localProgress, [0, 0.15, 0.5, 1], [0, 0, 1, 1]);
@@ -158,7 +158,7 @@ export default function DemoChapter({
   return (
     <motion.div
       ref={ref}
-      className={`relative min-h-screen flex items-center justify-center py-12 ${className}`}
+      className={`relative min-h-[380px] md:min-h-[450px] flex items-center justify-center py-12 ${className}`}
       initial={false}
       animate={{
         opacity: sectionActive ? (shouldShow ? 1 : 0.95) : 0.95,

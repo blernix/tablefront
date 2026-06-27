@@ -287,23 +287,23 @@ export default function ParallaxDemoSection() {
         {/* Chapters container */}
         <div ref={containerRef} className="relative" style={{ position: 'relative' }}>
           {chapters.map((chapter, index) => (
-            <DemoChapter
-              key={chapter.id}
-              id={chapter.id}
-              title={chapter.title}
-              description={chapter.description}
-              detailedDescription={chapter.detailedDescription}
-              demoComponent={chapter.component}
-              icon={chapter.icon}
-              features={chapter.features}
-              isActive={index === activeChapter}
-              isPast={index < activeChapter}
-              isFuture={index > activeChapter}
-              sectionActive={isSectionVisible}
-              invertLayout={index % 2 === 1}
-              scrollProgress={0} // Each chapter handles its own scroll progress
-              className=""
-            />
+              <DemoChapter
+                key={chapter.id}
+                id={chapter.id}
+                title={chapter.title}
+                description={chapter.description}
+                detailedDescription={chapter.detailedDescription}
+                demoComponent={chapter.component}
+                icon={chapter.icon}
+                features={chapter.features}
+                isActive={true}
+                isPast={true}
+                isFuture={false}
+                sectionActive={true}
+                invertLayout={index % 2 === 1}
+                scrollProgress={100}
+                className=""
+              />
           ))}
         </div>
 
