@@ -7,6 +7,7 @@ import { useRestaurantStore } from '@/store/restaurantStore';
 import DashboardSidebar from '@/components/dashboard/Sidebar';
 import DashboardHeader from '@/components/dashboard/Header';
 import MobileTabBar from '@/components/dashboard/MobileTabBar';
+import PastDueBlocker from '@/components/dashboard/PastDueBlocker';
 
 // Skeleton for dashboard loading
 function DashboardSkeleton() {
@@ -125,7 +126,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       />
       <div className="flex flex-1 flex-col overflow-hidden w-full md:w-auto">
         <DashboardHeader onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
+          <PastDueBlocker subscriptionStatus={restaurant?.subscription?.status}>
+            {children}
+          </PastDueBlocker>
+        </main>
         <MobileTabBar />
       </div>
     </div>

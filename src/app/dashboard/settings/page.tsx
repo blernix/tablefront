@@ -1,8 +1,7 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ChevronRight, Building2, Clock, CalendarX, Utensils, Calendar, Users, Bell, Code2, Palette, Download, Key, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const settingsCategories: { title: string; desc: string; icon: any; href: string; highlight?: boolean }[] = [
   { title: 'Guide de démarrage', desc: 'Premiers pas avec TableMaster', icon: HelpCircle, href: '/dashboard/guide', highlight: true },
@@ -20,8 +19,6 @@ const settingsCategories: { title: string; desc: string; icon: any; href: string
 ];
 
 export default function SettingsPage() {
-  const router = useRouter();
-
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
@@ -33,9 +30,9 @@ export default function SettingsPage() {
         {settingsCategories.map((cat) => {
           const Icon = cat.icon;
           return (
-            <button
+            <Link
               key={cat.title}
-              onClick={() => router.push(cat.href)}
+              href={cat.href}
               className={cn(
                 'w-full flex items-center gap-3 p-4 rounded-2xl border border-[#E5E5EA] active:bg-[#F2F2F7] transition-colors text-left md:rounded-xl md:p-4',
                 cat.highlight && 'bg-[#0066FF]/[0.03] border-[#0066FF]/20'
@@ -49,7 +46,7 @@ export default function SettingsPage() {
                 <p className="text-[12px] text-[#8E8E93] mt-0.5 truncate md:text-sm">{cat.desc}</p>
               </div>
               <ChevronRight className="h-5 w-5 text-[#C7C7CC] flex-shrink-0" />
-            </button>
+            </Link>
           );
         })}
       </div>

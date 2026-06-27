@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { apiClient } from '@/lib/api';
 
 export default function CommercialDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,11 +16,7 @@ export default function CommercialDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/admin/commercials/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
+    apiClient.admin.getCommercialDetail(id)
       .then(setData)
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -31,13 +27,8 @@ export default function CommercialDetailPage() {
 
   const handleDelete = async () => {
     if (!confirm(`Supprimer définitivement ce commercial ? Les restaurants qu'il a créés ne seront pas affectés.`)) return;
-    const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/admin/commercials/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('Erreur');
+      await apiClient.admin.deleteCommercialUser(id);
       toast.success('Commercial supprimé');
       router.push('/admin/commercials');
     } catch {

@@ -1,15 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { apiClient } from '@/lib/api';
 import { toast } from 'sonner';
-import { UserPlus, Loader2, X, Check } from 'lucide-react';
+import { UserPlus, Loader2, X } from 'lucide-react';
 
 export default function AdminCommercialsPage() {
+  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,13 +22,8 @@ export default function AdminCommercialsPage() {
 
   const fetchCommercials = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/admin/commercials`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setCommercials(data.users || []);
-      }
+      const data = await apiClient.admin.getCommercials();
+      setCommercials(data.users || []);
     } catch {}
     setLoading(false);
   };
@@ -102,7 +99,7 @@ export default function AdminCommercialsPage() {
       ) : (
         <div className="space-y-3">
           {commercials.map((c: any) => (
-              <Card key={c._id} className="cursor-pointer hover:shadow-sm transition-shadow" onClick={() => window.location.href = `/admin/commercials/${c._id}`}>
+            <Card key={c._id} className="cursor-pointer hover:shadow-sm transition-shadow" onClick={() => router.push(`/admin/commercials/${c._id}`)}>
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">

@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 async function fetchRestaurantInfo(slug: string) {
   try {
-    const res = await fetch(`${API_URL}/api/public/restaurant-info`, {
+    const res = await fetch(`${API_URL}/api/v1/public/restaurant-info`, {
       headers: { 'x-slug': slug },
       next: { revalidate: 60 },
     });

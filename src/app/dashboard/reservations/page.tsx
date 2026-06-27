@@ -173,7 +173,7 @@ export default function ReservationsPage() {
   useEffect(() => {
     (async () => {
       try { setIsLoading(true); await refreshReservations();
-        try { const r = await fetch('/api/blocked-days', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); if (r.ok) { const d = await r.json(); setBlockedDays(d.blockedDays || []); } } catch {} }
+        try { const r = await fetch('/api/v1/day-blocks', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); if (r.ok) { const d = await r.json(); setBlockedDays(d.blockedDays || []); } } catch {} }
       catch {} finally { setIsLoading(false); }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -99,7 +99,7 @@ export default function WidgetSettingsPage() {
     if (!slug || slug.length < 3) { setSlugAvailability(null); return; }
     setIsCheckingAvailability(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/public/check-slug-availability/${slug}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/public/check-slug-availability/${slug}`);
       const data = await response.json();
       setSlugAvailability({ available: data.available, message: data.message });
     } catch { setSlugAvailability({ available: false, message: 'Erreur lors de la vérification' }); }

@@ -197,6 +197,7 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   const steps = [
     { id: 'plan' as SignupStep, label: 'Plan', short: 'Plan' },
@@ -235,16 +236,43 @@ export default function SignupWizard({ onSuccess, onError }: SignupWizardProps) 
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setIsLoading(true); setSubmitError('');
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ restaurantName: restaurantData.restaurantName, restaurantAddress: restaurantData.restaurantAddress, restaurantPhone: restaurantData.restaurantPhone, restaurantEmail: restaurantData.restaurantEmail, ownerEmail: accountData.ownerEmail, ownerPassword: accountData.ownerPassword, acceptedTerms: accountData.acceptedTerms, plan: selectedPlan, website: '' }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error?.message || "Erreur lors de l'inscription");
-      if (data.checkout?.url) { track('signup-form-submit', { plan: selectedPlan }); track('signup-checkout-redirect', { plan: selectedPlan }); window.location.href = data.checkout.url; }
-      else throw new Error('URL de paiement manquante');
+      track('signup-form-submit', { plan: selectedPlan });
+      setSignupSuccess(true);
     } catch (err: any) { console.error(err); track('signup-error', { error: err.message }); setSubmitError(err.message); onError?.(err.message); setIsLoading(false); }
   };
+
+  if (signupSuccess) {
+    return (
+      <div className="w-full" ref={formRef}>
+        <div className="bg-white rounded-2xl border border-[#E5E5EA] p-8 text-center md:rounded-xl md:p-10">
+          <div className="h-16 w-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-5">
+            <svg className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-[#1A1A1A] mb-3">Vérifiez votre email</h2>
+          <p className="text-[15px] text-[#666666] leading-relaxed mb-2">
+            Un email de vérification a été envoyé à <strong>{accountData.ownerEmail}</strong>.
+          </p>
+          <p className="text-[14px] text-[#8E8E93] leading-relaxed">
+            Cliquez sur le lien dans l&apos;email pour activer votre compte et commencer votre essai gratuit de 14 jours.
+          </p>
+          <a
+            href="/login"
+            className="inline-flex items-center justify-center h-12 px-8 mt-6 rounded-xl bg-[#0066FF] text-white text-[15px] font-semibold hover:bg-[#0055DD] transition-colors"
+          >
+            Aller à la connexion
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full" ref={formRef}>

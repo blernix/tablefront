@@ -16,13 +16,15 @@ import { track } from '@/lib/umami';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized, twoFactorLoginData, clearTwoFactorData, paymentRequiredData, clearPaymentRequiredData } =
+  const { login, isAuthenticated, user, error, clearError, isLoading, initAuth, isInitialized, twoFactorLoginData, clearTwoFactorData } =
     useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
+  const [notVerifiedEmail, setNotVerifiedEmail] = useState('');
+  const [resending, setResending] = useState(false);
   const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
@@ -44,16 +46,27 @@ export default function LoginPage() {
     }
   }, [twoFactorLoginData]);
 
-  useEffect(() => {
-    if (paymentRequiredData?.checkoutUrl) {
-      track('login-payment-required-redirect');
-      window.location.href = paymentRequiredData.checkoutUrl;
-    }
-  }, [paymentRequiredData]);
+  const handleResendVerification = async () => {
+    setResending(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setNotVerifiedEmail('');
+        setLocalError('');
+        alert('Un nouveau lien de vérification a été envoyé à votre adresse email.');
+      }
+    } catch {}
+    setResending(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
+    setNotVerifiedEmail('');
     clearError();
     clearTwoFactorData();
     hasRedirectedRef.current = true;
@@ -65,8 +78,14 @@ export default function LoginPage() {
 
     await login(email, password);
 
+    const authState = useAuthStore.getState();
+    if (authState.error === 'EMAIL_NOT_VERIFIED') {
+      setNotVerifiedEmail(email);
+      return;
+    }
+
     // Check if 2FA is required (login sets twoFactorLoginData in the store)
-    const twoFactorState = useAuthStore.getState().twoFactorLoginData;
+    const twoFactorState = authState.twoFactorLoginData;
     if (twoFactorState) {
       track('login-2fa-required');
       return;
@@ -109,6 +128,43 @@ export default function LoginPage() {
   };
 
   const displayError = error || localError;
+
+  if (notVerifiedEmail) {
+    return (
+      <>
+        <AuthNavbar activePage="login" />
+        <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] p-6 pt-24 md:pt-6">
+          <div className="w-full max-w-md text-center">
+            <div className="bg-white rounded-2xl border border-[#E5E5EA] p-8 space-y-4">
+              <div className="h-14 w-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto">
+                <svg className="h-7 w-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">Vérifiez votre email</h2>
+              <p className="text-[15px] text-[#666666] leading-relaxed">
+                Un email de vérification a été envoyé à <strong>{notVerifiedEmail}</strong>.
+                Cliquez sur le lien dans l&apos;email pour activer votre compte.
+              </p>
+              <button
+                onClick={handleResendVerification}
+                disabled={resending}
+                className="text-[15px] text-[#0066FF] font-medium hover:underline disabled:opacity-50"
+              >
+                {resending ? 'Envoi en cours...' : 'Renvoyer l\'email de vérification'}
+              </button>
+              <button
+                onClick={() => { setNotVerifiedEmail(''); clearError(); }}
+                className="block w-full text-[14px] text-[#8E8E93] mt-2 hover:text-[#666666]"
+              >
+                Retour à la connexion
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

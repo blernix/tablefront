@@ -1,6 +1,4 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Clock,
@@ -11,34 +9,33 @@ import {
   UserPlus,
   CheckCircle2,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 
 const steps = [
   {
     num: 1,
-    title: 'Configurez vos horaires d’ouverture',
+    title: 'Configurez vos horaires d\'ouverture',
     icon: Clock,
-    desc: 'Définissez les jours d’ouverture de votre restaurant et les créneaux de service (midi et/ou soir).',
+    desc: 'Définissez les jours d\'ouverture de votre restaurant et les créneaux de service (midi et/ou soir).',
     details: [
       'Activez ou désactivez chaque jour avec le bouton on/off.',
       'Ajoutez un ou plusieurs créneaux par jour (ex : 12h00–14h00, 19h00–22h00).',
-      'Les jours désactivés n’apparaîtront pas sur votre widget de réservation.',
-      'Vous pouvez modifier vos horaires à tout moment, les réservations futures s’adapteront.',
+      'Les jours désactivés n\'apparaîtront pas sur votre widget de réservation.',
+      'Vous pouvez modifier vos horaires à tout moment, les réservations futures s\'adapteront.',
     ],
     href: '/dashboard/settings/opening-hours',
     action: 'Configurer les horaires',
   },
   {
     num: 2,
-    title: 'Définissez la durée d’un service',
+    title: 'Définissez la durée d\'un service',
     icon: Calendar,
-    desc: 'La durée d’un service détermine l’espacement entre deux créneaux de réservation.',
+    desc: 'La durée d\'un service détermine l\'espacement entre deux créneaux de réservation.',
     details: [
       'Par défaut, un service dure 1h30 (90 minutes).',
       'Si vous réglez 60 minutes, un client pourra réserver à 19h et le suivant à 20h.',
-      'Si vous réglez 120 minutes, l’espacement sera de 2 heures entre chaque réservation.',
-      'Activez « Créneaux basés sur les horaires » pour que seuls les créneaux dans vos heures d’ouverture soient proposés.',
+      'Si vous réglez 120 minutes, l\'espacement sera de 2 heures entre chaque réservation.',
+      'Activez « Créneaux basés sur les horaires » pour que seuls les créneaux dans vos heures d\'ouverture soient proposés.',
       'Vous pouvez aussi définir un prix moyen par client pour estimer vos revenus.',
     ],
     href: '/dashboard/settings/reservations',
@@ -53,7 +50,7 @@ const steps = [
       'Le mode Simple vous permet de définir un nombre total de tables et une capacité moyenne.',
       'Le mode Détaillé (recommandé) vous permet de créer des types de tables précis : tables de 2, 4, 6 personnes, etc.',
       'Plus vous êtes précis, plus TableMaster pourra optimiser le placement de vos réservations.',
-      'La capacité totale (tables × couverts) est utilisée pour calculer le taux d’occupation affiché dans le dashboard.',
+      'La capacité totale (tables × couverts) est utilisée pour calculer le taux d\'occupation affiché dans le dashboard.',
     ],
     href: '/dashboard/settings/tables',
     action: 'Configurer les tables',
@@ -67,7 +64,7 @@ const steps = [
       'Vous obtenez un lien direct à partager sur vos réseaux sociaux, emails ou QR codes.',
       'Le script JavaScript ajoute un bouton flottant « Réserver une table » sur votre site.',
       'Des instructions détaillées sont disponibles pour WordPress, Wix, Shopify, Webflow et tout site HTML.',
-      'Le formulaire de réservation s’affiche dans une fenêtre sans que le client quitte votre site.',
+      'Le formulaire de réservation s\'affiche dans une fenêtre sans que le client quitte votre site.',
     ],
     href: '/dashboard/settings/integrations',
     action: 'Intégrer le widget',
@@ -79,9 +76,9 @@ const steps = [
     desc: 'Soyez alerté en temps réel à chaque nouvelle réservation ou modification.',
     details: [
       'Activez les notifications push pour recevoir une alerte sur votre téléphone ou ordinateur à chaque nouvelle réservation.',
-      'Vous pouvez valider ou refuser une réservation directement depuis la notification, sans ouvrir l’application.',
+      'Vous pouvez valider ou refuser une réservation directement depuis la notification, sans ouvrir l\'application.',
       'Les emails de confirmation sont envoyés automatiquement à vos clients.',
-      'Vous pouvez choisir pour quel type d’événement vous souhaitez être notifié (nouvelle, confirmée, annulée, modifiée).',
+      'Vous pouvez choisir pour quel type d\'événement vous souhaitez être notifié (nouvelle, confirmée, annulée, modifiée).',
     ],
     href: '/dashboard/settings/notifications',
     action: 'Configurer les notifications',
@@ -102,8 +99,6 @@ const steps = [
 ];
 
 export default function GuidePage() {
-  const router = useRouter();
-
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
@@ -125,7 +120,6 @@ export default function GuidePage() {
             >
               <div className="p-4 md:p-5">
                 <div className="flex items-start gap-3 md:gap-4">
-                  {/* Numéro */}
                   <div className="h-10 w-10 rounded-xl bg-[#0066FF] text-white flex items-center justify-center font-bold text-lg flex-shrink-0 md:text-xl">
                     {step.num}
                   </div>
@@ -151,12 +145,11 @@ export default function GuidePage() {
                     </ul>
 
                     <div className="mt-4">
-                      <Button
-                        onClick={() => router.push(step.href)}
-                        className="h-11 rounded-xl text-[14px] font-medium md:h-10 md:text-sm"
-                      >
-                        {step.action}
-                        <ArrowRight className="ml-1.5 h-4 w-4" />
+                      <Button asChild className="h-11 rounded-xl text-[14px] font-medium md:h-10 md:text-sm">
+                        <Link href={step.href}>
+                          {step.action}
+                          <ArrowRight className="ml-1.5 h-4 w-4" />
+                        </Link>
                       </Button>
                     </div>
                   </div>
@@ -174,12 +167,11 @@ export default function GuidePage() {
           Une fois ces étapes terminées, votre restaurant est configuré et vos clients peuvent réserver.
           Pensez à tester votre widget de réservation pour vérifier que tout fonctionne.
         </p>
-        <Button
-          onClick={() => router.push('/dashboard/reservations')}
-          className="mt-4 h-11 rounded-xl text-[14px] font-medium md:h-10 md:text-sm"
-        >
-          Voir mes réservations
-          <ArrowRight className="ml-1.5 h-4 w-4" />
+        <Button asChild className="mt-4 h-11 rounded-xl text-[14px] font-medium md:h-10 md:text-sm">
+          <Link href="/dashboard/reservations">
+            Voir mes réservations
+            <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Link>
         </Button>
       </div>
 

@@ -1,5 +1,11 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
+const API_VERSION = '/api/v1';
+
+function normalizeEndpoint(endpoint: string): string {
+  return endpoint.replace(/^\/api/, API_VERSION);
+}
+
 export class ApiClient {
   protected baseUrl: string;
   private token: string | null = null;
@@ -132,7 +138,7 @@ export class ApiClient {
 
         startTime = Date.now();
 
-        response = await fetch(`${this.baseUrl}${endpoint}`, {
+        response = await fetch(`${this.baseUrl}${normalizeEndpoint(endpoint)}`, {
           ...options,
           headers,
           credentials: 'include',
@@ -263,7 +269,7 @@ export class ApiClient {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(`${this.baseUrl}${normalizeEndpoint(endpoint)}`, {
       method: 'POST',
       headers,
       body: formData,

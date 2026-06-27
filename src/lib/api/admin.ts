@@ -148,6 +148,18 @@ export class AdminApi extends ApiClient {
     this.downloadBlob(response.blob, 'notification_analytics.csv');
   }
 
+  async getCommercials(): Promise<{ users: any[] }> {
+    return this.request('/api/admin/commercials');
+  }
+
+  async getCommercialDetail(id: string): Promise<any> {
+    return this.request(`/api/admin/commercials/${id}`);
+  }
+
+  async deleteCommercialUser(id: string): Promise<void> {
+    return this.request(`/api/admin/commercials/${id}`, { method: 'DELETE' });
+  }
+
   async createCommercialUser(email: string, password: string): Promise<any> {
     return this.request('/api/admin/commercials', {
       method: 'POST',

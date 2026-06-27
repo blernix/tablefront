@@ -1,84 +1,139 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-/**
- * Check if a path is a reservation page (public slug)
- * Reservation pages include:
- * 1. Root-level slug: /mon-restaurant
- * 2. Embed reservation page: /embed/reservations/mon-restaurant
- */
-function isReservationPath(pathname: string): boolean {
-  if (!pathname || pathname === '/') return false;
+type Role = 'admin' | 'restaurant' | 'server' | 'commercial';
 
-  // Remove trailing slash
-  const cleanPath = pathname.replace(/\/$/, '');
-
-  // Check for root-level slug pattern (single segment, not a known system path)
-  const isRootSlug =
-    !cleanPath.startsWith('/_next') &&
-    !cleanPath.startsWith('/api') &&
-    !cleanPath.startsWith('/public') &&
-    !cleanPath.startsWith('/static') &&
-    !cleanPath.includes('.') && // No file extensions
-    !cleanPath.includes('//') && // No double slashes
-    cleanPath !== '/' &&
-    cleanPath.split('/').length === 2 && // Exactly one segment after root
-    !isKnownSystemPath(cleanPath);
-
-  // Check for embed reservation pattern
-  const isEmbedReservation =
-    cleanPath.startsWith('/embed/reservations/') && cleanPath.split('/').length >= 4; // Has a slug after /embed/reservations/
-
-  return isRootSlug || isEmbedReservation;
+interface JwtPayload {
+  exp: number;
+  role?: Role;
+  [key: string]: unknown;
 }
 
-/**
- * Helper function to check if a path is a known system path
- */
-function isKnownSystemPath(pathname: string): boolean {
-  const systemPaths = [
-    '/',
-    '/legal',
-    '/privacy',
-    '/cookies',
-    '/cgv',
-    '/signup',
-    '/login',
-    '/dashboard',
-    '/commercial',
-    '/forgot-password',
-    '/reset-password',
-    '/embed', // Just /embed without a slug
-    '/site-sur-mesure',
-    '/developpement-web',
-  ];
+function decodeJwtPayload(token: string): JwtPayload | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
 
-  return systemPaths.includes(pathname);
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = atob(base64);
+    const payload = JSON.parse(json);
+
+    if (!payload.exp || typeof payload.exp !== 'number') return null;
+
+    return payload as JwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+function isValidToken(payload: JwtPayload | null): boolean {
+  if (!payload) return false;
+  return payload.exp * 1000 > Date.now();
+}
+
+function matchRole(pathname: string, role: Role): boolean {
+  switch (role) {
+    case 'admin':
+      return pathname.startsWith('/admin');
+    case 'restaurant':
+    case 'server':
+      return pathname.startsWith('/dashboard');
+    case 'commercial':
+      return pathname.startsWith('/commercial');
+    default:
+      return false;
+  }
+}
+
+function getRoleRedirect(role: Role): string {
+  switch (role) {
+    case 'admin':
+      return '/admin/dashboard';
+    case 'restaurant':
+    case 'server':
+      return '/dashboard';
+    case 'commercial':
+      return '/commercial';
+    default:
+      return '/login';
+  }
+}
+
+const PUBLIC_PREFIXES = [
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+];
+
+const PUBLIC_PATHS = new Set([
+  '/',
+  '/legal',
+  '/privacy',
+  '/cookies',
+  '/cgv',
+  '/site-sur-mesure',
+  '/developpement-web',
+  '/debug-sentry',
+]);
+
+function isPublicRoute(pathname: string): boolean {
+  const clean = pathname.replace(/\/$/, '') || '/';
+
+  if (PUBLIC_PATHS.has(clean)) return true;
+
+  if (PUBLIC_PREFIXES.some((prefix) => clean.startsWith(prefix))) return true;
+
+  if (clean.startsWith('/embed/reservations/')) return true;
+
+  if (
+    clean !== '/' &&
+    !clean.includes('.') &&
+    !clean.includes('//') &&
+    clean.split('/').length === 2 &&
+    !clean.startsWith('/_next') &&
+    !clean.startsWith('/api')
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   const { pathname } = request.nextUrl;
-  const allCookies = request.cookies.getAll();
+  const cleanPath = pathname.replace(/\/$/, '') || '/';
+  const payload = token ? decodeJwtPayload(token) : null;
+  const isAuthenticated = isValidToken(payload);
+  const role = payload?.role ?? null;
 
-  // Public routes that don't require authentication
-  const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password'];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-
-  // Reservation pages are also public (no authentication required)
-  const isReservationRoute = isReservationPath(pathname);
-
-  // If trying to access protected route without token
-  if (!isPublicRoute && !isReservationRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (isPublicRoute(cleanPath)) {
+    if (isAuthenticated && role) {
+      const isAuthPage = PUBLIC_PREFIXES.some((p) => cleanPath.startsWith(p));
+      if (isAuthPage && matchRole(cleanPath, role)) {
+        return NextResponse.next();
+      }
+      if (isAuthPage) {
+        return NextResponse.redirect(new URL(getRoleRedirect(role), request.url));
+      }
+    }
+    return NextResponse.next();
   }
 
-  // If authenticated and trying to access login page, let the component handle redirection
-  // (component will redirect based on user role)
+  if (!isAuthenticated || !role) {
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    response.cookies.delete('token');
+    return response;
+  }
+
+  if (!matchRole(cleanPath, role)) {
+    return NextResponse.redirect(new URL(getRoleRedirect(role), request.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icons|manifest.webmanifest).*)'],
 };

@@ -37,7 +37,7 @@ export default function SignupCancelPage() {
     setCheckoutUrl(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/resume-payment`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/resume-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

@@ -1,6 +1,17 @@
 import { ApiClient } from './base';
 import { AuthResponse, TwoFactorAuthResponse } from '@/types';
 
+export class EmailNotVerifiedError extends Error {
+  public email: string;
+
+  constructor(email: string, message: string = 'Email not verified') {
+    super(message);
+    this.name = 'EmailNotVerifiedError';
+    this.email = email;
+    Object.setPrototypeOf(this, EmailNotVerifiedError.prototype);
+  }
+}
+
 export class TwoFactorRequiredError extends Error {
   public tempToken: string;
   public userId: string;
@@ -21,21 +32,6 @@ export class TwoFactorRequiredError extends Error {
   }
 }
 
-export class PaymentRequiredError extends Error {
-  public needsPayment: boolean = true;
-  public checkoutUrl: string;
-
-  constructor(
-    checkoutUrl: string,
-    message: string = 'Payment required to activate account'
-  ) {
-    super(message);
-    this.name = 'PaymentRequiredError';
-    this.checkoutUrl = checkoutUrl;
-    Object.setPrototypeOf(this, PaymentRequiredError.prototype);
-  }
-}
-
 export class AuthApi extends ApiClient {
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
@@ -44,10 +40,9 @@ export class AuthApi extends ApiClient {
         body: JSON.stringify({ email, password }),
       });
 
-      // Check if payment is required
-      if ('needsPayment' in response && (response as any).needsPayment) {
-        throw new PaymentRequiredError(
-          (response as any).checkoutUrl,
+      if ('code' in response && (response as any).code === 'EMAIL_NOT_VERIFIED') {
+        throw new EmailNotVerifiedError(
+          (response as any).email || email,
           (response as any).message
         );
       }
