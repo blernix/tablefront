@@ -64,6 +64,7 @@ const PUBLIC_PREFIXES = [
   '/signup',
   '/forgot-password',
   '/reset-password',
+  '/ville/',
 ];
 
 const PUBLIC_PATHS = new Set([

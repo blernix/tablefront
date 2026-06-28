@@ -1,4 +1,4 @@
-import { ApiClient } from './base';
+import { ApiClient, ApiError } from './base';
 import { AuthResponse, TwoFactorAuthResponse } from '@/types';
 
 export class EmailNotVerifiedError extends Error {
@@ -40,13 +40,6 @@ export class AuthApi extends ApiClient {
         body: JSON.stringify({ email, password }),
       });
 
-      if ('code' in response && (response as any).code === 'EMAIL_NOT_VERIFIED') {
-        throw new EmailNotVerifiedError(
-          (response as any).email || email,
-          (response as any).message
-        );
-      }
-
       // Check if 2FA is required
       if ('requiresTwoFactor' in response && response.requiresTwoFactor) {
         const twoFactorResponse = response as TwoFactorAuthResponse;
@@ -69,6 +62,12 @@ export class AuthApi extends ApiClient {
       this.setToken(authResponse.token);
       return authResponse;
     } catch (error) {
+      if (error instanceof ApiError && error.data?.error?.code === 'EMAIL_NOT_VERIFIED') {
+        throw new EmailNotVerifiedError(
+          error.data.error.email || email,
+          error.data.error.message
+        );
+      }
       console.error('[API] Login error details:', error);
       throw error;
     }

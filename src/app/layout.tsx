@@ -37,12 +37,21 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     url: 'https://tablemaster.fr',
     siteName: 'TableMaster',
+    images: [
+      {
+        url: 'https://tablemaster.fr/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'TableMaster — Logiciel de réservation pour restaurants',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'TableMaster | Alternative TheFork - 0% commission',
     description:
       'Économisez 15% vs TheFork, boostez vos avis Google. Alternative sans commission aux plateformes de réservation. Essai gratuit 14 jours.',
+    images: ['https://tablemaster.fr/og-image.png'],
   },
 };
 

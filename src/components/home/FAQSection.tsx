@@ -4,70 +4,83 @@ import { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useSectionView } from '@/hooks/useSectionView';
 
-type FAQItem = {
+export type FAQItem = {
   question: string;
   answer: string;
   keywords: string[];
 };
 
-export default function FAQSection() {
+export interface FAQSectionProps {
+  heading?: string;
+  subheading?: string;
+  faqs?: FAQItem[];
+  contactEmail?: string;
+}
+
+const defaultFaqs: FAQItem[] = [
+  {
+    question: 'Comment fonctionne la réservation en ligne avec TableMaster ?',
+    answer:
+      'Vous intégrez notre widget sur votre site en 2 minutes (une simple balise à copier-coller) ou partagez votre lien de réservation sur vos réseaux sociaux. Vos clients réservent en autonomie, vous recevez une notification instantanée et gérez tout depuis votre dashboard.',
+    keywords: ['réservation en ligne', 'widget', 'intégration'],
+  },
+  {
+    question: 'Quels sont les tarifs de TableMaster ?',
+    answer:
+      'Pack Gestion à 39€/mois (jusqu\'à 400 réservations) et Pack Croissance à 69€/mois (réservations illimitées, widget personnalisable). Les deux incluent 14 jours d\'essai gratuit, sans engagement. Pas de commission par couvert, pas de frais cachés.',
+    keywords: ['tarifs', 'prix', 'abonnement'],
+  },
+  {
+    question: 'Comment TableMaster aide-t-il à obtenir plus d\'avis Google ?',
+    answer:
+      'Après chaque réservation, TableMaster envoie automatiquement un email à vos clients pour les inviter à laisser un avis sur votre fiche Google. Le lien direct vers votre page d\'avis maximise le taux de réponse. Résultat : +30% d\'avis en moyenne.',
+    keywords: ['avis Google', 'réputation', 'email automatique'],
+  },
+  {
+    question: 'Puis-je tester TableMaster gratuitement ?',
+    answer:
+      "Oui, vous bénéficiez de 14 jours d'essai gratuit sur les deux packs, sans engagement et sans carte bancaire. Toutes les fonctionnalités sont disponibles pendant l'essai. Si vous n'êtes pas convaincu, vous ne payez rien.",
+    keywords: ['essai gratuit', '14 jours', 'sans engagement'],
+  },
+  {
+    question: 'TableMaster fonctionne-t-il sur mobile ?',
+    answer:
+      "Absolument. Notre dashboard est optimisé pour tous les écrans. Vous recevez des notifications push en temps réel pour chaque nouvelle réservation, annulation ou modification. Gérez vos réservations où que vous soyez, sans installer d'application.",
+    keywords: ['mobile', 'smartphone', 'notifications push'],
+  },
+  {
+    question: 'En quoi TableMaster est différent d\'un simple formulaire de contact ?',
+    answer:
+      "TableMaster est un système complet : gestion de salle avec vue calendrier, validation des réservations, emails automatiques (confirmation, rappel 24h), génération d'avis Google, notifications en temps réel, statistiques détaillées et export CSV. Un simple formulaire ne gère pas les conflits de réservation ni l'occupation de votre salle.",
+    keywords: ['gestion de salle', 'système complet', 'vs formulaire contact'],
+  },
+  {
+    question: 'TableMaster gère-t-il les réservations en groupe ?',
+    answer:
+      'Oui, vous configurez vos créneaux et capacités selon vos besoins. Vous pouvez définir des horaires spécifiques pour les grands groupes ou les événements, avec une durée de réservation ajustable pour optimiser votre service.',
+    keywords: ['réservations groupe', 'événements', 'capacité configurable'],
+  },
+  {
+    question: 'Mes données clients sont-elles protégées ?',
+    answer:
+      'Oui. Toutes vos données sont stockées en France, conformément au RGPD. Vous restez propriétaire de vos données clients : nous ne les partageons jamais avec des tiers, ne les utilisons pas à des fins marketing et vous pouvez les exporter à tout moment.',
+    keywords: ['RGPD', 'protection données', 'confidentialité'],
+  },
+];
+
+export default function FAQSection({
+  heading = 'Questions fréquentes',
+  subheading = 'Tout ce que vous devez savoir sur TableMaster',
+  faqs = defaultFaqs,
+  contactEmail,
+}: FAQSectionProps) {
   useSectionView('faq', 'section-view-faq');
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const email = contactEmail || process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@tablemaster.fr';
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
-
-  const faqs: FAQItem[] = [
-    {
-      question: 'Comment fonctionne la réservation en ligne avec TableMaster ?',
-      answer:
-        'Vous intégrez notre widget sur votre site en 2 minutes (une simple balise à copier-coller) ou partagez votre lien de réservation sur vos réseaux sociaux. Vos clients réservent en autonomie, vous recevez une notification instantanée et gérez tout depuis votre dashboard.',
-      keywords: ['réservation en ligne', 'widget', 'intégration'],
-    },
-    {
-      question: 'Quels sont les tarifs de TableMaster ?',
-      answer:
-        'Pack Gestion à 39€/mois (jusqu\'à 400 réservations) et Pack Croissance à 69€/mois (réservations illimitées, widget personnalisable). Les deux incluent 14 jours d\'essai gratuit, sans engagement. Pas de commission par couvert, pas de frais cachés.',
-      keywords: ['tarifs', 'prix', 'abonnement'],
-    },
-    {
-      question: 'Comment TableMaster aide-t-il à obtenir plus d\'avis Google ?',
-      answer:
-        'Après chaque réservation, TableMaster envoie automatiquement un email à vos clients pour les inviter à laisser un avis sur votre fiche Google. Le lien direct vers votre page d\'avis maximise le taux de réponse. Résultat : +30% d\'avis en moyenne.',
-      keywords: ['avis Google', 'réputation', 'email automatique'],
-    },
-    {
-      question: 'Puis-je tester TableMaster gratuitement ?',
-      answer:
-        "Oui, vous bénéficiez de 14 jours d'essai gratuit sur les deux packs, sans engagement et sans carte bancaire. Toutes les fonctionnalités sont disponibles pendant l'essai. Si vous n'êtes pas convaincu, vous ne payez rien.",
-      keywords: ['essai gratuit', '14 jours', 'sans engagement'],
-    },
-    {
-      question: 'TableMaster fonctionne-t-il sur mobile ?',
-      answer:
-        "Absolument. Notre dashboard est optimisé pour tous les écrans. Vous recevez des notifications push en temps réel pour chaque nouvelle réservation, annulation ou modification. Gérez vos réservations où que vous soyez, sans installer d'application.",
-      keywords: ['mobile', 'smartphone', 'notifications push'],
-    },
-    {
-      question: 'En quoi TableMaster est différent d\'un simple formulaire de contact ?',
-      answer:
-        "TableMaster est un système complet : gestion de salle avec vue calendrier, validation des réservations, emails automatiques (confirmation, rappel 24h), génération d'avis Google, notifications en temps réel, statistiques détaillées et export CSV. Un simple formulaire ne gère pas les conflits de réservation ni l'occupation de votre salle.",
-      keywords: ['gestion de salle', 'système complet', 'vs formulaire contact'],
-    },
-    {
-      question: 'TableMaster gère-t-il les réservations en groupe ?',
-      answer:
-        'Oui, vous configurez vos créneaux et capacités selon vos besoins. Vous pouvez définir des horaires spécifiques pour les grands groupes ou les événements, avec une durée de réservation ajustable pour optimiser votre service.',
-      keywords: ['réservations groupe', 'événements', 'capacité configurable'],
-    },
-    {
-      question: 'Mes données clients sont-elles protégées ?',
-      answer:
-        'Oui. Toutes vos données sont stockées en France, conformément au RGPD. Vous restez propriétaire de vos données clients : nous ne les partageons jamais avec des tiers, ne les utilisons pas à des fins marketing et vous pouvez les exporter à tout moment.',
-      keywords: ['RGPD', 'protection données', 'confidentialité'],
-    },
-  ];
 
   return (
     <section id="faq" className="py-20 bg-[#FAFAFA]">
@@ -76,11 +89,11 @@ export default function FAQSection() {
           <div className="inline-flex items-center gap-3 mb-4">
             <HelpCircle className="w-8 h-8 text-[#0066FF]" />
             <h2 className="text-4xl md:text-5xl font-light text-[#2A2A2A]">
-              Questions fréquentes
+              {heading}
             </h2>
           </div>
           <p className="text-xl text-[#666666] font-light max-w-3xl mx-auto">
-            Tout ce que vous devez savoir sur TableMaster
+            {subheading}
           </p>
         </div>
 
@@ -147,7 +160,7 @@ export default function FAQSection() {
             Vous avez une autre question ?
           </p>
           <a
-            href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@tablemaster.fr'}?subject=Question%20TableMaster`}
+            href={`mailto:${email}?subject=Question%20TableMaster`}
             data-umami-event="faq-ask-question-click"
             className="inline-flex items-center gap-2 px-8 py-3 bg-[#0066FF] text-white font-light rounded-lg hover:bg-[#0052CC] transition-colors"
           >

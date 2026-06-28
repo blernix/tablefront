@@ -7,6 +7,18 @@ function normalizeEndpoint(endpoint: string): string {
   return endpoint.replace(/^\/api/, API_PREFIX);
 }
 
+export class ApiError extends Error {
+  public status: number;
+  public data: any;
+
+  constructor(message: string, status: number, data: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
 export class ApiClient {
   protected baseUrl: string;
   private token: string | null = null;
@@ -194,9 +206,9 @@ export class ApiClient {
 
     // Handle 204 No Content
     if (response.status === 204) {
-      if (!response.ok) {
-        throw new Error('An error occurred');
-      }
+    if (!response.ok) {
+      throw new ApiError('An error occurred', response.status, null);
+    }
       return undefined as T;
     }
 
@@ -250,7 +262,7 @@ export class ApiClient {
         `[API] Request failed for ${endpoint}: ${response.status}`,
         data.error?.message
       );
-      throw new Error(data.error?.message || 'An error occurred');
+      throw new ApiError(data.error?.message || 'An error occurred', response.status, data);
     }
 
     return data;
@@ -323,7 +335,7 @@ export class ApiClient {
           this.onUnauthorizedCallback();
         }
       }
-      throw new Error(data.error?.message || 'An error occurred');
+      throw new ApiError(data.error?.message || 'An error occurred', response.status, data);
     }
 
     return data;

@@ -5,7 +5,7 @@ import { Check, ArrowRight, Calendar, Users, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSectionView } from '@/hooks/useSectionView';
 
-const floatingCards = [
+const defaultFloatingCards = [
   {
     icon: <Calendar className="h-3 w-3 text-blue-400" />,
     text: 'Réservation confirmée',
@@ -49,7 +49,7 @@ const floatingCards = [
   {
     icon: <Calendar className="h-3 w-3 text-purple-400" />,
     text: '12 réservations',
-    sub: 'Aujourd\'hui',
+    sub: "Aujourd'hui",
     x: '50%',
     y: '85%',
     rotation: 5,
@@ -58,12 +58,37 @@ const floatingCards = [
   },
 ];
 
-const checkItems = [
+const defaultCheckItems = [
   'Sans engagement',
   'Installation rapide',
   'Forfait fixe · 0€/couvert',
   'Widget intégrable',
 ];
+
+export interface FloatingCard {
+  icon: React.ReactNode;
+  text: string;
+  sub: string;
+  x: string;
+  y: string;
+  rotation: number;
+  delay: number;
+  duration: number;
+}
+
+export interface HeroSectionProps {
+  headlineLine1?: string;
+  headlineLine2?: string;
+  subtitle?: string;
+  badgeText?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  secondaryCtaText?: string;
+  secondaryCtaHref?: string;
+  checkItems?: string[];
+  floatingCards?: FloatingCard[];
+  trialText?: string;
+}
 
 const containerVariants = {
   hidden: {},
@@ -84,18 +109,28 @@ const itemVariants = {
   },
 };
 
-export default function HeroSection() {
+export default function HeroSection({
+  headlineLine1 = 'Arrêtez de payer',
+  headlineLine2 = 'pour vos propres clients.',
+  subtitle = 'Logiciel de réservation restaurant sans commission (0€/couvert). Widget sur votre site, avis Google automatisés, rappels 24h. Gérez vos réservations en temps réel, sans intermédiaire.',
+  badgeText = 'À partir de 39€/mois · Sans engagement · Résiliable à tout moment',
+  ctaText = 'Créer mon compte gratuitement',
+  ctaHref = '/signup',
+  secondaryCtaText = 'Voir les tarifs',
+  secondaryCtaHref = '/#pricing',
+  checkItems = defaultCheckItems,
+  floatingCards = defaultFloatingCards,
+  trialText = "14 jours d'essai · Aucune carte bancaire requise · Résiliable à tout moment",
+}: HeroSectionProps) {
   useSectionView('hero', 'section-view-hero');
 
   return (
     <section id="hero" className="relative min-h-[92vh] flex items-center justify-center px-6 pt-20 pb-8 overflow-hidden">
-      {/* Subtle radial gradient background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#0066FF]/[0.03] rounded-full blur-3xl -translate-y-1/4 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#0066FF]/[0.02] rounded-full blur-3xl translate-y-1/4 -translate-x-1/4" />
       </div>
 
-      {/* Floating cards */}
       {floatingCards.map((card, i) => (
         <motion.div
           key={i}
@@ -107,30 +142,10 @@ export default function HeroSection() {
             x: [0, 6, -4, 0],
           }}
           transition={{
-            opacity: {
-              duration: card.duration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: card.delay,
-            },
-            y: {
-              duration: card.duration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: card.delay,
-            },
-            rotate: {
-              duration: card.duration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: card.delay,
-            },
-            x: {
-              duration: card.duration * 1.3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: card.delay,
-            },
+            opacity: { duration: card.duration, repeat: Infinity, ease: 'easeInOut', delay: card.delay },
+            y: { duration: card.duration, repeat: Infinity, ease: 'easeInOut', delay: card.delay },
+            rotate: { duration: card.duration, repeat: Infinity, ease: 'easeInOut', delay: card.delay },
+            x: { duration: card.duration * 1.3, repeat: Infinity, ease: 'easeInOut', delay: card.delay },
           }}
           className="absolute hidden lg:block pointer-events-none"
           style={{ left: card.x, top: card.y }}
@@ -141,9 +156,7 @@ export default function HeroSection() {
                 {card.icon}
               </div>
               <div>
-                <div className="text-xs font-medium text-gray-700 leading-tight">
-                  {card.text}
-                </div>
+                <div className="text-xs font-medium text-gray-700 leading-tight">{card.text}</div>
                 <div className="text-xs text-gray-400 leading-tight">{card.sub}</div>
               </div>
             </div>
@@ -151,22 +164,15 @@ export default function HeroSection() {
         </motion.div>
       ))}
 
-      {/* Main content */}
       <div className="relative z-10 container mx-auto max-w-4xl text-center">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-8"
-        >
-          {/* Title */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
           <motion.h1
             variants={itemVariants}
             className="text-5xl md:text-6xl lg:text-7xl font-light text-[#2A2A2A] leading-[1.1] tracking-tight max-w-3xl mx-auto"
           >
-            Arrêtez de payer
+            {headlineLine1}
             <span className="block text-[#0066FF] font-normal mt-3">
-              pour vos propres clients.
+              {headlineLine2}
             </span>
           </motion.h1>
 
@@ -174,52 +180,41 @@ export default function HeroSection() {
             variants={itemVariants}
             className="text-lg md:text-xl text-[#666666] leading-relaxed font-light max-w-2xl mx-auto"
           >
-            Logiciel de réservation restaurant sans commission (0€/couvert).
-            Widget sur votre site, avis Google automatisés, rappels 24h.
-            Gérez vos réservations en temps réel, sans intermédiaire.
+            {subtitle}
           </motion.p>
 
-          {/* Badge */}
-          <motion.div variants={itemVariants}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#0066FF]/20 bg-[#0066FF]/[0.04] text-[#0066FF] text-sm font-light">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] animate-pulse" />
-              À partir de 39€/mois · Sans engagement · Résiliable à tout moment
-            </span>
-          </motion.div>
+          {badgeText && (
+            <motion.div variants={itemVariants}>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#0066FF]/20 bg-[#0066FF]/[0.04] text-[#0066FF] text-sm font-light">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF] animate-pulse" />
+                {badgeText}
+              </span>
+            </motion.div>
+          )}
 
-          {/* CTAs */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
-          >
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link
-              href="/signup"
+              href={ctaHref}
               data-umami-event="hero-signup-cta-click"
               className="group inline-flex items-center justify-center px-8 py-4 bg-[#0066FF] text-white font-light hover:bg-[#0052CC] transition-all rounded-lg text-lg shadow-lg shadow-[#0066FF]/20 hover:shadow-[#0066FF]/30 hover:-translate-y-0.5"
             >
-              Créer mon compte gratuitement
-              <motion.span
-                animate={{ x: [0, 4, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="ml-2"
-              >
+              {ctaText}
+              <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="ml-2">
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
             </Link>
-            <Link
-              href="/#pricing"
-              data-umami-event="hero-pricing-cta-click"
-              className="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-[#2A2A2A] font-light hover:border-[#0066FF] hover:text-[#0066FF] transition-all rounded-lg text-lg bg-white/50 backdrop-blur-sm"
-            >
-              Voir les tarifs
-            </Link>
+            {secondaryCtaText && (
+              <Link
+                href={secondaryCtaHref}
+                data-umami-event="hero-pricing-cta-click"
+                className="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-[#2A2A2A] font-light hover:border-[#0066FF] hover:text-[#0066FF] transition-all rounded-lg text-lg bg-white/50 backdrop-blur-sm"
+              >
+                {secondaryCtaText}
+              </Link>
+            )}
           </motion.div>
 
-          {/* Checkmarks */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 pt-6"
-          >
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 pt-6">
             {checkItems.map((item, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full bg-[#0066FF]/10 flex items-center justify-center flex-shrink-0">
@@ -230,14 +225,14 @@ export default function HeroSection() {
             ))}
           </motion.div>
 
-          {/* Sans CB badge */}
-          <motion.p variants={itemVariants} className="text-sm text-[#8E8E93] font-light">
-            14 jours d&apos;essai · Aucune carte bancaire requise · Résiliable à tout moment
-          </motion.p>
+          {trialText && (
+            <motion.p variants={itemVariants} className="text-sm text-[#8E8E93] font-light">
+              {trialText}
+            </motion.p>
+          )}
         </motion.div>
       </div>
 
-      {/* Bottom fade to next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FAFAFA] to-transparent pointer-events-none" />
     </section>
   );

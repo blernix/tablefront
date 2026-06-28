@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { cities } from '@/data/cities';
 
 export default function Footer() {
   return (
@@ -96,7 +97,22 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 text-center">
+        <div className="border-t border-white/10 pt-8">
+          <h3 className="text-sm font-normal mb-4 text-white/50">Réservation restaurant par ville</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2">
+            {cities.map((city) => (
+              <Link
+                key={city.slug}
+                href={`/ville/${city.slug}`}
+                className="text-white/40 hover:text-white/70 font-light text-xs transition-colors"
+              >
+                Logiciel réservation {city.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 pt-8 mt-8 text-center">
           <p className="text-white/70 text-sm font-light">
             © {new Date().getFullYear()} TableMaster. Tous droits réservés.
           </p>
