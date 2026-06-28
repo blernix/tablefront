@@ -65,13 +65,35 @@ export default function CityPage({ params }: { params: { slug: string } }) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: `TableMaster — Réservation restaurant ${city.name}`,
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web, iOS, Android',
-    description: `Logiciel de réservation pour restaurants à ${city.name}. Sans commission, 39€/mois. Widget intégrable, gestion des tables, rappels automatiques.`,
-    offers: { '@type': 'Offer', price: '39', priceCurrency: 'EUR' },
-    areaServed: { '@type': 'City', name: city.name },
+    '@graph': [
+      {
+        '@type': 'SoftwareApplication',
+        name: `TableMaster — Réservation restaurant ${city.name}`,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, iOS, Android',
+        description: `Logiciel de réservation pour restaurants à ${city.name}. Sans commission, 39€/mois. Widget intégrable, gestion des tables, rappels automatiques.`,
+        offers: { '@type': 'Offer', price: '39', priceCurrency: 'EUR' },
+        areaServed: { '@type': 'City', name: city.name },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://tablemaster.fr' },
+          { '@type': 'ListItem', position: 2, name: `Réservation restaurant ${city.name}`, item: `https://tablemaster.fr/ville/${city.slug}` },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: city.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.answer,
+          },
+        })),
+      },
+    ],
   };
 
   const cityStats = [
