@@ -8,6 +8,7 @@ import DashboardSidebar from '@/components/dashboard/Sidebar';
 import DashboardHeader from '@/components/dashboard/Header';
 import MobileTabBar from '@/components/dashboard/MobileTabBar';
 import PastDueBlocker from '@/components/dashboard/PastDueBlocker';
+import PWAInstallBanner from '@/components/PWAInstallBanner';
 
 // Skeleton for dashboard loading
 function DashboardSkeleton() {
@@ -132,6 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </PastDueBlocker>
         </main>
         <MobileTabBar />
+        <PWAInstallBanner />
       </div>
     </div>
   );

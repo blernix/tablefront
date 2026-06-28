@@ -3,6 +3,17 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages-cache',
+        expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
+      },
+    },
+  ],
+  buildExcludes: [/middleware-manifest\.json$/],
 });
 
 const { withSentryConfig } = require('@sentry/nextjs');
